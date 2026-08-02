@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💎 FRENCH STORE 💎</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a; /* Fondo oscuro moderno */
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            background-color: #1e293b;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        .tab-button {
+            flex: 1;
+            background: transparent;
+            color: #94a3b8;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            min-width: 120px;
+        }
+        .tab-button.active {
+            color: #38bdf8;
+            border-bottom: 3px solid #38bdf8;
+        }
+        .product-card {
+            background-color: #1e293b;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .product-info h3 { margin: 0 0 5px 0; font-size: 18px; color: #f1f5f9; }
+        .product-price { font-size: 20px; font-weight: bold; color: #10b981; }
+        .buy-button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        💎 FRENCH STORE 💎
+    </header>
+
+    <div class="container">
+        <!-- Pestañas de categorías -->
+        <div class="tabs">
+            <button class="tab-button active">Recargas por ID</button>
+            <button class="tab-button">Recargas por Cuenta</button>
+            <button class="tab-button">Streaming</button>
+        </div>
+
+        <!-- Área donde aparecerán los productos -->
+        <div id="lista-productos">
+            <div class="product-card">
+                <div class="product-info">
+                    <h3>Conectando con tu tienda...</h3>
+                    <p style="margin:0; color:#94a3b8; font-size:14px;">Preparando base de datos</p>
+                </div>
+                <div class="product-price">...</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
