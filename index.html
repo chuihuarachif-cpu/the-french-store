@@ -5,28 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💎 FRENCH STORE 💎</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            padding: 20px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
+        header { background: linear-gradient(90deg, #3b82f6, #8b5cf6); padding: 20px; text-align: center; font-size: 28px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .tabs { display: flex; justify-content: space-between; background-color: #1e293b; padding: 10px; border-radius: 10px; margin-bottom: 20px; overflow-x: auto; }
         .tab-button { flex: 1; background: transparent; color: #94a3b8; border: none; padding: 10px; font-size: 16px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; min-width: 120px; }
         .tab-button.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; }
-        .product-card { background-color: #1e293b; border-radius: 10px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-        .product-info h3 { margin: 0 0 5px 0; font-size: 18px; color: #f1f5f9; }
-        .product-price { font-size: 20px; font-weight: bold; color: #10b981; }
+        
+        /* Estilos de los menús desplegables */
+        details { background-color: #1e293b; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); overflow: hidden; }
+        summary { padding: 15px; font-size: 18px; font-weight: bold; color: #f1f5f9; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; background-color: #334155; }
+        summary::-webkit-details-marker { display: none; }
+        summary:after { content: "▼"; color: #94a3b8; font-size: 14px; }
+        details[open] summary:after { content: "▲"; }
+        
+        /* Estilos de los productos individuales */
+        .product-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-top: 1px solid #334155; }
+        .product-name { font-size: 16px; color: #cbd5e1; }
+        .product-price-buy { display: flex; align-items: center; gap: 15px; }
+        .price { font-size: 18px; font-weight: bold; color: #10b981; }
+        .btn-comprar { background-color: #25D366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -35,58 +33,91 @@
 
     <div class="container">
         <div class="tabs">
-            <button class="tab-button active">Recargas por ID</button>
-            <button class="tab-button">Recargas por Cuenta</button>
-            <button class="tab-button">Streaming</button>
+            <button class="tab-button active" onclick="filtrarCategoria('Recargas por ID', this)">Recargas por ID</button>
+            <button class="tab-button" onclick="filtrarCategoria('Recargas por Cuenta', this)">Recargas por Cuenta</button>
+            <button class="tab-button" onclick="filtrarCategoria('Streaming', this)">Streaming</button>
         </div>
 
         <div id="lista-productos">
-            <div class="product-card">
-                <div class="product-info">
-                    <h3 style="color: #94a3b8;">Cargando inventario...</h3>
-                </div>
-            </div>
+            <p style="text-align:center; color:#94a3b8;">Cargando catálogo...</p>
         </div>
     </div>
 
     <script>
-        // --- AQUÍ ESTÁN TUS DATOS DE SUPABASE ---
+        // --- AQUÍ ESTÁ TU URL LISTA ---
         const SUPABASE_URL = 'https://jivaaripugjdpxjvjnsu.supabase.co';
+        
+        // --- AQUÍ PEGAS TU LLAVE (¡Recuerda que empieza con "e" minúscula!) ---
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppdmFhcmlwdWdqZHB4anZqbnN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NDY3MzIsImV4cCI6MjEwMTIyMjczMn0.N60Xb1PqqPo12HdKEzPc4qCp1aFvVzwZz4VG04q_Es4';
         
-        // --- AQUÍ ESTÁ EL NOMBRE EXACTO DE TU TABLA ---
-        const NOMBRE_DE_TABLA = 'productos'; 
+        // --- AQUÍ PONES TU NÚMERO (Borra las X y pon tu número después del 591) ---
+        const NUMERO_WHATSAPP = '59177057379'; 
+
+        let inventarioGlobal = [];
 
         async function cargarProductos() {
             try {
-                const respuesta = await fetch(`${SUPABASE_URL}/rest/v1/${NOMBRE_DE_TABLA}?select=*`, {
+                const respuesta = await fetch(`${SUPABASE_URL}/rest/v1/productos?select=*`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
                     }
                 });
+                inventarioGlobal = await respuesta.json();
                 
-                const datos = await respuesta.json();
-                const contenedor = document.getElementById('lista-productos');
-                contenedor.innerHTML = ''; 
+                filtrarCategoria('Recargas por ID', document.querySelector('.tab-button.active'));
+                
+            } catch (error) {
+                document.getElementById('lista-productos').innerHTML = '<p style="color:red; text-align:center;">Error al conectar con la base de datos.</p>';
+            }
+        }
 
-                if (datos.length === 0) {
-                    contenedor.innerHTML = '<p style="text-align:center; color:#94a3b8;">Inventario vacío por ahora.</p>';
-                    return;
+        function filtrarCategoria(categoria, botonElement) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            botonElement.classList.add('active');
+
+            const contenedor = document.getElementById('lista-productos');
+            contenedor.innerHTML = '';
+
+            const productosFiltrados = inventarioGlobal.filter(item => item.categoria === categoria);
+
+            if (productosFiltrados.length === 0) {
+                contenedor.innerHTML = '<p style="text-align:center; color:#94a3b8;">No hay productos en esta sección por ahora.</p>';
+                return;
+            }
+
+            const juegosAgrupados = {};
+            productosFiltrados.forEach(item => {
+                if (!juegosAgrupados[item.juego]) {
+                    juegosAgrupados[item.juego] = [];
                 }
+                juegosAgrupados[item.juego].push(item);
+            });
 
-                datos.forEach(item => {
-                    contenedor.innerHTML += `
-                        <div class="product-card">
-                            <div class="product-info">
-                                <h3>${item.nombre}</h3>
+            for (const [juego, paquetes] of Object.entries(juegosAgrupados)) {
+                let htmlPaquetes = '';
+                
+                paquetes.forEach(p => {
+                    const mensaje = encodeURIComponent(`Hola, quisiera comprar el paquete de ${p.paquete} para ${juego} que cuesta ${p.precio} Bs.`);
+                    const linkWpp = `https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`;
+
+                    htmlPaquetes += `
+                        <div class="product-item">
+                            <div class="product-name">${p.paquete}</div>
+                            <div class="product-price-buy">
+                                <span class="price">${p.precio} Bs</span>
+                                <a href="${linkWpp}" target="_blank" class="btn-comprar">Comprar</a>
                             </div>
-                            <div class="product-price">${item.precio} Bs</div>
                         </div>
                     `;
                 });
-            } catch (error) {
-                document.getElementById('lista-productos').innerHTML = '<p style="color:red; text-align:center;">Error al conectar con la base de datos.</p>';
+
+                contenedor.innerHTML += `
+                    <details>
+                        <summary>${juego}</summary>
+                        ${htmlPaquetes}
+                    </details>
+                `;
             }
         }
 
