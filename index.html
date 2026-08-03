@@ -4,32 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💎 FRENCH STORE 💎</title>
+    
+    <!-- Fuentes futuristas y modernas -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
-        header { background: linear-gradient(90deg, #3b82f6, #8b5cf6); padding: 20px; text-align: center; font-size: 28px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .tabs { display: flex; justify-content: space-between; background-color: #1e293b; padding: 10px; border-radius: 10px; margin-bottom: 20px; overflow-x: auto; }
-        .tab-button { flex: 1; background: transparent; color: #94a3b8; border: none; padding: 10px; font-size: 16px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; min-width: 120px; }
-        .tab-button.active { color: #38bdf8; border-bottom: 3px solid #38bdf8; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #050b14; /* Fondo oscuro estilo gamer */
+            color: #f8fafc; 
+            margin: 0; 
+            padding: 0; 
+        }
         
-        /* Estilos de los menús desplegables */
-        details { background-color: #1e293b; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); overflow: hidden; }
-        summary { padding: 15px; font-size: 18px; font-weight: bold; color: #f1f5f9; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; background-color: #334155; }
+        /* --- ESTILOS DEL ENCABEZADO TIPO NEÓN --- */
+        header { 
+            text-align: center; 
+            padding: 40px 20px; 
+            background: radial-gradient(circle at center, #112240 0%, #050b14 100%);
+            border-bottom: 2px solid #0ff;
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.1);
+        }
+        .subtitle { 
+            color: #0ff; 
+            font-weight: 600; 
+            letter-spacing: 2px; 
+            font-size: 12px; 
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .neon-title { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 38px; 
+            color: #fff; 
+            margin: 0; 
+            /* Efecto Neón y animación */
+            text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff; 
+            animation: palpitar 2s infinite alternate;
+        }
+        .description { 
+            color: #94a3b8; 
+            font-size: 14px; 
+            max-width: 600px; 
+            margin: 15px auto; 
+            line-height: 1.5;
+        }
+        .badges { 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+            margin-top: 20px; 
+        }
+        .badge { 
+            border: 1px solid #0ff; 
+            color: #0ff; 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            background: rgba(0, 255, 255, 0.05); 
+        }
+
+        /* Animación del título */
+        @keyframes palpitar {
+            0% { text-shadow: 0 0 5px #0ff, 0 0 10px #0ff; }
+            100% { text-shadow: 0 0 5px #0ff, 0 0 20px #0ff, 0 0 35px #0ff; }
+        }
+
+        /* --- ESTILOS DEL CONTENEDOR Y PESTAÑAS --- */
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .tabs { 
+            display: flex; 
+            justify-content: space-between; 
+            background-color: #0f172a; 
+            padding: 10px; 
+            border-radius: 10px; 
+            margin-bottom: 25px; 
+            border: 1px solid #1e293b;
+        }
+        .tab-button { 
+            flex: 1; 
+            background: transparent; 
+            color: #64748b; 
+            border: none; 
+            padding: 10px; 
+            font-size: 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border-bottom: 2px solid transparent; 
+            transition: all 0.3s ease;
+        }
+        .tab-button.active { 
+            color: #0ff; 
+            border-bottom: 2px solid #0ff; 
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* --- ESTILOS DE LOS MENÚS DESPLEGABLES --- */
+        details { 
+            background-color: #0f172a; 
+            border-radius: 10px; 
+            margin-bottom: 15px; 
+            border: 1px solid #1e293b;
+            transition: all 0.3s ease; 
+            overflow: hidden; 
+        }
+        details:hover {
+            border-color: #0ff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
+            transform: translateY(-2px); /* Animación de flotar */
+        }
+        summary { 
+            padding: 18px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: #f1f5f9; 
+            cursor: pointer; 
+            list-style: none; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background-color: #1e293b; 
+        }
         summary::-webkit-details-marker { display: none; }
-        summary:after { content: "▼"; color: #94a3b8; font-size: 14px; }
+        summary:after { content: "▼"; color: #0ff; font-size: 12px; }
         details[open] summary:after { content: "▲"; }
         
-        /* Estilos de los productos individuales */
-        .product-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-top: 1px solid #334155; }
-        .product-name { font-size: 16px; color: #cbd5e1; }
+        /* --- ESTILOS DE LOS PRODUCTOS --- */
+        .product-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 20px; 
+            border-top: 1px solid #1e293b; 
+        }
+        .product-item:hover { background-color: rgba(30, 41, 59, 0.5); }
+        .product-name { font-size: 15px; color: #cbd5e1; }
         .product-price-buy { display: flex; align-items: center; gap: 15px; }
         .price { font-size: 18px; font-weight: bold; color: #10b981; }
-        .btn-comprar { background-color: #25D366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; font-size: 14px; }
+        
+        .btn-comprar { 
+            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%); 
+            color: #000; 
+            text-decoration: none; 
+            padding: 8px 18px; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            font-size: 14px; 
+            transition: all 0.2s ease;
+        }
+        .btn-comprar:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5); 
+        }
     </style>
 </head>
 <body>
 
-    <header>💎 FRENCH STORE 💎</header>
+    <header>
+        <div class="subtitle">RECARGAS AL INSTANTE</div>
+        <h1 class="neon-title">💎 FRENCH STORE 💎</h1>
+        <p class="description">Diamantes, monedas, pases y plataformas de streaming. Elige tu juego, selecciona tu paquete y recibe tu recarga en minutos.</p>
+        <div class="badges">
+            <span class="badge">⏱️ Entrega rápida</span>
+            <span class="badge">🛡️ Pago seguro</span>
+            <span class="badge">🎮 +25 Juegos</span>
+        </div>
+    </header>
 
     <div class="container">
         <div class="tabs">
@@ -39,18 +180,16 @@
         </div>
 
         <div id="lista-productos">
-            <p style="text-align:center; color:#94a3b8;">Cargando catálogo...</p>
+            <p style="text-align:center; color:#0ff; font-family:'Orbitron', sans-serif;">Cargando catálogo...</p>
         </div>
     </div>
 
     <script>
-        // --- AQUÍ ESTÁ TU URL LISTA ---
+        // --- 1. AQUÍ VAN TUS DATOS DE SUPABASE ---
         const SUPABASE_URL = 'https://jivaaripugjdpxjvjnsu.supabase.co';
-        
-        // --- AQUÍ PEGAS TU LLAVE (¡Recuerda que empieza con "e" minúscula!) ---
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppdmFhcmlwdWdqZHB4anZqbnN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NDY3MzIsImV4cCI6MjEwMTIyMjczMn0.N60Xb1PqqPo12HdKEzPc4qCp1aFvVzwZz4VG04q_Es4';
         
-        // --- AQUÍ PONES TU NÚMERO (Borra las X y pon tu número después del 591) ---
+        // --- 2. AQUÍ VA TU NÚMERO DE WHATSAPP ---
         const NUMERO_WHATSAPP = '59177057379'; 
 
         let inventarioGlobal = [];
@@ -82,7 +221,7 @@
             const productosFiltrados = inventarioGlobal.filter(item => item.categoria === categoria);
 
             if (productosFiltrados.length === 0) {
-                contenedor.innerHTML = '<p style="text-align:center; color:#94a3b8;">No hay productos en esta sección por ahora.</p>';
+                contenedor.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:30px;">No hay productos en esta sección por ahora.</p>';
                 return;
             }
 
