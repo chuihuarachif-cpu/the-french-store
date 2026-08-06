@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>💎 FRENCH STORE 💎</title>
     
     <!-- Fuentes futuristas y modernas -->
@@ -196,56 +199,144 @@
 
         async function cargarProductos() {
             try {
-                const respuesta = await fetch(`${SUPABASE_URL}/rest/v1/productos?select=*`, {
+                // Solo trae productos PUBLICADOS.
+                // Además ordena juego A-Z y precio de menor a mayor.
+                const url = new URL(`${SUPABASE_URL}/rest/v1/productos`);
+                url.searchParams.set('select', '*');
+                url.searchParams.set('activo', 'eq.true');
+                url.searchParams.set('order', 'juego.asc,precio.asc,paquete.asc');
+
+                const respuesta = await fetch(url.toString(), {
+                    method: 'GET',
+                    cache: 'no-store',
                     headers: {
                         'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Accept': 'application/json'
                     }
                 });
-                inventarioGlobal = await respuesta.json();
-                
-                filtrarCategoria('Recargas por ID', document.querySelector('.tab-button.active'));
-                
+
+                if (!respuesta.ok) {
+                    throw new Error(`Supabase respondió ${respuesta.status}`);
+                }
+
+                const datos = await respuesta.json();
+
+                // Segunda protección:
+                // aunque por error llegara una fila inactiva, no se muestra.
+                inventarioGlobal = Array.isArray(datos)
+                    ? datos.filter(item => item.activo === true)
+                    : [];
+
+                filtrarCategoria(
+                    'Recargas por ID',
+                    document.querySelector('.tab-button.active')
+                );
+
             } catch (error) {
-                document.getElementById('lista-productos').innerHTML = '<p style="color:red; text-align:center;">Error al conectar con la base de datos.</p>';
+                console.error('Error cargando productos:', error);
+                document.getElementById('lista-productos').innerHTML =
+                    '<p style="color:red; text-align:center;">Error al conectar con la base de datos.</p>';
             }
         }
 
         function filtrarCategoria(categoria, botonElement) {
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            botonElement.classList.add('active');
+            document.querySelectorAll('.tab-button').forEach(
+                btn => btn.classList.remove('active')
+            );
+
+            if (botonElement) {
+                botonElement.classList.add('active');
+            }
 
             const contenedor = document.getElementById('lista-productos');
             contenedor.innerHTML = '';
 
-            const productosFiltrados = inventarioGlobal.filter(item => item.categoria === categoria);
+            const productosFiltrados = inventarioGlobal
+                .filter(item =>
+                    item.activo === true &&
+                    item.categoria === categoria
+                )
+                .sort((a, b) => {
+                    const juegoA = String(a.juego || '');
+                    const juegoB = String(b.juego || '');
+
+                    const porJuego = juegoA.localeCompare(
+                        juegoB,
+                        'es',
+                        { sensitivity: 'base' }
+                    );
+
+                    if (porJuego !== 0) return porJuego;
+
+                    const precioA = Number(a.precio) || 0;
+                    const precioB = Number(b.precio) || 0;
+
+                    if (precioA !== precioB) return precioA - precioB;
+
+                    return String(a.paquete || '').localeCompare(
+                        String(b.paquete || ''),
+                        'es',
+                        { sensitivity: 'base' }
+                    );
+                });
 
             if (productosFiltrados.length === 0) {
-                contenedor.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:30px;">No hay productos en esta sección por ahora.</p>';
+                contenedor.innerHTML =
+                    '<p style="text-align:center; color:#94a3b8; margin-top:30px;">No hay productos en esta sección por ahora.</p>';
                 return;
             }
 
             const juegosAgrupados = {};
+
             productosFiltrados.forEach(item => {
-                if (!juegosAgrupados[item.juego]) {
-                    juegosAgrupados[item.juego] = [];
+                const nombreJuego = item.juego || 'Sin categoría';
+
+                if (!juegosAgrupados[nombreJuego]) {
+                    juegosAgrupados[nombreJuego] = [];
                 }
-                juegosAgrupados[item.juego].push(item);
+
+                juegosAgrupados[nombreJuego].push(item);
             });
 
-            for (const [juego, paquetes] of Object.entries(juegosAgrupados)) {
+            const nombresJuegos = Object.keys(juegosAgrupados).sort(
+                (a, b) => a.localeCompare(
+                    b,
+                    'es',
+                    { sensitivity: 'base' }
+                )
+            );
+
+            nombresJuegos.forEach(juego => {
+                const paquetes = juegosAgrupados[juego].sort((a, b) => {
+                    const precioA = Number(a.precio) || 0;
+                    const precioB = Number(b.precio) || 0;
+
+                    if (precioA !== precioB) return precioA - precioB;
+
+                    return String(a.paquete || '').localeCompare(
+                        String(b.paquete || ''),
+                        'es',
+                        { sensitivity: 'base' }
+                    );
+                });
+
                 let htmlPaquetes = '';
-                
+
                 paquetes.forEach(p => {
-                    const mensaje = encodeURIComponent(`Hola, quisiera comprar el paquete de ${p.paquete} para ${juego} que cuesta ${p.precio} Bs.`);
-                    const linkWpp = `https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`;
+                    const mensaje = encodeURIComponent(
+                        `Hola, quisiera comprar el paquete de ${p.paquete} para ${juego} que cuesta ${p.precio} Bs.`
+                    );
+
+                    const linkWpp =
+                        `https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`;
 
                     htmlPaquetes += `
                         <div class="product-item">
                             <div class="product-name">${p.paquete}</div>
                             <div class="product-price-buy">
                                 <span class="price">${p.precio} Bs</span>
-                                <a href="${linkWpp}" target="_blank" class="btn-comprar">Comprar</a>
+                                <a href="${linkWpp}" target="_blank" rel="noopener noreferrer" class="btn-comprar">Comprar</a>
                             </div>
                         </div>
                     `;
@@ -257,7 +348,7 @@
                         ${htmlPaquetes}
                     </details>
                 `;
-            }
+            });
         }
 
         cargarProductos();
