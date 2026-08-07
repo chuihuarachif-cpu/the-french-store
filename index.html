@@ -525,6 +525,10 @@
             <span class="badge">🛡️ Pago seguro</span>
             <span class="badge">🎮 +25 Juegos</span>
         </div>
+        <p style="margin:14px auto 0; max-width:620px; color:#64748b; font-size:11px; line-height:1.5;">
+            🔐 Por tu seguridad, verifica siempre el destinatario mostrado por tu banco antes de pagar.
+            Si no coincide con el indicado en esta página, no realices el pago.
+        </p>
     </header>
 
     <div class="container">
@@ -600,11 +604,15 @@
                 </button>
             </div>
 
-            <div class="seguridad-pago">
+            <div class="seguridad-pago" style="background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.28); padding:12px; border-radius:12px;">
                 <span>🛡️</span>
                 <span>
-                    Verifica que el importe y el destinatario de tu banca sean correctos antes de confirmar.
-                    Nunca te pediremos contraseñas, PIN ni códigos de seguridad.
+                    <strong style="color:#fbbf24;">Pago seguro:</strong><br>
+                    Antes de confirmar, verifica que tu banca muestre:<br>
+                    <strong>Destinatario:</strong> <span id="seguridad-destinatario">-</span><br>
+                    <strong>Banco:</strong> <span id="seguridad-banco">-</span><br><br>
+                    Si el destinatario no coincide, <strong>NO realices el pago</strong>.<br>
+                    Nunca te pediremos contraseña, PIN, código SMS ni token de seguridad.
                 </span>
             </div>
         </div>
@@ -618,6 +626,11 @@
         // --- 2. AQUÍ VA TU NÚMERO DE WHATSAPP ---
         const NUMERO_WHATSAPP = '59177057379';
 
+        // DATOS QUE EL CLIENTE DEBE VERIFICAR ANTES DE PAGAR
+        // Cambia SOLO estos dos valores por tus datos reales.
+        const DESTINATARIO_PAGO = 'PON_AQUI_EL_NOMBRE_DEL_DESTINATARIO';
+        const BANCO_PAGO = 'PON_AQUI_EL_BANCO';
+
         // El archivo de tu QR debe llamarse exactamente "qr-pago.png"
         // y estar en la misma carpeta que index.html en GitHub.
         const ARCHIVO_QR = 'qr-pago.png';
@@ -630,7 +643,7 @@
                 // Solo trae productos PUBLICADOS.
                 // Además ordena juego A-Z y precio de menor a mayor.
                 const url = new URL(`${SUPABASE_URL}/rest/v1/productos`);
-                url.searchParams.set('select', '*');
+                url.searchParams.set('select', 'id,juego,paquete,categoria,precio,activo');
                 url.searchParams.set('activo', 'eq.true');
                 url.searchParams.set('order', 'juego.asc,precio.asc,paquete.asc');
 
@@ -833,6 +846,12 @@
 
             document.getElementById('pago-pedido').textContent =
                 compraActual.pedido;
+
+            document.getElementById('seguridad-destinatario').textContent =
+                DESTINATARIO_PAGO;
+
+            document.getElementById('seguridad-banco').textContent =
+                BANCO_PAGO;
 
             const qr = document.getElementById('qr-pago');
             const ayudaQR = document.getElementById('qr-ayuda');
