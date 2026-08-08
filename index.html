@@ -501,6 +501,77 @@
             }
         }
 
+
+        .product-price-buy {
+            flex-wrap: wrap;
+        }
+
+        .btn-canje {
+            border: 1px solid rgba(250, 204, 21, .48);
+            background: rgba(250, 204, 21, .08);
+            color: #fde047;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .2s ease, border-color .2s ease, background .2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-canje:hover {
+            transform: translateY(-1px);
+            border-color: rgba(250, 204, 21, .9);
+            background: rgba(250, 204, 21, .15);
+        }
+
+        .gift-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+            padding: 4px 7px;
+            border-radius: 999px;
+            border: 1px solid rgba(34,197,94,.32);
+            background: rgba(34,197,94,.07);
+            color: #86efac;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .02em;
+        }
+
+        .canje-lista {
+            margin: 15px 0 18px;
+            padding-left: 21px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        .canje-lista li {
+            margin-bottom: 8px;
+        }
+
+        .canje-aviso {
+            padding: 10px 12px;
+            border: 1px solid rgba(56,189,248,.25);
+            background: rgba(56,189,248,.07);
+            color: #bae6fd;
+            border-radius: 12px;
+            font-size: 11px;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .btn-oficial {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *,
             *::before,
@@ -517,9 +588,9 @@
 <body>
 
     <header>
-        <div class="subtitle">RECARGAS AL INSTANTE</div>
+        <div class="subtitle">RECARGAS Y CÓDIGOS DIGITALES</div>
         <h1 class="neon-title">💎 FRENCH STORE 💎</h1>
-        <p class="description">Diamantes, monedas, pases y plataformas de streaming. Elige tu juego, selecciona tu paquete y recibe tu recarga en minutos.</p>
+        <p class="description">Diamantes, monedas, pases, plataformas de streaming y Gift Cards. Elige tu producto y compra de forma sencilla.</p>
         <div class="badges">
             <span class="badge">⏱️ Entrega rápida</span>
             <span class="badge">🛡️ Pago seguro</span>
@@ -533,9 +604,10 @@
 
     <div class="container">
         <div class="tabs">
-            <button class="tab-button active" onclick="filtrarCategoria('Recargas por ID', this)">Recargas por ID</button>
-            <button class="tab-button" onclick="filtrarCategoria('Recargas por Cuenta', this)">Recargas por Cuenta</button>
-            <button class="tab-button" onclick="filtrarCategoria('Streaming', this)">Streaming</button>
+            <button class="tab-button active" onclick="filtrarCategoria('Recargas por ID', this)">🎮 Recargas por ID</button>
+            <button class="tab-button" onclick="filtrarCategoria('Recargas por Cuenta', this)">👤 Recargas por Cuenta</button>
+            <button class="tab-button" onclick="filtrarCategoria('Streaming', this)">📺 Plataformas de Streaming</button>
+            <button class="tab-button" onclick="filtrarCategoria('Gift Cards', this)">🎁 Gift Cards</button>
         </div>
 
         <div id="lista-productos">
@@ -555,7 +627,7 @@
 
             <h2 id="modal-pago-titulo" class="modal-title">Completa tu pago</h2>
             <p class="modal-subtitle">
-                Revisa el paquete, escanea el QR y luego avísanos por WhatsApp para procesar tu recarga.
+                Revisa el producto, escanea el QR y luego avísanos por WhatsApp para procesar tu compra.
             </p>
 
             <div class="resumen-pago">
@@ -618,6 +690,32 @@
         </div>
     </div>
 
+
+    <!-- MODAL DE CÓMO CANJEAR GIFT CARDS -->
+    <div id="modal-canje" class="modal-pago" aria-hidden="true">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-canje-titulo">
+            <button class="modal-cerrar" type="button" onclick="cerrarModalCanje()" aria-label="Cerrar">×</button>
+
+            <h2 id="modal-canje-titulo" class="modal-title">📖 Cómo canjear</h2>
+            <p id="modal-canje-subtitulo" class="modal-subtitle">Instrucciones de canje.</p>
+
+            <div class="canje-aviso">
+                🔐 Verifica que estés entrando en tu cuenta correcta antes de canjear el código.
+                Los códigos digitales normalmente son de un solo uso.
+            </div>
+
+            <ol id="modal-canje-pasos" class="canje-lista"></ol>
+
+            <a
+                id="modal-canje-enlace"
+                class="btn-modal btn-pagado btn-oficial"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+            >🌐 Ir al sitio oficial</a>
+        </div>
+    </div>
+
     <script>
         // --- 1. AQUÍ VAN TUS DATOS DE SUPABASE ---
         const SUPABASE_URL = 'https://jivaaripugjdpxjvjnsu.supabase.co';
@@ -637,6 +735,290 @@
 
         let inventarioGlobal = [];
         let compraActual = null;
+
+        const GUIAS_CANJE = {
+            roblox: {
+                titulo: '🔷 Roblox',
+                pasos: [
+                    'Abre la página oficial de canje de Roblox en un navegador.',
+                    'Inicia sesión en la cuenta donde quieres recibir el saldo o los Robux.',
+                    'Introduce el código recibido y pulsa Canjear.',
+                    'Comprueba el mensaje de confirmación antes de cerrar la página.'
+                ],
+                enlace: 'https://www.roblox.com/redeem'
+            },
+            steam: {
+                titulo: '💵 Steam',
+                pasos: [
+                    'Inicia sesión en tu cuenta de Steam.',
+                    'Abre la opción para canjear una tarjeta de regalo o código de la Cartera.',
+                    'Introduce el código recibido exactamente como aparece.',
+                    'Pulsa Continuar y verifica que el saldo se agregue a tu Cartera de Steam.'
+                ],
+                enlace: 'https://store.steampowered.com/account/redeemwalletcode'
+            },
+            minecraft: {
+                titulo: '🟡 Minecraft Minecoins',
+                pasos: [
+                    'Abre la página oficial de canje de Minecraft.',
+                    'Inicia sesión con la cuenta de Microsoft que utilizas en Minecraft.',
+                    'Introduce el código recibido y sigue las instrucciones de pantalla.',
+                    'Abre Minecraft Marketplace y verifica tu saldo de Minecoins.'
+                ],
+                enlace: 'https://www.minecraft.net/es-es/redeem'
+            },
+            leagueoflegends: {
+                titulo: '💠 League of Legends',
+                pasos: [
+                    'Abre League of Legends e inicia sesión en la cuenta correcta.',
+                    'Entra a la Tienda y abre la sección Cuenta.',
+                    'Selecciona Canjear códigos.',
+                    'Introduce el código recibido y confirma el canje.'
+                ],
+                enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
+            },
+            teamfighttactics: {
+                titulo: '🟣 Teamfight Tactics',
+                pasos: [
+                    'Inicia sesión con tu cuenta de Riot.',
+                    'Desde el cliente compatible, entra a Tienda y luego a Cuenta.',
+                    'Selecciona Canjear códigos.',
+                    'Introduce el código completo y confirma el canje en la cuenta correcta.'
+                ],
+                enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
+            },
+            valorant: {
+                titulo: '🔻 VALORANT',
+                pasos: [
+                    'Abre VALORANT e inicia sesión en la cuenta correcta.',
+                    'Pulsa el icono de VALORANT junto al saldo de VP.',
+                    'Elige Tarjetas prepagadas y códigos.',
+                    'Introduce el código recibido y confirma para agregar los VP.'
+                ],
+                enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
+            },
+            standoff2: {
+                titulo: '🟡 Standoff 2',
+                pasos: [
+                    'Abre la tienda oficial de Standoff 2.',
+                    'Inicia sesión y selecciona la cuenta correcta usando tu ID.',
+                    'Abre la opción Promo Code / código en la tienda.',
+                    'Introduce el código recibido y pulsa Apply.'
+                ],
+                enlace: 'https://store.standoff2.com'
+            }
+        };
+
+        function normalizarClave(texto) {
+            return String(texto || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '');
+        }
+
+        function escaparHTML(texto) {
+            return String(texto ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function quitarEmojiInicial(texto) {
+            return String(texto || '')
+                .replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '')
+                .trim();
+        }
+
+        function numeroSeguro(texto) {
+            let valor = String(texto || '').trim();
+
+            // 1.000 se interpreta como mil; 10,5 como decimal.
+            if (/^\d{1,3}(\.\d{3})+$/.test(valor)) {
+                valor = valor.replace(/\./g, '');
+            } else {
+                valor = valor.replace(',', '.');
+            }
+
+            const numero = Number(valor);
+            return Number.isFinite(numero) ? numero : null;
+        }
+
+        function mostrarNumero(numero) {
+            if (!Number.isFinite(numero)) return '';
+            return Number.isInteger(numero)
+                ? String(numero)
+                : String(Math.round(numero * 100) / 100).replace('.', ',');
+        }
+
+        function unidadPorJuego(juego) {
+            const clave = normalizarClave(juego);
+
+            if (clave.includes('freefire')) return 'Diamantes';
+            if (clave.includes('mobilelegends')) return 'Diamantes';
+            if (clave.includes('pubg')) return 'UC';
+            if (clave.includes('honorofkings')) return 'Tokens';
+            if (clave.includes('roblox')) return 'Robux';
+            if (clave.includes('minecraft')) return 'Minecoins';
+            if (clave.includes('valorant')) return 'VP';
+            if (clave.includes('leagueoflegends')) return 'RP';
+            if (clave.includes('standoff2')) return 'Gold';
+
+            return '';
+        }
+
+        function totalizarBonos(textoOriginal, juego) {
+            let texto = quitarEmojiInicial(textoOriginal)
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            const unidad =
+                '(diamantes?|diamonds?|uc|tokens?|robux|vp|rp|minecoins?|gold|oro|coins?|monedas?)';
+
+            // Ej.: 500 + 60 Diamantes -> 560 Diamantes
+            let match = texto.match(
+                new RegExp(
+                    '^([\\d.,]+)\\s*\\+\\s*([\\d.,]+)\\s*' + unidad + '(?:\\s*(?:bonus|bono|extra))?\\s*$',
+                    'i'
+                )
+            );
+
+            if (match) {
+                const a = numeroSeguro(match[1]);
+                const b = numeroSeguro(match[2]);
+
+                if (a !== null && b !== null) {
+                    return `${mostrarNumero(a + b)} ${match[3]}`;
+                }
+            }
+
+            // Ej.: 500 Diamantes + 60 Bonus -> 560 Diamantes
+            match = texto.match(
+                new RegExp(
+                    '^([\\d.,]+)\\s*' + unidad + '\\s*\\+\\s*([\\d.,]+)\\s*(?:bonus|bono|extra)\\s*$',
+                    'i'
+                )
+            );
+
+            if (match) {
+                const a = numeroSeguro(match[1]);
+                const b = numeroSeguro(match[3]);
+
+                if (a !== null && b !== null) {
+                    return `${mostrarNumero(a + b)} ${match[2]}`;
+                }
+            }
+
+            // Ej.: 500 + 60 -> 560 Diamantes / UC / Tokens según el juego.
+            match = texto.match(/^([\d.,]+)\s*\+\s*([\d.,]+)$/);
+
+            if (match) {
+                const a = numeroSeguro(match[1]);
+                const b = numeroSeguro(match[2]);
+                const unidadInferida = unidadPorJuego(juego);
+
+                if (a !== null && b !== null && unidadInferida) {
+                    return `${mostrarNumero(a + b)} ${unidadInferida}`;
+                }
+            }
+
+            return texto;
+        }
+
+        function iconoProducto(producto, textoVisible) {
+            const juego = normalizarClave(producto?.juego);
+            const texto = normalizarClave(textoVisible);
+            const categoria = producto?.categoria || '';
+
+            // Emojis elegidos para parecerse lo máximo posible a la
+            // moneda/identidad visual del juego usando Unicode.
+            if (juego.includes('steam')) return '💵';
+            if (juego.includes('minecraft')) return '🟡';
+            if (juego.includes('roblox')) return '🔷';
+            if (juego.includes('valorant')) return '🔻';
+            if (juego.includes('leagueoflegends')) return '💠';
+            if (juego.includes('teamfighttactics')) return '🟣';
+            if (juego.includes('standoff2')) return '🟡';
+
+            if (texto.includes('diamante') || texto.includes('diamond')) return '💎';
+            if (/(^|[^a-z])uc([^a-z]|$)/i.test(String(textoVisible))) return '🪙';
+            if (texto.includes('token')) return '🟡';
+            if (texto.includes('robux')) return '🔷';
+            if (texto.includes('minecoin')) return '🟡';
+            if (/(^|[^a-z])vp([^a-z]|$)/i.test(String(textoVisible))) return '🔻';
+            if (/(^|[^a-z])rp([^a-z]|$)/i.test(String(textoVisible))) return '💠';
+            if (texto.includes('gold') || texto.includes('oro')) return '🟡';
+            if (texto.includes('coin') || texto.includes('moneda')) return '🪙';
+
+            if (texto.includes('pase') || texto.includes('pass')) return '🎟️';
+            if (texto.includes('mensual') || texto.includes('monthly') || texto.includes('tarjeta')) return '🗓️';
+            if (texto.includes('paquete') || texto.includes('paq') || texto.includes('bundle')) return '📦';
+            if (texto.includes('skin')) return '👕';
+            if (texto.includes('suscripcion') || texto.includes('subscription')) return '⭐';
+
+            if (categoria === 'Gift Cards') return '🎁';
+            if (categoria === 'Recargas por Cuenta') return '👤';
+            if (categoria === 'Streaming') return '📺';
+
+            return '🎮';
+        }
+
+        function nombrePaqueteVisible(producto) {
+            const texto = totalizarBonos(producto?.paquete || '', producto?.juego || '');
+            const icono = iconoProducto(producto, texto);
+            return `${icono} ${texto}`.trim();
+        }
+
+        function guiaCanjeDeProducto(producto) {
+            const clave = normalizarClave(producto?.juego);
+            return GUIAS_CANJE[clave] || null;
+        }
+
+        function abrirComoCanjear(idProducto, evento) {
+            evento?.stopPropagation();
+
+            const producto = inventarioGlobal.find(
+                item => String(item.id) === String(idProducto)
+            );
+
+            if (!producto || producto.categoria !== 'Gift Cards') return;
+
+            const guia = guiaCanjeDeProducto(producto);
+
+            if (!guia) {
+                alert('Todavía no hay una guía de canje publicada para este producto.');
+                return;
+            }
+
+            document.getElementById('modal-canje-titulo').textContent =
+                `📖 Cómo canjear ${producto.juego}`;
+
+            document.getElementById('modal-canje-subtitulo').textContent =
+                nombrePaqueteVisible(producto);
+
+            const lista = document.getElementById('modal-canje-pasos');
+            lista.innerHTML = guia.pasos
+                .map(paso => `<li>${escaparHTML(paso)}</li>`)
+                .join('');
+
+            const enlace = document.getElementById('modal-canje-enlace');
+            enlace.href = guia.enlace;
+
+            const modal = document.getElementById('modal-canje');
+            modal.classList.add('visible');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModalCanje() {
+            const modal = document.getElementById('modal-canje');
+            modal.classList.remove('visible');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
 
         async function cargarProductos() {
             try {
@@ -765,11 +1147,29 @@
                 let htmlPaquetes = '';
 
                 paquetes.forEach(p => {
+                    const paqueteVisible = nombrePaqueteVisible(p);
+                    const esGiftCard = p.categoria === 'Gift Cards';
+                    const tieneGuia = Boolean(guiaCanjeDeProducto(p));
+
                     htmlPaquetes += `
                         <div class="product-item">
-                            <div class="product-name">${p.paquete}</div>
+                            <div class="product-name">
+                                ${escaparHTML(paqueteVisible)}
+                                ${esGiftCard
+                                    ? '<div class="gift-badge">🇧🇴 Compatible con Bolivia · 🔑 Código digital</div>'
+                                    : ''
+                                }
+                            </div>
                             <div class="product-price-buy">
-                                <span class="price">${p.precio} Bs</span>
+                                <span class="price">${escaparHTML(p.precio)} Bs</span>
+                                ${esGiftCard && tieneGuia
+                                    ? `<button
+                                        type="button"
+                                        class="btn-canje"
+                                        onclick="abrirComoCanjear('${p.id}', event)"
+                                    >📖 Cómo canjear</button>`
+                                    : ''
+                                }
                                 <button
                                     type="button"
                                     class="btn-comprar"
@@ -822,8 +1222,10 @@
             abrirModalPago(
                 {
                     juego: producto.juego,
-                    paquete: producto.paquete,
-                    precio: producto.precio
+                    paquete: nombrePaqueteVisible(producto),
+                    paqueteOriginal: producto.paquete,
+                    precio: producto.precio,
+                    categoria: producto.categoria
                 },
                 evento
             );
@@ -886,13 +1288,19 @@
         function confirmarPagoWhatsApp() {
             if (!compraActual) return;
 
+            const esGiftCard = compraActual.categoria === 'Gift Cards';
+
             const mensaje = encodeURIComponent(
                 `Hola, ya realicé el pago.\n\n` +
                 `Pedido: ${compraActual.pedido}\n` +
-                `Juego: ${compraActual.juego}\n` +
+                `${esGiftCard ? 'Gift Card' : 'Juego'}: ${compraActual.juego}\n` +
                 `Paquete: ${compraActual.paquete}\n` +
+                `${esGiftCard ? 'Entrega: Código digital\\n' : ''}` +
                 `Total pagado: ${compraActual.precio} Bs\n\n` +
-                `Quedo a la espera de mi recarga.`
+                `${esGiftCard
+                    ? 'Quedo a la espera de mi código.'
+                    : 'Quedo a la espera de mi recarga.'
+                }`
             );
 
             crearChispas(
@@ -912,9 +1320,11 @@
         function consultarAntesDePagar() {
             if (!compraActual) return;
 
+            const esGiftCard = compraActual.categoria === 'Gift Cards';
+
             const mensaje = encodeURIComponent(
                 `Hola, quiero consultar antes de pagar.\n\n` +
-                `Juego: ${compraActual.juego}\n` +
+                `${esGiftCard ? 'Gift Card' : 'Juego'}: ${compraActual.juego}\n` +
                 `Paquete: ${compraActual.paquete}\n` +
                 `Precio mostrado: ${compraActual.precio} Bs`
             );
@@ -978,9 +1388,19 @@
             }
         );
 
+        document.getElementById('modal-canje').addEventListener(
+            'click',
+            (event) => {
+                if (event.target.id === 'modal-canje') {
+                    cerrarModalCanje();
+                }
+            }
+        );
+
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 cerrarModalPago();
+                cerrarModalCanje();
             }
         });
 
