@@ -16,7 +16,7 @@ NO contiene QR de pago.
     <title>💎 FRENCH STORE 💎</title>
     
     <!-- Fuentes futuristas y modernas -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Cinzel:wght@500;600;700;800&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         body { 
@@ -818,23 +818,962 @@ NO contiene QR de pago.
             summary::before { margin-right: 7px; }
         }
 
+
+
+        /* =====================================================
+           THE FRENCH STORE — MEDIEVAL MARRÓN DORADO FINAL
+           Estética medieval elegante marrón/dorado; logo azul preservado.
+           SOLO VISUAL: no cambia Supabase, Worker, precios,
+           categorías, QR, WhatsApp ni selector G/B.
+           ===================================================== */
+
+        :root {
+            --royal-abyss: #020711;
+            --royal-night: #06101d;
+            --royal-stone: #0b1a2d;
+            --royal-stone-2: #10253e;
+            --royal-cyan: #25e7f2;
+            --royal-ice: #b9f9ff;
+            --royal-blue: #287dc4;
+            --royal-silver: #a9bfd2;
+            --royal-line: rgba(96, 203, 227, .42);
+            --royal-shadow: rgba(0, 0, 0, .62);
+        }
+
+        html {
+            background: var(--royal-abyss);
+        }
+
+        body {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            background-color: var(--royal-abyss);
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%2349dbe8' stroke-opacity='.075' stroke-width='.8'%3E%3Cpath d='M60 5 115 60 60 115 5 60Z'/%3E%3Cpath d='M60 20 100 60 60 100 20 60Z'/%3E%3Ccircle cx='60' cy='60' r='7'/%3E%3Cpath d='M60 5C52 25 25 52 5 60M115 60C95 52 68 25 60 5M60 115C68 95 95 68 115 60M5 60C25 68 52 95 60 115'/%3E%3C/g%3E%3C/svg%3E"),
+                radial-gradient(circle at 18% 8%, rgba(37,231,242,.11), transparent 28%),
+                radial-gradient(circle at 80% 86%, rgba(40,125,196,.12), transparent 32%),
+                linear-gradient(180deg, #06101c 0%, #020711 100%);
+            background-attachment: fixed;
+            color: #eef7fb;
+        }
+
+        body::before,
+        body::after {
+            display: none !important;
+        }
+
+        /* ----- CABECERA / BLASÓN ----- */
+        header {
+            position: relative;
+            padding: 48px 24px 52px;
+            overflow: hidden;
+            background-color: #071321;
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76' viewBox='0 0 76 76'%3E%3Cg fill='none' stroke='%237eeaf3' stroke-opacity='.07' stroke-width='.75'%3E%3Cpath d='M38 3 73 38 38 73 3 38Z'/%3E%3Cpath d='M38 14 62 38 38 62 14 38Z'/%3E%3C/g%3E%3C/svg%3E"),
+                linear-gradient(180deg, rgba(22,55,88,.82), rgba(4,13,24,.98));
+            border-top: 1px solid rgba(185,249,255,.32);
+            border-bottom: 3px double rgba(37,231,242,.72);
+            box-shadow:
+                inset 0 -22px 38px rgba(0,0,0,.35),
+                inset 0 1px 0 rgba(255,255,255,.05),
+                0 15px 34px rgba(0,0,0,.42);
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            inset: 13px 4%;
+            height: auto;
+            border: 1px solid rgba(169,191,210,.25);
+            background: none;
+            box-shadow:
+                inset 0 0 0 3px rgba(2,7,17,.40),
+                inset 0 0 0 4px rgba(37,231,242,.07);
+            pointer-events: none;
+        }
+
+        header::after {
+            content: "◆   ✦   ◆";
+            position: absolute;
+            left: 50%;
+            right: auto;
+            bottom: 14px;
+            height: auto;
+            transform: translateX(-50%);
+            background: none;
+            color: rgba(126,234,243,.72);
+            font-size: 10px;
+            letter-spacing: 8px;
+            text-shadow: 0 0 10px rgba(37,231,242,.38);
+            pointer-events: none;
+        }
+
+        .subtitle {
+            font-family: 'Cinzel', Georgia, serif;
+            color: #a9edf4;
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-size: 11px;
+            text-shadow: 0 1px 0 #000;
+        }
+
+        .neon-title {
+            font-family: 'Cinzel', Georgia, serif;
+            font-weight: 800;
+            font-size: 38px;
+            letter-spacing: 2px;
+            color: #d8fbff;
+            animation: none !important;
+            text-shadow:
+                0 0 4px rgba(37,231,242,.92),
+                0 0 13px rgba(37,231,242,.34),
+                0 2px 1px rgba(0,0,0,.95);
+        }
+
+        .description {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            color: #a9b8c7;
+            line-height: 1.7;
+        }
+
+        .badges {
+            margin-top: 23px;
+        }
+
+        .badge {
+            font-family: 'Cinzel', Georgia, serif;
+            font-size: 10px;
+            letter-spacing: .4px;
+            border-radius: 3px;
+            border: 1px solid rgba(90,218,232,.48);
+            color: #c9f7fb;
+            background:
+                linear-gradient(180deg, rgba(18,48,77,.96), rgba(5,17,31,.96));
+            box-shadow:
+                inset 0 0 0 2px rgba(3,9,18,.55),
+                inset 0 0 0 3px rgba(169,191,210,.06),
+                0 4px 10px rgba(0,0,0,.22);
+        }
+
+        /* ----- MARCO GENERAL ----- */
+        .container {
+            max-width: 900px;
+            padding-top: 30px;
+        }
+
+        .tabs {
+            position: relative;
+            border-radius: 4px;
+            padding: 8px;
+            background:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42'%3E%3Cpath d='M21 3 39 21 21 39 3 21Z' fill='none' stroke='%237eeaf3' stroke-opacity='.045'/%3E%3C/svg%3E"),
+                linear-gradient(180deg, #142a44 0%, #09182a 100%);
+            border: 1px solid rgba(100,186,216,.48);
+            box-shadow:
+                inset 0 0 0 3px #05101d,
+                inset 0 0 0 4px rgba(169,191,210,.10),
+                0 13px 28px rgba(0,0,0,.35);
+        }
+
+        .tabs::before,
+        .tabs::after {
+            content: "◆";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(37,231,242,.70);
+            font-size: 9px;
+            text-shadow: 0 0 8px rgba(37,231,242,.35);
+            pointer-events: none;
+        }
+
+        .tabs::before { left: 9px; }
+        .tabs::after { right: 9px; }
+
+        .tab-button {
+            font-family: 'Cinzel', Georgia, serif;
+            color: #91a5b8;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: .15px;
+            border-radius: 2px;
+            border-bottom-width: 1px;
+        }
+
+        .tab-button.active {
+            color: #d4fbff;
+            background: linear-gradient(180deg, rgba(37,231,242,.085), rgba(37,231,242,.025));
+            border-bottom: 2px solid #42e9f2;
+            text-shadow: 0 0 8px rgba(37,231,242,.25);
+        }
+
+        /* ----- TARJETAS TIPO PIEDRA / METAL ----- */
+        details {
+            position: relative;
+            border-radius: 4px;
+            margin-bottom: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(101,167,200,.48);
+            background:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cg fill='none' stroke='%23b6dbe8' stroke-opacity='.035' stroke-width='.7'%3E%3Cpath d='M36 4 68 36 36 68 4 36Z'/%3E%3Cpath d='M36 16 56 36 36 56 16 36Z'/%3E%3C/g%3E%3C/svg%3E"),
+                linear-gradient(145deg, #10243c, #071524 70%);
+            box-shadow:
+                0 12px 24px rgba(0,0,0,.34),
+                inset 0 0 0 3px #05101d,
+                inset 0 0 0 4px rgba(169,191,210,.08),
+                inset 0 -18px 35px rgba(0,0,0,.16);
+        }
+
+        details::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border-radius: 1px;
+            border: 1px solid rgba(185,249,255,.08);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        details::after {
+            content: "✦";
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(89,221,233,.38);
+            font-size: 9px;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        details:hover,
+        details[open] {
+            transform: translateY(-1px);
+            border-color: rgba(75,225,238,.70);
+            box-shadow:
+                0 14px 30px rgba(0,0,0,.40),
+                0 0 18px rgba(37,231,242,.07),
+                inset 0 0 0 3px #05101d,
+                inset 0 0 0 4px rgba(37,231,242,.10);
+        }
+
+        summary {
+            min-height: 34px;
+            padding: 20px 22px 20px 38px;
+            font-family: 'Cinzel', Georgia, serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: .15px;
+            color: #f2f8fb;
+            background:
+                linear-gradient(180deg, rgba(31,60,93,.95), rgba(14,35,58,.97)),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 8px);
+            text-shadow: 0 1px 1px #000;
+        }
+
+        summary::before {
+            content: "◆";
+            color: #74e9f2;
+            font-size: 8px;
+            margin-right: 10px;
+            text-shadow: 0 0 9px rgba(37,231,242,.28);
+        }
+
+        summary:after {
+            content: "❖";
+            color: #57e9f2;
+            font-size: 12px;
+            transform: rotate(45deg);
+            transition: transform .25s ease;
+        }
+
+        details[open] summary:after {
+            content: "❖";
+            transform: rotate(135deg);
+        }
+
+        .product-item {
+            padding: 16px 22px;
+            background:
+                linear-gradient(90deg, rgba(4,13,24,.94), rgba(11,29,48,.90)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.012) 0 1px, transparent 1px 9px);
+            border-top: 1px solid rgba(94,146,178,.20);
+        }
+
+        .product-item:hover {
+            background:
+                linear-gradient(90deg, rgba(13,35,56,.96), rgba(8,23,40,.93));
+        }
+
+        .product-name {
+            color: #c8d5df;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .price {
+            color: #8cf5fb;
+            font-family: 'Cinzel', Georgia, serif;
+            font-size: 16px;
+            text-shadow: 0 0 8px rgba(37,231,242,.15);
+        }
+
+        /* ----- BOTONES TIPO METAL AZUL ----- */
+        .btn-comprar,
+        .btn-modal {
+            font-family: 'Cinzel', Georgia, serif;
+            letter-spacing: .3px;
+        }
+
+        .btn-comprar {
+            border-radius: 2px;
+            padding: 9px 17px;
+            background:
+                linear-gradient(180deg, #a6fbff 0%, #4ce7ef 38%, #168cbf 100%);
+            color: #02111a;
+            border: 1px solid #b9fbff;
+            clip-path: polygon(7px 0, calc(100% - 7px) 0, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0 calc(100% - 7px), 0 7px);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.72),
+                inset 0 -3px 0 rgba(0,49,80,.40),
+                0 5px 13px rgba(0,0,0,.30);
+        }
+
+        .btn-comprar:hover {
+            transform: translateY(-1px);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.75),
+                inset 0 -3px 0 rgba(0,49,80,.40),
+                0 0 17px rgba(37,231,242,.24);
+        }
+
+        /* ----- MODAL COMO COFRE / MARCO ----- */
+        .modal-pago {
+            background: rgba(1,5,12,.84);
+            backdrop-filter: blur(7px);
+        }
+
+        .modal-card,
+        .modal-canje-card {
+            border-radius: 4px;
+            border: 1px solid rgba(92,213,228,.58);
+            background:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Cpath d='M35 5 65 35 35 65 5 35Z' fill='none' stroke='%237eeaf3' stroke-opacity='.04'/%3E%3C/svg%3E"),
+                linear-gradient(155deg, #10243b 0%, #050f1e 78%);
+            box-shadow:
+                0 28px 85px rgba(0,0,0,.68),
+                inset 0 0 0 4px #040c17,
+                inset 0 0 0 5px rgba(169,191,210,.10),
+                0 0 26px rgba(37,231,242,.08);
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', Georgia, serif;
+            color: #d8fbff;
+            letter-spacing: .7px;
+            text-shadow: 0 0 8px rgba(37,231,242,.18);
+        }
+
+        .modal-cerrar {
+            border-radius: 2px;
+            background: #0b1b2e;
+            border-color: rgba(91,181,210,.40);
+        }
+
+        .resumen-pago {
+            border-radius: 3px;
+            border-color: rgba(98,166,199,.32);
+            background:
+                linear-gradient(180deg, rgba(15,38,62,.94), rgba(5,17,31,.96));
+            box-shadow: inset 0 0 0 2px rgba(2,8,16,.55);
+        }
+
+        .qr-wrap {
+            border-radius: 3px;
+            border: 2px solid #7dcbd8;
+            box-shadow:
+                0 0 0 4px #06101d,
+                0 0 0 5px rgba(169,191,210,.18),
+                0 10px 24px rgba(0,0,0,.38);
+        }
+
+        .btn-modal {
+            border-radius: 2px;
+        }
+
+        .btn-pagado {
+            background: linear-gradient(180deg, #7ef2dd, #28bca3 55%, #147c70);
+            color: #04120f;
+            border: 1px solid rgba(205,255,246,.50);
+        }
+
+        .btn-descargar {
+            background: linear-gradient(180deg, #203a56, #10253d);
+            color: #e5f3f8;
+            border: 1px solid rgba(106,169,199,.38);
+        }
+
+        .btn-consultar {
+            background: linear-gradient(180deg, rgba(24,58,82,.55), rgba(7,25,42,.55));
+            color: #aaf8fc;
+            border: 1px solid rgba(73,210,224,.38);
+        }
+
+        /* ----- REGALOS / CANJE ----- */
+        .btn-canje,
+        .gift-badge,
+        .canje-aviso {
+            border-radius: 3px;
+        }
+
+        /* ----- MÓVIL ----- */
+        @media (max-width: 620px) {
+            header {
+                padding: 38px 17px 45px;
+            }
+
+            header::before {
+                inset: 10px 8px;
+            }
+
+            .neon-title {
+                font-size: 27px;
+                letter-spacing: 1px;
+            }
+
+            .subtitle {
+                font-size: 9px;
+                letter-spacing: 2px;
+            }
+
+            .description {
+                font-size: 12px;
+                line-height: 1.65;
+            }
+
+            .container {
+                padding: 20px 12px 30px;
+            }
+
+            .tabs {
+                border-radius: 3px;
+                padding: 7px 10px;
+            }
+
+            .tab-button {
+                min-width: 145px;
+                font-size: 11px;
+            }
+
+            details {
+                border-radius: 3px;
+                margin-bottom: 14px;
+            }
+
+            summary {
+                padding: 18px 18px 18px 34px;
+                font-size: 13px;
+            }
+
+            .product-item {
+                padding: 15px 17px;
+            }
+        }
+
+
+        /* =====================================================
+           THE FRENCH STORE — MEDIEVAL MARRÓN + DORADO FINAL
+           Mantiene el logo 💎 FRENCH STORE 💎 azul/cian.
+           SOLO VISUAL. No cambia precios, Supabase, Worker,
+           QR, WhatsApp, categorías ni selector G/B.
+           ===================================================== */
+        :root {
+            --fs-ink: #090603;
+            --fs-night: #120b06;
+            --fs-brown-1: #1b0f08;
+            --fs-brown-2: #2a170c;
+            --fs-brown-3: #3a2211;
+            --fs-gold-dark: #7d531f;
+            --fs-gold: #c8913d;
+            --fs-gold-light: #f0ce82;
+            --fs-parchment: #ead6ad;
+            --fs-blue: #22dff2;
+            --fs-blue-2: #159fd8;
+            --fs-blue-light: #d7fbff;
+            --fs-panel: rgba(18, 12, 8, .96);
+            --fs-panel-2: rgba(31, 19, 11, .96);
+        }
+
+        html { background: #080503; }
+
+        body {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            color: #f3e8d2;
+            background-color: #0a0603;
+            background-image:
+                radial-gradient(circle at 50% -10%, rgba(199,139,55,.13), transparent 34%),
+                radial-gradient(circle at 12% 28%, rgba(84,44,17,.22), transparent 24%),
+                radial-gradient(circle at 88% 34%, rgba(75,38,15,.18), transparent 24%),
+                repeating-linear-gradient(135deg, rgba(255,219,153,.018) 0 1px, transparent 1px 11px),
+                repeating-linear-gradient(45deg, rgba(0,0,0,.12) 0 2px, transparent 2px 17px),
+                linear-gradient(180deg, #0e0905 0%, #070403 50%, #0b0704 100%);
+            background-attachment: fixed;
+        }
+
+        body::before,
+        body::after { display: none !important; }
+
+        /* HERO / CASTILLO */
+        header {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            padding: 34px 22px 50px;
+            border-top: 1px solid rgba(240,206,130,.42);
+            border-bottom: 3px double rgba(200,145,61,.80);
+            background:
+                linear-gradient(180deg, rgba(6,7,10,.18), rgba(11,7,4,.88)),
+                radial-gradient(circle at 50% 24%, rgba(24,111,145,.22), transparent 35%),
+                linear-gradient(180deg, #07101a 0%, #0b0908 64%, #100a05 100%);
+            box-shadow: 0 18px 50px rgba(0,0,0,.58), inset 0 -20px 40px rgba(0,0,0,.35);
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            z-index: -2;
+            inset: 0;
+            opacity: .70;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            background-size: min(1200px, 120vw) auto;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 340'%3E%3Cg fill='%23010000' fill-opacity='.92'%3E%3Cpath d='M0 340V260h80v-95h26v-37h24v37h26v95h82V190h35v-45h28v45h35v70h70V138h36V80h18V48h20v32h18v58h36v122h86V165h40v-55h20V72h22v38h20v55h40v95h74V188h36v-42h28v42h36v72h84v-96h26v-36h24v36h26v96h80v80H0Z'/%3E%3Cpath d='M455 82h290v178H455z'/%3E%3C/g%3E%3Cg fill='%23110a05' fill-opacity='.65'%3E%3Ccircle cx='600' cy='40' r='2'/%3E%3Ccircle cx='310' cy='90' r='1.5'/%3E%3Ccircle cx='850' cy='76' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+            filter: drop-shadow(0 -8px 18px rgba(0,0,0,.85));
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(0,0,0,.62), transparent 18%, transparent 82%, rgba(0,0,0,.62)),
+                linear-gradient(180deg, transparent 45%, rgba(4,2,1,.48) 100%);
+            pointer-events: none;
+        }
+
+        .hero-frame {
+            position: relative;
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 18px 86px 20px;
+            border-top: 1px solid rgba(232,190,104,.55);
+            border-bottom: 1px solid rgba(232,190,104,.45);
+        }
+
+        .hero-frame::before,
+        .hero-frame::after {
+            content: "✦";
+            position: absolute;
+            top: 50%;
+            color: #d6a857;
+            font-size: 14px;
+            text-shadow: 0 0 12px rgba(211,160,70,.35);
+        }
+        .hero-frame::before { left: 54px; }
+        .hero-frame::after { right: 54px; }
+
+        .store-banner {
+            position: absolute;
+            z-index: 3;
+            top: 28px;
+            width: 82px;
+            min-height: 210px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            color: var(--fs-gold-light);
+            background:
+                linear-gradient(90deg, rgba(255,215,130,.06), transparent 18% 82%, rgba(255,215,130,.06)),
+                linear-gradient(180deg, #15100c, #07111c 45%, #130b06);
+            border: 1px solid #8d6228;
+            box-shadow: inset 0 0 0 3px #090603, inset 0 0 0 4px rgba(224,180,92,.22), 0 12px 28px rgba(0,0,0,.45);
+            clip-path: polygon(0 0,100% 0,100% 88%,50% 100%,0 88%);
+        }
+        .banner-left { left: max(14px, calc(50% - 585px)); }
+        .banner-right { right: max(14px, calc(50% - 585px)); }
+        .banner-gem { font-size: 31px; filter: drop-shadow(0 0 8px rgba(30,223,244,.45)); }
+        .banner-fs { font-family: 'Cinzel', serif; font-size: 29px; font-weight: 800; color: #d8ad5b; text-shadow: 0 2px 0 #000; }
+        .banner-mini { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 1px; color: #c99d52; text-align:center; }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            color: #d8ad62;
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-size: 11px;
+            text-shadow: 0 2px 0 #000;
+        }
+
+        .neon-title {
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            animation: none !important;
+        }
+
+        .brand-word {
+            font-family: 'Bungee', 'Arial Black', sans-serif;
+            font-size: clamp(29px, 5vw, 55px);
+            line-height: 1.05;
+            letter-spacing: 1px;
+            color: #6deeff;
+            background: linear-gradient(180deg, #e8feff 0%, #73efff 26%, #26cdeb 58%, #1588cf 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 2px #020306;
+            paint-order: stroke fill;
+            filter: drop-shadow(0 3px 0 #00101c) drop-shadow(0 0 10px rgba(36,215,244,.42));
+        }
+
+        .brand-diamond {
+            font-size: clamp(30px, 4.4vw, 50px);
+            line-height: 1;
+            filter: drop-shadow(0 0 10px rgba(21,206,242,.52));
+        }
+
+        .description {
+            color: #dbc9a8;
+            max-width: 690px;
+            font-size: 13px;
+            line-height: 1.6;
+            text-shadow: 0 1px 1px #000;
+        }
+
+        .badges { gap: 12px; }
+        .badge {
+            font-family: 'Cinzel', serif;
+            color: #efd294;
+            border-radius: 2px;
+            border: 1px solid #8f6329;
+            background: linear-gradient(180deg, rgba(42,27,16,.97), rgba(15,10,7,.97));
+            box-shadow: inset 0 0 0 2px #080503, inset 0 0 0 3px rgba(238,194,102,.11), 0 6px 15px rgba(0,0,0,.25);
+            padding: 7px 18px;
+        }
+
+        .security-head {
+            margin: 15px auto 0;
+            max-width: 700px;
+            color: #bfae90;
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
+        /* CONTENEDOR */
+        .container { max-width: 980px; padding-top: 26px; }
+
+        .tabs {
+            border-radius: 2px;
+            padding: 7px;
+            gap: 4px;
+            background:
+                repeating-linear-gradient(135deg, rgba(240,206,130,.025) 0 1px, transparent 1px 9px),
+                linear-gradient(180deg, #25160d, #0d0906);
+            border: 1px solid #8c622b;
+            box-shadow: inset 0 0 0 3px #070403, inset 0 0 0 4px rgba(221,174,86,.13), 0 12px 27px rgba(0,0,0,.35);
+        }
+        .tabs::before,
+        .tabs::after { color: #d6a34d; }
+
+        .tab-button {
+            font-family: 'Cinzel', serif;
+            color: #c6ad82;
+            font-weight: 700;
+            border: 1px solid transparent;
+            border-radius: 1px;
+            min-height: 46px;
+        }
+        .tab-button:hover { color: #f3dca6; background: rgba(117,71,25,.12); }
+        .tab-button.active {
+            color: #ffe0a1;
+            border: 1px solid #9d6f32;
+            border-bottom: 2px solid #e2b45c;
+            background: linear-gradient(180deg, rgba(88,51,20,.52), rgba(34,20,11,.65));
+            text-shadow: 0 1px 0 #000;
+            box-shadow: inset 0 0 0 2px rgba(6,4,2,.55);
+        }
+
+        /* LISTA / MARCOS */
+        details {
+            position: relative;
+            border-radius: 2px;
+            margin-bottom: 9px;
+            border: 1px solid #765126;
+            background:
+                repeating-linear-gradient(135deg, rgba(240,206,130,.018) 0 1px, transparent 1px 10px),
+                linear-gradient(145deg, #1f130b, #0b0805 72%);
+            box-shadow: inset 0 0 0 2px #050302, inset 0 0 0 3px rgba(217,169,81,.08), 0 6px 15px rgba(0,0,0,.30);
+        }
+        details::before {
+            content: "";
+            position: absolute;
+            inset: 5px;
+            border: 1px solid rgba(224,181,95,.09);
+            pointer-events: none;
+            z-index: 2;
+        }
+        details::after { display:none; }
+        details:hover,
+        details[open] {
+            border-color: #b37c35;
+            box-shadow: inset 0 0 0 2px #050302, inset 0 0 0 3px rgba(225,178,86,.12), 0 8px 22px rgba(0,0,0,.38), 0 0 13px rgba(197,137,52,.07);
+        }
+
+        summary {
+            padding: 12px 16px;
+            min-height: 42px;
+            font-family: 'Cinzel', serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #ead7af;
+            background:
+                linear-gradient(90deg, rgba(55,34,18,.96), rgba(17,12,8,.96)),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.014) 0 1px, transparent 1px 8px);
+            text-shadow: 0 1px 1px #000;
+        }
+        summary::before { display:none !important; }
+        summary:after {
+            content: "⌄";
+            color: #d6a451;
+            font-size: 18px;
+            transform: none;
+        }
+        details[open] summary:after { content:"⌃"; transform:none; }
+
+        .summary-brand { display:flex; align-items:center; gap:11px; min-width:0; }
+        .summary-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .summary-brand-logo {
+            width: 28px; height: 28px; flex: 0 0 28px;
+            display:grid; place-items:center;
+            border-radius: 5px;
+            border: 1px solid rgba(224,181,95,.42);
+            background: #0b0805;
+            box-shadow: inset 0 0 0 2px rgba(0,0,0,.65), 0 2px 6px rgba(0,0,0,.25);
+            overflow:hidden;
+        }
+        .summary-brand-logo img { width:22px; height:22px; object-fit:contain; border-radius:4px; }
+        .brand-logo-fallback {
+            width:100%; height:100%; display:grid; place-items:center;
+            font-family:'Cinzel',serif; font-weight:800; font-size:10px;
+            color:#e9c675; background:linear-gradient(145deg,#25160c,#090604);
+        }
+
+        .product-item {
+            padding: 12px 17px;
+            background: linear-gradient(90deg, rgba(12,8,5,.96), rgba(27,17,10,.93));
+            border-top: 1px solid rgba(139,93,41,.24);
+        }
+        .product-item:hover { background: linear-gradient(90deg, rgba(37,22,11,.97), rgba(18,12,8,.96)); }
+        .product-name { color:#d8c6a6; font-size:13px; line-height:1.48; }
+        .price { color:#f0c96f; font-family:'Cinzel',serif; font-size:15px; text-shadow:0 1px 0 #000; }
+
+        .btn-comprar,
+        .btn-modal,
+        .btn-canje { font-family:'Cinzel',serif; }
+        .btn-comprar {
+            border-radius:2px;
+            clip-path: polygon(6px 0,calc(100% - 6px) 0,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0 calc(100% - 6px),0 6px);
+            background: linear-gradient(180deg,#f4d58d,#c78d38 52%,#8b5b24);
+            color:#160d05;
+            border:1px solid #ffdfa0;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.50), inset 0 -2px 0 rgba(60,31,7,.40), 0 5px 12px rgba(0,0,0,.35);
+        }
+        .btn-comprar:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.58), 0 0 15px rgba(212,158,67,.27); }
+
+        /* CTA DE COTIZACIÓN */
+        .quote-cta {
+            margin: 24px 0 8px;
+            padding: 18px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:16px;
+            border:1px solid #8e622a;
+            background:
+                repeating-linear-gradient(135deg, rgba(245,210,138,.02) 0 1px, transparent 1px 10px),
+                linear-gradient(180deg,#21140b,#0d0805);
+            box-shadow: inset 0 0 0 3px #060402, inset 0 0 0 4px rgba(222,174,85,.12), 0 10px 24px rgba(0,0,0,.34);
+        }
+        .quote-cta-text strong { display:block; color:#f2d28c; font-family:'Cinzel',serif; font-size:14px; margin-bottom:5px; }
+        .quote-cta-text span { color:#bca98a; font-size:11px; line-height:1.5; }
+        .quote-cta button {
+            flex:0 0 auto;
+            border:1px solid #59bf76;
+            color:#ecfff1;
+            background:linear-gradient(180deg,#1caf55,#08752f);
+            padding:11px 15px;
+            font-family:'Cinzel',serif;
+            font-weight:700;
+            cursor:pointer;
+            border-radius:2px;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 5px 14px rgba(0,0,0,.30);
+        }
+
+        /* MODALES MEDIEVALES */
+        .modal-pago { background:rgba(5,3,2,.86); backdrop-filter:blur(7px); }
+        .modal-card,
+        .modal-canje-card {
+            border-radius:2px;
+            border:1px solid #9f6f31;
+            background:
+                repeating-linear-gradient(135deg,rgba(240,206,130,.02) 0 1px,transparent 1px 10px),
+                linear-gradient(155deg,#29180d,#0d0805 75%);
+            box-shadow:0 28px 85px rgba(0,0,0,.72),inset 0 0 0 4px #060402,inset 0 0 0 5px rgba(226,179,88,.12);
+        }
+        .modal-title { color:#f0d092; font-family:'Cinzel',serif; text-shadow:0 1px 0 #000; }
+        .resumen-pago { border-radius:2px; border-color:rgba(176,119,51,.44); background:linear-gradient(180deg,rgba(47,27,13,.95),rgba(15,9,5,.96)); }
+        .qr-wrap { border-radius:2px; border:2px solid #c79543; box-shadow:0 0 0 4px #0c0704,0 0 0 5px rgba(235,195,112,.18),0 10px 24px rgba(0,0,0,.40); }
+        .btn-descargar { background:linear-gradient(180deg,#3a2414,#1e130c); color:#ead9b9; border:1px solid rgba(184,127,58,.50); }
+        .btn-consultar { background:linear-gradient(180deg,#332012,#160e08); color:#e8c67f; border:1px solid rgba(184,127,58,.45); }
+        .btn-pagado { background:linear-gradient(180deg,#42c66a,#16833b); color:#04140a; border:1px solid rgba(197,255,210,.38); }
+
+        /* =====================================================
+           AJUSTE V2 — METAL/PIEDRA + CONTORNO ANIME DEL LOGO
+           SOLO VISUAL. Mantiene lógica, precios, G/B y catálogo.
+           ===================================================== */
+
+        /* Logo: conserva el azul/cian original, pero ahora el borde
+           negro es mucho más visible para separar el brillo de la letra. */
+        .brand-word {
+            -webkit-text-stroke: 4px #03050a;
+            paint-order: stroke fill;
+            text-shadow:
+                0 2px 0 #020308,
+                2px 0 0 #020308,
+                -2px 0 0 #020308,
+                0 -2px 0 #020308,
+                2px 2px 0 #020308,
+                -2px 2px 0 #020308,
+                2px -2px 0 #020308,
+                -2px -2px 0 #020308;
+            filter:
+                drop-shadow(0 4px 0 #00101c)
+                drop-shadow(0 0 11px rgba(36,215,244,.48));
+        }
+
+        /* Zona de productos: piedra/metal gris oscuro.
+           Conservamos el dorado únicamente como detalle del marco. */
+        .product-item {
+            position: relative;
+            background:
+                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 8px),
+                repeating-linear-gradient(45deg, rgba(0,0,0,.055) 0 2px, transparent 2px 15px),
+                linear-gradient(180deg, #3d4147 0%, #2b2f34 48%, #202328 100%);
+            border-top: 1px solid rgba(206,211,217,.18);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.045),
+                inset 0 -1px 0 rgba(0,0,0,.38);
+        }
+        .product-item:hover {
+            background:
+                repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 1px, transparent 1px 8px),
+                linear-gradient(180deg, #484d54 0%, #33383e 50%, #25292e 100%);
+        }
+        .product-name {
+            color: #e4e5e7;
+            text-shadow: 0 1px 0 #070809;
+        }
+        .price {
+            color: #f0cd7d;
+        }
+
+        /* Botón COMPRAR: placa de metal gris con marco dorado. */
+        .btn-comprar {
+            background:
+                linear-gradient(180deg, #777d84 0%, #555b62 36%, #3d4248 58%, #292d31 100%);
+            color: #f7dfaa;
+            border: 1px solid #c89a4e;
+            text-shadow: 0 1px 0 #000;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.28),
+                inset 0 -2px 0 rgba(0,0,0,.42),
+                0 0 0 1px rgba(28,18,8,.55),
+                0 5px 12px rgba(0,0,0,.36);
+        }
+        .btn-comprar:hover {
+            background:
+                linear-gradient(180deg, #8a9098 0%, #636a72 38%, #474d54 60%, #30343a 100%);
+            border-color: #e0b766;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.35),
+                0 0 15px rgba(200,154,78,.20),
+                0 6px 14px rgba(0,0,0,.38);
+        }
+
+        @media (max-width: 760px) {
+            .store-banner { display:none; }
+            .hero-frame { padding:14px 8px 16px; border:none; }
+            .hero-frame::before,.hero-frame::after { display:none; }
+            header { padding:28px 14px 34px; }
+            .brand-word { -webkit-text-stroke:2.6px #03050a; }
+            .neon-title { gap:7px; }
+            .description { font-size:11px; }
+            .badges { gap:7px; }
+            .badge { padding:6px 9px; font-size:9px; }
+            .container { padding:16px 12px 24px; }
+            .tabs { overflow-x:auto; justify-content:flex-start; scrollbar-width:none; }
+            .tabs::-webkit-scrollbar { display:none; }
+            .tab-button { min-width:155px; flex:0 0 auto; font-size:10px; padding:9px 8px; }
+            summary { padding:11px 12px; font-size:12px; }
+            .summary-brand-logo { width:26px;height:26px;flex-basis:26px; }
+            .product-item { padding:12px 12px; }
+            .product-price-buy { gap:8px; }
+            .price { font-size:14px; }
+            .btn-comprar { padding:8px 11px; font-size:11px; }
+            .quote-cta { flex-direction:column; align-items:stretch; }
+            .quote-cta button { width:100%; }
+        }
+
     </style>
 </head>
 <body>
 
     <header>
-        <div class="subtitle">RECARGAS Y CÓDIGOS DIGITALES</div>
-        <h1 class="neon-title">💎 FRENCH STORE 💎</h1>
-        <p class="description">Diamantes, monedas, pases, plataformas de streaming y Gift Cards. Elige tu producto y compra de forma sencilla.</p>
-        <div class="badges">
-            <span class="badge">⏱️ Entrega rápida</span>
-            <span class="badge">🛡️ Pago seguro</span>
-            <span class="badge">🎮 +25 Juegos</span>
+        <div class="store-banner banner-left" aria-hidden="true">
+            <div class="banner-mini">FRENCH STORE</div>
+            <div class="banner-gem">💎</div>
+            <div class="banner-fs">FS</div>
+            <div class="banner-mini">RECARGAS · CÓDIGOS</div>
         </div>
-        <p style="margin:14px auto 0; max-width:620px; color:#64748b; font-size:11px; line-height:1.5;">
-            🔐 Por tu seguridad, verifica siempre el destinatario mostrado por tu banco antes de pagar.
-            Si no coincide con el indicado en esta página, no realices el pago.
-        </p>
+        <div class="store-banner banner-right" aria-hidden="true">
+            <div class="banner-mini">FRENCH STORE</div>
+            <div class="banner-gem">💎</div>
+            <div class="banner-fs">FS</div>
+            <div class="banner-mini">JUEGOS · STREAMING</div>
+        </div>
+
+        <div class="hero-frame">
+            <div class="subtitle">RECARGAS Y CÓDIGOS DIGITALES</div>
+            <h1 class="neon-title">
+                <span class="brand-diamond">💎</span>
+                <span class="brand-word">FRENCH STORE</span>
+                <span class="brand-diamond">💎</span>
+            </h1>
+            <p class="description">Diamantes, monedas, pases, plataformas de streaming y Gift Cards. Elige tu producto y compra de forma sencilla.</p>
+            <div class="badges">
+                <span class="badge">⚡ Entrega rápida</span>
+                <span class="badge">🛡️ Pago seguro</span>
+                <span class="badge">🎮 +25 Juegos</span>
+            </div>
+            <p class="security-head">
+                🔐 Por tu seguridad, verifica siempre el destinatario mostrado por tu banco antes de pagar.
+                Si no coincide con el indicado en esta página, no realices el pago.
+            </p>
+        </div>
     </header>
 
     <div class="container">
@@ -851,6 +1790,14 @@ NO contiene QR de pago.
                 <div>Cargando catálogo...</div>
                 <div class="loader-line"></div>
             </div>
+        </div>
+
+        <div class="quote-cta">
+            <div class="quote-cta-text">
+                <strong>¿No encuentras el juego o plataforma que buscas?</strong>
+                <span>Escríbenos por WhatsApp y con gusto te enviaremos una cotización personalizada.</span>
+            </div>
+            <button type="button" onclick="cotizarProducto()">💬 Cotizar por WhatsApp</button>
         </div>
     </div>
 
@@ -1083,6 +2030,86 @@ NO contiene QR de pago.
                 .replace(/'/g, '&#039;');
         }
 
+
+        // Logos visuales para juegos, Streaming y Gift Cards.
+        // Se usan favicons de dominios oficiales; si alguno no carga,
+        // aparece un escudo con iniciales como respaldo.
+        function dominioLogoMarca(nombre) {
+            const clave = normalizarClave(nombre);
+            const reglas = [
+                ['deltaforce', 'playdeltaforce.com'],
+                ['freefire', 'ff.garena.com'],
+                ['genshinimpact', 'genshin.hoyoverse.com'],
+                ['honkaistarrail', 'hsr.hoyoverse.com'],
+                ['zenlesszonezero', 'zenless.hoyoverse.com'],
+                ['honorofkings', 'honorofkings.com'],
+                ['marvelrivals', 'marvelrivals.com'],
+                ['mobilelegends', 'mobilelegends.com'],
+                ['pubgmobile', 'pubgmobile.com'],
+                ['arenabreakout', 'arenabreakout.com'],
+                ['asphaltlegends', 'asphaltlegends.com'],
+                ['bloodstrike', 'blood-strike.com'],
+                ['clashofclans', 'supercell.com'],
+                ['clashroyale', 'supercell.com'],
+                ['roblox', 'roblox.com'],
+                ['minecraft', 'minecraft.net'],
+                ['valorant', 'playvalorant.com'],
+                ['leagueoflegends', 'leagueoflegends.com'],
+                ['teamfighttactics', 'teamfighttactics.leagueoflegends.com'],
+                ['standoff2', 'standoff2.com'],
+                ['steam', 'steampowered.com'],
+                ['netflix', 'netflix.com'],
+                ['disneyplus', 'disneyplus.com'],
+                ['disney', 'disneyplus.com'],
+                ['hbomax', 'max.com'],
+                ['max', 'max.com'],
+                ['primevideo', 'primevideo.com'],
+                ['amazonprime', 'primevideo.com'],
+                ['spotify', 'spotify.com'],
+                ['crunchyroll', 'crunchyroll.com'],
+                ['vix', 'vix.com']
+            ];
+
+            const encontrado = reglas.find(([fragmento]) => clave.includes(fragmento));
+            return encontrado ? encontrado[1] : '';
+        }
+
+        function inicialesMarca(nombre) {
+            const limpio = String(nombre || '')
+                .replace(/[:()\-_/]+/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            if (!limpio) return 'FS';
+
+            const partes = limpio.split(' ').filter(Boolean);
+            const letras = partes.slice(0, 2).map(p => p[0]).join('');
+            return (letras || limpio.slice(0, 2)).toUpperCase();
+        }
+
+        function logoMarcaHTML(nombre) {
+            const dominio = dominioLogoMarca(nombre);
+            const iniciales = escaparHTML(inicialesMarca(nombre));
+
+            if (!dominio) {
+                return `<span class="summary-brand-logo"><span class="brand-logo-fallback">${iniciales}</span></span>`;
+            }
+
+            const src = `https://www.google.com/s2/favicons?sz=64&domain_url=https://${dominio}`;
+            return `
+                <span class="summary-brand-logo">
+                    <img
+                        src="${escaparHTML(src)}"
+                        alt=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+                    >
+                    <span class="brand-logo-fallback" style="display:none;">${iniciales}</span>
+                </span>
+            `;
+        }
+
         function quitarEmojiInicial(texto) {
             return String(texto || '')
                 .replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '')
@@ -1185,41 +2212,183 @@ NO contiene QR de pago.
         }
 
         function iconoProducto(producto, textoVisible) {
-            const juego = normalizarClave(producto?.juego);
+            const juego = normalizarClave(nombreJuegoCanonico(producto?.juego));
             const texto = normalizarClave(textoVisible);
             const categoria = producto?.categoria || '';
 
-            // Emojis elegidos para parecerse lo máximo posible a la
-            // moneda/identidad visual del juego usando Unicode.
+            // =================================================
+            // EMOJIS TOMADOS DEL EXCEL "Preciso app.xlsx"
+            // + dos reglas explícitas solicitadas:
+            // - Diamantes + Pase Semanal MLBB => solo 📆
+            // - Pase Semanal de Diamantes Magic Chess => solo 📆
+            // =================================================
+
+            // MOBILE LEGENDS
+            if (juego.includes('mobilelegends')) {
+                if (texto.includes('pasesemanalelite')) return '🎖️';
+                if (texto.includes('pasemensualepico')) return '🟣';
+                if (texto.includes('pasecrepus')) return '🌑';
+                if (texto.includes('pasesemanal') && texto.includes('diamante')) return '📆';
+                if (texto.includes('pasesemanal')) return '🎫';
+                if (texto.includes('evento')) return '🎁';
+                if (texto.includes('diamante')) return '💎';
+            }
+
+            // MAGIC CHESS — regla solicitada para su Pase Semanal
+            if (juego.includes('magicchess')) {
+                if (texto.includes('pasesemanal')) return '📆';
+                if (texto.includes('diamante') || texto.includes('diamond')) return '💎';
+            }
+
+            // FREE FIRE
+            if (juego.includes('freefire')) {
+                if (texto.includes('tarjetasemanal')) return '📆';
+                if (texto.includes('tarjetamensual')) return '🗓️';
+                if (texto.includes('tarjetapb')) return '🛡️';
+                if (texto.includes('semanalbasico')) return '🎫';
+                if (texto.includes('aumentonivel') || texto.includes('paquete') || texto.includes('paq')) return '📦';
+                if (texto.includes('diamante')) return '💎';
+            }
+
+            // ARENA BREAKOUT
+            if (juego.includes('arenabreakout')) {
+                if (texto.includes('seleccionprincipiante')) return '📦';
+                if (texto.includes('cajaantibalas')) return '🪖';
+                if (texto.includes('cajacompuesta')) return '📦';
+                if (texto.includes('trimestral')) return '🎖️';
+                if (texto.includes('batalla')) return '🏆';
+                if (texto.includes('bond')) return '🪙';
+            }
+
+            // ZENLESS ZONE ZERO
+            if (juego.includes('zenlesszonezero')) {
+                if (texto.includes('interknot')) return '🌐';
+                if (texto.includes('monochrome')) return '💿';
+            }
+
+            // HONKAI STAR RAIL
+            if (juego.includes('honkaistarrail')) {
+                if (texto.includes('expresssupplypass')) return '🎫';
+                if (texto.includes('oneiric')) return '🔮';
+            }
+
+            // HONOR OF KINGS
+            if (juego.includes('honorofkings')) {
+                if (texto.includes('tarjetasemanalplus')) return '✨';
+                if (texto.includes('token') || texto.includes('ficha')) return '🟡';
+            }
+
+            // PUBG MOBILE
+            if (juego.includes('pubg')) {
+                if (/(^|[^a-z])uc([^a-z]|$)/i.test(String(textoVisible))) return '🪙';
+            }
+
+            // BLOOD STRIKE
+            if (juego.includes('bloodstrike')) {
+                if (texto.includes('pasedemejora') || texto.includes('leveluppass')) return '🛠️';
+                if (texto.includes('elite') && !texto.includes('premium')) return '🎖️';
+                if (texto.includes('premium')) return '🏆';
+                if (texto.includes('cofre')) return '🎁';
+                if (texto.includes('bolsadelasuerte')) return '💰';
+                if (texto.includes('gold') || texto.includes('oro')) return '🟡';
+            }
+
+            // MARVEL RIVALS
+            if (juego.includes('marvelrivals') && texto.includes('lattice')) return '💠';
+
+            // WHERE WINDS MEET
+            if (juego.includes('wherewindsmeet')) {
+                if (texto.includes('echobead')) return '🎐';
+                if (texto.includes('monthlypass')) return '📜';
+                if (texto.includes('battlepass')) return '💳';
+            }
+
+            // DELTA FORCE
+            if (juego.includes('deltaforce') && (texto.includes('deltacoin') || texto.includes('coin'))) return '🪙';
+
+            // FARLIGHT 84
+            if (juego.includes('farlight84') && (texto.includes('diamond') || texto.includes('diamante'))) return '🔷';
+
+            // LORDS MOBILE
+            if (juego.includes('lordsmobile')) {
+                if (texto.includes('pasesemanal')) return '🎫';
+                if (texto.includes('diamond') || texto.includes('diamante')) return '💎';
+            }
+
+            // STUMBLE GUYS
+            if (juego.includes('stumbleguys')) {
+                if (texto.includes('chip')) return '🟢';
+                if (texto.includes('gema')) return '🟣';
+            }
+
+            // TOWER OF FANTASY
+            if (juego.includes('toweroffantasy')) {
+                if (texto.includes('upgradepass')) return '🛠️';
+                if (texto.includes('monthlypass')) return '🗓️';
+                if (texto.includes('basicpass')) return '💳';
+                if (texto.includes('adventurepack')) return '🎫';
+                if (texto.includes('tanium')) return '💠';
+            }
+
+            // ARENA OF VALOR
+            if (juego.includes('arenaofvalor') && texto.includes('voucher')) return '⚔️';
+
+            // LIFEAFTER
+            if (juego.includes('lifeafter')) {
+                if (texto.includes('membership')) return '💳';
+                if (texto.includes('luckystar')) return '📜';
+                if (texto.includes('credito')) return '💵';
+            }
+
+            // ROBLOX
+            if (juego.includes('roblox') && texto.includes('robux')) return '🟩';
+
+            // CLASH OF CLANS
+            if (juego.includes('clashofclans')) {
+                if (texto.includes('pasedeoro')) return '🌟';
+                if (texto.includes('gema')) return '🟢';
+            }
+
+            // CLASH ROYALE
+            if (juego.includes('clashroyale')) {
+                if (texto.includes('passroyale')) return '🗓️';
+                if (texto.includes('gema')) return '👑';
+            }
+
+            // TIKTOK
+            if (juego.includes('tiktok') && texto.includes('coin')) return '🟡';
+
+            // FORTNITE
+            if (juego.includes('fornite') || juego.includes('fortnite')) {
+                if (texto.includes('pavo')) return '🔷';
+            }
+
+            // WUTHERING WAVES
+            if (juego.includes('wutheringwaves')) {
+                if (texto.includes('suscripcionlunar')) return '🗓️';
+                if (texto.includes('lunite')) return '🌑';
+            }
+
+            // Gift Cards ya tienen logo de marca en el encabezado.
+            if (categoria === 'Gift Cards') return '🎁';
+            if (categoria === 'Streaming') return '📺';
+            if (categoria === 'Recargas por Cuenta') return '👤';
+
+            // Compatibilidad con familias ya usadas en la tienda.
             if (juego.includes('steam')) return '💵';
             if (juego.includes('minecraft')) return '🟡';
-            if (juego.includes('roblox')) return '🔷';
             if (juego.includes('valorant')) return '🔻';
             if (juego.includes('leagueoflegends')) return '💠';
             if (juego.includes('teamfighttactics')) return '🟣';
             if (juego.includes('standoff2')) return '🟡';
 
+            // Respaldo conservador para productos sin emoji explícito en el Excel.
             if (texto.includes('diamante') || texto.includes('diamond')) return '💎';
-            if (/(^|[^a-z])uc([^a-z]|$)/i.test(String(textoVisible))) return '🪙';
-            if (texto.includes('token')) return '🟡';
-            if (texto.includes('robux')) return '🔷';
-            if (texto.includes('minecoin')) return '🟡';
-            if (/(^|[^a-z])vp([^a-z]|$)/i.test(String(textoVisible))) return '🔻';
-            if (/(^|[^a-z])rp([^a-z]|$)/i.test(String(textoVisible))) return '💠';
-            if (texto.includes('gold') || texto.includes('oro')) return '🟡';
             if (texto.includes('coin') || texto.includes('moneda')) return '🪙';
+            if (texto.includes('paquete') || texto.includes('bundle')) return '📦';
+            if (texto.includes('pase') || texto.includes('pass')) return '🎫';
 
-            if (texto.includes('pase') || texto.includes('pass')) return '🎟️';
-            if (texto.includes('mensual') || texto.includes('monthly') || texto.includes('tarjeta')) return '🗓️';
-            if (texto.includes('paquete') || texto.includes('paq') || texto.includes('bundle')) return '📦';
-            if (texto.includes('skin')) return '👕';
-            if (texto.includes('suscripcion') || texto.includes('subscription')) return '⭐';
-
-            if (categoria === 'Gift Cards') return '🎁';
-            if (categoria === 'Recargas por Cuenta') return '👤';
-            if (categoria === 'Streaming') return '📺';
-
-            return '🎮';
+            return '✦';
         }
 
         function nombrePaqueteVisible(producto) {
@@ -1439,7 +2608,12 @@ NO contiene QR de pago.
 
                 contenedor.innerHTML += `
                     <details>
-                        <summary>${juego}</summary>
+                        <summary>
+                            <span class="summary-brand">
+                                ${logoMarcaHTML(juego)}
+                                <span class="summary-name">${escaparHTML(juego)}</span>
+                            </span>
+                        </summary>
                         ${htmlPaquetes}
                     </details>
                 `;
@@ -1645,6 +2819,21 @@ NO contiene QR de pago.
 
             const descargar = document.getElementById('descargar-qr');
             descargar.style.display = 'none';
+        }
+
+
+        function cotizarProducto() {
+            const mensaje = encodeURIComponent(
+                'Hola, FRENCH STORE. 👋\n\n' +
+                'No encontré el juego, plataforma o producto digital que busco en el catálogo. ' +
+                '¿Podrían ayudarme con una cotización personalizada?'
+            );
+
+            window.open(
+                `https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`,
+                '_blank',
+                'noopener,noreferrer'
+            );
         }
 
         function crearChispas(x, y) {
