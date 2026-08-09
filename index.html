@@ -589,6 +589,235 @@ NO contiene QR de pago.
             }
         }
 
+
+        /* =====================================================
+           THE FRENCH STORE — MEDIEVAL ELEGANTE AZUL
+           Mejora visual solamente. Mantiene la identidad azul,
+           el logo 💎 FRENCH STORE 💎 y toda la lógica existente.
+           ===================================================== */
+
+        :root {
+            --fs-bg-deep: #030912;
+            --fs-bg-navy: #071322;
+            --fs-panel: #0e1a2d;
+            --fs-panel-2: #14243a;
+            --fs-blue: #00eaf2;
+            --fs-blue-2: #3b82f6;
+            --fs-blue-soft: rgba(0, 234, 242, .18);
+            --fs-silver: #b9cadb;
+            --fs-line: rgba(84, 163, 220, .34);
+        }
+
+        body {
+            background-color: var(--fs-bg-deep);
+            background-image:
+                radial-gradient(circle at 15% 12%, rgba(0, 234, 242, .10), transparent 24%),
+                radial-gradient(circle at 88% 78%, rgba(59, 130, 246, .09), transparent 28%),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 9px),
+                repeating-linear-gradient(45deg, rgba(0,234,242,.012) 0 1px, transparent 1px 13px),
+                linear-gradient(180deg, #050d18 0%, #020711 100%);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            background: #00eaf2;
+            opacity: .08;
+        }
+
+        body::after {
+            background: #2563eb;
+            opacity: .07;
+        }
+
+        header {
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,.025), transparent 45%),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.015) 0 1px, transparent 1px 12px),
+                radial-gradient(circle at center, #122744 0%, #071321 58%, #030912 100%);
+            border-bottom: 1px solid rgba(0, 234, 242, .72);
+            box-shadow:
+                0 14px 36px rgba(0, 0, 0, .45),
+                inset 0 -1px 0 rgba(185, 202, 219, .10),
+                0 0 28px rgba(0, 234, 242, .08);
+        }
+
+        header::before,
+        header::after {
+            content: "";
+            position: absolute;
+            left: 7%;
+            right: 7%;
+            height: 1px;
+            pointer-events: none;
+            background: linear-gradient(90deg, transparent, rgba(0,234,242,.55), rgba(185,202,219,.35), rgba(0,234,242,.55), transparent);
+        }
+
+        header::before { top: 12px; }
+        header::after { bottom: 12px; }
+
+        .neon-title {
+            color: #f8fbff;
+            text-shadow:
+                0 0 5px rgba(0,234,242,.95),
+                0 0 16px rgba(0,234,242,.50),
+                0 2px 0 rgba(0,0,0,.75);
+        }
+
+        .subtitle {
+            color: #87f7ff;
+            text-shadow: 0 0 10px rgba(0,234,242,.24);
+        }
+
+        .badge {
+            border-color: rgba(0,234,242,.62);
+            background:
+                linear-gradient(180deg, rgba(22,49,78,.70), rgba(6,17,31,.80)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.02) 0 1px, transparent 1px 7px);
+            box-shadow: inset 0 0 0 1px rgba(185,202,219,.05);
+        }
+
+        .container {
+            position: relative;
+        }
+
+        .tabs {
+            background:
+                linear-gradient(180deg, rgba(20,36,58,.96), rgba(8,20,35,.96)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 8px);
+            border: 1px solid var(--fs-line);
+            box-shadow:
+                0 12px 28px rgba(0,0,0,.25),
+                inset 0 1px 0 rgba(255,255,255,.035),
+                inset 0 -1px 0 rgba(0,234,242,.06);
+        }
+
+        .tab-button {
+            color: #8294aa;
+        }
+
+        .tab-button.active {
+            color: #86f7ff;
+            border-bottom-color: var(--fs-blue);
+            text-shadow: 0 0 10px rgba(0,234,242,.42);
+        }
+
+        details {
+            position: relative;
+            background:
+                linear-gradient(145deg, rgba(17,32,53,.98), rgba(7,17,30,.98)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 9px);
+            border: 1px solid rgba(82, 137, 183, .34);
+            border-radius: 13px;
+            box-shadow:
+                0 10px 22px rgba(0,0,0,.22),
+                inset 0 0 0 1px rgba(255,255,255,.018),
+                inset 0 -18px 30px rgba(0,0,0,.12);
+        }
+
+        details::before {
+            content: "";
+            position: absolute;
+            inset: 5px;
+            border: 1px solid rgba(185,202,219,.045);
+            border-radius: 9px;
+            pointer-events: none;
+        }
+
+        details:hover,
+        details[open] {
+            border-color: rgba(0,234,242,.70);
+            box-shadow:
+                0 12px 28px rgba(0,0,0,.28),
+                0 0 18px rgba(0,234,242,.10),
+                inset 0 0 0 1px rgba(0,234,242,.045);
+        }
+
+        summary {
+            position: relative;
+            background:
+                linear-gradient(180deg, #1b2c45 0%, #132239 52%, #0e1b2f 100%),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.015) 0 1px, transparent 1px 11px);
+            color: #f3f7fb;
+            text-shadow: 0 1px 2px rgba(0,0,0,.8);
+            border-bottom: 1px solid rgba(0,234,242,.04);
+        }
+
+        summary::before {
+            content: "◆";
+            color: rgba(103,232,249,.45);
+            font-size: 8px;
+            margin-right: 10px;
+            text-shadow: 0 0 8px rgba(0,234,242,.30);
+        }
+
+        summary:after {
+            color: #22eaf2;
+            text-shadow: 0 0 8px rgba(0,234,242,.35);
+        }
+
+        .product-item {
+            background:
+                linear-gradient(90deg, rgba(5,14,26,.62), rgba(14,28,47,.48)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.01) 0 1px, transparent 1px 10px);
+            border-top-color: rgba(72,116,153,.20);
+        }
+
+        .product-item:hover {
+            background:
+                linear-gradient(90deg, rgba(14,36,59,.82), rgba(10,25,43,.70)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.012) 0 1px, transparent 1px 10px);
+        }
+
+        .price {
+            color: #69eff6;
+            text-shadow: 0 0 8px rgba(0,234,242,.18);
+        }
+
+        .btn-comprar {
+            background: linear-gradient(180deg, #65f5fb 0%, #20dbe7 45%, #1598d4 100%);
+            color: #031018;
+            border: 1px solid rgba(176,249,255,.65);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.50),
+                inset 0 -2px 0 rgba(0,46,80,.35),
+                0 5px 14px rgba(0,174,210,.18);
+        }
+
+        .btn-comprar:hover {
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.55),
+                inset 0 -2px 0 rgba(0,46,80,.35),
+                0 0 18px rgba(0,234,242,.35);
+        }
+
+        .modal-card,
+        .modal-canje-card {
+            background:
+                linear-gradient(160deg, rgba(17,34,56,.99), rgba(4,13,25,.99)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.016) 0 1px, transparent 1px 9px);
+            border-color: rgba(0,234,242,.52);
+            box-shadow:
+                0 26px 80px rgba(0,0,0,.58),
+                0 0 30px rgba(0,234,242,.10),
+                inset 0 0 0 1px rgba(185,202,219,.035);
+        }
+
+        .resumen-pago {
+            background:
+                linear-gradient(180deg, rgba(14,30,50,.90), rgba(6,17,31,.92)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.012) 0 1px, transparent 1px 9px);
+            border-color: rgba(82,137,183,.30);
+        }
+
+        @media (max-width: 600px) {
+            header { padding-top: 34px; padding-bottom: 34px; }
+            details { border-radius: 15px; }
+            summary { padding: 19px 18px; }
+            summary::before { margin-right: 7px; }
+        }
+
     </style>
 </head>
 <body>
@@ -825,6 +1054,24 @@ NO contiene QR de pago.
                 .replace(/[\u0300-\u036f]/g, '')
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '');
+        }
+
+        // Unifica nombres equivalentes que llegan con distinta etiqueta
+        // desde cada proveedor. Solo cambia cómo se muestran/agrupan en la web;
+        // NO modifica Supabase ni los datos técnicos del producto.
+        function nombreJuegoCanonico(juego) {
+            const original = String(juego || '').trim();
+            const clave = normalizarClave(original);
+
+            if (clave === 'magicchess' || clave === 'magicchessgogo') {
+                return 'Magic Chess';
+            }
+
+            if (clave === 'mobilelegends' || clave === 'mobilelegendsbangbang') {
+                return 'Mobile Legends: Bang Bang';
+            }
+
+            return original || 'Sin categoría';
         }
 
         function escaparHTML(texto) {
@@ -1091,8 +1338,8 @@ NO contiene QR de pago.
                     item.categoria === categoria
                 )
                 .sort((a, b) => {
-                    const juegoA = String(a.juego || '');
-                    const juegoB = String(b.juego || '');
+                    const juegoA = nombreJuegoCanonico(a.juego);
+                    const juegoB = nombreJuegoCanonico(b.juego);
 
                     const porJuego = juegoA.localeCompare(
                         juegoB,
@@ -1123,7 +1370,7 @@ NO contiene QR de pago.
             const juegosAgrupados = {};
 
             productosFiltrados.forEach(item => {
-                const nombreJuego = item.juego || 'Sin categoría';
+                const nombreJuego = nombreJuegoCanonico(item.juego);
 
                 if (!juegosAgrupados[nombreJuego]) {
                     juegosAgrupados[nombreJuego] = [];
@@ -1272,7 +1519,7 @@ NO contiene QR de pago.
 
             abrirModalPago(
                 {
-                    juego: producto.juego,
+                    juego: nombreJuegoCanonico(producto.juego),
                     paquete: nombrePaqueteVisible(producto),
                     paqueteOriginal: producto.paquete,
                     precio: producto.precio,
