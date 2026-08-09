@@ -1,2912 +1,1676 @@
-<!--
-MIGRATION SAFE COPY - THE FRENCH STORE
-Última versión de frontend confirmada en funcionamiento antes del parche pendiente del salto de línea de Gift Cards.
-Valores públicos/sensibles de configuración fueron reemplazados por placeholders.
-NO contiene QR de pago.
--->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="theme-color" content="#050b14">
-    <title>💎 FRENCH STORE 💎</title>
-    <!-- VERSION FINAL VISUAL: letras blancas + contorno negro + medieval metal/piedra -->
-    
-    <!-- Fuentes futuristas y modernas -->
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Cinzel:wght@500;600;700;800&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: #050b14; /* Fondo oscuro estilo gamer */
-            color: #f8fafc; 
-            margin: 0; 
-            padding: 0; 
-        }
-        
-        /* --- ESTILOS DEL ENCABEZADO TIPO NEÓN --- */
-        header { 
-            text-align: center; 
-            padding: 40px 20px; 
-            background: radial-gradient(circle at center, #112240 0%, #050b14 100%);
-            border-bottom: 2px solid #0ff;
-            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.1);
-        }
-        .subtitle { 
-            color: #0ff; 
-            font-weight: 600; 
-            letter-spacing: 2px; 
-            font-size: 12px; 
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-        .neon-title { 
-            font-family: 'Orbitron', sans-serif; 
-            font-size: 38px; 
-            color: #fff; 
-            margin: 0; 
-            /* Efecto Neón y animación */
-            text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff; 
-            animation: palpitar 2s infinite alternate;
-        }
-        .description { 
-            color: #94a3b8; 
-            font-size: 14px; 
-            max-width: 600px; 
-            margin: 15px auto; 
-            line-height: 1.5;
-        }
-        .badges { 
-            display: flex; 
-            justify-content: center; 
-            gap: 10px; 
-            flex-wrap: wrap; 
-            margin-top: 20px; 
-        }
-        .badge { 
-            border: 1px solid #0ff; 
-            color: #0ff; 
-            padding: 5px 15px; 
-            border-radius: 20px; 
-            font-size: 12px; 
-            background: rgba(0, 255, 255, 0.05); 
-        }
-
-        /* Animación del título */
-        @keyframes palpitar {
-            0% { text-shadow: 0 0 5px #0ff, 0 0 10px #0ff; }
-            100% { text-shadow: 0 0 5px #0ff, 0 0 20px #0ff, 0 0 35px #0ff; }
-        }
-
-        /* --- ESTILOS DEL CONTENEDOR Y PESTAÑAS --- */
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .tabs { 
-            display: flex; 
-            justify-content: space-between; 
-            background-color: #0f172a; 
-            padding: 10px; 
-            border-radius: 10px; 
-            margin-bottom: 25px; 
-            border: 1px solid #1e293b;
-        }
-        .tab-button { 
-            flex: 1; 
-            background: transparent; 
-            color: #64748b; 
-            border: none; 
-            padding: 10px; 
-            font-size: 15px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            border-bottom: 2px solid transparent; 
-            transition: all 0.3s ease;
-        }
-        .tab-button.active { 
-            color: #0ff; 
-            border-bottom: 2px solid #0ff; 
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-        }
-        
-        /* --- ESTILOS DE LOS MENÚS DESPLEGABLES --- */
-        details { 
-            background-color: #0f172a; 
-            border-radius: 10px; 
-            margin-bottom: 15px; 
-            border: 1px solid #1e293b;
-            transition: all 0.3s ease; 
-            overflow: hidden; 
-        }
-        details:hover {
-            border-color: #0ff;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
-            transform: translateY(-2px); /* Animación de flotar */
-        }
-        summary { 
-            padding: 18px; 
-            font-size: 16px; 
-            font-weight: 600; 
-            color: #f1f5f9; 
-            cursor: pointer; 
-            list-style: none; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background-color: #1e293b; 
-        }
-        summary::-webkit-details-marker { display: none; }
-        summary:after { content: "▼"; color: #0ff; font-size: 12px; }
-        details[open] summary:after { content: "▲"; }
-        
-        /* --- ESTILOS DE LOS PRODUCTOS --- */
-        .product-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 15px 20px; 
-            border-top: 1px solid #1e293b; 
-        }
-        .product-item:hover { background-color: rgba(30, 41, 59, 0.5); }
-        .product-name { font-size: 15px; color: #cbd5e1; }
-        .product-price-buy { display: flex; align-items: center; gap: 15px; }
-        .price { font-size: 18px; font-weight: bold; color: #10b981; }
-        
-        .btn-comprar { 
-            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%); 
-            color: #000; 
-            text-decoration: none; 
-            padding: 8px 18px; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            font-size: 14px; 
-            transition: all 0.2s ease;
-        }
-        .btn-comprar:hover { 
-            transform: scale(1.05); 
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5); 
-        }
-
-        /* --- FONDO ANIMADO SUAVE --- */
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            width: 360px;
-            height: 360px;
-            border-radius: 50%;
-            filter: blur(90px);
-            opacity: .12;
-            pointer-events: none;
-            z-index: -1;
-            animation: flotarFondo 12s ease-in-out infinite alternate;
-        }
-        body::before {
-            background: #00f2fe;
-            top: 8%;
-            left: -120px;
-        }
-        body::after {
-            background: #7c3aed;
-            right: -120px;
-            bottom: 5%;
-            animation-delay: -5s;
-        }
-
-        @keyframes flotarFondo {
-            from { transform: translate3d(0, 0, 0) scale(1); }
-            to { transform: translate3d(60px, 40px, 0) scale(1.15); }
-        }
-
-        /* --- ANIMACIÓN DE ENTRADA DEL CATÁLOGO --- */
-        .catalog-enter {
-            animation: aparecerCatalogo .45s ease both;
-        }
-
-        @keyframes aparecerCatalogo {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- LOADER GAMER --- */
-        #loader-catalogo {
-            min-height: 210px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            color: #94a3b8;
-        }
-
-        .loader-gem {
-            font-size: 46px;
-            animation: girarGema 1.1s linear infinite, pulsoGema 1.2s ease-in-out infinite alternate;
-            filter: drop-shadow(0 0 10px #00f2fe);
-        }
-
-        @keyframes girarGema {
-            to { transform: rotateY(360deg); }
-        }
-
-        @keyframes pulsoGema {
-            from { filter: drop-shadow(0 0 7px #00f2fe); }
-            to { filter: drop-shadow(0 0 22px #00f2fe); }
-        }
-
-        .loader-line {
-            width: min(280px, 75vw);
-            height: 5px;
-            overflow: hidden;
-            border-radius: 999px;
-            background: #1e293b;
-        }
-
-        .loader-line::after {
-            content: "";
-            display: block;
-            height: 100%;
-            width: 45%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #00f2fe, #7c3aed);
-            animation: correrLoader 1.15s ease-in-out infinite;
-        }
-
-        @keyframes correrLoader {
-            from { transform: translateX(-110%); }
-            to { transform: translateX(250%); }
-        }
-
-        /* --- MEJORAS DE INTERACCIÓN --- */
-        .tab-button:active,
-        .btn-comprar:active {
-            transform: scale(.97);
-        }
-
-        details[open] {
-            border-color: rgba(0, 255, 255, .5);
-            box-shadow: 0 0 22px rgba(0, 255, 255, .08);
-        }
-
-        details[open] .product-item {
-            animation: productoEntrada .28s ease both;
-        }
-
-        @keyframes productoEntrada {
-            from { opacity: 0; transform: translateX(-8px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .btn-comprar {
-            border: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-comprar::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            transform: translateX(-130%);
-            background: linear-gradient(
-                110deg,
-                transparent 20%,
-                rgba(255,255,255,.55) 50%,
-                transparent 80%
-            );
-            transition: transform .45s ease;
-        }
-
-        .btn-comprar:hover::after {
-            transform: translateX(130%);
-        }
-
-        /* --- MODAL DE PAGO QR --- */
-        .modal-pago {
-            position: fixed;
-            inset: 0;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-            background: rgba(2, 6, 23, .78);
-            backdrop-filter: blur(10px);
-            z-index: 9999;
-        }
-
-        .modal-pago.visible {
-            display: flex;
-            animation: fondoModal .2s ease both;
-        }
-
-        @keyframes fondoModal {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-card {
-            width: min(440px, 94vw);
-            max-height: 92vh;
-            overflow-y: auto;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 255, .5);
-            background: linear-gradient(180deg, #0f172a 0%, #08111f 100%);
-            box-shadow:
-                0 25px 80px rgba(0, 0, 0, .5),
-                0 0 35px rgba(0, 255, 255, .12);
-            padding: 22px;
-            position: relative;
-            animation: subirModal .28s cubic-bezier(.22, .9, .35, 1.15) both;
-        }
-
-        @keyframes subirModal {
-            from { opacity: 0; transform: translateY(20px) scale(.96); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .modal-cerrar {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1px solid #334155;
-            background: #111827;
-            color: #cbd5e1;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .modal-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 21px;
-            margin: 3px 40px 8px 0;
-            color: #fff;
-        }
-
-        .modal-subtitle {
-            color: #94a3b8;
-            font-size: 13px;
-            line-height: 1.5;
-            margin-bottom: 14px;
-        }
-
-        .resumen-pago {
-            background: rgba(15, 23, 42, .8);
-            border: 1px solid #1e293b;
-            border-radius: 14px;
-            padding: 14px;
-            margin-bottom: 15px;
-        }
-
-        .resumen-fila {
-            display: flex;
-            justify-content: space-between;
-            gap: 14px;
-            padding: 6px 0;
-            font-size: 14px;
-        }
-
-        .resumen-fila strong {
-            text-align: right;
-            color: #e2e8f0;
-        }
-
-        .qr-wrap {
-            background: #fff;
-            padding: 12px;
-            border-radius: 16px;
-            width: min(260px, 76vw);
-            margin: 0 auto 10px;
-            box-shadow: 0 0 25px rgba(0,255,255,.13);
-        }
-
-        .qr-wrap img {
-            display: block;
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .qr-ayuda {
-            color: #94a3b8;
-            text-align: center;
-            font-size: 12px;
-            line-height: 1.45;
-            margin: 8px 0 16px;
-        }
-
-        .acciones-pago {
-            display: grid;
-            gap: 10px;
-        }
-
-        .btn-modal {
-            width: 100%;
-            box-sizing: border-box;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-weight: 700;
-            font-family: inherit;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            transition: transform .15s ease, box-shadow .15s ease;
-        }
-
-        .btn-modal:hover {
-            transform: translateY(-1px);
-        }
-
-        .btn-pagado {
-            background: linear-gradient(90deg, #10b981, #22c55e);
-            color: #04130c;
-            box-shadow: 0 8px 25px rgba(16,185,129,.18);
-        }
-
-        .btn-descargar {
-            background: #162033;
-            color: #e2e8f0;
-            border: 1px solid #334155;
-        }
-
-        .btn-consultar {
-            background: transparent;
-            color: #67e8f9;
-            border: 1px solid rgba(103,232,249,.35);
-        }
-
-        .seguridad-pago {
-            display: flex;
-            gap: 8px;
-            align-items: flex-start;
-            margin-top: 14px;
-            color: #64748b;
-            font-size: 11px;
-            line-height: 1.45;
-        }
-
-        /* --- CHISPAS AL COMPRAR --- */
-        .spark {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10050;
-            animation: explotar .7s ease-out forwards;
-        }
-
-        @keyframes explotar {
-            to {
-                transform: translate(var(--x), var(--y)) scale(0);
-                opacity: 0;
-            }
-        }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 620px) {
-            .neon-title { font-size: 30px; }
-            .tabs { overflow-x: auto; justify-content: flex-start; }
-            .tab-button { min-width: 145px; }
-            .product-item {
-                align-items: flex-start;
-                gap: 10px;
-                flex-direction: column;
-            }
-            .product-price-buy {
-                width: 100%;
-                justify-content: space-between;
-            }
-            .btn-comprar {
-                padding: 9px 14px;
-            }
-        }
-
-
-        .product-price-buy {
-            flex-wrap: wrap;
-        }
-
-        .btn-canje {
-            border: 1px solid rgba(250, 204, 21, .48);
-            background: rgba(250, 204, 21, .08);
-            color: #fde047;
-            border-radius: 10px;
-            padding: 8px 10px;
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: transform .2s ease, border-color .2s ease, background .2s ease;
-            white-space: nowrap;
-        }
-
-        .btn-canje:hover {
-            transform: translateY(-1px);
-            border-color: rgba(250, 204, 21, .9);
-            background: rgba(250, 204, 21, .15);
-        }
-
-        .gift-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 5px;
-            padding: 4px 7px;
-            border-radius: 999px;
-            border: 1px solid rgba(34,197,94,.32);
-            background: rgba(34,197,94,.07);
-            color: #86efac;
-            font-size: 9px;
-            font-weight: 800;
-            letter-spacing: .02em;
-        }
-
-        .canje-lista {
-            margin: 15px 0 18px;
-            padding-left: 21px;
-            color: #cbd5e1;
-            line-height: 1.6;
-            font-size: 13px;
-        }
-
-        .canje-lista li {
-            margin-bottom: 8px;
-        }
-
-        .canje-aviso {
-            padding: 10px 12px;
-            border: 1px solid rgba(56,189,248,.25);
-            background: rgba(56,189,248,.07);
-            color: #bae6fd;
-            border-radius: 12px;
-            font-size: 11px;
-            line-height: 1.5;
-            margin-bottom: 14px;
-        }
-
-        .btn-oficial {
-            display: block;
-            width: 100%;
-            box-sizing: border-box;
-            text-align: center;
-            text-decoration: none;
-            margin-top: 10px;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: .001ms !important;
-                animation-iteration-count: 1 !important;
-                scroll-behavior: auto !important;
-                transition-duration: .001ms !important;
-            }
-        }
-
-
-        /* =====================================================
-           THE FRENCH STORE — MEDIEVAL ELEGANTE AZUL
-           Mejora visual solamente. Mantiene la identidad azul,
-           el logo 💎 FRENCH STORE 💎 y toda la lógica existente.
-           ===================================================== */
-
-        :root {
-            --fs-bg-deep: #030912;
-            --fs-bg-navy: #071322;
-            --fs-panel: #0e1a2d;
-            --fs-panel-2: #14243a;
-            --fs-blue: #00eaf2;
-            --fs-blue-2: #3b82f6;
-            --fs-blue-soft: rgba(0, 234, 242, .18);
-            --fs-silver: #b9cadb;
-            --fs-line: rgba(84, 163, 220, .34);
-        }
-
-        body {
-            background-color: var(--fs-bg-deep);
-            background-image:
-                radial-gradient(circle at 15% 12%, rgba(0, 234, 242, .10), transparent 24%),
-                radial-gradient(circle at 88% 78%, rgba(59, 130, 246, .09), transparent 28%),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 9px),
-                repeating-linear-gradient(45deg, rgba(0,234,242,.012) 0 1px, transparent 1px 13px),
-                linear-gradient(180deg, #050d18 0%, #020711 100%);
-            background-attachment: fixed;
-        }
-
-        body::before {
-            background: #00eaf2;
-            opacity: .08;
-        }
-
-        body::after {
-            background: #2563eb;
-            opacity: .07;
-        }
-
-        header {
-            position: relative;
-            overflow: hidden;
-            background:
-                linear-gradient(180deg, rgba(255,255,255,.025), transparent 45%),
-                repeating-linear-gradient(90deg, rgba(255,255,255,.015) 0 1px, transparent 1px 12px),
-                radial-gradient(circle at center, #122744 0%, #071321 58%, #030912 100%);
-            border-bottom: 1px solid rgba(0, 234, 242, .72);
-            box-shadow:
-                0 14px 36px rgba(0, 0, 0, .45),
-                inset 0 -1px 0 rgba(185, 202, 219, .10),
-                0 0 28px rgba(0, 234, 242, .08);
-        }
-
-        header::before,
-        header::after {
-            content: "";
-            position: absolute;
-            left: 7%;
-            right: 7%;
-            height: 1px;
-            pointer-events: none;
-            background: linear-gradient(90deg, transparent, rgba(0,234,242,.55), rgba(185,202,219,.35), rgba(0,234,242,.55), transparent);
-        }
-
-        header::before { top: 12px; }
-        header::after { bottom: 12px; }
-
-        .neon-title {
-            color: #f8fbff;
-            text-shadow:
-                0 0 5px rgba(0,234,242,.95),
-                0 0 16px rgba(0,234,242,.50),
-                0 2px 0 rgba(0,0,0,.75);
-        }
-
-        .subtitle {
-            color: #87f7ff;
-            text-shadow: 0 0 10px rgba(0,234,242,.24);
-        }
-
-        .badge {
-            border-color: rgba(0,234,242,.62);
-            background:
-                linear-gradient(180deg, rgba(22,49,78,.70), rgba(6,17,31,.80)),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.02) 0 1px, transparent 1px 7px);
-            box-shadow: inset 0 0 0 1px rgba(185,202,219,.05);
-        }
-
-        .container {
-            position: relative;
-        }
-
-        .tabs {
-            background:
-                linear-gradient(180deg, rgba(20,36,58,.96), rgba(8,20,35,.96)),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 8px);
-            border: 1px solid var(--fs-line);
-            box-shadow:
-                0 12px 28px rgba(0,0,0,.25),
-                inset 0 1px 0 rgba(255,255,255,.035),
-                inset 0 -1px 0 rgba(0,234,242,.06);
-        }
-
-        .tab-button {
-            color: #8294aa;
-        }
-
-        .tab-button.active {
-            color: #86f7ff;
-            border-bottom-color: var(--fs-blue);
-            text-shadow: 0 0 10px rgba(0,234,242,.42);
-        }
-
-        details {
-            position: relative;
-            background:
-                linear-gradient(145deg, rgba(17,32,53,.98), rgba(7,17,30,.98)),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 9px);
-            border: 1px solid rgba(82, 137, 183, .34);
-            border-radius: 13px;
-            box-shadow:
-                0 10px 22px rgba(0,0,0,.22),
-                inset 0 0 0 1px rgba(255,255,255,.018),
-                inset 0 -18px 30px rgba(0,0,0,.12);
-        }
-
-        details::before {
-            content: "";
-            position: absolute;
-            inset: 5px;
-            border: 1px solid rgba(185,202,219,.045);
-            border-radius: 9px;
-            pointer-events: none;
-        }
-
-        details:hover,
-        details[open] {
-            border-color: rgba(0,234,242,.70);
-            box-shadow:
-                0 12px 28px rgba(0,0,0,.28),
-                0 0 18px rgba(0,234,242,.10),
-                inset 0 0 0 1px rgba(0,234,242,.045);
-        }
-
-        summary {
-            position: relative;
-            background:
-                linear-gradient(180deg, #1b2c45 0%, #132239 52%, #0e1b2f 100%),
-                repeating-linear-gradient(90deg, rgba(255,255,255,.015) 0 1px, transparent 1px 11px);
-            color: #f3f7fb;
-            text-shadow: 0 1px 2px rgba(0,0,0,.8);
-            border-bottom: 1px solid rgba(0,234,242,.04);
-        }
-
-        summary::before {
-            content: "◆";
-            color: rgba(103,232,249,.45);
-            font-size: 8px;
-            margin-right: 10px;
-            text-shadow: 0 0 8px rgba(0,234,242,.30);
-        }
-
-        summary:after {
-            color: #22eaf2;
-            text-shadow: 0 0 8px rgba(0,234,242,.35);
-        }
-
-        .product-item {
-            background:
-                linear-gradient(90deg, rgba(5,14,26,.62), rgba(14,28,47,.48)),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.01) 0 1px, transparent 1px 10px);
-            border-top-color: rgba(72,116,153,.20);
-        }
-
-        .product-item:hover {
-            background:
-                linear-gradient(90deg, rgba(14,36,59,.82), rgba(10,25,43,.70)),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.012) 0 1px, transparent 1px 10px);
-        }
-
-        .price {
-            color: #69eff6;
-            text-shadow: 0 0 8px rgba(0,234,242,.18);
-        }
-
-        .btn-comprar {
-            background: linear-gradient(180deg, #65f5fb 0%, #20dbe7 45%, #1598d4 100%);
-            color: #031018;
-            border: 1px solid rgba(176,249,255,.65);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,.50),
-                inset 0 -2px 0 rgba(0,46,80,.35),
-                0 5px 14px rgba(0,174,210,.18);
-        }
-
-        .btn-comprar:hover {
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,.55),
-                inset 0 -2px 0 rgba(0,46,80,.35),
-                0 0 18px rgba(0,234,242,.35);
-        }
-
-        .modal-card,
-        .modal-canje-card {
-            background:
-                linear-gradient(160deg, rgba(17,34,56,.99), rgba(4,13,25,.99)),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.016) 0 1px, transparent 1px 9px);
-            border-color: rgba(0,234,242,.52);
-            box-shadow:
-                0 26px 80px rgba(0,0,0,.58),
-                0 0 30px rgba(0,234,242,.10),
-                inset 0 0 0 1px rgba(185,202,219,.035);
-        }
-
-        .resumen-pago {
-            background:
-                linear-gradient(180deg, rgba(14,30,50,.90), rgba(6,17,31,.92)),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.012) 0 1px, transparent 1px 9px);
-            border-color: rgba(82,137,183,.30);
-        }
-
-        @media (max-width: 600px) {
-            header { padding-top: 34px; padding-bottom: 34px; }
-            details { border-radius: 15px; }
-            summary { padding: 19px 18px; }
-            summary::before { margin-right: 7px; }
-        }
-
-
-
-        /* =====================================================
-           THE FRENCH STORE — MEDIEVAL MARRÓN DORADO FINAL
-           Estética medieval elegante marrón/dorado; logo azul preservado.
-           SOLO VISUAL: no cambia Supabase, Worker, precios,
-           categorías, QR, WhatsApp ni selector G/B.
-           ===================================================== */
-
-        :root {
-            --royal-abyss: #020711;
-            --royal-night: #06101d;
-            --royal-stone: #0b1a2d;
-            --royal-stone-2: #10253e;
-            --royal-cyan: #25e7f2;
-            --royal-ice: #b9f9ff;
-            --royal-blue: #287dc4;
-            --royal-silver: #a9bfd2;
-            --royal-line: rgba(96, 203, 227, .42);
-            --royal-shadow: rgba(0, 0, 0, .62);
-        }
-
-        html {
-            background: var(--royal-abyss);
-        }
-
-        body {
-            font-family: 'Libre Baskerville', Georgia, serif;
-            background-color: var(--royal-abyss);
-            background-image:
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%2349dbe8' stroke-opacity='.075' stroke-width='.8'%3E%3Cpath d='M60 5 115 60 60 115 5 60Z'/%3E%3Cpath d='M60 20 100 60 60 100 20 60Z'/%3E%3Ccircle cx='60' cy='60' r='7'/%3E%3Cpath d='M60 5C52 25 25 52 5 60M115 60C95 52 68 25 60 5M60 115C68 95 95 68 115 60M5 60C25 68 52 95 60 115'/%3E%3C/g%3E%3C/svg%3E"),
-                radial-gradient(circle at 18% 8%, rgba(37,231,242,.11), transparent 28%),
-                radial-gradient(circle at 80% 86%, rgba(40,125,196,.12), transparent 32%),
-                linear-gradient(180deg, #06101c 0%, #020711 100%);
-            background-attachment: fixed;
-            color: #eef7fb;
-        }
-
-        body::before,
-        body::after {
-            display: none !important;
-        }
-
-        /* ----- CABECERA / BLASÓN ----- */
-        header {
-            position: relative;
-            padding: 48px 24px 52px;
-            overflow: hidden;
-            background-color: #071321;
-            background-image:
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76' viewBox='0 0 76 76'%3E%3Cg fill='none' stroke='%237eeaf3' stroke-opacity='.07' stroke-width='.75'%3E%3Cpath d='M38 3 73 38 38 73 3 38Z'/%3E%3Cpath d='M38 14 62 38 38 62 14 38Z'/%3E%3C/g%3E%3C/svg%3E"),
-                linear-gradient(180deg, rgba(22,55,88,.82), rgba(4,13,24,.98));
-            border-top: 1px solid rgba(185,249,255,.32);
-            border-bottom: 3px double rgba(37,231,242,.72);
-            box-shadow:
-                inset 0 -22px 38px rgba(0,0,0,.35),
-                inset 0 1px 0 rgba(255,255,255,.05),
-                0 15px 34px rgba(0,0,0,.42);
-        }
-
-        header::before {
-            content: "";
-            position: absolute;
-            inset: 13px 4%;
-            height: auto;
-            border: 1px solid rgba(169,191,210,.25);
-            background: none;
-            box-shadow:
-                inset 0 0 0 3px rgba(2,7,17,.40),
-                inset 0 0 0 4px rgba(37,231,242,.07);
-            pointer-events: none;
-        }
-
-        header::after {
-            content: "◆   ✦   ◆";
-            position: absolute;
-            left: 50%;
-            right: auto;
-            bottom: 14px;
-            height: auto;
-            transform: translateX(-50%);
-            background: none;
-            color: rgba(126,234,243,.72);
-            font-size: 10px;
-            letter-spacing: 8px;
-            text-shadow: 0 0 10px rgba(37,231,242,.38);
-            pointer-events: none;
-        }
-
-        .subtitle {
-            font-family: 'Cinzel', Georgia, serif;
-            color: #a9edf4;
-            font-weight: 700;
-            letter-spacing: 3px;
-            font-size: 11px;
-            text-shadow: 0 1px 0 #000;
-        }
-
-        .neon-title {
-            font-family: 'Cinzel', Georgia, serif;
-            font-weight: 800;
-            font-size: 38px;
-            letter-spacing: 2px;
-            color: #d8fbff;
-            animation: none !important;
-            text-shadow:
-                0 0 4px rgba(37,231,242,.92),
-                0 0 13px rgba(37,231,242,.34),
-                0 2px 1px rgba(0,0,0,.95);
-        }
-
-        .description {
-            font-family: 'Libre Baskerville', Georgia, serif;
-            color: #a9b8c7;
-            line-height: 1.7;
-        }
-
-        .badges {
-            margin-top: 23px;
-        }
-
-        .badge {
-            font-family: 'Cinzel', Georgia, serif;
-            font-size: 10px;
-            letter-spacing: .4px;
-            border-radius: 3px;
-            border: 1px solid rgba(90,218,232,.48);
-            color: #c9f7fb;
-            background:
-                linear-gradient(180deg, rgba(18,48,77,.96), rgba(5,17,31,.96));
-            box-shadow:
-                inset 0 0 0 2px rgba(3,9,18,.55),
-                inset 0 0 0 3px rgba(169,191,210,.06),
-                0 4px 10px rgba(0,0,0,.22);
-        }
-
-        /* ----- MARCO GENERAL ----- */
-        .container {
-            max-width: 900px;
-            padding-top: 30px;
-        }
-
-        .tabs {
-            position: relative;
-            border-radius: 4px;
-            padding: 8px;
-            background:
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42'%3E%3Cpath d='M21 3 39 21 21 39 3 21Z' fill='none' stroke='%237eeaf3' stroke-opacity='.045'/%3E%3C/svg%3E"),
-                linear-gradient(180deg, #142a44 0%, #09182a 100%);
-            border: 1px solid rgba(100,186,216,.48);
-            box-shadow:
-                inset 0 0 0 3px #05101d,
-                inset 0 0 0 4px rgba(169,191,210,.10),
-                0 13px 28px rgba(0,0,0,.35);
-        }
-
-        .tabs::before,
-        .tabs::after {
-            content: "◆";
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(37,231,242,.70);
-            font-size: 9px;
-            text-shadow: 0 0 8px rgba(37,231,242,.35);
-            pointer-events: none;
-        }
-
-        .tabs::before { left: 9px; }
-        .tabs::after { right: 9px; }
-
-        .tab-button {
-            font-family: 'Cinzel', Georgia, serif;
-            color: #91a5b8;
-            font-weight: 700;
-            font-size: 12px;
-            letter-spacing: .15px;
-            border-radius: 2px;
-            border-bottom-width: 1px;
-        }
-
-        .tab-button.active {
-            color: #d4fbff;
-            background: linear-gradient(180deg, rgba(37,231,242,.085), rgba(37,231,242,.025));
-            border-bottom: 2px solid #42e9f2;
-            text-shadow: 0 0 8px rgba(37,231,242,.25);
-        }
-
-        /* ----- TARJETAS TIPO PIEDRA / METAL ----- */
-        details {
-            position: relative;
-            border-radius: 4px;
-            margin-bottom: 18px;
-            overflow: hidden;
-            border: 1px solid rgba(101,167,200,.48);
-            background:
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cg fill='none' stroke='%23b6dbe8' stroke-opacity='.035' stroke-width='.7'%3E%3Cpath d='M36 4 68 36 36 68 4 36Z'/%3E%3Cpath d='M36 16 56 36 36 56 16 36Z'/%3E%3C/g%3E%3C/svg%3E"),
-                linear-gradient(145deg, #10243c, #071524 70%);
-            box-shadow:
-                0 12px 24px rgba(0,0,0,.34),
-                inset 0 0 0 3px #05101d,
-                inset 0 0 0 4px rgba(169,191,210,.08),
-                inset 0 -18px 35px rgba(0,0,0,.16);
-        }
-
-        details::before {
-            content: "";
-            position: absolute;
-            inset: 7px;
-            border-radius: 1px;
-            border: 1px solid rgba(185,249,255,.08);
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        details::after {
-            content: "✦";
-            position: absolute;
-            left: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(89,221,233,.38);
-            font-size: 9px;
-            pointer-events: none;
-            z-index: 4;
-        }
-
-        details:hover,
-        details[open] {
-            transform: translateY(-1px);
-            border-color: rgba(75,225,238,.70);
-            box-shadow:
-                0 14px 30px rgba(0,0,0,.40),
-                0 0 18px rgba(37,231,242,.07),
-                inset 0 0 0 3px #05101d,
-                inset 0 0 0 4px rgba(37,231,242,.10);
-        }
-
-        summary {
-            min-height: 34px;
-            padding: 20px 22px 20px 38px;
-            font-family: 'Cinzel', Georgia, serif;
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: .15px;
-            color: #f2f8fb;
-            background:
-                linear-gradient(180deg, rgba(31,60,93,.95), rgba(14,35,58,.97)),
-                repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 8px);
-            text-shadow: 0 1px 1px #000;
-        }
-
-        summary::before {
-            content: "◆";
-            color: #74e9f2;
-            font-size: 8px;
-            margin-right: 10px;
-            text-shadow: 0 0 9px rgba(37,231,242,.28);
-        }
-
-        summary:after {
-            content: "❖";
-            color: #57e9f2;
-            font-size: 12px;
-            transform: rotate(45deg);
-            transition: transform .25s ease;
-        }
-
-        details[open] summary:after {
-            content: "❖";
-            transform: rotate(135deg);
-        }
-
-        .product-item {
-            padding: 16px 22px;
-            background:
-                linear-gradient(90deg, rgba(4,13,24,.94), rgba(11,29,48,.90)),
-                repeating-linear-gradient(135deg, rgba(255,255,255,.012) 0 1px, transparent 1px 9px);
-            border-top: 1px solid rgba(94,146,178,.20);
-        }
-
-        .product-item:hover {
-            background:
-                linear-gradient(90deg, rgba(13,35,56,.96), rgba(8,23,40,.93));
-        }
-
-        .product-name {
-            color: #c8d5df;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .price {
-            color: #8cf5fb;
-            font-family: 'Cinzel', Georgia, serif;
-            font-size: 16px;
-            text-shadow: 0 0 8px rgba(37,231,242,.15);
-        }
-
-        /* ----- BOTONES TIPO METAL AZUL ----- */
-        .btn-comprar,
-        .btn-modal {
-            font-family: 'Cinzel', Georgia, serif;
-            letter-spacing: .3px;
-        }
-
-        .btn-comprar {
-            border-radius: 2px;
-            padding: 9px 17px;
-            background:
-                linear-gradient(180deg, #a6fbff 0%, #4ce7ef 38%, #168cbf 100%);
-            color: #02111a;
-            border: 1px solid #b9fbff;
-            clip-path: polygon(7px 0, calc(100% - 7px) 0, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0 calc(100% - 7px), 0 7px);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,.72),
-                inset 0 -3px 0 rgba(0,49,80,.40),
-                0 5px 13px rgba(0,0,0,.30);
-        }
-
-        .btn-comprar:hover {
-            transform: translateY(-1px);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,.75),
-                inset 0 -3px 0 rgba(0,49,80,.40),
-                0 0 17px rgba(37,231,242,.24);
-        }
-
-        /* ----- MODAL COMO COFRE / MARCO ----- */
-        .modal-pago {
-            background: rgba(1,5,12,.84);
-            backdrop-filter: blur(7px);
-        }
-
-        .modal-card,
-        .modal-canje-card {
-            border-radius: 4px;
-            border: 1px solid rgba(92,213,228,.58);
-            background:
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Cpath d='M35 5 65 35 35 65 5 35Z' fill='none' stroke='%237eeaf3' stroke-opacity='.04'/%3E%3C/svg%3E"),
-                linear-gradient(155deg, #10243b 0%, #050f1e 78%);
-            box-shadow:
-                0 28px 85px rgba(0,0,0,.68),
-                inset 0 0 0 4px #040c17,
-                inset 0 0 0 5px rgba(169,191,210,.10),
-                0 0 26px rgba(37,231,242,.08);
-        }
-
-        .modal-title {
-            font-family: 'Cinzel', Georgia, serif;
-            color: #d8fbff;
-            letter-spacing: .7px;
-            text-shadow: 0 0 8px rgba(37,231,242,.18);
-        }
-
-        .modal-cerrar {
-            border-radius: 2px;
-            background: #0b1b2e;
-            border-color: rgba(91,181,210,.40);
-        }
-
-        .resumen-pago {
-            border-radius: 3px;
-            border-color: rgba(98,166,199,.32);
-            background:
-                linear-gradient(180deg, rgba(15,38,62,.94), rgba(5,17,31,.96));
-            box-shadow: inset 0 0 0 2px rgba(2,8,16,.55);
-        }
-
-        .qr-wrap {
-            border-radius: 3px;
-            border: 2px solid #7dcbd8;
-            box-shadow:
-                0 0 0 4px #06101d,
-                0 0 0 5px rgba(169,191,210,.18),
-                0 10px 24px rgba(0,0,0,.38);
-        }
-
-        .btn-modal {
-            border-radius: 2px;
-        }
-
-        .btn-pagado {
-            background: linear-gradient(180deg, #7ef2dd, #28bca3 55%, #147c70);
-            color: #04120f;
-            border: 1px solid rgba(205,255,246,.50);
-        }
-
-        .btn-descargar {
-            background: linear-gradient(180deg, #203a56, #10253d);
-            color: #e5f3f8;
-            border: 1px solid rgba(106,169,199,.38);
-        }
-
-        .btn-consultar {
-            background: linear-gradient(180deg, rgba(24,58,82,.55), rgba(7,25,42,.55));
-            color: #aaf8fc;
-            border: 1px solid rgba(73,210,224,.38);
-        }
-
-        /* ----- REGALOS / CANJE ----- */
-        .btn-canje,
-        .gift-badge,
-        .canje-aviso {
-            border-radius: 3px;
-        }
-
-        /* ----- MÓVIL ----- */
-        @media (max-width: 620px) {
-            header {
-                padding: 38px 17px 45px;
-            }
-
-            header::before {
-                inset: 10px 8px;
-            }
-
-            .neon-title {
-                font-size: 27px;
-                letter-spacing: 1px;
-            }
-
-            .subtitle {
-                font-size: 9px;
-                letter-spacing: 2px;
-            }
-
-            .description {
-                font-size: 12px;
-                line-height: 1.65;
-            }
-
-            .container {
-                padding: 20px 12px 30px;
-            }
-
-            .tabs {
-                border-radius: 3px;
-                padding: 7px 10px;
-            }
-
-            .tab-button {
-                min-width: 145px;
-                font-size: 11px;
-            }
-
-            details {
-                border-radius: 3px;
-                margin-bottom: 14px;
-            }
-
-            summary {
-                padding: 18px 18px 18px 34px;
-                font-size: 13px;
-            }
-
-            .product-item {
-                padding: 15px 17px;
-            }
-        }
-
-
-        /* =====================================================
-           THE FRENCH STORE — MEDIEVAL MARRÓN + DORADO FINAL
-           Mantiene el logo 💎 FRENCH STORE 💎 azul/cian.
-           SOLO VISUAL. No cambia precios, Supabase, Worker,
-           QR, WhatsApp, categorías ni selector G/B.
-           ===================================================== */
-        :root {
-            --fs-ink: #090603;
-            --fs-night: #120b06;
-            --fs-brown-1: #1b0f08;
-            --fs-brown-2: #2a170c;
-            --fs-brown-3: #3a2211;
-            --fs-gold-dark: #7d531f;
-            --fs-gold: #c8913d;
-            --fs-gold-light: #f0ce82;
-            --fs-parchment: #ead6ad;
-            --fs-blue: #22dff2;
-            --fs-blue-2: #159fd8;
-            --fs-blue-light: #d7fbff;
-            --fs-panel: rgba(18, 12, 8, .96);
-            --fs-panel-2: rgba(31, 19, 11, .96);
-        }
-
-        html { background: #080503; }
-
-        body {
-            font-family: 'Libre Baskerville', Georgia, serif;
-            color: #f3e8d2;
-            background-color: #0a0603;
-            background-image:
-                radial-gradient(circle at 50% -10%, rgba(199,139,55,.13), transparent 34%),
-                radial-gradient(circle at 12% 28%, rgba(84,44,17,.22), transparent 24%),
-                radial-gradient(circle at 88% 34%, rgba(75,38,15,.18), transparent 24%),
-                repeating-linear-gradient(135deg, rgba(255,219,153,.018) 0 1px, transparent 1px 11px),
-                repeating-linear-gradient(45deg, rgba(0,0,0,.12) 0 2px, transparent 2px 17px),
-                linear-gradient(180deg, #0e0905 0%, #070403 50%, #0b0704 100%);
-            background-attachment: fixed;
-        }
-
-        body::before,
-        body::after { display: none !important; }
-
-        /* HERO / CASTILLO */
-        header {
-            position: relative;
-            isolation: isolate;
-            overflow: hidden;
-            padding: 34px 22px 50px;
-            border-top: 1px solid rgba(240,206,130,.42);
-            border-bottom: 3px double rgba(200,145,61,.80);
-            background:
-                linear-gradient(180deg, rgba(6,7,10,.18), rgba(11,7,4,.88)),
-                radial-gradient(circle at 50% 24%, rgba(24,111,145,.22), transparent 35%),
-                linear-gradient(180deg, #07101a 0%, #0b0908 64%, #100a05 100%);
-            box-shadow: 0 18px 50px rgba(0,0,0,.58), inset 0 -20px 40px rgba(0,0,0,.35);
-        }
-
-        header::before {
-            content: "";
-            position: absolute;
-            z-index: -2;
-            inset: 0;
-            opacity: .70;
-            background-repeat: no-repeat;
-            background-position: center bottom;
-            background-size: min(1200px, 120vw) auto;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 340'%3E%3Cg fill='%23010000' fill-opacity='.92'%3E%3Cpath d='M0 340V260h80v-95h26v-37h24v37h26v95h82V190h35v-45h28v45h35v70h70V138h36V80h18V48h20v32h18v58h36v122h86V165h40v-55h20V72h22v38h20v55h40v95h74V188h36v-42h28v42h36v72h84v-96h26v-36h24v36h26v96h80v80H0Z'/%3E%3Cpath d='M455 82h290v178H455z'/%3E%3C/g%3E%3Cg fill='%23110a05' fill-opacity='.65'%3E%3Ccircle cx='600' cy='40' r='2'/%3E%3Ccircle cx='310' cy='90' r='1.5'/%3E%3Ccircle cx='850' cy='76' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
-            filter: drop-shadow(0 -8px 18px rgba(0,0,0,.85));
-        }
-
-        header::after {
-            content: "";
-            position: absolute;
-            z-index: -1;
-            inset: 0;
-            background:
-                linear-gradient(90deg, rgba(0,0,0,.62), transparent 18%, transparent 82%, rgba(0,0,0,.62)),
-                linear-gradient(180deg, transparent 45%, rgba(4,2,1,.48) 100%);
-            pointer-events: none;
-        }
-
-        .hero-frame {
-            position: relative;
-            max-width: 920px;
-            margin: 0 auto;
-            padding: 18px 86px 20px;
-            border-top: 1px solid rgba(232,190,104,.55);
-            border-bottom: 1px solid rgba(232,190,104,.45);
-        }
-
-        .hero-frame::before,
-        .hero-frame::after {
-            content: "✦";
-            position: absolute;
-            top: 50%;
-            color: #d6a857;
-            font-size: 14px;
-            text-shadow: 0 0 12px rgba(211,160,70,.35);
-        }
-        .hero-frame::before { left: 54px; }
-        .hero-frame::after { right: 54px; }
-
-        .store-banner {
-            position: absolute;
-            z-index: 3;
-            top: 28px;
-            width: 82px;
-            min-height: 210px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 9px;
-            color: var(--fs-gold-light);
-            background:
-                linear-gradient(90deg, rgba(255,215,130,.06), transparent 18% 82%, rgba(255,215,130,.06)),
-                linear-gradient(180deg, #15100c, #07111c 45%, #130b06);
-            border: 1px solid #8d6228;
-            box-shadow: inset 0 0 0 3px #090603, inset 0 0 0 4px rgba(224,180,92,.22), 0 12px 28px rgba(0,0,0,.45);
-            clip-path: polygon(0 0,100% 0,100% 88%,50% 100%,0 88%);
-        }
-        .banner-left { left: max(14px, calc(50% - 585px)); }
-        .banner-right { right: max(14px, calc(50% - 585px)); }
-        .banner-gem { font-size: 31px; filter: drop-shadow(0 0 8px rgba(30,223,244,.45)); }
-        .banner-fs { font-family: 'Cinzel', serif; font-size: 29px; font-weight: 800; color: #d8ad5b; text-shadow: 0 2px 0 #000; }
-        .banner-mini { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 1px; color: #c99d52; text-align:center; }
-
-        .subtitle {
-            font-family: 'Cinzel', serif;
-            color: #d8ad62;
-            font-weight: 700;
-            letter-spacing: 3px;
-            font-size: 11px;
-            text-shadow: 0 2px 0 #000;
-        }
-
-        .neon-title {
-            margin-top: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            animation: none !important;
-        }
-
-        .brand-word {
-            font-family: 'Bungee', 'Arial Black', sans-serif;
-            font-size: clamp(29px, 5vw, 55px);
-            line-height: 1.05;
-            letter-spacing: 1px;
-            color: #6deeff;
-            background: linear-gradient(180deg, #e8feff 0%, #73efff 26%, #26cdeb 58%, #1588cf 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            -webkit-text-stroke: 2px #020306;
-            paint-order: stroke fill;
-            filter: drop-shadow(0 3px 0 #00101c) drop-shadow(0 0 10px rgba(36,215,244,.42));
-        }
-
-        .brand-diamond {
-            font-size: clamp(30px, 4.4vw, 50px);
-            line-height: 1;
-            filter: drop-shadow(0 0 10px rgba(21,206,242,.52));
-        }
-
-        .description {
-            color: #dbc9a8;
-            max-width: 690px;
-            font-size: 13px;
-            line-height: 1.6;
-            text-shadow: 0 1px 1px #000;
-        }
-
-        .badges { gap: 12px; }
-        .badge {
-            font-family: 'Cinzel', serif;
-            color: #efd294;
-            border-radius: 2px;
-            border: 1px solid #8f6329;
-            background: linear-gradient(180deg, rgba(42,27,16,.97), rgba(15,10,7,.97));
-            box-shadow: inset 0 0 0 2px #080503, inset 0 0 0 3px rgba(238,194,102,.11), 0 6px 15px rgba(0,0,0,.25);
-            padding: 7px 18px;
-        }
-
-        .security-head {
-            margin: 15px auto 0;
-            max-width: 700px;
-            color: #bfae90;
-            font-size: 10px;
-            line-height: 1.55;
-        }
-
-        /* CONTENEDOR */
-        .container { max-width: 980px; padding-top: 26px; }
-
-        .tabs {
-            border-radius: 2px;
-            padding: 7px;
-            gap: 4px;
-            background:
-                repeating-linear-gradient(135deg, rgba(240,206,130,.025) 0 1px, transparent 1px 9px),
-                linear-gradient(180deg, #25160d, #0d0906);
-            border: 1px solid #8c622b;
-            box-shadow: inset 0 0 0 3px #070403, inset 0 0 0 4px rgba(221,174,86,.13), 0 12px 27px rgba(0,0,0,.35);
-        }
-        .tabs::before,
-        .tabs::after { color: #d6a34d; }
-
-        .tab-button {
-            font-family: 'Cinzel', serif;
-            color: #c6ad82;
-            font-weight: 700;
-            border: 1px solid transparent;
-            border-radius: 1px;
-            min-height: 46px;
-        }
-        .tab-button:hover { color: #f3dca6; background: rgba(117,71,25,.12); }
-        .tab-button.active {
-            color: #ffe0a1;
-            border: 1px solid #9d6f32;
-            border-bottom: 2px solid #e2b45c;
-            background: linear-gradient(180deg, rgba(88,51,20,.52), rgba(34,20,11,.65));
-            text-shadow: 0 1px 0 #000;
-            box-shadow: inset 0 0 0 2px rgba(6,4,2,.55);
-        }
-
-        /* LISTA / MARCOS */
-        details {
-            position: relative;
-            border-radius: 2px;
-            margin-bottom: 9px;
-            border: 1px solid #765126;
-            background:
-                repeating-linear-gradient(135deg, rgba(240,206,130,.018) 0 1px, transparent 1px 10px),
-                linear-gradient(145deg, #1f130b, #0b0805 72%);
-            box-shadow: inset 0 0 0 2px #050302, inset 0 0 0 3px rgba(217,169,81,.08), 0 6px 15px rgba(0,0,0,.30);
-        }
-        details::before {
-            content: "";
-            position: absolute;
-            inset: 5px;
-            border: 1px solid rgba(224,181,95,.09);
-            pointer-events: none;
-            z-index: 2;
-        }
-        details::after { display:none; }
-        details:hover,
-        details[open] {
-            border-color: #b37c35;
-            box-shadow: inset 0 0 0 2px #050302, inset 0 0 0 3px rgba(225,178,86,.12), 0 8px 22px rgba(0,0,0,.38), 0 0 13px rgba(197,137,52,.07);
-        }
-
-        summary {
-            padding: 12px 16px;
-            min-height: 42px;
-            font-family: 'Cinzel', serif;
-            font-size: 13px;
-            font-weight: 700;
-            color: #ead7af;
-            background:
-                linear-gradient(90deg, rgba(55,34,18,.96), rgba(17,12,8,.96)),
-                repeating-linear-gradient(90deg, rgba(255,255,255,.014) 0 1px, transparent 1px 8px);
-            text-shadow: 0 1px 1px #000;
-        }
-        summary::before { display:none !important; }
-        summary:after {
-            content: "⌄";
-            color: #d6a451;
-            font-size: 18px;
-            transform: none;
-        }
-        details[open] summary:after { content:"⌃"; transform:none; }
-
-        .summary-brand { display:flex; align-items:center; gap:11px; min-width:0; }
-        .summary-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .summary-brand-logo {
-            width: 28px; height: 28px; flex: 0 0 28px;
-            display:grid; place-items:center;
-            border-radius: 5px;
-            border: 1px solid rgba(224,181,95,.42);
-            background: #0b0805;
-            box-shadow: inset 0 0 0 2px rgba(0,0,0,.65), 0 2px 6px rgba(0,0,0,.25);
-            overflow:hidden;
-        }
-        .summary-brand-logo img { width:22px; height:22px; object-fit:contain; border-radius:4px; }
-        .brand-logo-fallback {
-            width:100%; height:100%; display:grid; place-items:center;
-            font-family:'Cinzel',serif; font-weight:800; font-size:10px;
-            color:#e9c675; background:linear-gradient(145deg,#25160c,#090604);
-        }
-
-        .product-item {
-            padding: 12px 17px;
-            background: linear-gradient(90deg, rgba(12,8,5,.96), rgba(27,17,10,.93));
-            border-top: 1px solid rgba(139,93,41,.24);
-        }
-        .product-item:hover { background: linear-gradient(90deg, rgba(37,22,11,.97), rgba(18,12,8,.96)); }
-        .product-name { color:#d8c6a6; font-size:13px; line-height:1.48; }
-        .price { color:#f0c96f; font-family:'Cinzel',serif; font-size:15px; text-shadow:0 1px 0 #000; }
-
-        .btn-comprar,
-        .btn-modal,
-        .btn-canje { font-family:'Cinzel',serif; }
-        .btn-comprar {
-            border-radius:2px;
-            clip-path: polygon(6px 0,calc(100% - 6px) 0,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0 calc(100% - 6px),0 6px);
-            background: linear-gradient(180deg,#f4d58d,#c78d38 52%,#8b5b24);
-            color:#160d05;
-            border:1px solid #ffdfa0;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.50), inset 0 -2px 0 rgba(60,31,7,.40), 0 5px 12px rgba(0,0,0,.35);
-        }
-        .btn-comprar:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.58), 0 0 15px rgba(212,158,67,.27); }
-
-        /* CTA DE COTIZACIÓN */
-        .quote-cta {
-            margin: 24px 0 8px;
-            padding: 18px;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:16px;
-            border:1px solid #8e622a;
-            background:
-                repeating-linear-gradient(135deg, rgba(245,210,138,.02) 0 1px, transparent 1px 10px),
-                linear-gradient(180deg,#21140b,#0d0805);
-            box-shadow: inset 0 0 0 3px #060402, inset 0 0 0 4px rgba(222,174,85,.12), 0 10px 24px rgba(0,0,0,.34);
-        }
-        .quote-cta-text strong { display:block; color:#f2d28c; font-family:'Cinzel',serif; font-size:14px; margin-bottom:5px; }
-        .quote-cta-text span { color:#bca98a; font-size:11px; line-height:1.5; }
-        .quote-cta button {
-            flex:0 0 auto;
-            border:1px solid #59bf76;
-            color:#ecfff1;
-            background:linear-gradient(180deg,#1caf55,#08752f);
-            padding:11px 15px;
-            font-family:'Cinzel',serif;
-            font-weight:700;
-            cursor:pointer;
-            border-radius:2px;
-            box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 5px 14px rgba(0,0,0,.30);
-        }
-
-        /* MODALES MEDIEVALES */
-        .modal-pago { background:rgba(5,3,2,.86); backdrop-filter:blur(7px); }
-        .modal-card,
-        .modal-canje-card {
-            border-radius:2px;
-            border:1px solid #9f6f31;
-            background:
-                repeating-linear-gradient(135deg,rgba(240,206,130,.02) 0 1px,transparent 1px 10px),
-                linear-gradient(155deg,#29180d,#0d0805 75%);
-            box-shadow:0 28px 85px rgba(0,0,0,.72),inset 0 0 0 4px #060402,inset 0 0 0 5px rgba(226,179,88,.12);
-        }
-        .modal-title { color:#f0d092; font-family:'Cinzel',serif; text-shadow:0 1px 0 #000; }
-        .resumen-pago { border-radius:2px; border-color:rgba(176,119,51,.44); background:linear-gradient(180deg,rgba(47,27,13,.95),rgba(15,9,5,.96)); }
-        .qr-wrap { border-radius:2px; border:2px solid #c79543; box-shadow:0 0 0 4px #0c0704,0 0 0 5px rgba(235,195,112,.18),0 10px 24px rgba(0,0,0,.40); }
-        .btn-descargar { background:linear-gradient(180deg,#3a2414,#1e130c); color:#ead9b9; border:1px solid rgba(184,127,58,.50); }
-        .btn-consultar { background:linear-gradient(180deg,#332012,#160e08); color:#e8c67f; border:1px solid rgba(184,127,58,.45); }
-        .btn-pagado { background:linear-gradient(180deg,#42c66a,#16833b); color:#04140a; border:1px solid rgba(197,255,210,.38); }
-
-        /* =====================================================
-           AJUSTE V2 — METAL/PIEDRA + CONTORNO ANIME DEL LOGO
-           SOLO VISUAL. Mantiene lógica, precios, G/B y catálogo.
-           ===================================================== */
-
-        /* Logo FINAL: letras blancas estilo anime/gamer con contorno negro.
-           Los diamantes se mantienen azules/cian. El brillo cian queda por
-           fuera del contorno para separar claramente letra, borde y glow. */
-        .brand-word {
-            color: #ffffff;
-            background: none;
-            background-image: none;
-            -webkit-background-clip: initial;
-            background-clip: border-box;
-            -webkit-text-fill-color: #ffffff;
-            -webkit-text-stroke: 4px #020306;
-            paint-order: stroke fill;
-            text-shadow:
-                0 2px 0 #020306,
-                2px 0 0 #020306,
-                -2px 0 0 #020306,
-                0 -2px 0 #020306,
-                2px 2px 0 #020306,
-                -2px 2px 0 #020306,
-                2px -2px 0 #020306,
-                -2px -2px 0 #020306,
-                0 4px 0 #000000;
-            filter:
-                drop-shadow(0 0 1.5px #35e8ff)
-                drop-shadow(0 0 7px rgba(34,218,247,.60))
-                drop-shadow(0 5px 0 rgba(0,0,0,.82));
-        }
-
-        /* Zona de productos: piedra/metal gris oscuro.
-           Conservamos el dorado únicamente como detalle del marco. */
-        .product-item {
-            position: relative;
-            background:
-                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 8px),
-                repeating-linear-gradient(45deg, rgba(0,0,0,.055) 0 2px, transparent 2px 15px),
-                linear-gradient(180deg, #3d4147 0%, #2b2f34 48%, #202328 100%);
-            border-top: 1px solid rgba(206,211,217,.18);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,.045),
-                inset 0 -1px 0 rgba(0,0,0,.38);
-        }
-        .product-item:hover {
-            background:
-                repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 1px, transparent 1px 8px),
-                linear-gradient(180deg, #484d54 0%, #33383e 50%, #25292e 100%);
-        }
-        .product-name {
-            color: #e4e5e7;
-            text-shadow: 0 1px 0 #070809;
-        }
-        .price {
-            color: #f0cd7d;
-        }
-
-        /* Botón COMPRAR: placa de metal gris con marco dorado. */
-        .btn-comprar {
-            background:
-                linear-gradient(180deg, #777d84 0%, #555b62 36%, #3d4248 58%, #292d31 100%);
-            color: #f7dfaa;
-            border: 1px solid #c89a4e;
-            text-shadow: 0 1px 0 #000;
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,.28),
-                inset 0 -2px 0 rgba(0,0,0,.42),
-                0 0 0 1px rgba(28,18,8,.55),
-                0 5px 12px rgba(0,0,0,.36);
-        }
-        .btn-comprar:hover {
-            background:
-                linear-gradient(180deg, #8a9098 0%, #636a72 38%, #474d54 60%, #30343a 100%);
-            border-color: #e0b766;
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,.35),
-                0 0 15px rgba(200,154,78,.20),
-                0 6px 14px rgba(0,0,0,.38);
-        }
-
-        @media (max-width: 760px) {
-            .store-banner { display:none; }
-            .hero-frame { padding:14px 8px 16px; border:none; }
-            .hero-frame::before,.hero-frame::after { display:none; }
-            header { padding:28px 14px 34px; }
-            .brand-word {
-                color:#fff;
-                -webkit-text-fill-color:#fff;
-                -webkit-text-stroke:2.8px #020306;
-            }
-            .neon-title { gap:7px; }
-            .description { font-size:11px; }
-            .badges { gap:7px; }
-            .badge { padding:6px 9px; font-size:9px; }
-            .container { padding:16px 12px 24px; }
-            .tabs { overflow-x:auto; justify-content:flex-start; scrollbar-width:none; }
-            .tabs::-webkit-scrollbar { display:none; }
-            .tab-button { min-width:155px; flex:0 0 auto; font-size:10px; padding:9px 8px; }
-            summary { padding:11px 12px; font-size:12px; }
-            .summary-brand-logo { width:26px;height:26px;flex-basis:26px; }
-            .product-item { padding:12px 12px; }
-            .product-price-buy { gap:8px; }
-            .price { font-size:14px; }
-            .btn-comprar { padding:8px 11px; font-size:11px; }
-            .quote-cta { flex-direction:column; align-items:stretch; }
-            .quote-cta button { width:100%; }
-        }
-
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta name="theme-color" content="#06111f" />
+  <title>💎 FRENCH STORE 💎</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #06111f;
+      --bg-2: #08182a;
+      --panel: rgba(11, 28, 47, 0.92);
+      --panel-soft: rgba(13, 33, 56, 0.82);
+      --line: rgba(59, 209, 255, 0.22);
+      --line-strong: rgba(59, 209, 255, 0.55);
+      --cyan: #2ee7ff;
+      --cyan-soft: #8ff6ff;
+      --text: #eef7ff;
+      --muted: #95aec5;
+      --green: #18d38d;
+      --danger: #ff5b7a;
+      --shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
+      --card-radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Exo 2', sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(46, 231, 255, 0.14), transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(0, 121, 255, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(4, 13, 24, 0.96), rgba(3, 10, 18, 1)),
+        #06111f;
+      color: var(--text);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(46, 231, 255, 0.03) 0,
+          rgba(46, 231, 255, 0.03) 1px,
+          transparent 1px,
+          transparent 110px
+        );
+      opacity: 0.35;
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 100%);
+      z-index: -1;
+    }
+
+    .page-wrap {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 90px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      padding: 32px 24px 28px;
+      margin-bottom: 26px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(8, 24, 42, 0.92), rgba(5, 14, 26, 0.96)),
+        url('https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+      box-shadow: var(--shadow);
+      text-align: center;
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 10%, rgba(46, 231, 255, 0.16), transparent 35%),
+        linear-gradient(180deg, rgba(4, 13, 24, 0.35), rgba(4, 13, 24, 0.72));
+      z-index: -1;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 24px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(46, 231, 255, 0.45);
+      background: rgba(8, 22, 38, 0.72);
+      color: var(--cyan);
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(14px, 2vw, 18px);
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      box-shadow: 0 0 0 1px rgba(46,231,255,0.06) inset, 0 0 26px rgba(46, 231, 255, 0.08);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(10px, 2vw, 18px);
+      flex-wrap: wrap;
+      margin: 26px 0 10px;
+    }
+
+    .brand-diamond {
+      font-size: clamp(36px, 4vw, 54px);
+      line-height: 1;
+      filter: drop-shadow(0 0 12px rgba(46, 231, 255, 0.55));
+    }
+
+    .brand-title {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      font-size: clamp(34px, 7vw, 70px);
+      line-height: 0.95;
+      letter-spacing: 0.03em;
+      color: #f6fbff;
+      text-transform: uppercase;
+      text-shadow:
+        -1px -1px 0 rgba(2, 16, 28, 0.95),
+        1px -1px 0 rgba(2, 16, 28, 0.95),
+        -1px 1px 0 rgba(2, 16, 28, 0.95),
+        1px 1px 0 rgba(2, 16, 28, 0.95),
+        0 0 16px rgba(46, 231, 255, 0.16);
+    }
+
+    .hero-description {
+      margin: 14px auto 0;
+      max-width: 830px;
+      color: var(--muted);
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height: 1.65;
+    }
+
+    .hero-badges {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      max-width: 760px;
+      margin: 28px auto 18px;
+    }
+
+    .hero-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 68px;
+      padding: 12px 16px;
+      border-radius: 20px;
+      background: rgba(9, 24, 40, 0.78);
+      border: 1px solid rgba(46, 231, 255, 0.18);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+      font-size: 17px;
+      color: #edf8ff;
+      text-align: center;
+    }
+
+    .hero-badge span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .hero-security {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: rgba(7, 18, 31, 0.66);
+      border: 1px solid rgba(46, 231, 255, 0.12);
+      color: #c7d9ea;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .tabs-wrap {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .tab-button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(10, 28, 47, 0.96), rgba(8, 19, 33, 0.96));
+      color: #ccdef0;
+      border-radius: 22px;
+      min-height: 74px;
+      padding: 16px 14px;
+      text-align: center;
+      cursor: pointer;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(46, 231, 255, 0.45);
+    }
+
+    .tab-button.active {
+      color: white;
+      border-color: rgba(46, 231, 255, 0.65);
+      box-shadow: 0 0 0 1px rgba(46, 231, 255, 0.18) inset, 0 0 22px rgba(46, 231, 255, 0.08);
+    }
+
+    .catalog-panel {
+      border-radius: 30px;
+      padding: 30px 20px 26px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(7, 19, 33, 0.92), rgba(6, 15, 26, 0.96));
+      box-shadow: var(--shadow);
+    }
+
+    .catalog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.02em;
+      color: #f7fbff;
+      text-transform: none;
+      text-shadow:
+        -1px -1px 0 rgba(2, 16, 28, 0.95),
+        1px -1px 0 rgba(2, 16, 28, 0.95),
+        -1px 1px 0 rgba(2, 16, 28, 0.95),
+        1px 1px 0 rgba(2, 16, 28, 0.95);
+    }
+
+    .cart-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(46, 231, 255, 0.28);
+      background: rgba(8, 22, 38, 0.85);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .cart-inline strong {
+      color: var(--cyan-soft);
+      font-size: 15px;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 22px;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid rgba(46, 231, 255, 0.18);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(12, 29, 48, 0.96), rgba(9, 23, 39, 0.96));
+      color: white;
+      padding: 18px 18px 18px 54px;
+      font-size: 17px;
+      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.015);
+    }
+
+    .search-box input::placeholder { color: #758ca5; }
+
+    .search-box svg {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      stroke: #90a7c0;
+    }
+
+    .catalog-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .catalog-enter { animation: fadeCatalog 0.3s ease both; }
+    @keyframes fadeCatalog {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .game-card {
+      border: 1px solid rgba(46, 231, 255, 0.14);
+      border-radius: 26px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(12, 29, 48, 0.9), rgba(8, 21, 35, 0.96));
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+    }
+
+    .game-summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 20px;
+      user-select: none;
+    }
+
+    .game-summary::-webkit-details-marker { display: none; }
+
+    .game-main {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .game-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(46, 231, 255, 0.12);
+      color: var(--cyan);
+      font-size: 28px;
+      flex-shrink: 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .game-info { min-width: 0; }
+
+    .game-title {
+      margin: 0;
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      font-size: clamp(21px, 3vw, 30px);
+      letter-spacing: 0.02em;
+      text-shadow:
+        -1px -1px 0 rgba(2, 16, 28, 0.95),
+        1px -1px 0 rgba(2, 16, 28, 0.95),
+        -1px 1px 0 rgba(2, 16, 28, 0.95),
+        1px 1px 0 rgba(2, 16, 28, 0.95);
+    }
+
+    .game-count {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .game-arrow {
+      color: var(--cyan);
+      font-size: 22px;
+      transition: transform 0.2s ease;
+    }
+
+    details[open] .game-arrow { transform: rotate(180deg); }
+
+    .game-products {
+      padding: 0 16px 14px;
+      border-top: 1px solid rgba(46, 231, 255, 0.08);
+    }
+
+    .product-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .product-item:last-child { border-bottom: none; }
+
+    .product-name {
+      color: #edf8ff;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .product-name .gift-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(24, 211, 141, 0.24);
+      background: rgba(24, 211, 141, 0.08);
+      color: #8af6c7;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .product-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #9dffcf;
+      min-width: max-content;
+    }
+
+    .btn,
+    .btn-secondary,
+    .btn-outline,
+    .btn-danger {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:hover,
+    .btn-secondary:hover,
+    .btn-outline:hover,
+    .btn-danger:hover { transform: translateY(-1px); }
+
+    .btn {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #2ee7ff, #16baf5);
+      color: #03141d;
+      box-shadow: 0 8px 18px rgba(46, 231, 255, 0.16);
+    }
+
+    .btn-secondary {
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 14px;
+      background: rgba(46, 231, 255, 0.08);
+      border: 1px solid rgba(46, 231, 255, 0.22);
+      color: white;
+    }
+
+    .btn-outline {
+      min-height: 40px;
+      padding: 0 13px;
+      border-radius: 12px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #dfefff;
+    }
+
+    .btn-danger {
+      min-height: 40px;
+      padding: 0 13px;
+      border-radius: 12px;
+      background: rgba(255, 91, 122, 0.09);
+      border: 1px solid rgba(255, 91, 122, 0.18);
+      color: #ffc4d0;
+    }
+
+    .btn-canje {
+      min-height: 38px;
+      padding: 0 12px;
+      border-radius: 12px;
+      background: rgba(255, 215, 87, 0.08);
+      border: 1px solid rgba(255, 215, 87, 0.18);
+      color: #ffd86d;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .empty-state,
+    .error-state,
+    .loading-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .loading-gem {
+      font-size: 42px;
+      filter: drop-shadow(0 0 12px rgba(46, 231, 255, 0.45));
+      animation: pulseGem 1.15s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseGem {
+      from { transform: scale(0.92); opacity: 0.7; }
+      to { transform: scale(1.08); opacity: 1; }
+    }
+
+    .floating-wa,
+    .floating-cart {
+      position: fixed;
+      right: 16px;
+      border: none;
+      cursor: pointer;
+      z-index: 1600;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.3);
+    }
+
+    .floating-wa {
+      bottom: 18px;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #29ee72, #16c95b);
+      color: white;
+      font-size: 30px;
+    }
+
+    .floating-cart {
+      bottom: 96px;
+      min-width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #1c3350, #0b1e34);
+      color: white;
+      border: 1px solid rgba(46, 231, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: 4px;
+      right: 2px;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: #2ee7ff;
+      color: #04131d;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(2, 8, 15, 0.74);
+      backdrop-filter: blur(9px);
+      z-index: 3000;
+    }
+
+    .modal.visible { display: flex; }
+
+    .modal-card {
+      width: min(560px, 96vw);
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 26px;
+      padding: 22px;
+      border: 1px solid rgba(46, 231, 255, 0.2);
+      background: linear-gradient(180deg, rgba(10, 26, 44, 0.98), rgba(7, 18, 32, 0.98));
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: white;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .modal-title {
+      margin: 0 42px 10px 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .modal-subtitle {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .summary-box {
+      border: 1px solid rgba(46, 231, 255, 0.12);
+      border-radius: 20px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+      margin-bottom: 14px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+      font-size: 15px;
+      color: #dbebf8;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .summary-row:last-child { border-bottom: none; }
+
+    .summary-row strong { text-align: right; }
+
+    .cart-list {
+      display: grid;
+      gap: 10px;
+      margin: 14px 0 16px;
+    }
+
+    .cart-item {
+      border: 1px solid rgba(46, 231, 255, 0.1);
+      background: rgba(255,255,255,0.02);
+      border-radius: 18px;
+      padding: 13px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .cart-item-title {
+      font-size: 15px;
+      color: white;
+      line-height: 1.45;
+    }
+
+    .cart-item-sub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .qty-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid rgba(46, 231, 255, 0.16);
+      background: rgba(46, 231, 255, 0.05);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .qty-pill {
+      min-width: 38px;
+      height: 34px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-weight: 700;
+    }
+
+    .total-box {
+      border-radius: 20px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(10, 30, 48, 0.95), rgba(7, 20, 34, 0.98));
+      border: 1px solid rgba(46, 231, 255, 0.14);
+      margin-top: 16px;
+    }
+
+    .total-box strong {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      color: #9dffcf;
+    }
+
+    .modal-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .qr-wrap {
+      width: min(260px, 78vw);
+      background: white;
+      border-radius: 18px;
+      padding: 12px;
+      margin: 0 auto 12px;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.2);
+    }
+
+    .qr-wrap img {
+      width: 100%;
+      display: block;
+      border-radius: 10px;
+    }
+
+    .qr-help {
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .security-box {
+      margin-top: 16px;
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255, 208, 94, 0.08);
+      border: 1px solid rgba(255, 208, 94, 0.2);
+      color: #f6e4b0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .howto-list {
+      padding-left: 20px;
+      line-height: 1.6;
+      color: #dcecf8;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 980px) {
+      .hero-badges,
+      .tabs-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      .page-wrap { width: min(100% - 18px, 100%); padding-top: 14px; }
+      .hero { padding: 24px 16px 22px; border-radius: 24px; }
+      .brand-row { gap: 8px; }
+      .brand-title { letter-spacing: 0.02em; }
+      .hero-description { font-size: 15px; }
+      .hero-badges { grid-template-columns: 1fr; }
+      .tabs-wrap { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .tab-button { min-height: 64px; font-size: 15px; padding: 10px; }
+      .catalog-panel { padding: 22px 14px 18px; border-radius: 24px; }
+      .catalog-head { margin-bottom: 16px; }
+      .section-title { font-size: 24px; }
+      .product-item { grid-template-columns: 1fr; }
+      .product-actions { justify-content: flex-start; }
+      .game-summary { padding: 16px 14px; }
+      .game-title { font-size: 19px; }
+      .game-count { font-size: 14px; }
+      .search-box input { font-size: 16px; }
+      .cart-inline { width: 100%; justify-content: center; }
+      .floating-cart { bottom: 92px; right: 12px; }
+      .floating-wa { right: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="page-wrap">
+    <header class="hero">
+      <div class="hero-pill">Recargas al instante</div>
 
-    <header>
-        <div class="store-banner banner-left" aria-hidden="true">
-            <div class="banner-mini">FRENCH STORE</div>
-            <div class="banner-gem">💎</div>
-            <div class="banner-fs">FS</div>
-            <div class="banner-mini">RECARGAS · CÓDIGOS</div>
-        </div>
-        <div class="store-banner banner-right" aria-hidden="true">
-            <div class="banner-mini">FRENCH STORE</div>
-            <div class="banner-gem">💎</div>
-            <div class="banner-fs">FS</div>
-            <div class="banner-mini">JUEGOS · STREAMING</div>
-        </div>
+      <div class="brand-row">
+        <span class="brand-diamond">💎</span>
+        <h1 class="brand-title">FRENCH STORE</h1>
+        <span class="brand-diamond">💎</span>
+      </div>
 
-        <div class="hero-frame">
-            <div class="subtitle">RECARGAS Y CÓDIGOS DIGITALES</div>
-            <h1 class="neon-title">
-                <span class="brand-diamond">💎</span>
-                <span class="brand-word">FRENCH STORE</span>
-                <span class="brand-diamond">💎</span>
-            </h1>
-            <p class="description">Diamantes, monedas, pases, plataformas de streaming y Gift Cards. Elige tu producto y compra de forma sencilla.</p>
-            <div class="badges">
-                <span class="badge">⚡ Entrega rápida</span>
-                <span class="badge">🛡️ Pago seguro</span>
-                <span class="badge">🎮 +25 Juegos</span>
-            </div>
-            <p class="security-head">
-                🔐 Por tu seguridad, verifica siempre el destinatario mostrado por tu banco antes de pagar.
-                Si no coincide con el indicado en esta página, no realices el pago.
-            </p>
-        </div>
+      <p class="hero-description">
+        Diamantes, monedas y pases para tus juegos favoritos. Elige tu juego, elige tu paquete y recibe tu recarga en minutos.
+      </p>
+
+      <div class="hero-badges">
+        <div class="hero-badge">🕒 Entrega rápida</div>
+        <div class="hero-badge">🛡️ Pago seguro</div>
+        <div class="hero-badge">🎮 <div><strong id="hero-juegos-count">+25 juegos</strong><span>Catálogo actualizado</span></div></div>
+      </div>
+
+      <div class="hero-security">
+        🔐 Por tu seguridad, verifica siempre el destinatario mostrado por tu banco antes de pagar.
+        Si no coincide con el indicado en esta página, no realices el pago.
+      </div>
     </header>
 
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-button active" onclick="filtrarCategoria('Recargas por ID', this)">🎮 Recargas por ID</button>
-            <button class="tab-button" onclick="filtrarCategoria('Recargas por Cuenta', this)">👤 Recargas por Cuenta</button>
-            <button class="tab-button" onclick="filtrarCategoria('Streaming', this)">📺 Plataformas de Streaming</button>
-            <button class="tab-button" onclick="filtrarCategoria('Gift Cards', this)">🎁 Gift Cards</button>
-        </div>
-
-        <div id="lista-productos">
-            <div id="loader-catalogo">
-                <div class="loader-gem">💎</div>
-                <div>Cargando catálogo...</div>
-                <div class="loader-line"></div>
-            </div>
-        </div>
-
-        <div class="quote-cta">
-            <div class="quote-cta-text">
-                <strong>¿No encuentras el juego o plataforma que buscas?</strong>
-                <span>Escríbenos por WhatsApp y con gusto te enviaremos una cotización personalizada.</span>
-            </div>
-            <button type="button" onclick="cotizarProducto()">💬 Cotizar por WhatsApp</button>
-        </div>
+    <div class="tabs-wrap">
+      <button class="tab-button active" data-categoria="Recargas por ID">🎮 Recargas por ID</button>
+      <button class="tab-button" data-categoria="Recargas por Cuenta">👤 Recargas por Cuenta</button>
+      <button class="tab-button" data-categoria="Streaming">📺 Plataformas de Streaming</button>
+      <button class="tab-button" data-categoria="Gift Cards">🎁 Gift Cards</button>
     </div>
 
+    <section class="catalog-panel">
+      <div class="catalog-head">
+        <h2 class="section-title">Catálogo de juegos</h2>
+        <button class="cart-inline" type="button" onclick="abrirCarrito()">
+          🛒 Carrito <strong id="cart-inline-count">0</strong>
+        </button>
+      </div>
 
-    <!-- MODAL DE PAGO -->
-    <div id="modal-pago" class="modal-pago" aria-hidden="true">
-        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-pago-titulo">
-            <button class="modal-cerrar" type="button" onclick="cerrarModalPago()" aria-label="Cerrar">×</button>
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="input-busqueda" type="text" placeholder="Buscar juego o paquete..." autocomplete="off">
+      </div>
 
-            <h2 id="modal-pago-titulo" class="modal-title">Completa tu pago</h2>
-            <p class="modal-subtitle">
-                Revisa el producto, escanea el QR y luego avísanos por WhatsApp para procesar tu compra.
-            </p>
+      <div class="catalog-meta">
+        <div id="meta-categoria">Mostrando: Recargas por ID</div>
+        <div id="meta-conteo">0 juegos</div>
+      </div>
 
-            <div class="resumen-pago">
-                <div class="resumen-fila">
-                    <span>Juego</span>
-                    <strong id="pago-juego">-</strong>
-                </div>
-                <div class="resumen-fila">
-                    <span>Paquete</span>
-                    <strong id="pago-paquete">-</strong>
-                </div>
-                <div class="resumen-fila">
-                    <span>Total</span>
-                    <strong id="pago-precio" style="color:#22c55e;">-</strong>
-                </div>
-                <div class="resumen-fila">
-                    <span>Pedido</span>
-                    <strong id="pago-pedido">-</strong>
-                </div>
-            </div>
-
-            <div class="qr-wrap">
-                <img
-                    id="qr-pago"
-                    src="qr-pago.png"
-                    alt="Código QR para realizar el pago"
-                    onerror="mostrarQRFaltante(this)"
-                >
-            </div>
-
-            <p id="qr-ayuda" class="qr-ayuda">
-                Puedes escanear el QR desde otro dispositivo o descargarlo para abrirlo desde tu banca móvil.
-            </p>
-
-            <div class="acciones-pago">
-                <button class="btn-modal btn-pagado" type="button" onclick="confirmarPagoWhatsApp()">
-                    ✅ Ya pagué, avisar por WhatsApp
-                </button>
-
-                <a id="descargar-qr" class="btn-modal btn-descargar" href="qr-pago.png" download="QR-FRENCH-STORE.png">
-                    ⬇️ Descargar QR
-                </a>
-
-                <button class="btn-modal btn-consultar" type="button" onclick="consultarAntesDePagar()">
-                    💬 Prefiero consultar antes de pagar
-                </button>
-            </div>
-
-            <div class="seguridad-pago" style="background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.28); padding:12px; border-radius:12px;">
-                <span>🛡️</span>
-                <span>
-                    <strong style="color:#fbbf24;">Pago seguro:</strong><br>
-                    Antes de confirmar, verifica que tu banca muestre:<br>
-                    <strong>Destinatario:</strong> <span id="seguridad-destinatario">-</span><br>
-                    <strong>Banco:</strong> <span id="seguridad-banco">-</span><br><br>
-                    Si el destinatario no coincide, <strong>NO realices el pago</strong>.<br>
-                    Nunca te pediremos contraseña, PIN, código SMS ni token de seguridad.
-                </span>
-            </div>
+      <div id="lista-productos" class="catalog-enter">
+        <div class="loading-state">
+          <div class="loading-gem">💎</div>
+          <div style="margin-top:10px;">Cargando catálogo...</div>
         </div>
+      </div>
+    </section>
+  </div>
+
+  <button class="floating-cart" type="button" onclick="abrirCarrito()" aria-label="Abrir carrito">
+    🛒
+    <span id="cart-badge" class="cart-badge">0</span>
+  </button>
+
+  <button class="floating-wa" type="button" onclick="contactarWhatsApp()" aria-label="WhatsApp">💬</button>
+
+  <!-- MODAL CARRITO -->
+  <div id="modal-carrito" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" type="button" onclick="cerrarCarrito()">×</button>
+      <h3 class="modal-title">Tu carrito</h3>
+      <p class="modal-subtitle">Aquí puedes juntar varios productos, como varios pases semanales, y pagar todo en un mismo pedido.</p>
+      <div id="carrito-contenido"></div>
     </div>
+  </div>
 
+  <!-- MODAL PAGO -->
+  <div id="modal-pago" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" type="button" onclick="cerrarModalPago()">×</button>
+      <h3 class="modal-title">Completa tu pago</h3>
+      <p class="modal-subtitle">Revisa tu pedido, escanea el QR y luego avísanos por WhatsApp para procesar la compra.</p>
 
-    <!-- MODAL DE CÓMO CANJEAR GIFT CARDS -->
-    <div id="modal-canje" class="modal-pago" aria-hidden="true">
-        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-canje-titulo">
-            <button class="modal-cerrar" type="button" onclick="cerrarModalCanje()" aria-label="Cerrar">×</button>
+      <div class="summary-box" id="resumen-pago-box"></div>
+      <div id="detalle-pago-extra"></div>
 
-            <h2 id="modal-canje-titulo" class="modal-title">📖 Cómo canjear</h2>
-            <p id="modal-canje-subtitulo" class="modal-subtitle">Instrucciones de canje.</p>
+      <div class="qr-wrap">
+        <img id="qr-pago" src="qr-pago.png" alt="Código QR para realizar el pago" onerror="mostrarQRFaltante(this)">
+      </div>
+      <div class="qr-help" id="qr-help">Puedes escanear el QR desde otro dispositivo o descargarlo para abrirlo desde tu banca móvil.</div>
 
-            <div class="canje-aviso">
-                🔐 Verifica que estés entrando en tu cuenta correcta antes de canjear el código.
-                Los códigos digitales normalmente son de un solo uso.
-            </div>
+      <div class="modal-actions">
+        <button class="btn" type="button" onclick="confirmarPagoWhatsApp()">✅ Ya pagué, avisar por WhatsApp</button>
+        <a id="descargar-qr" class="btn-secondary" href="qr-pago.png" download="QR-FRENCH-STORE.png" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">⬇️ Descargar QR</a>
+        <button class="btn-outline" type="button" onclick="consultarAntesDePagar()">💬 Consultar antes de pagar</button>
+      </div>
 
-            <ol id="modal-canje-pasos" class="canje-lista"></ol>
+      <div class="security-box">
+        <strong>Verificación de pago</strong><br>
+        Destinatario: <strong id="seguridad-destinatario">-</strong><br>
+        Banco: <strong id="seguridad-banco">-</strong><br><br>
+        Si el destinatario no coincide, <strong>NO realices el pago</strong>.<br>
+        Nunca te pediremos contraseña, PIN, código SMS ni token de seguridad.
+      </div>
+    </div>
+  </div>
 
-            <a
-                id="modal-canje-enlace"
-                class="btn-modal btn-pagado btn-oficial"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-            >🌐 Ir al sitio oficial</a>
+  <!-- MODAL CÓMO CANJEAR -->
+  <div id="modal-canje" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" type="button" onclick="cerrarModalCanje()">×</button>
+      <h3 id="modal-canje-titulo" class="modal-title">Cómo canjear</h3>
+      <p id="modal-canje-subtitulo" class="modal-subtitle">Sigue estos pasos.</p>
+      <ol id="modal-canje-pasos" class="howto-list"></ol>
+      <div class="modal-actions">
+        <a id="modal-canje-enlace" class="btn" href="#" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">🌐 Ir al sitio oficial</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === CONFIGURACIÓN ===
+    const SUPABASE_URL = 'SUPABASE_URL_PUBLICA_REDACTED';
+    const SUPABASE_KEY = 'SUPABASE_ANON_KEY_PUBLICA_REDACTED';
+    const NUMERO_WHATSAPP = 'NUMERO_WHATSAPP_PUBLICO_REDACTED';
+    const DESTINATARIO_PAGO = 'DESTINATARIO_PAGO_REDACTED';
+    const BANCO_PAGO = 'BANCO_PAGO_REDACTED';
+    const ARCHIVO_QR = 'qr-pago.png';
+
+    let inventarioGlobal = [];
+    let categoriaActual = 'Recargas por ID';
+    let terminoBusqueda = '';
+    let compraActual = null;
+    let carrito = [];
+
+    const GUIAS_CANJE = {
+      roblox: {
+        titulo: '🔷 Roblox',
+        pasos: [
+          'Abre la página oficial de canje de Roblox.',
+          'Inicia sesión en la cuenta donde quieres recibir el saldo o los Robux.',
+          'Introduce el código recibido y pulsa Canjear.',
+          'Comprueba el mensaje de confirmación antes de cerrar la página.'
+        ],
+        enlace: 'https://www.roblox.com/redeem'
+      },
+      steam: {
+        titulo: '💵 Steam',
+        pasos: [
+          'Inicia sesión en tu cuenta de Steam.',
+          'Abre la opción para canjear una tarjeta de regalo o código de la Cartera.',
+          'Introduce el código recibido exactamente como aparece.',
+          'Pulsa Continuar y verifica que el saldo se agregue a tu Cartera de Steam.'
+        ],
+        enlace: 'https://store.steampowered.com/account/redeemwalletcode'
+      },
+      minecraft: {
+        titulo: '🟡 Minecraft Minecoins',
+        pasos: [
+          'Abre la página oficial de canje de Minecraft.',
+          'Inicia sesión con la cuenta de Microsoft que utilizas en Minecraft.',
+          'Introduce el código recibido y sigue las instrucciones de pantalla.',
+          'Abre Minecraft Marketplace y verifica tu saldo de Minecoins.'
+        ],
+        enlace: 'https://www.minecraft.net/es-es/redeem'
+      },
+      leagueoflegends: {
+        titulo: '💠 League of Legends',
+        pasos: [
+          'Abre League of Legends e inicia sesión en la cuenta correcta.',
+          'Entra a la Tienda y abre la sección Cuenta.',
+          'Selecciona Canjear códigos.',
+          'Introduce el código recibido y confirma el canje.'
+        ],
+        enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
+      },
+      teamfighttactics: {
+        titulo: '🟣 Teamfight Tactics',
+        pasos: [
+          'Inicia sesión con tu cuenta de Riot.',
+          'Desde el cliente compatible, entra a Tienda y luego a Cuenta.',
+          'Selecciona Canjear códigos.',
+          'Introduce el código y confirma el canje.'
+        ],
+        enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
+      },
+      valorant: {
+        titulo: '🔻 VALORANT',
+        pasos: [
+          'Abre VALORANT e inicia sesión en la cuenta correcta.',
+          'Pulsa el icono de VALORANT junto al saldo de VP.',
+          'Elige Tarjetas prepagadas y códigos.',
+          'Introduce el código recibido y confirma.'
+        ],
+        enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
+      },
+      standoff2: {
+        titulo: '🟡 Standoff 2',
+        pasos: [
+          'Abre la tienda oficial de Standoff 2.',
+          'Inicia sesión y selecciona la cuenta correcta usando tu ID.',
+          'Abre la opción Promo Code / código en la tienda.',
+          'Introduce el código recibido y pulsa Apply.'
+        ],
+        enlace: 'https://store.standoff2.com'
+      }
+    };
+
+    function escaparHTML(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function normalizarClave(texto) {
+      return String(texto || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '');
+    }
+
+    function normalizarBusqueda(texto) {
+      return String(texto || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+    }
+
+    function quitarEmojiInicial(texto) {
+      return String(texto || '')
+        .replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '')
+        .trim();
+    }
+
+    function numeroSeguro(texto) {
+      let valor = String(texto || '').trim();
+      if (/^\d{1,3}(\.\d{3})+$/.test(valor)) {
+        valor = valor.replace(/\./g, '');
+      } else {
+        valor = valor.replace(',', '.');
+      }
+      const numero = Number(valor);
+      return Number.isFinite(numero) ? numero : null;
+    }
+
+    function mostrarNumero(numero) {
+      if (!Number.isFinite(numero)) return '';
+      return Number.isInteger(numero)
+        ? String(numero)
+        : String(Math.round(numero * 100) / 100).replace('.', ',');
+    }
+
+    function formatoPrecio(valor) {
+      const numero = Number(valor) || 0;
+      return `${(Math.round(numero * 100) / 100).toFixed(2).replace(/\.00$/, '')} Bs`;
+    }
+
+    function generarIdPedido() {
+      const ahora = new Date();
+      const fecha =
+        String(ahora.getFullYear()).slice(-2) +
+        String(ahora.getMonth() + 1).padStart(2, '0') +
+        String(ahora.getDate()).padStart(2, '0');
+      const aleatorio = Math.random().toString(36).slice(2, 6).toUpperCase();
+      return `FS-${fecha}-${aleatorio}`;
+    }
+
+    function unidadPorJuego(juego) {
+      const clave = normalizarClave(juego);
+      if (clave.includes('freefire')) return 'Diamantes';
+      if (clave.includes('mobilelegends')) return 'Diamantes';
+      if (clave.includes('pubg')) return 'UC';
+      if (clave.includes('honorofkings')) return 'Tokens';
+      if (clave.includes('roblox')) return 'Robux';
+      if (clave.includes('minecraft')) return 'Minecoins';
+      if (clave.includes('valorant')) return 'VP';
+      if (clave.includes('leagueoflegends')) return 'RP';
+      if (clave.includes('standoff2')) return 'Gold';
+      return '';
+    }
+
+    function totalizarBonos(textoOriginal, juego) {
+      let texto = quitarEmojiInicial(textoOriginal).replace(/\s+/g, ' ').trim();
+      const unidad = '(diamantes?|diamonds?|uc|tokens?|robux|vp|rp|minecoins?|gold|oro|coins?|monedas?)';
+
+      let match = texto.match(new RegExp('^([\\d.,]+)\\s*\\+\\s*([\\d.,]+)\\s*' + unidad + '(?:\\s*(?:bonus|bono|extra))?\\s*$', 'i'));
+      if (match) {
+        const a = numeroSeguro(match[1]);
+        const b = numeroSeguro(match[2]);
+        if (a !== null && b !== null) return `${mostrarNumero(a + b)} ${match[3]}`;
+      }
+
+      match = texto.match(new RegExp('^([\\d.,]+)\\s*' + unidad + '\\s*\\+\\s*([\\d.,]+)\\s*(?:bonus|bono|extra)\\s*$', 'i'));
+      if (match) {
+        const a = numeroSeguro(match[1]);
+        const b = numeroSeguro(match[3]);
+        if (a !== null && b !== null) return `${mostrarNumero(a + b)} ${match[2]}`;
+      }
+
+      match = texto.match(/^([\d.,]+)\s*\+\s*([\d.,]+)$/);
+      if (match) {
+        const a = numeroSeguro(match[1]);
+        const b = numeroSeguro(match[2]);
+        const unidadInferida = unidadPorJuego(juego);
+        if (a !== null && b !== null && unidadInferida) return `${mostrarNumero(a + b)} ${unidadInferida}`;
+      }
+
+      return texto;
+    }
+
+    function iconoProducto(producto, textoVisible) {
+      const juego = normalizarClave(producto?.juego);
+      const texto = normalizarClave(textoVisible);
+      const categoria = producto?.categoria || '';
+
+      if (juego.includes('steam')) return '💵';
+      if (juego.includes('minecraft')) return '🟡';
+      if (juego.includes('roblox')) return '🔷';
+      if (juego.includes('valorant')) return '🔻';
+      if (juego.includes('leagueoflegends')) return '💠';
+      if (juego.includes('teamfighttactics')) return '🟣';
+      if (juego.includes('standoff2')) return '🟡';
+      if (texto.includes('diamante') || texto.includes('diamond')) return '💎';
+      if (/(^|[^a-z])uc([^a-z]|$)/i.test(String(textoVisible))) return '🪙';
+      if (texto.includes('token')) return '🟡';
+      if (texto.includes('robux')) return '🔷';
+      if (texto.includes('minecoin')) return '🟡';
+      if (/(^|[^a-z])vp([^a-z]|$)/i.test(String(textoVisible))) return '🔻';
+      if (/(^|[^a-z])rp([^a-z]|$)/i.test(String(textoVisible))) return '💠';
+      if (texto.includes('gold') || texto.includes('oro')) return '🟡';
+      if (texto.includes('coin') || texto.includes('moneda')) return '🪙';
+      if (texto.includes('pase') || texto.includes('pass')) return '🎟️';
+      if (texto.includes('mensual') || texto.includes('monthly') || texto.includes('tarjeta')) return '🗓️';
+      if (texto.includes('paquete') || texto.includes('paq') || texto.includes('bundle')) return '📦';
+      if (texto.includes('skin')) return '👕';
+      if (texto.includes('suscripcion') || texto.includes('subscription')) return '⭐';
+      if (categoria === 'Gift Cards') return '🎁';
+      if (categoria === 'Recargas por Cuenta') return '👤';
+      if (categoria === 'Streaming') return '📺';
+      return '🎮';
+    }
+
+    function iconoJuego(producto) {
+      const categoria = producto?.categoria || '';
+      const juego = normalizarClave(producto?.juego);
+      if (categoria === 'Streaming') return '📺';
+      if (categoria === 'Gift Cards') return '🎁';
+      if (juego.includes('freefire') || juego.includes('mobilelegends') || juego.includes('pubg') || juego.includes('bloodstrike')) return '🎮';
+      if (juego.includes('clash')) return '⚔️';
+      if (juego.includes('minecraft')) return '🧱';
+      if (juego.includes('valorant')) return '🎯';
+      return '🎮';
+    }
+
+    function nombrePaqueteVisible(producto) {
+      const texto = totalizarBonos(producto?.paquete || '', producto?.juego || '');
+      const icono = iconoProducto(producto, texto);
+      return `${icono} ${texto}`.trim();
+    }
+
+    function guiaCanjeDeProducto(producto) {
+      const clave = normalizarClave(producto?.juego || '');
+      return GUIAS_CANJE[clave] || null;
+    }
+
+    function actualizarContadoresCarrito() {
+      const cantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+      document.getElementById('cart-badge').textContent = cantidad;
+      document.getElementById('cart-inline-count').textContent = cantidad;
+    }
+
+    function guardarCarrito() {
+      try {
+        localStorage.setItem('french_store_carrito', JSON.stringify(carrito));
+      } catch (_) {}
+      actualizarContadoresCarrito();
+    }
+
+    function cargarCarritoGuardado() {
+      try {
+        const guardado = JSON.parse(localStorage.getItem('french_store_carrito') || '[]');
+        carrito = Array.isArray(guardado) ? guardado : [];
+      } catch (_) {
+        carrito = [];
+      }
+      actualizarContadoresCarrito();
+    }
+
+    function agregarAlCarrito(idProducto) {
+      const producto = inventarioGlobal.find(item => String(item.id) === String(idProducto));
+      if (!producto) return;
+
+      const existente = carrito.find(item => String(item.id) === String(idProducto));
+      if (existente) {
+        existente.cantidad += 1;
+      } else {
+        carrito.push({
+          id: producto.id,
+          juego: producto.juego,
+          paquete: nombrePaqueteVisible(producto),
+          paqueteOriginal: producto.paquete,
+          categoria: producto.categoria,
+          precio: Number(producto.precio) || 0,
+          cantidad: 1
+        });
+      }
+
+      guardarCarrito();
+      mostrarToast(`Añadido al carrito: ${producto.juego}`);
+    }
+
+    function cambiarCantidadCarrito(idProducto, cambio) {
+      const item = carrito.find(row => String(row.id) === String(idProducto));
+      if (!item) return;
+      item.cantidad += cambio;
+      if (item.cantidad <= 0) {
+        carrito = carrito.filter(row => String(row.id) !== String(idProducto));
+      }
+      guardarCarrito();
+      renderizarCarrito();
+    }
+
+    function eliminarDelCarrito(idProducto) {
+      carrito = carrito.filter(row => String(row.id) !== String(idProducto));
+      guardarCarrito();
+      renderizarCarrito();
+    }
+
+    function vaciarCarrito() {
+      carrito = [];
+      guardarCarrito();
+      renderizarCarrito();
+    }
+
+    function subtotalCarrito() {
+      return carrito.reduce((acc, item) => acc + (Number(item.precio) || 0) * item.cantidad, 0);
+    }
+
+    function abrirCarrito() {
+      renderizarCarrito();
+      const modal = document.getElementById('modal-carrito');
+      modal.classList.add('visible');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarCarrito() {
+      const modal = document.getElementById('modal-carrito');
+      modal.classList.remove('visible');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function renderizarCarrito() {
+      const contenedor = document.getElementById('carrito-contenido');
+      if (!carrito.length) {
+        contenedor.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size:36px; margin-bottom:8px;">🛒</div>
+            Tu carrito está vacío.<br>
+            <span class="small-note">Puedes ir agregando varios productos y luego pagarlos juntos.</span>
+          </div>
+        `;
+        return;
+      }
+
+      const itemsHtml = carrito.map(item => `
+        <div class="cart-item">
+          <div>
+            <div class="cart-item-title">${escaparHTML(item.juego)}</div>
+            <div class="cart-item-sub">${escaparHTML(item.paquete)} · ${formatoPrecio(item.precio)} c/u</div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" type="button" onclick="cambiarCantidadCarrito('${item.id}', -1)">−</button>
+            <div class="qty-pill">${item.cantidad}</div>
+            <button class="qty-btn" type="button" onclick="cambiarCantidadCarrito('${item.id}', 1)">+</button>
+            <button class="btn-danger" type="button" onclick="eliminarDelCarrito('${item.id}')">Quitar</button>
+          </div>
         </div>
-    </div>
-
-    <script>
-        // --- 1. AQUÍ VAN TUS DATOS DE SUPABASE ---
-        const SUPABASE_URL = 'https://jivaaripugjdpxjvjnsu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppdmFhcmlwdWdqZHB4anZqbnN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NDY3MzIsImV4cCI6MjEwMTIyMjczMn0.N60Xb1PqqPo12HdKEzPc4qCp1aFvVzwZz4VG04q_Es4';
-        
-        // --- 2. AQUÍ VA TU NÚMERO DE WHATSAPP ---
-        const NUMERO_WHATSAPP = '59177057379';
-
-        // DATOS QUE EL CLIENTE DEBE VERIFICAR ANTES DE PAGAR
-        // Cambia SOLO estos dos valores por tus datos reales.
-        const DESTINATARIO_PAGO = 'Franz Chui';
-        const BANCO_PAGO = 'Banco Unión';
-
-        // El archivo de tu QR debe llamarse exactamente "qr-pago.png"
-        // y estar en la misma carpeta que index.html en GitHub.
-        const ARCHIVO_QR = 'qr-pago.png';
-
-        // Worker público: sólo devuelve la letra interna G/B del proveedor
-        // para productos que participan en el selector multiproveedor.
-        const WORKER_PUBLIC_URL = 'https://the-french-store.chuihuarachif.workers.dev';
-
-        let inventarioGlobal = [];
-        let compraActual = null;
-
-        const GUIAS_CANJE = {
-            roblox: {
-                titulo: '🔷 Roblox',
-                pasos: [
-                    'Abre la página oficial de canje de Roblox en un navegador.',
-                    'Inicia sesión en la cuenta donde quieres recibir el saldo o los Robux.',
-                    'Introduce el código recibido y pulsa Canjear.',
-                    'Comprueba el mensaje de confirmación antes de cerrar la página.'
-                ],
-                enlace: 'https://www.roblox.com/redeem'
-            },
-            steam: {
-                titulo: '💵 Steam',
-                pasos: [
-                    'Inicia sesión en tu cuenta de Steam.',
-                    'Abre la opción para canjear una tarjeta de regalo o código de la Cartera.',
-                    'Introduce el código recibido exactamente como aparece.',
-                    'Pulsa Continuar y verifica que el saldo se agregue a tu Cartera de Steam.'
-                ],
-                enlace: 'https://store.steampowered.com/account/redeemwalletcode'
-            },
-            minecraft: {
-                titulo: '🟡 Minecraft Minecoins',
-                pasos: [
-                    'Abre la página oficial de canje de Minecraft.',
-                    'Inicia sesión con la cuenta de Microsoft que utilizas en Minecraft.',
-                    'Introduce el código recibido y sigue las instrucciones de pantalla.',
-                    'Abre Minecraft Marketplace y verifica tu saldo de Minecoins.'
-                ],
-                enlace: 'https://www.minecraft.net/es-es/redeem'
-            },
-            leagueoflegends: {
-                titulo: '💠 League of Legends',
-                pasos: [
-                    'Abre League of Legends e inicia sesión en la cuenta correcta.',
-                    'Entra a la Tienda y abre la sección Cuenta.',
-                    'Selecciona Canjear códigos.',
-                    'Introduce el código recibido y confirma el canje.'
-                ],
-                enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
-            },
-            teamfighttactics: {
-                titulo: '🟣 Teamfight Tactics',
-                pasos: [
-                    'Inicia sesión con tu cuenta de Riot.',
-                    'Desde el cliente compatible, entra a Tienda y luego a Cuenta.',
-                    'Selecciona Canjear códigos.',
-                    'Introduce el código completo y confirma el canje en la cuenta correcta.'
-                ],
-                enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
-            },
-            valorant: {
-                titulo: '🔻 VALORANT',
-                pasos: [
-                    'Abre VALORANT e inicia sesión en la cuenta correcta.',
-                    'Pulsa el icono de VALORANT junto al saldo de VP.',
-                    'Elige Tarjetas prepagadas y códigos.',
-                    'Introduce el código recibido y confirma para agregar los VP.'
-                ],
-                enlace: 'https://support-leagueoflegends.riotgames.com/hc/en-us/articles/201753224-Prepaid-Gift-Cards'
-            },
-            standoff2: {
-                titulo: '🟡 Standoff 2',
-                pasos: [
-                    'Abre la tienda oficial de Standoff 2.',
-                    'Inicia sesión y selecciona la cuenta correcta usando tu ID.',
-                    'Abre la opción Promo Code / código en la tienda.',
-                    'Introduce el código recibido y pulsa Apply.'
-                ],
-                enlace: 'https://store.standoff2.com'
-            }
-        };
-
-        function normalizarClave(texto) {
-            return String(texto || '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '');
-        }
-
-        // Unifica nombres equivalentes que llegan con distinta etiqueta
-        // desde cada proveedor. Solo cambia cómo se muestran/agrupan en la web;
-        // NO modifica Supabase ni los datos técnicos del producto.
-        function nombreJuegoCanonico(juego) {
-            const original = String(juego || '').trim();
-            const clave = normalizarClave(original);
-
-            if (clave === 'magicchess' || clave === 'magicchessgogo') {
-                return 'Magic Chess';
-            }
-
-            if (clave === 'mobilelegends' || clave === 'mobilelegendsbangbang') {
-                return 'Mobile Legends: Bang Bang';
-            }
-
-            return original || 'Sin categoría';
-        }
-
-        function escaparHTML(texto) {
-            return String(texto ?? '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-
-        // Logos visuales para juegos, Streaming y Gift Cards.
-        // Se usan favicons de dominios oficiales; si alguno no carga,
-        // aparece un escudo con iniciales como respaldo.
-        function dominioLogoMarca(nombre) {
-            const clave = normalizarClave(nombre);
-            const reglas = [
-                ['deltaforce', 'playdeltaforce.com'],
-                ['freefire', 'ff.garena.com'],
-                ['genshinimpact', 'genshin.hoyoverse.com'],
-                ['honkaistarrail', 'hsr.hoyoverse.com'],
-                ['zenlesszonezero', 'zenless.hoyoverse.com'],
-                ['honorofkings', 'honorofkings.com'],
-                ['marvelrivals', 'marvelrivals.com'],
-                ['mobilelegends', 'mobilelegends.com'],
-                ['pubgmobile', 'pubgmobile.com'],
-                ['arenabreakout', 'arenabreakout.com'],
-                ['asphaltlegends', 'asphaltlegends.com'],
-                ['bloodstrike', 'blood-strike.com'],
-                ['clashofclans', 'supercell.com'],
-                ['clashroyale', 'supercell.com'],
-                ['roblox', 'roblox.com'],
-                ['minecraft', 'minecraft.net'],
-                ['valorant', 'playvalorant.com'],
-                ['leagueoflegends', 'leagueoflegends.com'],
-                ['teamfighttactics', 'teamfighttactics.leagueoflegends.com'],
-                ['standoff2', 'standoff2.com'],
-                ['steam', 'steampowered.com'],
-                ['netflix', 'netflix.com'],
-                ['disneyplus', 'disneyplus.com'],
-                ['disney', 'disneyplus.com'],
-                ['hbomax', 'max.com'],
-                ['max', 'max.com'],
-                ['primevideo', 'primevideo.com'],
-                ['amazonprime', 'primevideo.com'],
-                ['spotify', 'spotify.com'],
-                ['crunchyroll', 'crunchyroll.com'],
-                ['vix', 'vix.com']
-            ];
-
-            const encontrado = reglas.find(([fragmento]) => clave.includes(fragmento));
-            return encontrado ? encontrado[1] : '';
-        }
-
-        function inicialesMarca(nombre) {
-            const limpio = String(nombre || '')
-                .replace(/[:()\-_/]+/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-
-            if (!limpio) return 'FS';
-
-            const partes = limpio.split(' ').filter(Boolean);
-            const letras = partes.slice(0, 2).map(p => p[0]).join('');
-            return (letras || limpio.slice(0, 2)).toUpperCase();
-        }
-
-        function logoMarcaHTML(nombre) {
-            const dominio = dominioLogoMarca(nombre);
-            const iniciales = escaparHTML(inicialesMarca(nombre));
-
-            if (!dominio) {
-                return `<span class="summary-brand-logo"><span class="brand-logo-fallback">${iniciales}</span></span>`;
-            }
-
-            const src = `https://www.google.com/s2/favicons?sz=64&domain_url=https://${dominio}`;
-            return `
-                <span class="summary-brand-logo">
-                    <img
-                        src="${escaparHTML(src)}"
-                        alt=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
-                    >
-                    <span class="brand-logo-fallback" style="display:none;">${iniciales}</span>
-                </span>
-            `;
-        }
-
-        function quitarEmojiInicial(texto) {
-            return String(texto || '')
-                .replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '')
-                .trim();
-        }
-
-        function numeroSeguro(texto) {
-            let valor = String(texto || '').trim();
-
-            // 1.000 se interpreta como mil; 10,5 como decimal.
-            if (/^\d{1,3}(\.\d{3})+$/.test(valor)) {
-                valor = valor.replace(/\./g, '');
-            } else {
-                valor = valor.replace(',', '.');
-            }
-
-            const numero = Number(valor);
-            return Number.isFinite(numero) ? numero : null;
-        }
-
-        function mostrarNumero(numero) {
-            if (!Number.isFinite(numero)) return '';
-            return Number.isInteger(numero)
-                ? String(numero)
-                : String(Math.round(numero * 100) / 100).replace('.', ',');
-        }
-
-        function unidadPorJuego(juego) {
-            const clave = normalizarClave(juego);
-
-            if (clave.includes('freefire')) return 'Diamantes';
-            if (clave.includes('mobilelegends')) return 'Diamantes';
-            if (clave.includes('pubg')) return 'UC';
-            if (clave.includes('honorofkings')) return 'Tokens';
-            if (clave.includes('roblox')) return 'Robux';
-            if (clave.includes('minecraft')) return 'Minecoins';
-            if (clave.includes('valorant')) return 'VP';
-            if (clave.includes('leagueoflegends')) return 'RP';
-            if (clave.includes('standoff2')) return 'Gold';
-
-            return '';
-        }
-
-        function totalizarBonos(textoOriginal, juego) {
-            let texto = quitarEmojiInicial(textoOriginal)
-                .replace(/\s+/g, ' ')
-                .trim();
-
-            const unidad =
-                '(diamantes?|diamonds?|uc|tokens?|robux|vp|rp|minecoins?|gold|oro|coins?|monedas?)';
-
-            // Ej.: 500 + 60 Diamantes -> 560 Diamantes
-            let match = texto.match(
-                new RegExp(
-                    '^([\\d.,]+)\\s*\\+\\s*([\\d.,]+)\\s*' + unidad + '(?:\\s*(?:bonus|bono|extra))?\\s*$',
-                    'i'
-                )
-            );
-
-            if (match) {
-                const a = numeroSeguro(match[1]);
-                const b = numeroSeguro(match[2]);
-
-                if (a !== null && b !== null) {
-                    return `${mostrarNumero(a + b)} ${match[3]}`;
-                }
-            }
-
-            // Ej.: 500 Diamantes + 60 Bonus -> 560 Diamantes
-            match = texto.match(
-                new RegExp(
-                    '^([\\d.,]+)\\s*' + unidad + '\\s*\\+\\s*([\\d.,]+)\\s*(?:bonus|bono|extra)\\s*$',
-                    'i'
-                )
-            );
-
-            if (match) {
-                const a = numeroSeguro(match[1]);
-                const b = numeroSeguro(match[3]);
-
-                if (a !== null && b !== null) {
-                    return `${mostrarNumero(a + b)} ${match[2]}`;
-                }
-            }
-
-            // Ej.: 500 + 60 -> 560 Diamantes / UC / Tokens según el juego.
-            match = texto.match(/^([\d.,]+)\s*\+\s*([\d.,]+)$/);
-
-            if (match) {
-                const a = numeroSeguro(match[1]);
-                const b = numeroSeguro(match[2]);
-                const unidadInferida = unidadPorJuego(juego);
-
-                if (a !== null && b !== null && unidadInferida) {
-                    return `${mostrarNumero(a + b)} ${unidadInferida}`;
-                }
-            }
-
-            return texto;
-        }
-
-        function iconoProducto(producto, textoVisible) {
-            const juego = normalizarClave(nombreJuegoCanonico(producto?.juego));
-            const texto = normalizarClave(textoVisible);
-            const categoria = producto?.categoria || '';
-
-            // =================================================
-            // EMOJIS TOMADOS DEL EXCEL "Preciso app.xlsx"
-            // + dos reglas explícitas solicitadas:
-            // - Diamantes + Pase Semanal MLBB => solo 📆
-            // - Pase Semanal de Diamantes Magic Chess => solo 📆
-            // =================================================
-
-            // MOBILE LEGENDS
-            if (juego.includes('mobilelegends')) {
-                if (texto.includes('pasesemanalelite')) return '🎖️';
-                if (texto.includes('pasemensualepico')) return '🟣';
-                if (texto.includes('pasecrepus')) return '🌑';
-                if (texto.includes('pasesemanal') && texto.includes('diamante')) return '📆';
-                if (texto.includes('pasesemanal')) return '🎫';
-                if (texto.includes('evento')) return '🎁';
-                if (texto.includes('diamante')) return '💎';
-            }
-
-            // MAGIC CHESS — regla solicitada para su Pase Semanal
-            if (juego.includes('magicchess')) {
-                if (texto.includes('pasesemanal')) return '📆';
-                if (texto.includes('diamante') || texto.includes('diamond')) return '💎';
-            }
-
-            // FREE FIRE
-            if (juego.includes('freefire')) {
-                if (texto.includes('tarjetasemanal')) return '📆';
-                if (texto.includes('tarjetamensual')) return '🗓️';
-                if (texto.includes('tarjetapb')) return '🛡️';
-                if (texto.includes('semanalbasico')) return '🎫';
-                if (texto.includes('aumentonivel') || texto.includes('paquete') || texto.includes('paq')) return '📦';
-                if (texto.includes('diamante')) return '💎';
-            }
-
-            // ARENA BREAKOUT
-            if (juego.includes('arenabreakout')) {
-                if (texto.includes('seleccionprincipiante')) return '📦';
-                if (texto.includes('cajaantibalas')) return '🪖';
-                if (texto.includes('cajacompuesta')) return '📦';
-                if (texto.includes('trimestral')) return '🎖️';
-                if (texto.includes('batalla')) return '🏆';
-                if (texto.includes('bond')) return '🪙';
-            }
-
-            // ZENLESS ZONE ZERO
-            if (juego.includes('zenlesszonezero')) {
-                if (texto.includes('interknot')) return '🌐';
-                if (texto.includes('monochrome')) return '💿';
-            }
-
-            // HONKAI STAR RAIL
-            if (juego.includes('honkaistarrail')) {
-                if (texto.includes('expresssupplypass')) return '🎫';
-                if (texto.includes('oneiric')) return '🔮';
-            }
-
-            // HONOR OF KINGS
-            if (juego.includes('honorofkings')) {
-                if (texto.includes('tarjetasemanalplus')) return '✨';
-                if (texto.includes('token') || texto.includes('ficha')) return '🟡';
-            }
-
-            // PUBG MOBILE
-            if (juego.includes('pubg')) {
-                if (/(^|[^a-z])uc([^a-z]|$)/i.test(String(textoVisible))) return '🪙';
-            }
-
-            // BLOOD STRIKE
-            if (juego.includes('bloodstrike')) {
-                if (texto.includes('pasedemejora') || texto.includes('leveluppass')) return '🛠️';
-                if (texto.includes('elite') && !texto.includes('premium')) return '🎖️';
-                if (texto.includes('premium')) return '🏆';
-                if (texto.includes('cofre')) return '🎁';
-                if (texto.includes('bolsadelasuerte')) return '💰';
-                if (texto.includes('gold') || texto.includes('oro')) return '🟡';
-            }
-
-            // MARVEL RIVALS
-            if (juego.includes('marvelrivals') && texto.includes('lattice')) return '💠';
-
-            // WHERE WINDS MEET
-            if (juego.includes('wherewindsmeet')) {
-                if (texto.includes('echobead')) return '🎐';
-                if (texto.includes('monthlypass')) return '📜';
-                if (texto.includes('battlepass')) return '💳';
-            }
-
-            // DELTA FORCE
-            if (juego.includes('deltaforce') && (texto.includes('deltacoin') || texto.includes('coin'))) return '🪙';
-
-            // FARLIGHT 84
-            if (juego.includes('farlight84') && (texto.includes('diamond') || texto.includes('diamante'))) return '🔷';
-
-            // LORDS MOBILE
-            if (juego.includes('lordsmobile')) {
-                if (texto.includes('pasesemanal')) return '🎫';
-                if (texto.includes('diamond') || texto.includes('diamante')) return '💎';
-            }
-
-            // STUMBLE GUYS
-            if (juego.includes('stumbleguys')) {
-                if (texto.includes('chip')) return '🟢';
-                if (texto.includes('gema')) return '🟣';
-            }
-
-            // TOWER OF FANTASY
-            if (juego.includes('toweroffantasy')) {
-                if (texto.includes('upgradepass')) return '🛠️';
-                if (texto.includes('monthlypass')) return '🗓️';
-                if (texto.includes('basicpass')) return '💳';
-                if (texto.includes('adventurepack')) return '🎫';
-                if (texto.includes('tanium')) return '💠';
-            }
-
-            // ARENA OF VALOR
-            if (juego.includes('arenaofvalor') && texto.includes('voucher')) return '⚔️';
-
-            // LIFEAFTER
-            if (juego.includes('lifeafter')) {
-                if (texto.includes('membership')) return '💳';
-                if (texto.includes('luckystar')) return '📜';
-                if (texto.includes('credito')) return '💵';
-            }
-
-            // ROBLOX
-            if (juego.includes('roblox') && texto.includes('robux')) return '🟩';
-
-            // CLASH OF CLANS
-            if (juego.includes('clashofclans')) {
-                if (texto.includes('pasedeoro')) return '🌟';
-                if (texto.includes('gema')) return '🟢';
-            }
-
-            // CLASH ROYALE
-            if (juego.includes('clashroyale')) {
-                if (texto.includes('passroyale')) return '🗓️';
-                if (texto.includes('gema')) return '👑';
-            }
-
-            // TIKTOK
-            if (juego.includes('tiktok') && texto.includes('coin')) return '🟡';
-
-            // FORTNITE
-            if (juego.includes('fornite') || juego.includes('fortnite')) {
-                if (texto.includes('pavo')) return '🔷';
-            }
-
-            // WUTHERING WAVES
-            if (juego.includes('wutheringwaves')) {
-                if (texto.includes('suscripcionlunar')) return '🗓️';
-                if (texto.includes('lunite')) return '🌑';
-            }
-
-            // Gift Cards ya tienen logo de marca en el encabezado.
-            if (categoria === 'Gift Cards') return '🎁';
-            if (categoria === 'Streaming') return '📺';
-            if (categoria === 'Recargas por Cuenta') return '👤';
-
-            // Compatibilidad con familias ya usadas en la tienda.
-            if (juego.includes('steam')) return '💵';
-            if (juego.includes('minecraft')) return '🟡';
-            if (juego.includes('valorant')) return '🔻';
-            if (juego.includes('leagueoflegends')) return '💠';
-            if (juego.includes('teamfighttactics')) return '🟣';
-            if (juego.includes('standoff2')) return '🟡';
-
-            // Respaldo conservador para productos sin emoji explícito en el Excel.
-            if (texto.includes('diamante') || texto.includes('diamond')) return '💎';
-            if (texto.includes('coin') || texto.includes('moneda')) return '🪙';
-            if (texto.includes('paquete') || texto.includes('bundle')) return '📦';
-            if (texto.includes('pase') || texto.includes('pass')) return '🎫';
-
-            return '✦';
-        }
-
-        function nombrePaqueteVisible(producto) {
-            const texto = totalizarBonos(producto?.paquete || '', producto?.juego || '');
-            const icono = iconoProducto(producto, texto);
-            return `${icono} ${texto}`.trim();
-        }
-
-        function guiaCanjeDeProducto(producto) {
-            const clave = normalizarClave(producto?.juego);
-            return GUIAS_CANJE[clave] || null;
-        }
-
-        function abrirComoCanjear(idProducto, evento) {
-            evento?.stopPropagation();
-
-            const producto = inventarioGlobal.find(
-                item => String(item.id) === String(idProducto)
-            );
-
-            if (!producto || producto.categoria !== 'Gift Cards') return;
-
-            const guia = guiaCanjeDeProducto(producto);
-
-            if (!guia) {
-                alert('Todavía no hay una guía de canje publicada para este producto.');
-                return;
-            }
-
-            document.getElementById('modal-canje-titulo').textContent =
-                `📖 Cómo canjear ${producto.juego}`;
-
-            document.getElementById('modal-canje-subtitulo').textContent =
-                nombrePaqueteVisible(producto);
-
-            const lista = document.getElementById('modal-canje-pasos');
-            lista.innerHTML = guia.pasos
-                .map(paso => `<li>${escaparHTML(paso)}</li>`)
-                .join('');
-
-            const enlace = document.getElementById('modal-canje-enlace');
-            enlace.href = guia.enlace;
-
-            const modal = document.getElementById('modal-canje');
-            modal.classList.add('visible');
-            modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function cerrarModalCanje() {
-            const modal = document.getElementById('modal-canje');
-            modal.classList.remove('visible');
-            modal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-        }
-
-
-        async function cargarProductos() {
-            try {
-                // Solo trae productos PUBLICADOS.
-                // Además ordena juego A-Z y precio de menor a mayor.
-                const url = new URL(`${SUPABASE_URL}/rest/v1/productos`);
-                url.searchParams.set('select', 'id,juego,paquete,categoria,precio,activo');
-                url.searchParams.set('activo', 'eq.true');
-                url.searchParams.set('order', 'juego.asc,precio.asc,paquete.asc');
-
-                const respuesta = await fetch(url.toString(), {
-                    method: 'GET',
-                    cache: 'no-store',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!respuesta.ok) {
-                    throw new Error(`Supabase respondió ${respuesta.status}`);
-                }
-
-                const datos = await respuesta.json();
-
-                // Segunda protección:
-                // aunque por error llegara una fila inactiva, no se muestra.
-                inventarioGlobal = Array.isArray(datos)
-                    ? datos.filter(item => item.activo === true)
-                    : [];
-
-                filtrarCategoria(
-                    'Recargas por ID',
-                    document.querySelector('.tab-button.active')
-                );
-
-            } catch (error) {
-                console.error('Error cargando productos:', error);
-                document.getElementById('lista-productos').innerHTML =
-                    '<p style="color:red; text-align:center;">Error al conectar con la base de datos.</p>';
-            }
-        }
-
-        function filtrarCategoria(categoria, botonElement) {
-            document.querySelectorAll('.tab-button').forEach(
-                btn => btn.classList.remove('active')
-            );
-
-            if (botonElement) {
-                botonElement.classList.add('active');
-            }
-
-            const contenedor = document.getElementById('lista-productos');
-            contenedor.innerHTML = '';
-
-            const productosFiltrados = inventarioGlobal
-                .filter(item =>
-                    item.activo === true &&
-                    item.categoria === categoria
-                )
-                .sort((a, b) => {
-                    const juegoA = nombreJuegoCanonico(a.juego);
-                    const juegoB = nombreJuegoCanonico(b.juego);
-
-                    const porJuego = juegoA.localeCompare(
-                        juegoB,
-                        'es',
-                        { sensitivity: 'base' }
-                    );
-
-                    if (porJuego !== 0) return porJuego;
-
-                    const precioA = Number(a.precio) || 0;
-                    const precioB = Number(b.precio) || 0;
-
-                    if (precioA !== precioB) return precioA - precioB;
-
-                    return String(a.paquete || '').localeCompare(
-                        String(b.paquete || ''),
-                        'es',
-                        { sensitivity: 'base' }
-                    );
-                });
-
-            if (productosFiltrados.length === 0) {
-                contenedor.innerHTML =
-                    '<p style="text-align:center; color:#94a3b8; margin-top:30px;">No hay productos en esta sección por ahora.</p>';
-                return;
-            }
-
-            const juegosAgrupados = {};
-
-            productosFiltrados.forEach(item => {
-                const nombreJuego = nombreJuegoCanonico(item.juego);
-
-                if (!juegosAgrupados[nombreJuego]) {
-                    juegosAgrupados[nombreJuego] = [];
-                }
-
-                juegosAgrupados[nombreJuego].push(item);
-            });
-
-            const nombresJuegos = Object.keys(juegosAgrupados).sort(
-                (a, b) => a.localeCompare(
-                    b,
-                    'es',
-                    { sensitivity: 'base' }
-                )
-            );
-
-            nombresJuegos.forEach(juego => {
-                const paquetes = juegosAgrupados[juego].sort((a, b) => {
-                    const precioA = Number(a.precio) || 0;
-                    const precioB = Number(b.precio) || 0;
-
-                    if (precioA !== precioB) return precioA - precioB;
-
-                    return String(a.paquete || '').localeCompare(
-                        String(b.paquete || ''),
-                        'es',
-                        { sensitivity: 'base' }
-                    );
-                });
-
-                let htmlPaquetes = '';
-
-                paquetes.forEach(p => {
-                    const paqueteVisible = nombrePaqueteVisible(p);
-                    const esGiftCard = p.categoria === 'Gift Cards';
-                    const tieneGuia = Boolean(guiaCanjeDeProducto(p));
-
-                    htmlPaquetes += `
-                        <div class="product-item">
-                            <div class="product-name">
-                                ${escaparHTML(paqueteVisible)}
-                                ${esGiftCard
-                                    ? '<div class="gift-badge">🇧🇴 Compatible con Bolivia · 🔑 Código digital</div>'
-                                    : ''
-                                }
-                            </div>
-                            <div class="product-price-buy">
-                                <span class="price">${escaparHTML(p.precio)} Bs</span>
-                                ${esGiftCard && tieneGuia
-                                    ? `<button
-                                        type="button"
-                                        class="btn-canje"
-                                        onclick="abrirComoCanjear('${p.id}', event)"
-                                    >📖 Cómo canjear</button>`
-                                    : ''
-                                }
-                                <button
-                                    type="button"
-                                    class="btn-comprar"
-                                    onclick="abrirModalPorId('${p.id}', event)"
-                                >Comprar</button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                contenedor.innerHTML += `
-                    <details>
-                        <summary>
-                            <span class="summary-brand">
-                                ${logoMarcaHTML(juego)}
-                                <span class="summary-name">${escaparHTML(juego)}</span>
-                            </span>
-                        </summary>
-                        ${htmlPaquetes}
-                    </details>
-                `;
-            });
-
-            contenedor.classList.remove('catalog-enter');
-            requestAnimationFrame(() => {
-                contenedor.classList.add('catalog-enter');
-            });
-        }
-
-        function generarIdPedido(codigoProveedor = null) {
-            const ahora = new Date();
-            const fecha =
-                String(ahora.getFullYear()).slice(-2) +
-                String(ahora.getMonth() + 1).padStart(2, '0') +
-                String(ahora.getDate()).padStart(2, '0');
-
-            const aleatorio = Math.random()
-                .toString(36)
-                .slice(2, 6)
-                .toUpperCase();
-
-            const codigo = ['G', 'B'].includes(codigoProveedor)
-                ? `-${codigoProveedor}`
-                : '';
-
-            return `FS-${fecha}${codigo}-${aleatorio}`;
-        }
-
-        async function obtenerCodigoProveedorPedido(idProducto) {
-            const url = new URL(`${WORKER_PUBLIC_URL}/proveedor-pedido`);
-            url.searchParams.set('producto_id', String(idProducto));
-
-            const respuesta = await fetch(url.toString(), {
-                method: 'GET',
-                cache: 'no-store',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (!respuesta.ok) {
-                throw new Error(`Worker respondió ${respuesta.status}`);
-            }
-
-            const datos = await respuesta.json();
-
-            if (!datos || datos.ok !== true || !['G', 'B'].includes(datos.codigo)) {
-                throw new Error('El Worker no devolvió un proveedor válido.');
-            }
-
-            return datos.codigo;
-        }
-
-        async function abrirModalPorId(idProducto, evento) {
-            const producto = inventarioGlobal.find(
-                item => String(item.id) === String(idProducto)
-            );
-
-            if (!producto) {
-                console.error('No se encontró el producto:', idProducto);
-                return;
-            }
-
-            let codigoProveedor = null;
-
-            if (producto.categoria === 'Recargas por ID') {
-                try {
-                    codigoProveedor = await obtenerCodigoProveedorPedido(producto.id);
-                } catch (error) {
-                    console.error('No se pudo seleccionar proveedor:', error);
-                    alert('No pudimos preparar esta recarga en este momento. Intenta nuevamente en unos segundos.');
-                    return;
-                }
-            }
-
-            abrirModalPago(
-                {
-                    juego: nombreJuegoCanonico(producto.juego),
-                    paquete: nombrePaqueteVisible(producto),
-                    paqueteOriginal: producto.paquete,
-                    precio: producto.precio,
-                    categoria: producto.categoria,
-                    codigoProveedor
-                },
-                evento
-            );
-        }
-
-        function abrirModalPago(producto, evento) {
-            compraActual = {
-                ...producto,
-                pedido: generarIdPedido(producto.codigoProveedor)
-            };
-
-            document.getElementById('pago-juego').textContent =
-                compraActual.juego || '-';
-
-            document.getElementById('pago-paquete').textContent =
-                compraActual.paquete || '-';
-
-            document.getElementById('pago-precio').textContent =
-                `${compraActual.precio} Bs`;
-
-            document.getElementById('pago-pedido').textContent =
-                compraActual.pedido;
-
-            document.getElementById('seguridad-destinatario').textContent =
-                DESTINATARIO_PAGO;
-
-            document.getElementById('seguridad-banco').textContent =
-                BANCO_PAGO;
-
-            const qr = document.getElementById('qr-pago');
-            const ayudaQR = document.getElementById('qr-ayuda');
-            const descargarQR = document.getElementById('descargar-qr');
-
-            qr.style.display = 'block';
-            ayudaQR.innerHTML =
-                'Puedes escanear el QR desde otro dispositivo o descargarlo para abrirlo desde tu banca móvil.';
-            descargarQR.style.display = 'block';
-
-            qr.src = `${ARCHIVO_QR}?v=${Date.now()}`;
-            descargarQR.href = ARCHIVO_QR;
-
-            const modal = document.getElementById('modal-pago');
-            modal.classList.add('visible');
-            modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-
-            crearChispas(
-                evento?.clientX || window.innerWidth / 2,
-                evento?.clientY || window.innerHeight / 2
-            );
-        }
-
-        function cerrarModalPago() {
-            const modal = document.getElementById('modal-pago');
-            modal.classList.remove('visible');
-            modal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-        }
-
-        function confirmarPagoWhatsApp() {
-            if (!compraActual) return;
-
-            const esGiftCard = compraActual.categoria === 'Gift Cards';
-
-            const mensaje = encodeURIComponent(
-                `Hola, ya realicé el pago.\n\n` +
-                `Pedido: ${compraActual.pedido}\n` +
-                `${esGiftCard ? 'Gift Card' : 'Juego'}: ${compraActual.juego}\n` +
-                `Paquete: ${compraActual.paquete}\n` +
-                `${esGiftCard ? 'Entrega: Código digital\n' : ''}` +
-                `Total pagado: ${compraActual.precio} Bs\n\n` +
-                `${esGiftCard
-                    ? 'Quedo a la espera de mi código.'
-                    : 'Quedo a la espera de mi recarga.'
-                }`
-            );
-
-            crearChispas(
-                window.innerWidth / 2,
-                window.innerHeight / 2
-            );
-
-            setTimeout(() => {
-                window.open(
-                    `https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`,
-                    '_blank',
-                    'noopener,noreferrer'
-                );
-            }, 250);
-        }
-
-        function consultarAntesDePagar() {
-            if (!compraActual) return;
-
-            const esGiftCard = compraActual.categoria === 'Gift Cards';
-
-            const mensaje = encodeURIComponent(
-                `Hola, quiero consultar antes de pagar.\n\n` +
-                `${esGiftCard ? 'Gift Card' : 'Juego'}: ${compraActual.juego}\n` +
-                `Paquete: ${compraActual.paquete}\n` +
-                `Precio mostrado: ${compraActual.precio} Bs`
-            );
-
-            window.open(
-                `https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`,
-                '_blank',
-                'noopener,noreferrer'
-            );
-        }
-
-        function mostrarQRFaltante(img) {
-            img.style.display = 'none';
-
-            const ayuda = document.getElementById('qr-ayuda');
-            ayuda.innerHTML =
-                '⚠️ Falta subir el archivo <strong>qr-pago.png</strong> a GitHub. ' +
-                'La tienda seguirá funcionando, pero el QR no aparecerá hasta subirlo.';
-
-            const descargar = document.getElementById('descargar-qr');
-            descargar.style.display = 'none';
-        }
-
-
-        function cotizarProducto() {
-            const mensaje = encodeURIComponent(
-                'Hola, FRENCH STORE. 👋\n\n' +
-                'No encontré el juego, plataforma o producto digital que busco en el catálogo. ' +
-                '¿Podrían ayudarme con una cotización personalizada?'
-            );
-
-            window.open(
-                `https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`,
-                '_blank',
-                'noopener,noreferrer'
-            );
-        }
-
-        function crearChispas(x, y) {
-            const tonos = ['#00f2fe', '#7c3aed', '#22c55e', '#f8fafc'];
-
-            for (let i = 0; i < 18; i++) {
-                const chispa = document.createElement('span');
-                chispa.className = 'spark';
-
-                const angulo = Math.random() * Math.PI * 2;
-                const distancia = 45 + Math.random() * 85;
-
-                chispa.style.left = `${x}px`;
-                chispa.style.top = `${y}px`;
-                chispa.style.background =
-                    tonos[Math.floor(Math.random() * tonos.length)];
-
-                chispa.style.setProperty(
-                    '--x',
-                    `${Math.cos(angulo) * distancia}px`
-                );
-
-                chispa.style.setProperty(
-                    '--y',
-                    `${Math.sin(angulo) * distancia}px`
-                );
-
-                document.body.appendChild(chispa);
-
-                setTimeout(() => chispa.remove(), 750);
-            }
-        }
-
-        document.getElementById('modal-pago').addEventListener(
-            'click',
-            (event) => {
-                if (event.target.id === 'modal-pago') {
-                    cerrarModalPago();
-                }
-            }
-        );
-
-        document.getElementById('modal-canje').addEventListener(
-            'click',
-            (event) => {
-                if (event.target.id === 'modal-canje') {
-                    cerrarModalCanje();
-                }
-            }
-        );
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                cerrarModalPago();
-                cerrarModalCanje();
-            }
+      `).join('');
+
+      const total = subtotalCarrito();
+
+      contenedor.innerHTML = `
+        <div class="cart-list">${itemsHtml}</div>
+        <div class="total-box">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:13px;color:var(--muted);">Total a pagar</div>
+              <strong>${formatoPrecio(total)}</strong>
+            </div>
+            <div style="text-align:right;color:var(--muted);font-size:13px;">
+              ${carrito.reduce((acc, item) => acc + item.cantidad, 0)} productos en total
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" type="button" onclick="procederPagoCarrito()">✅ Proceder al pago de todo el carrito</button>
+          <button class="btn-secondary" type="button" onclick="vaciarCarrito()">🗑️ Vaciar carrito</button>
+        </div>
+      `;
+    }
+
+    function abrirComoCanjear(idProducto) {
+      const producto = inventarioGlobal.find(item => String(item.id) === String(idProducto));
+      if (!producto) return;
+      const guia = guiaCanjeDeProducto(producto);
+      if (!guia) return;
+
+      document.getElementById('modal-canje-titulo').textContent = `📖 Cómo canjear ${producto.juego}`;
+      document.getElementById('modal-canje-subtitulo').textContent = nombrePaqueteVisible(producto);
+      document.getElementById('modal-canje-pasos').innerHTML = guia.pasos.map(p => `<li>${escaparHTML(p)}</li>`).join('');
+      document.getElementById('modal-canje-enlace').href = guia.enlace;
+
+      const modal = document.getElementById('modal-canje');
+      modal.classList.add('visible');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModalCanje() {
+      const modal = document.getElementById('modal-canje');
+      modal.classList.remove('visible');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function abrirCompraDirecta(idProducto) {
+      const producto = inventarioGlobal.find(item => String(item.id) === String(idProducto));
+      if (!producto) return;
+
+      compraActual = {
+        tipo: 'simple',
+        pedido: generarIdPedido(),
+        juego: producto.juego,
+        paquete: nombrePaqueteVisible(producto),
+        paqueteOriginal: producto.paquete,
+        categoria: producto.categoria,
+        precio: Number(producto.precio) || 0
+      };
+
+      abrirModalPago();
+    }
+
+    function procederPagoCarrito() {
+      if (!carrito.length) return;
+
+      compraActual = {
+        tipo: 'carrito',
+        pedido: generarIdPedido(),
+        items: carrito.map(item => ({ ...item })),
+        precioTotal: subtotalCarrito()
+      };
+
+      cerrarCarrito();
+      abrirModalPago();
+    }
+
+    function abrirModalPago() {
+      if (!compraActual) return;
+
+      document.getElementById('seguridad-destinatario').textContent = DESTINATARIO_PAGO;
+      document.getElementById('seguridad-banco').textContent = BANCO_PAGO;
+      document.getElementById('qr-pago').src = `${ARCHIVO_QR}?v=${Date.now()}`;
+      document.getElementById('descargar-qr').href = ARCHIVO_QR;
+
+      const resumen = document.getElementById('resumen-pago-box');
+      const extra = document.getElementById('detalle-pago-extra');
+
+      if (compraActual.tipo === 'carrito') {
+        resumen.innerHTML = `
+          <div class="summary-row"><span>Pedido</span><strong>${compraActual.pedido}</strong></div>
+          <div class="summary-row"><span>Tipo</span><strong>Compra múltiple</strong></div>
+          <div class="summary-row"><span>Total</span><strong style="color:#9dffcf;">${formatoPrecio(compraActual.precioTotal)}</strong></div>
+        `;
+
+        extra.innerHTML = `
+          <div class="summary-box">
+            <div style="font-weight:700;color:white;margin-bottom:8px;">Productos del carrito</div>
+            ${compraActual.items.map(item => `
+              <div class="summary-row">
+                <span>${escaparHTML(item.juego)} · x${item.cantidad}</span>
+                <strong>${escaparHTML(item.paquete)}</strong>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        resumen.innerHTML = `
+          <div class="summary-row"><span>Pedido</span><strong>${compraActual.pedido}</strong></div>
+          <div class="summary-row"><span>Juego</span><strong>${escaparHTML(compraActual.juego)}</strong></div>
+          <div class="summary-row"><span>Paquete</span><strong>${escaparHTML(compraActual.paquete)}</strong></div>
+          <div class="summary-row"><span>Total</span><strong style="color:#9dffcf;">${formatoPrecio(compraActual.precio)}</strong></div>
+        `;
+        extra.innerHTML = '';
+      }
+
+      const modal = document.getElementById('modal-pago');
+      modal.classList.add('visible');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModalPago() {
+      const modal = document.getElementById('modal-pago');
+      modal.classList.remove('visible');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function confirmarPagoWhatsApp() {
+      if (!compraActual) return;
+
+      let mensaje = '';
+
+      if (compraActual.tipo === 'carrito') {
+        const lineas = compraActual.items.map(item => `• ${item.juego} - ${item.paquete} x${item.cantidad}`);
+        mensaje =
+          `Hola, ya realicé el pago.\n\n` +
+          `Pedido: ${compraActual.pedido}\n` +
+          `Tipo: Compra múltiple\n` +
+          `Productos:\n${lineas.join('\n')}\n\n` +
+          `Total pagado: ${formatoPrecio(compraActual.precioTotal)}\n\n` +
+          `Quedo a la espera de mis recargas.`;
+      } else {
+        const esGiftCard = compraActual.categoria === 'Gift Cards';
+        mensaje =
+          `Hola, ya realicé el pago.\n\n` +
+          `Pedido: ${compraActual.pedido}\n` +
+          `${esGiftCard ? 'Gift Card' : 'Juego'}: ${compraActual.juego}\n` +
+          `Paquete: ${compraActual.paquete}\n` +
+          `${esGiftCard ? 'Entrega: Código digital\n' : ''}` +
+          `Total pagado: ${formatoPrecio(compraActual.precio)}\n\n` +
+          `${esGiftCard ? 'Quedo a la espera de mi código.' : 'Quedo a la espera de mi recarga.'}`;
+      }
+
+      window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank', 'noopener,noreferrer');
+    }
+
+    function consultarAntesDePagar() {
+      const mensaje = encodeURIComponent('Hola, quiero consultar antes de realizar el pago.');
+      window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`, '_blank', 'noopener,noreferrer');
+    }
+
+    function contactarWhatsApp() {
+      consultarAntesDePagar();
+    }
+
+    function mostrarQRFaltante(img) {
+      img.style.display = 'none';
+      document.getElementById('qr-help').innerHTML = 'No se encontró <strong>qr-pago.png</strong>. Súbelo a la misma carpeta donde está el <strong>index.html</strong>.';
+      document.getElementById('descargar-qr').style.display = 'none';
+    }
+
+    function mostrarToast(texto) {
+      const toast = document.createElement('div');
+      toast.textContent = texto;
+      toast.style.position = 'fixed';
+      toast.style.left = '50%';
+      toast.style.bottom = '22px';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.background = 'rgba(9, 22, 36, 0.94)';
+      toast.style.color = 'white';
+      toast.style.padding = '12px 16px';
+      toast.style.borderRadius = '14px';
+      toast.style.border = '1px solid rgba(46, 231, 255, 0.24)';
+      toast.style.boxShadow = '0 18px 30px rgba(0,0,0,0.35)';
+      toast.style.zIndex = '5000';
+      toast.style.fontSize = '14px';
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity .25s ease';
+      }, 1700);
+      setTimeout(() => toast.remove(), 2100);
+    }
+
+    async function cargarProductos() {
+      try {
+        const url = new URL(`${SUPABASE_URL}/rest/v1/productos`);
+        url.searchParams.set('select', 'id,juego,paquete,categoria,precio,activo');
+        url.searchParams.set('activo', 'eq.true');
+        url.searchParams.set('order', 'juego.asc,precio.asc,paquete.asc');
+
+        const respuesta = await fetch(url.toString(), {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Accept': 'application/json'
+          }
         });
 
-        cargarProductos();
-    </script>
+        if (!respuesta.ok) throw new Error(`Supabase respondió ${respuesta.status}`);
+
+        const datos = await respuesta.json();
+        inventarioGlobal = Array.isArray(datos) ? datos.filter(item => item.activo === true) : [];
+        actualizarHeroCount();
+        renderizarCatalogo();
+      } catch (error) {
+        console.error('Error cargando productos:', error);
+        document.getElementById('lista-productos').innerHTML = '<div class="error-state">Error al conectar con la base de datos.</div>';
+      }
+    }
+
+    function actualizarHeroCount() {
+      const juegos = new Set(inventarioGlobal.map(item => item.juego).filter(Boolean));
+      document.getElementById('hero-juegos-count').textContent = `+${juegos.size} juegos`;
+    }
+
+    function renderizarCatalogo() {
+      const contenedor = document.getElementById('lista-productos');
+
+      let productosFiltrados = inventarioGlobal.filter(item => item.activo === true && item.categoria === categoriaActual);
+
+      if (terminoBusqueda.trim()) {
+        const q = normalizarBusqueda(terminoBusqueda);
+        productosFiltrados = productosFiltrados.filter(item => {
+          const base = `${item.juego || ''} ${item.paquete || ''} ${nombrePaqueteVisible(item)}`;
+          return normalizarBusqueda(base).includes(q);
+        });
+      }
+
+      document.getElementById('meta-categoria').textContent = `Mostrando: ${categoriaActual}`;
+
+      if (!productosFiltrados.length) {
+        document.getElementById('meta-conteo').textContent = '0 juegos';
+        contenedor.innerHTML = '<div class="empty-state">No hay productos en esta sección con esa búsqueda.</div>';
+        return;
+      }
+
+      const juegosAgrupados = {};
+      productosFiltrados.forEach(item => {
+        const nombreJuego = item.juego || 'Sin categoría';
+        if (!juegosAgrupados[nombreJuego]) juegosAgrupados[nombreJuego] = [];
+        juegosAgrupados[nombreJuego].push(item);
+      });
+
+      const nombresJuegos = Object.keys(juegosAgrupados).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+      document.getElementById('meta-conteo').textContent = `${nombresJuegos.length} juegos`;
+
+      contenedor.innerHTML = nombresJuegos.map((juego, index) => {
+        const paquetes = juegosAgrupados[juego].sort((a, b) => (Number(a.precio) || 0) - (Number(b.precio) || 0));
+        const itemEjemplo = paquetes[0];
+        const abiertos = index < 2 ? 'open' : '';
+
+        const itemsHtml = paquetes.map(p => {
+          const paqueteVisible = nombrePaqueteVisible(p);
+          const esGiftCard = p.categoria === 'Gift Cards';
+          const tieneGuia = Boolean(guiaCanjeDeProducto(p));
+          return `
+            <div class="product-item">
+              <div class="product-name">
+                ${escaparHTML(paqueteVisible)}
+                ${esGiftCard ? '<div class="gift-badge">🔑 Código digital · Compatible con Bolivia</div>' : ''}
+              </div>
+              <div class="product-actions">
+                <span class="price">${escaparHTML(p.precio)} Bs</span>
+                ${esGiftCard && tieneGuia ? `<button class="btn-canje" type="button" onclick="abrirComoCanjear('${p.id}')">📖 Cómo canjear</button>` : ''}
+                <button class="btn-secondary" type="button" onclick="agregarAlCarrito('${p.id}')">➕ Carrito</button>
+                <button class="btn" type="button" onclick="abrirCompraDirecta('${p.id}')">Comprar</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <details class="game-card" ${abiertos}>
+            <summary class="game-summary">
+              <div class="game-main">
+                <div class="game-icon">${iconoJuego(itemEjemplo)}</div>
+                <div class="game-info">
+                  <div class="game-title">${escaparHTML(juego)}</div>
+                  <div class="game-count">${paquetes.length} paquetes disponibles</div>
+                </div>
+              </div>
+              <div class="game-arrow">⌄</div>
+            </summary>
+            <div class="game-products">${itemsHtml}</div>
+          </details>
+        `;
+      }).join('');
+
+      contenedor.classList.remove('catalog-enter');
+      requestAnimationFrame(() => contenedor.classList.add('catalog-enter'));
+    }
+
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-button').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        categoriaActual = btn.dataset.categoria;
+        renderizarCatalogo();
+      });
+    });
+
+    document.getElementById('input-busqueda').addEventListener('input', (e) => {
+      terminoBusqueda = e.target.value || '';
+      renderizarCatalogo();
+    });
+
+    document.getElementById('modal-pago').addEventListener('click', (e) => {
+      if (e.target.id === 'modal-pago') cerrarModalPago();
+    });
+
+    document.getElementById('modal-carrito').addEventListener('click', (e) => {
+      if (e.target.id === 'modal-carrito') cerrarCarrito();
+    });
+
+    document.getElementById('modal-canje').addEventListener('click', (e) => {
+      if (e.target.id === 'modal-canje') cerrarModalCanje();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        cerrarModalPago();
+        cerrarCarrito();
+        cerrarModalCanje();
+      }
+    });
+
+    cargarCarritoGuardado();
+    cargarProductos();
+  </script>
 </body>
 </html>
