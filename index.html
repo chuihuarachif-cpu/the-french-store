@@ -1,3 +1,9 @@
+<!--
+MIGRATION SAFE COPY - THE FRENCH STORE
+Última versión de frontend confirmada en funcionamiento antes del parche pendiente del salto de línea de Gift Cards.
+Valores públicos/sensibles de configuración fueron reemplazados por placeholders.
+NO contiene QR de pago.
+-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -733,6 +739,10 @@
         // y estar en la misma carpeta que index.html en GitHub.
         const ARCHIVO_QR = 'qr-pago.png';
 
+        // Worker público: sólo devuelve la letra interna G/B del proveedor
+        // para productos que participan en el selector multiproveedor.
+        const WORKER_PUBLIC_URL = 'https://the-french-store.chuihuarachif.workers.dev';
+
         let inventarioGlobal = [];
         let compraActual = null;
 
@@ -1194,7 +1204,7 @@
             });
         }
 
-        function generarIdPedido() {
+        function generarIdPedido(codigoProveedor = null) {
             const ahora = new Date();
             const fecha =
                 String(ahora.getFullYear()).slice(-2) +
@@ -1206,10 +1216,39 @@
                 .slice(2, 6)
                 .toUpperCase();
 
-            return `FS-${fecha}-${aleatorio}`;
+            const codigo = ['G', 'B'].includes(codigoProveedor)
+                ? `-${codigoProveedor}`
+                : '';
+
+            return `FS-${fecha}${codigo}-${aleatorio}`;
         }
 
-        function abrirModalPorId(idProducto, evento) {
+        async function obtenerCodigoProveedorPedido(idProducto) {
+            const url = new URL(`${WORKER_PUBLIC_URL}/proveedor-pedido`);
+            url.searchParams.set('producto_id', String(idProducto));
+
+            const respuesta = await fetch(url.toString(), {
+                method: 'GET',
+                cache: 'no-store',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!respuesta.ok) {
+                throw new Error(`Worker respondió ${respuesta.status}`);
+            }
+
+            const datos = await respuesta.json();
+
+            if (!datos || datos.ok !== true || !['G', 'B'].includes(datos.codigo)) {
+                throw new Error('El Worker no devolvió un proveedor válido.');
+            }
+
+            return datos.codigo;
+        }
+
+        async function abrirModalPorId(idProducto, evento) {
             const producto = inventarioGlobal.find(
                 item => String(item.id) === String(idProducto)
             );
@@ -1219,13 +1258,26 @@
                 return;
             }
 
+            let codigoProveedor = null;
+
+            if (producto.categoria === 'Recargas por ID') {
+                try {
+                    codigoProveedor = await obtenerCodigoProveedorPedido(producto.id);
+                } catch (error) {
+                    console.error('No se pudo seleccionar proveedor:', error);
+                    alert('No pudimos preparar esta recarga en este momento. Intenta nuevamente en unos segundos.');
+                    return;
+                }
+            }
+
             abrirModalPago(
                 {
                     juego: producto.juego,
                     paquete: nombrePaqueteVisible(producto),
                     paqueteOriginal: producto.paquete,
                     precio: producto.precio,
-                    categoria: producto.categoria
+                    categoria: producto.categoria,
+                    codigoProveedor
                 },
                 evento
             );
@@ -1234,7 +1286,7 @@
         function abrirModalPago(producto, evento) {
             compraActual = {
                 ...producto,
-                pedido: generarIdPedido()
+                pedido: generarIdPedido(producto.codigoProveedor)
             };
 
             document.getElementById('pago-juego').textContent =
