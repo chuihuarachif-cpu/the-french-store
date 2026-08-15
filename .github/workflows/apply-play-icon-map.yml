@@ -1,0 +1,91 @@
+name: Apply official Play icon map
+
+on:
+  push:
+    branches: [web-v2-integration]
+    paths:
+      - '.github/workflows/apply-play-icon-map.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web-v2-integration
+
+      - name: Patch Web V2 icon map
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          app = Path('v2/app.js')
+          text = app.read_text(encoding='utf-8')
+          replacement = r'''const PLAY_ICONS={
+          'arenabreakout':'assets/apps/arena-breakout.webp',
+          'asphaltlegends':'assets/apps/asphalt-legends.webp',
+          'bloodstrike':'assets/apps/blood-strike.webp',
+          'deltaforce':'assets/apps/delta-force.webp',
+          'freefire':'assets/apps/free-fire.webp',
+          'genshinimpact':'assets/apps/genshin-impact.webp',
+          'honkaistarrail':'assets/apps/honkai-star-rail.webp',
+          'honorofkings':'assets/apps/honor-of-kings.webp',
+          'magicchess':'assets/apps/magic-chess.webp',
+          'mobilelegendsbangbang':'assets/apps/mobile-legends.webp',
+          'pubgmobile':'assets/apps/pubg-mobile.webp',
+          'wutheringwaves':'assets/apps/wuthering-waves.webp',
+          'zenlesszonezero':'assets/apps/zenless-zone-zero.webp',
+          'clashofclans':'assets/apps/clash-of-clans.webp',
+          'clashroyale':'assets/apps/clash-royale.webp',
+          'fortnite':'assets/apps/fortnite.webp',
+          'roblox':'assets/apps/roblox.webp',
+          'tiktok':'assets/apps/tiktok.webp',
+          'steam':'assets/apps/steam.webp',
+          'minecraft':'assets/apps/minecraft.webp',
+          'standoff2':'assets/apps/standoff-2.webp',
+          'teamfighttactics':'assets/apps/teamfight-tactics.webp'
+          };
+          function logoUrl(name){
+            const k=normalize(name);
+            if(k.includes('clashofclansclashroyale')) return PLAY_ICONS.clashofclans;
+            if(PLAY_ICONS[k]) return PLAY_ICONS[k];
+            const found=Object.entries(PLAY_ICONS).find(([key])=>k.includes(key)||key.includes(k));
+            return found?found[1]:'';
+          }
+          function navigate'''
+
+          pattern = r"function logoDomain\(name\).*?function logoUrl\(name\).*?\nfunction navigate"
+          new_text, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit(f'Icon block replacement count was {count}, expected 1')
+          app.write_text(new_text, encoding='utf-8')
+
+          css = Path('v2/styles.css')
+          css_text = css.read_text(encoding='utf-8')
+          marker='/* OFFICIAL PLAY STORE ICONS */'
+          if marker not in css_text:
+              css_text += '''\n/* OFFICIAL PLAY STORE ICONS */\n.game-logo{width:64px;height:64px;flex:0 0 64px;border-radius:16px;object-fit:cover;background:#07131d;border:1px solid rgba(255,255,255,.10);box-shadow:0 5px 14px rgba(0,0,0,.28)}\n@media(max-width:620px){.game-logo{width:54px;height:54px;flex-basis:54px;border-radius:14px}}\n'''
+              css.write_text(css_text,encoding='utf-8')
+          PY
+
+      - name: Validate patch
+        run: |
+          node --check v2/app.js
+          grep -q "assets/apps/free-fire.webp" v2/app.js
+          grep -q "assets/apps/mobile-legends.webp" v2/app.js
+          grep -q "assets/apps/pubg-mobile.webp" v2/app.js
+          ! grep -q "google.com/s2/favicons" v2/app.js
+          test "$(find v2/assets/apps -name '*.webp' | wc -l)" -eq 22
+
+      - name: Commit patched storefront
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v2/app.js v2/styles.css
+          git commit -m 'Show official Play Store icons in Web V2'
+          git push origin HEAD:web-v2-integration
