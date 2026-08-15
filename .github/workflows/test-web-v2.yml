@@ -37,3 +37,27 @@ jobs:
           grep -q "Recargas por Cuenta" v2/app.js
           grep -q "Streaming" v2/app.js
           grep -q "Gift Cards" v2/app.js
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8080 > /tmp/french-store-http.log 2>&1 &
+          echo $! > /tmp/french-store-http.pid
+          sleep 2
+          curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
+      - name: Capture responsive screenshots
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          if [ -z "$CHROME" ]; then
+            echo "Google Chrome not found on runner"
+            exit 1
+          fi
+          mkdir -p screenshots
+          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=390,844 --virtual-time-budget=8000 --screenshot=screenshots/mobile-390.png http://127.0.0.1:8080/v2/index.html
+          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,768 --virtual-time-budget=8000 --screenshot=screenshots/desktop-1366.png http://127.0.0.1:8080/v2/index.html
+          test -s screenshots/mobile-390.png
+          test -s screenshots/desktop-1366.png
+      - name: Upload responsive screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-v2-responsive-screenshots
+          path: screenshots/*.png
+          retention-days: 7
