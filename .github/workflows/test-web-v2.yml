@@ -1,0 +1,39 @@
+name: Test Web V2
+
+on:
+  push:
+    branches: [web-v2-integration]
+    paths:
+      - 'v2/**'
+      - '.github/workflows/test-web-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required files
+        run: |
+          test -s v2/index.html
+          test -s v2/styles.css
+          test -s v2/app.js
+      - name: Validate JavaScript syntax
+        run: node --check v2/app.js
+      - name: Check critical frontend contracts
+        run: |
+          grep -q "create_wallet_order" v2/app.js
+          grep -q "create_qr_order" v2/app.js
+          grep -q "request_wallet_topup_v2" v2/app.js
+          grep -q "admin_update_order_status" v2/app.js
+          grep -q "service_role" v2/app.js && exit 1 || true
+          grep -q "SUPABASE_SERVICE" v2/app.js && exit 1 || true
+      - name: Check category separation
+        run: |
+          grep -q "Recargas por ID" v2/app.js
+          grep -q "Recargas por Cuenta" v2/app.js
+          grep -q "Streaming" v2/app.js
+          grep -q "Gift Cards" v2/app.js
