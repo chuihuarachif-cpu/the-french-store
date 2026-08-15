@@ -1,0 +1,86 @@
+name: Sync official Play Store icons
+
+on:
+  push:
+    branches: [web-v2-integration]
+    paths:
+      - '.github/workflows/sync-play-icons.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web-v2-integration
+
+      - name: Download official Google Play app icons
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p tmp/play-icons v2/assets/apps
+
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/YkjOLbdDuSqO9W3tvNNogoWfKhCAOj7R76ZBPmi3ZrA01Xxadfcfx9pOQdMjYE5RKyemeNi-kVXhSduUFd-8Og=w240-h480' -o tmp/play-icons/arena-breakout.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/53ngsanoIl6vcppIwZD2LGMcjT9j5beVN_GakLncwrIr7WjTXYs6lnaSef-zlKmWr2NaaoSmMs1qQjtyXgLnSiw=w240-h480' -o tmp/play-icons/asphalt-legends.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/SXwJQ3maA2BmyR2uGztnwHDIhyxcI8skvrZ1x_wDRKSv7nOALa7ZMJ_otbDoQvGkMxPJK2bFmYaY8_jzplFJNQ=w240-h480' -o tmp/play-icons/blood-strike.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/F-kd3uWFO1kcUMCZVxkAf_ITAaGTL0UMggkyAgPSI7s468ZTDGCb50DqBnIywKRdRy8g60bUurFHho_fzjq-=w240-h480' -o tmp/play-icons/delta-force.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/JT88XmsHoGDio7FxONwh382DhuTxuccfMmWFDtRBFjilySzNqWOCxUhqm8IhBKzQSwVrW2HWp_XvSgKFwi3ETA=w240-h480' -o tmp/play-icons/free-fire.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/YQqyKaXX-63krqsfIzUEJWUWLINxcb5tbS6QVySdxbS7eZV7YB2dUjUvX27xA0TIGtfxQ5v-tQjwlT5tTB-O=w240-h480' -o tmp/play-icons/genshin-impact.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/aWrGocSA7hEuk1qAPe7L4T57LvLKrwwH26cK2_LOqxRQMQX7j3uHYojC-EKWgYEV2PdrmE0ahqvvhLhXrAGk6Q=w240-h480' -o tmp/play-icons/honkai-star-rail.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/ySKKDO_bieWZ11fmnOD1fuDpcPgOjASwjg9Nxyut3gk9bM_QPVYnAn3G4Q7_vR76dOs0VnW_DVFE99aOqVEcaCU=w240-h480' -o tmp/play-icons/honor-of-kings.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/D1m2Dx9BoCrl4ZIkZ4BZTLBZG7-q0jzsjsN8jZbM6aATGmxItR2qVjsW5GI38vD5mh5ZBReIaxh6KRYxlcbVxg=w240-h480' -o tmp/play-icons/magic-chess.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/Bi6Ci1rk-szbr2-zaiy1ERCwgf6ndaNX81btfma8JurIMAg-_E5erEHGT2E5U6pyRCGSaV0091Kdt6tOboL9t9Y=w240-h480' -o tmp/play-icons/mobile-legends.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/un5n8qOi9ylhMdrb3Ti2mEZEr4DmxoVqugQn4WfaVD_oa7QskWj7m2buovFqCTq2hQ=w240-h480' -o tmp/play-icons/pubg-mobile.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/f8SoRHdK3E8ofPV6ZbXG-TkcNtXiGmgXnPLl_zjHh6OsSQ1yZqbDIDWFI2P7UCnAQGY_C9VUv2Q8P87CIAqH=w240-h480' -o tmp/play-icons/wuthering-waves.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/-OwYJcIdDSfGJBOQozVC3kKxqnA7ev2O897twi-aVUpc8AXVMNtB3YWEXDui_V0VJxelNAbUbLXpNZj9AqWa3A=w240-h480' -o tmp/play-icons/zenless-zone-zero.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/F4k0gQZzJHrUiG2-jtM-NXo0Os8f16EICJ1e8pr2on4ifnyjX31TPorgml1veMCWf0L65dTSjVMuerVaw4nQew=w240-h480' -o tmp/play-icons/clash-of-clans.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/gnSC6s8-6Tjc4uhvDW7nfrSJxpbhllzYhgX8y374N1LYvWBStn2YhozS9XXaz1T_Pi2q=w240-h480' -o tmp/play-icons/clash-royale.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/cveL3gVZw3pTVHlki-HjTQuLq4r2NJwfFbOIn3ldLDHKA0-zfOJAp50JSy9jVnKgA3_qtwX0D5HhruNbZLxrUA=w240-h480' -o tmp/play-icons/fortnite.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/7cIIPlWm4m7AGqVpEsIfyL-HW4cQla4ucXnfalMft1TMIYQIlf2vqgmthlZgbNAQoaQ=w240-h480' -o tmp/play-icons/roblox.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA=w240-h480' -o tmp/play-icons/tiktok.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/E_x2GPSJakCdUYfECBptVyFoVnC4BxIPy3K4OdbwNyEtEJkRAY_J-Lo_Ltiybq6LiJ_aZCIzvqLv5h4Fbk91=w240-h480' -o tmp/play-icons/steam.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/tI4StRSPVhpGJH5R013naszLUawOjao1ya8FvyaNO7XY_cJFHFqo1EFaEJv_7zz3rRJ5lEpLiw14ZqQLCOYc=w240-h480' -o tmp/play-icons/minecraft.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/VpUP8AqSRB-R_uusCh1jeQLa2LRyqPB3Vb_9tY9O8Y-2wzJvtwwrZWWhP0xxTuFf5bpz-DP6LrdcYOc-KjIdOA=w240-h480' -o tmp/play-icons/standoff-2.img
+          curl -fL --retry 3 'https://play-lh.googleusercontent.com/wy8xCVA9q2_1cO6N8i3aVthK3U5BVUadpFAhW560Z-zTr6iU8eACjNkKVl1TX1VPzxsPpj2vz6pwDK682m16K1o=w240-h480' -o tmp/play-icons/teamfight-tactics.img
+
+      - name: Normalize icons for the storefront
+        run: |
+          python -m pip install --quiet pillow
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+
+          src = Path('tmp/play-icons')
+          dst = Path('v2/assets/apps')
+          dst.mkdir(parents=True, exist_ok=True)
+          for path in sorted(src.glob('*.img')):
+              with Image.open(path) as image:
+                  image = image.convert('RGB')
+                  size = min(image.size)
+                  left = (image.width - size) // 2
+                  top = (image.height - size) // 2
+                  image = image.crop((left, top, left + size, top + size))
+                  image = image.resize((160, 160), Image.Resampling.LANCZOS)
+                  image.save(dst / f'{path.stem}.webp', 'WEBP', quality=88, method=6)
+          PY
+
+      - name: Verify icon files
+        run: |
+          test "$(find v2/assets/apps -name '*.webp' | wc -l)" -eq 22
+          find v2/assets/apps -name '*.webp' -size +1k | grep -q .
+
+      - name: Commit app icons to staging branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v2/assets/apps
+          if git diff --cached --quiet; then
+            echo 'Icons already up to date.'
+          else
+            git commit -m 'Add official Google Play app icons for Web V2'
+            git push origin HEAD:web-v2-integration
+          fi
