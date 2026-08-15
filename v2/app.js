@@ -12,7 +12,37 @@ const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
 function showNotice(el,msg,type=''){el.textContent=msg;el.className=`notice ${type}`.trim();el.classList.remove('hidden')}function hideNotice(el){el.classList.add('hidden')}function openModal(id){$(id).classList.add('open');$(id).setAttribute('aria-hidden','false')}function closeModal(id){$(id).classList.remove('open');$(id).setAttribute('aria-hidden','true')}
 function loadCart(){try{const x=JSON.parse(localStorage.getItem('fs_cart_v2')||'[]');return Array.isArray(x)?x.filter(i=>i&&i.product_id&&i.quantity>0):[]}catch{return[]}}function saveCart(){localStorage.setItem('fs_cart_v2',JSON.stringify(cart));renderCartCounters()}function renderCartCounters(){const n=cart.reduce((a,i)=>a+Number(i.quantity||0),0);$('cartCount').textContent=n;$('cartInlineCount').textContent=n}function currentProduct(id){return inventory.find(p=>String(p.id)===String(id))}function cartVisualTotal(){return cart.reduce((a,i)=>{const p=currentProduct(i.product_id);return a+(p?Number(p.precio||0)*i.quantity:0)},0)}
 function canonicalGame(name){const k=normalize(name);if(k==='magicchessgogo'||k==='magicchess')return'Magic Chess';if(k==='mobilelegendsbangbang'||k==='mobilelegends')return'Mobile Legends: Bang Bang';return String(name||'Sin nombre').trim()}
-function logoDomain(name){const k=normalize(name);const rules=[['freefire','ff.garena.com'],['mobilelegends','mobilelegends.com'],['pubg','pubgmobile.com'],['genshin','genshin.hoyoverse.com'],['wuthering','wutheringwaves.kurogames.com'],['honorofking','honorofkings.com'],['bloodstrike','blood-strike.com'],['clashofclans','supercell.com'],['clashroyale','supercell.com'],['fortnite','fortnite.com'],['roblox','roblox.com'],['minecraft','minecraft.net'],['valorant','playvalorant.com'],['steam','steampowered.com'],['netflix','netflix.com'],['disney','disneyplus.com'],['hbomax','max.com'],['primevideo','primevideo.com'],['vix','vix.com'],['spotify','spotify.com'],['crunchyroll','crunchyroll.com']];return(rules.find(r=>k.includes(r[0]))||[])[1]||''}function logoUrl(name){const d=logoDomain(name);return d?`https://www.google.com/s2/favicons?sz=128&domain_url=https://${d}`:''}
+const PLAY_ICONS={
+'arenabreakout':'assets/apps/arena-breakout.webp',
+'asphaltlegends':'assets/apps/asphalt-legends.webp',
+'bloodstrike':'assets/apps/blood-strike.webp',
+'deltaforce':'assets/apps/delta-force.webp',
+'freefire':'assets/apps/free-fire.webp',
+'genshinimpact':'assets/apps/genshin-impact.webp',
+'honkaistarrail':'assets/apps/honkai-star-rail.webp',
+'honorofkings':'assets/apps/honor-of-kings.webp',
+'magicchess':'assets/apps/magic-chess.webp',
+'mobilelegendsbangbang':'assets/apps/mobile-legends.webp',
+'pubgmobile':'assets/apps/pubg-mobile.webp',
+'wutheringwaves':'assets/apps/wuthering-waves.webp',
+'zenlesszonezero':'assets/apps/zenless-zone-zero.webp',
+'clashofclans':'assets/apps/clash-of-clans.webp',
+'clashroyale':'assets/apps/clash-royale.webp',
+'fortnite':'assets/apps/fortnite.webp',
+'roblox':'assets/apps/roblox.webp',
+'tiktok':'assets/apps/tiktok.webp',
+'steam':'assets/apps/steam.webp',
+'minecraft':'assets/apps/minecraft.webp',
+'standoff2':'assets/apps/standoff-2.webp',
+'teamfighttactics':'assets/apps/teamfight-tactics.webp'
+};
+function logoUrl(name){
+  const k=normalize(name);
+  if(k.includes('clashofclansclashroyale')) return PLAY_ICONS.clashofclans;
+  if(PLAY_ICONS[k]) return PLAY_ICONS[k];
+  const found=Object.entries(PLAY_ICONS).find(([key])=>k.includes(key)||key.includes(k));
+  return found?found[1]:'';
+}
 function navigate(view){if(['wallet','pedidos','perfil'].includes(view)&&!session){openModal('authModal');return}if(view==='admin'&&!admin)return;document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));const target=$(`view-${view}`);if(target)target.classList.add('active');document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));window.scrollTo({top:0,behavior:'auto'});if(view==='wallet')loadWallet();if(view==='pedidos')loadOrders();if(view==='perfil')renderProfile();if(view==='admin')loadAdmin()}
 function renderCategoryTabs(){const box=$('categoryTabs');box.innerHTML=CATEGORIES.map(c=>`<button class="${c===category?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');box.querySelectorAll('button').forEach(b=>b.onclick=()=>{category=b.dataset.cat;renderCategoryTabs();renderCatalog()})}
 function productGroups(items){const groups={};items.forEach(p=>{const n=canonicalGame(p.juego);(groups[n]??=[]).push(p)});return Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0],'es',{sensitivity:'base'}))}
