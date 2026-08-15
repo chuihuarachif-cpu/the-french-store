@@ -23,7 +23,6 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p tmp/play-icons v2/assets/apps
-
           curl -fL --retry 3 'https://play-lh.googleusercontent.com/YkjOLbdDuSqO9W3tvNNogoWfKhCAOj7R76ZBPmi3ZrA01Xxadfcfx9pOQdMjYE5RKyemeNi-kVXhSduUFd-8Og=w240-h480' -o tmp/play-icons/arena-breakout.img
           curl -fL --retry 3 'https://play-lh.googleusercontent.com/53ngsanoIl6vcppIwZD2LGMcjT9j5beVN_GakLncwrIr7WjTXYs6lnaSef-zlKmWr2NaaoSmMs1qQjtyXgLnSiw=w240-h480' -o tmp/play-icons/asphalt-legends.img
           curl -fL --retry 3 'https://play-lh.googleusercontent.com/SXwJQ3maA2BmyR2uGztnwHDIhyxcI8skvrZ1x_wDRKSv7nOALa7ZMJ_otbDoQvGkMxPJK2bFmYaY8_jzplFJNQ=w240-h480' -o tmp/play-icons/blood-strike.img
@@ -53,7 +52,6 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           from PIL import Image
-
           src = Path('tmp/play-icons')
           dst = Path('v2/assets/apps')
           dst.mkdir(parents=True, exist_ok=True)
@@ -68,19 +66,49 @@ jobs:
                   image.save(dst / f'{path.stem}.webp', 'WEBP', quality=88, method=6)
           PY
 
-      - name: Verify icon files
+      - name: Patch storefront to use local official icons
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          app = Path('v2/app.js')
+          text = app.read_text(encoding='utf-8')
+          replacement = r'''const PLAY_ICONS={
+'arenabreakout':'assets/apps/arena-breakout.webp','asphaltlegends':'assets/apps/asphalt-legends.webp','bloodstrike':'assets/apps/blood-strike.webp','deltaforce':'assets/apps/delta-force.webp','freefire':'assets/apps/free-fire.webp','genshinimpact':'assets/apps/genshin-impact.webp','honkaistarrail':'assets/apps/honkai-star-rail.webp','honorofkings':'assets/apps/honor-of-kings.webp','magicchess':'assets/apps/magic-chess.webp','mobilelegendsbangbang':'assets/apps/mobile-legends.webp','pubgmobile':'assets/apps/pubg-mobile.webp','wutheringwaves':'assets/apps/wuthering-waves.webp','zenlesszonezero':'assets/apps/zenless-zone-zero.webp','clashofclans':'assets/apps/clash-of-clans.webp','clashroyale':'assets/apps/clash-royale.webp','fortnite':'assets/apps/fortnite.webp','roblox':'assets/apps/roblox.webp','tiktok':'assets/apps/tiktok.webp','steam':'assets/apps/steam.webp','minecraft':'assets/apps/minecraft.webp','standoff2':'assets/apps/standoff-2.webp','teamfighttactics':'assets/apps/teamfight-tactics.webp'};
+function logoUrl(name){const k=normalize(name);if(k.includes('clashofclansclashroyale'))return PLAY_ICONS.clashofclans;const exact=PLAY_ICONS[k];if(exact)return exact;const found=Object.entries(PLAY_ICONS).find(([key])=>k.includes(key)||key.includes(k));return found?found[1]:''}
+function navigate'''
+          pattern = r"function logoDomain\(name\).*?function logoUrl\(name\).*?\nfunction navigate"
+          new_text, n = re.subn(pattern, replacement, text, count=1, flags=re.S)
+          if n != 1:
+              raise SystemExit(f'Expected one logo function block, replaced {n}')
+          app.write_text(new_text, encoding='utf-8')
+
+          css = Path('v2/styles.css')
+          css_text = css.read_text(encoding='utf-8')
+          marker = '/* OFFICIAL PLAY STORE ICONS */'
+          override = '''\n/* OFFICIAL PLAY STORE ICONS */\n.game-logo{width:64px;height:64px;flex:0 0 64px;border-radius:16px;object-fit:cover;background:#07131d;border:1px solid rgba(255,255,255,.10);box-shadow:0 5px 14px rgba(0,0,0,.28)}\n@media(max-width:620px){.game-logo{width:54px;height:54px;flex-basis:54px;border-radius:14px}}\n'''
+          if marker not in css_text:
+              css.write_text(css_text + override, encoding='utf-8')
+          PY
+
+      - name: Verify icon files and JS syntax
         run: |
           test "$(find v2/assets/apps -name '*.webp' | wc -l)" -eq 22
           find v2/assets/apps -name '*.webp' -size +1k | grep -q .
+          node --check v2/app.js
+          grep -q "assets/apps/free-fire.webp" v2/app.js
+          grep -q "assets/apps/mobile-legends.webp" v2/app.js
+          ! grep -q "google.com/s2/favicons" v2/app.js
 
-      - name: Commit app icons to staging branch
+      - name: Commit app icons and storefront mapping
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add v2/assets/apps
+          git add v2/assets/apps v2/app.js v2/styles.css
           if git diff --cached --quiet; then
             echo 'Icons already up to date.'
           else
-            git commit -m 'Add official Google Play app icons for Web V2'
+            git commit -m 'Use official Google Play icons in Web V2'
             git push origin HEAD:web-v2-integration
           fi
