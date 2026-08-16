@@ -1,10 +1,11 @@
-/* THE FRENCH STORE — R8 official logo presentation */
+/* THE FRENCH STORE — R8 official brand image presentation */
 .r6-game-art img[data-r8-official-logo='1'],
 .r6-hero-logo img[data-r8-official-logo='1'],
 .r6-feature-card img[data-r8-official-logo='1']{
   object-fit:contain!important;
   transform:none!important;
   box-sizing:border-box;
+  image-rendering:auto;
 }
 
 .r6-game-art img[data-r8-official-logo='1']{
@@ -24,15 +25,41 @@ img[data-r8-official-key='lol']{
 }
 
 img[data-r8-official-key='valorant']{
-  background:linear-gradient(145deg,#ff4655,#e83d50 58%,#bf3042);
+  background:linear-gradient(145deg,#f2f5f7,#dfe6eb 58%,#cdd8df);
 }
 
-img[data-r8-official-key='marvel-rivals']{
-  background:linear-gradient(145deg,#f8f8f5,#e7e8e8);
+img[data-r8-official-key='netflix'],
+img[data-r8-official-key='disney-plus'],
+img[data-r8-official-key='crunchyroll'],
+img[data-r8-official-key='hbo-max'],
+img[data-r8-official-key='prime-video'],
+img[data-r8-official-key='spotify'],
+img[data-r8-official-key='vix']{
+  padding:0!important;
+  object-fit:cover!important;
+  background:#07131d;
+}
+
+.r6-game-art img[data-r8-official-key='netflix'],
+.r6-game-art img[data-r8-official-key='disney-plus'],
+.r6-game-art img[data-r8-official-key='crunchyroll'],
+.r6-game-art img[data-r8-official-key='hbo-max'],
+.r6-game-art img[data-r8-official-key='prime-video'],
+.r6-game-art img[data-r8-official-key='spotify'],
+.r6-game-art img[data-r8-official-key='vix']{
+  width:100%;
+  height:100%;
 }
 
 @media(max-width:620px){
   .r6-game-art img[data-r8-official-logo='1']{padding:13px 17px}
   .r6-hero-logo img[data-r8-official-logo='1']{padding:10px}
   .r6-feature-card img[data-r8-official-logo='1']{padding:6px}
+  .r6-game-art img[data-r8-official-key='netflix'],
+  .r6-game-art img[data-r8-official-key='disney-plus'],
+  .r6-game-art img[data-r8-official-key='crunchyroll'],
+  .r6-game-art img[data-r8-official-key='hbo-max'],
+  .r6-game-art img[data-r8-official-key='prime-video'],
+  .r6-game-art img[data-r8-official-key='spotify'],
+  .r6-game-art img[data-r8-official-key='vix']{padding:0}
 }
