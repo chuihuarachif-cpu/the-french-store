@@ -16,41 +16,13 @@
       id: 'valorant',
       src: 'https://www.riotgames.com/darkroom/800/9691de74fc891930fdb7d200d72396ec%3A36d04b23935d6c621156e13d621ffc15/v-lockup-horizontal-pos-off-white.png'
     },
-    {
-      keys: ['netflix'],
-      id: 'netflix',
-      src: 'https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI%3Dw240-h480'
-    },
-    {
-      keys: ['disneypremium', 'disneyplus', 'disney'],
-      id: 'disney-plus',
-      src: 'https://play-lh.googleusercontent.com/AEX_3Bk5_SEZfR4fUcJsWiyqW_RRVcLED9AM2HMUVHAPVTZhZHfP2q3M35mRe4LtCXlb712DtkKwkZa_nJ-0%3Dw240-h480'
-    },
-    {
-      keys: ['crunchyroll'],
-      id: 'crunchyroll',
-      src: 'https://play-lh.googleusercontent.com/FUEOotGzxEZqItvGGov0YBiOhZBCACxCM6kF37OtpWrCG9H6EyxSeY2G8PDXQGueLxlxtL3Xr0fbkvXaQ67NLg%3Dw240-h480'
-    },
-    {
-      keys: ['hbomax', 'max'],
-      id: 'hbo-max',
-      src: 'https://play-lh.googleusercontent.com/wKJ5hN5CmSBWXPBVYYuRENzcEVb7FB6NyibjKqPT4SB0eoZ7Fww2jq-OhUDCxEPGALrSekQaazrHLSBwVb6T4A%3Dw240-h480'
-    },
-    {
-      keys: ['primevideo'],
-      id: 'prime-video',
-      src: 'https://play-lh.googleusercontent.com/NnoDzfxkvlsAvU8jzoPeK8aaxbcU2sEH_btwgMQ2xI88_qtrNGQuf1vlFkxSiQODyKVFZ3-s71sU1MHyV-vc9Q%3Dw240-h480'
-    },
-    {
-      keys: ['spotify'],
-      id: 'spotify',
-      src: 'https://play-lh.googleusercontent.com/IzQgYCcnCFCD08GR-3bdtcT8xzOvrNkC84avGT5CwTX2VIqmTmKKJcP_Cd4JoBOdmCMlTndlOzV6hrthg2fOWA%3Dw240-h480'
-    },
-    {
-      keys: ['vixplus', 'vix'],
-      id: 'vix',
-      src: 'https://play-lh.googleusercontent.com/633te87O6OwdbHCgPfkE1atdsYLHNDwL6jdgx5-pFPQ29gbfLxBXXaJ7Ejvl5ec4BlOC62l3MedNwJ7asrvdug%3Dw240-h480'
-    }
+    { keys: ['netflix'], id: 'netflix', src: 'assets/brands/netflix.webp' },
+    { keys: ['disneypremium', 'disneyplus', 'disney'], id: 'disney-plus', src: 'assets/brands/disney-plus.webp' },
+    { keys: ['crunchyroll'], id: 'crunchyroll', src: 'assets/brands/crunchyroll.webp' },
+    { keys: ['hbomax', 'max'], id: 'hbo-max', src: 'assets/brands/hbo-max.webp' },
+    { keys: ['primevideo'], id: 'prime-video', src: 'assets/brands/prime-video.webp' },
+    { keys: ['spotify'], id: 'spotify', src: 'assets/brands/spotify.webp' },
+    { keys: ['vixplus', 'vix'], id: 'vix', src: 'assets/brands/vix.webp' }
   ];
 
   function norm(value) {
