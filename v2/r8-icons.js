@@ -9,7 +9,7 @@
     {
       keys: ['leagueoflegends'],
       id: 'lol',
-      src: 'https://www.riotgames.com/darkroom/800/9c08e3b3ce6281f252a4dfbf61357a11%3A75ab7e60b85225c6c7f19ae4024e27a6/lol-logo-rendered-hi-res.png'
+      src: 'https://www.riotgames.com/darkroom/original/9a50f5b3bdcfb815580ef103ec9b6ee2%3Ad49b78b12cf185e10127cdf81b144a00/lol-logo-rendered-hi-res.png'
     },
     {
       keys: ['valorant'],
