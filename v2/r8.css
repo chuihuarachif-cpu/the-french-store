@@ -1,0 +1,116 @@
+/* THE FRENCH STORE — Revision 8 motion & genre ambience
+   Pure visual layer over R6/R7. No layout contract or business logic changes. */
+
+:root{--r8-ease:cubic-bezier(.2,.8,.2,1)}
+
+/* Premium micro-interactions without changing card geometry */
+.r6-game-card,.r6-feature-card{--r8-a:var(--r6-accent,#61e9f8);--r8-b:var(--r6-accent2,#7d87ff);transform:translateZ(0);backface-visibility:hidden}
+.r6-game-card .r6-game-art,.r6-feature-card{isolation:isolate}
+.r6-game-card .r6-game-art::before,.r6-feature-card::before{content:"";position:absolute;inset:-55% -80%;z-index:2;pointer-events:none;opacity:0;background:linear-gradient(110deg,transparent 43%,rgba(255,255,255,.16) 49%,rgba(255,255,255,.33) 50%,rgba(255,255,255,.12) 53%,transparent 59%);transform:translateX(-28%) rotate(8deg);transition:opacity .25s ease}
+.r6-game-card:hover .r6-game-art::before,.r6-game-card:focus-visible .r6-game-art::before,.r6-feature-card:hover::before,.r6-feature-card:focus-visible::before{opacity:.75;animation:r8CardShine 1.15s var(--r8-ease) both}
+.r6-game-card .r6-game-art img,.r6-feature-card img{transition:transform .48s var(--r8-ease),filter .48s ease;will-change:transform}
+.r6-game-card:hover .r6-game-art img,.r6-game-card:focus-visible .r6-game-art img,.r6-feature-card:hover img,.r6-feature-card:focus-visible img{transform:scale(1.075);filter:saturate(1.08) contrast(1.04)}
+.r6-game-card[data-r8-effect],.r6-feature-card[data-r8-effect]{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--r8-a) 12%,transparent)}
+.r6-game-card[data-r8-effect]:hover,.r6-game-card[data-r8-effect]:focus-visible,.r6-feature-card[data-r8-effect]:hover,.r6-feature-card[data-r8-effect]:focus-visible{border-color:color-mix(in srgb,var(--r8-a) 70%,#fff 10%);box-shadow:0 16px 34px rgba(0,0,0,.28),0 0 22px color-mix(in srgb,var(--r8-a) 16%,transparent),inset 0 0 0 1px color-mix(in srgb,var(--r8-a) 20%,transparent)}
+
+/* Card-specific ambient cues */
+.r6-game-card[data-r8-effect="gacha"]::before,.r6-feature-card[data-r8-effect="gacha"]{background-image:radial-gradient(circle at 82% 14%,color-mix(in srgb,var(--r8-a) 18%,transparent),transparent 34%),radial-gradient(circle at 15% 86%,color-mix(in srgb,var(--r8-b) 14%,transparent),transparent 38%)}
+.r6-game-card[data-r8-effect="moba"]::before{background:radial-gradient(circle at 88% 12%,color-mix(in srgb,var(--r8-b) 16%,transparent),transparent 35%),conic-gradient(from 40deg at 70% 35%,transparent,color-mix(in srgb,var(--r8-a) 8%,transparent),transparent 32%)}
+.r6-game-card[data-r8-effect="shooter"]::before{background:linear-gradient(145deg,transparent 52%,color-mix(in srgb,var(--r8-a) 7%,transparent) 53% 55%,transparent 56%),radial-gradient(circle at 20% 8%,color-mix(in srgb,var(--r8-a) 13%,transparent),transparent 38%)}
+.r6-game-card[data-r8-effect="racing"]::before{background:repeating-linear-gradient(155deg,transparent 0 26px,color-mix(in srgb,var(--r8-a) 7%,transparent) 27px 30px,transparent 31px 48px),radial-gradient(circle at 80% 18%,color-mix(in srgb,var(--r8-b) 12%,transparent),transparent 38%)}
+.r6-game-card[data-r8-effect="sandbox"]::before{background:linear-gradient(90deg,color-mix(in srgb,var(--r8-a) 4%,transparent) 1px,transparent 1px),linear-gradient(color-mix(in srgb,var(--r8-a) 4%,transparent) 1px,transparent 1px);background-size:20px 20px}
+.r6-game-card[data-r8-effect="strategy"]::before{background:radial-gradient(circle at 78% 25%,color-mix(in srgb,var(--r8-a) 15%,transparent),transparent 38%)}
+.r6-game-card[data-r8-effect="competitive"]::before{background:linear-gradient(135deg,transparent 44%,color-mix(in srgb,var(--r8-a) 7%,transparent) 45% 47%,transparent 48%),radial-gradient(circle at 12% 18%,color-mix(in srgb,var(--r8-b) 12%,transparent),transparent 34%)}
+.r6-game-card[data-r8-effect="digital"]::before{background:repeating-linear-gradient(180deg,transparent 0 9px,color-mix(in srgb,var(--r8-a) 3%,transparent) 10px 11px),radial-gradient(circle at 80% 20%,color-mix(in srgb,var(--r8-a) 13%,transparent),transparent 38%)}
+
+/* Hero motion stage */
+.r6-game-detail[data-r8-effect] .r6-hero{--r8-a:var(--r6-accent,#61e9f8);--r8-b:var(--r6-accent2,#7d87ff);box-shadow:0 22px 50px rgba(0,0,0,.25),inset 0 0 45px color-mix(in srgb,var(--r8-a) 4%,transparent)}
+.r6-game-detail[data-r8-effect] .r6-hero-logo{transition:transform .45s var(--r8-ease),box-shadow .45s ease;animation:r8LogoFloat 5.6s ease-in-out infinite}
+.r6-game-detail[data-r8-effect] .r6-hero:hover .r6-hero-logo{transform:translateY(-3px) scale(1.025);box-shadow:0 22px 52px rgba(0,0,0,.42),0 0 24px color-mix(in srgb,var(--r8-a) 18%,transparent)}
+.r8-motion-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;contain:layout paint style}
+.r6-hero>*:not(.r7-motion-stage):not(.r8-motion-layer){position:relative;z-index:2}
+.r7-motion-stage{z-index:0}
+.r8-motion-layer>*{position:absolute;display:block;pointer-events:none}
+.r6-hero[data-r8-active="0"] .r8-motion-layer>*,.r6-hero[data-r8-active="0"] .r7-motion-stage>*,:root[data-r8-paused="1"] .r8-motion-layer>*,:root[data-r8-paused="1"] .r7-motion-stage>*{animation-play-state:paused!important}
+
+/* GACHA / anime RPG: soft energy, stars and ribbon */
+.r6-hero[data-r8-effect="gacha"]::after{background:radial-gradient(circle at 78% 28%,color-mix(in srgb,var(--r8-a) 20%,transparent),transparent 34%),radial-gradient(circle at 92% 74%,color-mix(in srgb,var(--r8-b) 14%,transparent),transparent 36%),linear-gradient(120deg,transparent 48%,color-mix(in srgb,var(--r8-b) 7%,transparent));animation:r8Backdrop 7s ease-in-out infinite alternate}
+.r8-orb{border-radius:999px;filter:blur(2px);background:radial-gradient(circle at 35% 30%,#fff,color-mix(in srgb,var(--r8-a) 85%,#fff 8%) 24%,transparent 68%);opacity:.32;box-shadow:0 0 24px color-mix(in srgb,var(--r8-a) 35%,transparent)}
+.r8-orb.o1{width:18px;height:18px;left:68%;top:73%;animation:r8Orb 6.2s ease-in-out infinite}.r8-orb.o2{width:9px;height:9px;left:91%;top:21%;animation:r8Orb 4.8s ease-in-out -2.1s infinite}
+.r8-spark{font-size:18px;line-height:1;color:#fff;text-shadow:0 0 12px var(--r8-a),0 0 24px var(--r8-b);opacity:.75}.r8-spark.s1{left:72%;top:16%;animation:r8Spark 3.4s ease-in-out infinite}.r8-spark.s2{left:86%;top:57%;font-size:13px;animation:r8Spark 4.2s ease-in-out -1.4s infinite}.r8-spark.s3{left:58%;top:76%;font-size:11px;animation:r8Spark 3.8s ease-in-out -2.2s infinite}
+.r8-ribbon{width:55%;height:160%;right:-25%;top:-28%;border:2px solid color-mix(in srgb,var(--r8-a) 34%,transparent);border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--r8-b) 22%,transparent));transform:rotate(24deg);animation:r8Ribbon 8s ease-in-out infinite}
+
+/* MOBA: rotating runes and arc energy */
+.r6-hero[data-r8-effect="moba"]::after{background:conic-gradient(from 0deg at 80% 45%,transparent 0 68%,color-mix(in srgb,var(--r8-a) 8%,transparent) 72%,transparent 78%),radial-gradient(circle at 80% 45%,color-mix(in srgb,var(--r8-b) 15%,transparent),transparent 35%)}
+.r8-rune{border-radius:50%;border:1px solid color-mix(in srgb,var(--r8-a) 35%,transparent);box-shadow:inset 0 0 20px color-mix(in srgb,var(--r8-b) 9%,transparent),0 0 18px color-mix(in srgb,var(--r8-a) 9%,transparent)}.r8-rune::before,.r8-rune::after{content:"";position:absolute;inset:12%;border-radius:50%;border:1px dashed color-mix(in srgb,var(--r8-b) 42%,transparent)}
+.r8-rune.r1{width:210px;height:210px;right:-45px;top:12px;animation:r8Spin 18s linear infinite}.r8-rune.r2{width:120px;height:120px;right:110px;bottom:-55px;opacity:.55;animation:r8SpinReverse 13s linear infinite}
+.r8-arc{width:47%;height:72%;right:-4%;top:15%;border:2px solid transparent;border-top-color:color-mix(in srgb,var(--r8-a) 38%,transparent);border-left-color:color-mix(in srgb,var(--r8-b) 20%,transparent);border-radius:50%;transform:rotate(-18deg);animation:r8Arc 5.5s ease-in-out infinite}
+
+/* SHOOTERS: smoke, tracers and reticle */
+.r6-hero[data-r8-effect="shooter"]::after{background:linear-gradient(118deg,transparent 55%,color-mix(in srgb,var(--r8-a) 8%,transparent) 56% 57%,transparent 58%),radial-gradient(circle at 83% 38%,color-mix(in srgb,var(--r8-a) 16%,transparent),transparent 34%)}
+.r8-smoke{width:160px;height:90px;border-radius:50%;background:radial-gradient(ellipse,rgba(205,220,228,.17),rgba(98,112,120,.08) 44%,transparent 72%);filter:blur(13px);opacity:.3}.r8-smoke.sm1{right:-35px;bottom:-8px;animation:r8Smoke 8s ease-in-out infinite}.r8-smoke.sm2{right:115px;bottom:-35px;transform:scale(.72);animation:r8Smoke 10s ease-in-out -4s infinite}
+.r8-tracer{height:2px;width:46%;right:-16%;background:linear-gradient(90deg,transparent,var(--r8-a),#fff,transparent);box-shadow:0 0 9px var(--r8-a);opacity:0;transform:rotate(-11deg)}.r8-tracer.t1{top:29%;animation:r8Tracer 4.5s ease-out .4s infinite}.r8-tracer.t2{top:61%;width:33%;animation:r8Tracer 5.8s ease-out -1.8s infinite}
+.r8-reticle{right:9%;top:22%;width:84px;height:84px;border:1px solid color-mix(in srgb,var(--r8-a) 34%,transparent);border-radius:50%;opacity:.24;animation:r8Reticle 4.4s ease-in-out infinite}.r8-reticle::before,.r8-reticle::after{content:"";position:absolute;background:color-mix(in srgb,var(--r8-a) 40%,transparent)}.r8-reticle::before{width:120%;height:1px;left:-10%;top:50%}.r8-reticle::after{height:120%;width:1px;top:-10%;left:50%}
+
+/* RACING: moving speed trails and road horizon */
+.r6-hero[data-r8-effect="racing"]::after{background:linear-gradient(155deg,transparent 42%,color-mix(in srgb,var(--r8-b) 8%,transparent) 43%,transparent 52%),radial-gradient(ellipse at 82% 70%,color-mix(in srgb,var(--r8-a) 19%,transparent),transparent 40%)}
+.r8-speed{height:2px;right:-25%;background:linear-gradient(90deg,transparent,var(--r8-a),#fff);opacity:0;transform:skewX(-28deg)}.r8-speed.v1{top:18%;width:54%;animation:r8Speed 2.6s linear infinite}.r8-speed.v2{top:38%;width:38%;animation:r8Speed 2.1s linear -.8s infinite}.r8-speed.v3{top:62%;width:60%;animation:r8Speed 2.9s linear -1.5s infinite}.r8-speed.v4{top:80%;width:42%;animation:r8Speed 2.35s linear -.35s infinite}
+.r8-road{right:-5%;bottom:-38%;width:64%;height:68%;border-top:1px solid color-mix(in srgb,var(--r8-b) 26%,transparent);background:repeating-linear-gradient(90deg,transparent 0 42px,color-mix(in srgb,var(--r8-a) 9%,transparent) 43px 46px,transparent 47px 86px);transform:perspective(220px) rotateX(63deg);transform-origin:center top;opacity:.22;animation:r8Road 4s linear infinite}
+
+/* SANDBOX: blocks and pixel grid */
+.r6-hero[data-r8-effect="sandbox"]::after{background:linear-gradient(90deg,color-mix(in srgb,var(--r8-a) 4%,transparent) 1px,transparent 1px),linear-gradient(color-mix(in srgb,var(--r8-a) 4%,transparent) 1px,transparent 1px),radial-gradient(circle at 82% 40%,color-mix(in srgb,var(--r8-a) 12%,transparent),transparent 36%);background-size:26px 26px,26px 26px,auto}
+.r8-block{width:16px;height:16px;border:1px solid color-mix(in srgb,var(--r8-a) 52%,transparent);background:linear-gradient(145deg,color-mix(in srgb,var(--r8-a) 24%,transparent),color-mix(in srgb,var(--r8-b) 14%,transparent));box-shadow:0 0 9px color-mix(in srgb,var(--r8-a) 15%,transparent);opacity:.48}.r8-block.b1{right:10%;top:16%;animation:r8Block 6.4s ease-in-out infinite}.r8-block.b2{right:22%;top:66%;width:12px;height:12px;animation:r8Block 5.2s ease-in-out -1.6s infinite}.r8-block.b3{right:38%;top:25%;width:9px;height:9px;animation:r8Block 7.1s ease-in-out -3s infinite}.r8-block.b4{right:4%;top:78%;width:22px;height:22px;animation:r8Block 8s ease-in-out -4s infinite}
+.r8-pixel-grid{right:-7%;bottom:-40%;width:55%;height:82%;background:linear-gradient(90deg,color-mix(in srgb,var(--r8-a) 9%,transparent) 1px,transparent 1px),linear-gradient(color-mix(in srgb,var(--r8-a) 9%,transparent) 1px,transparent 1px);background-size:20px 20px;transform:rotate(-10deg);opacity:.22;animation:r8Grid 8s linear infinite}
+
+/* STRATEGY: rune shields and embers */
+.r6-hero[data-r8-effect="strategy"]::after{background:radial-gradient(circle at 82% 45%,color-mix(in srgb,var(--r8-a) 15%,transparent),transparent 35%),linear-gradient(120deg,transparent 56%,color-mix(in srgb,var(--r8-b) 6%,transparent))}
+.r8-ember{width:5px;height:5px;border-radius:50%;background:var(--r8-a);box-shadow:0 0 10px var(--r8-a);opacity:.7}.r8-ember.e1{right:13%;bottom:13%;animation:r8Ember 4.2s ease-out infinite}.r8-ember.e2{right:27%;bottom:4%;animation:r8Ember 5.1s ease-out -2s infinite}.r8-ember.e3{right:40%;bottom:12%;animation:r8Ember 4.7s ease-out -3.2s infinite}
+
+/* COMPETITIVE: angular neon / rank feel */
+.r6-hero[data-r8-effect="competitive"]::after{background:linear-gradient(135deg,transparent 48%,color-mix(in srgb,var(--r8-a) 8%,transparent) 49% 51%,transparent 52%),radial-gradient(circle at 82% 30%,color-mix(in srgb,var(--r8-b) 13%,transparent),transparent 34%)}
+.r8-chevron{right:8%;width:90px;height:90px;border-top:2px solid color-mix(in srgb,var(--r8-a) 45%,transparent);border-right:2px solid color-mix(in srgb,var(--r8-a) 45%,transparent);transform:rotate(45deg);opacity:.3}.r8-chevron.c1{top:12%;animation:r8Chevron 5s ease-in-out infinite}.r8-chevron.c2{top:45%;right:20%;width:55px;height:55px;animation:r8Chevron 6.2s ease-in-out -2.4s infinite}
+.r8-line{right:-10%;height:1px;background:linear-gradient(90deg,transparent,var(--r8-a),transparent);transform:rotate(-8deg);opacity:.28}.r8-line.l1{top:32%;width:48%;animation:r8Line 4.5s ease-in-out infinite}.r8-line.l2{top:70%;width:38%;animation:r8Line 5.4s ease-in-out -2s infinite}
+
+/* DIGITAL / streaming: equalizer and scan */
+.r6-hero[data-r8-effect="digital"]::after{background:repeating-linear-gradient(180deg,transparent 0 13px,color-mix(in srgb,var(--r8-a) 2.5%,transparent) 14px 15px),radial-gradient(circle at 82% 38%,color-mix(in srgb,var(--r8-a) 14%,transparent),transparent 34%)}
+.r8-eq{bottom:16%;width:7px;border-radius:8px 8px 2px 2px;background:linear-gradient(180deg,var(--r8-a),var(--r8-b));opacity:.35;transform-origin:center bottom;animation:r8Eq 1.9s ease-in-out infinite}.r8-eq.q1{right:10%;height:34px}.r8-eq.q2{right:13%;height:55px;animation-delay:-.4s}.r8-eq.q3{right:16%;height:42px;animation-delay:-.9s}.r8-eq.q4{right:19%;height:66px;animation-delay:-1.3s}
+.r8-digital-scan{inset:0;background:linear-gradient(180deg,transparent 0 45%,color-mix(in srgb,var(--r8-a) 8%,transparent) 50%,transparent 55%);transform:translateY(-100%);animation:r8DigitalScan 7s linear infinite;opacity:.42}
+
+/* Package micro-feedback */
+.r6-package-card{transition:border-color .2s ease,background-color .2s ease,transform .2s var(--r8-ease),box-shadow .2s ease}.r6-package-card:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--r6-accent,#61e9f8) 45%,#12394d);box-shadow:0 10px 24px rgba(0,0,0,.16)}
+.r6-package-card .add-btn{transition:transform .16s var(--r8-ease),filter .16s ease,box-shadow .16s ease}.r6-package-card .add-btn:hover,.r6-package-card .add-btn:focus-visible{transform:translateY(-1px) scale(1.025);filter:brightness(1.07);box-shadow:0 7px 18px rgba(0,0,0,.18)}
+img[data-r8-brand="1"]{object-fit:cover!important;image-rendering:auto}
+
+/* Keyframes */
+@keyframes r8CardShine{0%{transform:translateX(-34%) rotate(8deg)}100%{transform:translateX(34%) rotate(8deg)}}
+@keyframes r8LogoFloat{0%,100%{translate:0 0}50%{translate:0 -3px}}
+@keyframes r8Backdrop{0%{opacity:.72}100%{opacity:1}}
+@keyframes r8Orb{0%,100%{transform:translate3d(0,0,0) scale(.75);opacity:.18}50%{transform:translate3d(-18px,-27px,0) scale(1.2);opacity:.55}}
+@keyframes r8Spark{0%,100%{transform:scale(.65) rotate(0deg);opacity:.2}45%{transform:scale(1.35) rotate(25deg);opacity:.95}}
+@keyframes r8Ribbon{0%,100%{transform:translate3d(0,0,0) rotate(24deg) scale(1)}50%{transform:translate3d(-18px,8px,0) rotate(16deg) scale(1.05)}}
+@keyframes r8Spin{to{transform:rotate(360deg)}}@keyframes r8SpinReverse{to{transform:rotate(-360deg)}}
+@keyframes r8Arc{0%,100%{transform:rotate(-22deg) scale(.95);opacity:.2}50%{transform:rotate(-6deg) scale(1.04);opacity:.55}}
+@keyframes r8Smoke{0%,100%{transform:translate3d(0,12px,0) scale(.82);opacity:.08}50%{transform:translate3d(-35px,-14px,0) scale(1.15);opacity:.32}}
+@keyframes r8Tracer{0%,72%{transform:translate3d(18%,0,0) rotate(-11deg);opacity:0}78%{opacity:.8}92%,100%{transform:translate3d(-95%,0,0) rotate(-11deg);opacity:0}}
+@keyframes r8Reticle{0%,100%{transform:scale(.88) rotate(0deg);opacity:.14}50%{transform:scale(1.04) rotate(8deg);opacity:.34}}
+@keyframes r8Speed{0%{transform:translate3d(35%,0,0) skewX(-28deg);opacity:0}18%{opacity:.7}100%{transform:translate3d(-130%,0,0) skewX(-28deg);opacity:0}}
+@keyframes r8Road{to{background-position:86px 0}}
+@keyframes r8Block{0%,100%{transform:translate3d(0,8px,0) rotate(0deg);opacity:.22}50%{transform:translate3d(-12px,-18px,0) rotate(90deg);opacity:.62}}
+@keyframes r8Grid{to{background-position:20px 20px}}
+@keyframes r8Ember{0%{transform:translate3d(0,0,0) scale(.7);opacity:0}20%{opacity:.75}100%{transform:translate3d(-20px,-110px,0) scale(.2);opacity:0}}
+@keyframes r8Chevron{0%,100%{transform:translateX(0) rotate(45deg);opacity:.13}50%{transform:translateX(-15px) rotate(45deg);opacity:.42}}
+@keyframes r8Line{0%,100%{transform:translateX(20px) rotate(-8deg);opacity:.12}50%{transform:translateX(-25px) rotate(-8deg);opacity:.42}}
+@keyframes r8Eq{0%,100%{transform:scaleY(.38)}50%{transform:scaleY(1)}}
+@keyframes r8DigitalScan{to{transform:translateY(100%)}}
+
+/* Mobile performance: fewer particles, no costly blur-heavy secondary effects */
+@media(max-width:620px){.r8-ribbon,.r8-rune.r2,.r8-smoke.sm2,.r8-speed.v4,.r8-block.b4,.r8-chevron.c2,.r8-line.l2,.r8-eq.q4{display:none}.r8-rune.r1{width:150px;height:150px;right:-58px;top:4px}.r8-smoke{width:120px;height:70px;filter:blur(10px)}.r8-reticle{width:62px;height:62px;right:4%}.r8-road{width:75%;opacity:.15}.r6-game-detail[data-r8-effect] .r6-hero-logo{animation-duration:7s}}
+
+/* Lite mode auto-selected for data saver / low-memory / low-core devices */
+:root[data-r8-motion="lite"] .r8-ribbon,:root[data-r8-motion="lite"] .r8-rune.r2,:root[data-r8-motion="lite"] .r8-smoke.sm2,:root[data-r8-motion="lite"] .r8-tracer.t2,:root[data-r8-motion="lite"] .r8-speed.v3,:root[data-r8-motion="lite"] .r8-speed.v4,:root[data-r8-motion="lite"] .r8-block.b3,:root[data-r8-motion="lite"] .r8-block.b4,:root[data-r8-motion="lite"] .r8-ember.e2,:root[data-r8-motion="lite"] .r8-ember.e3,:root[data-r8-motion="lite"] .r8-chevron.c2,:root[data-r8-motion="lite"] .r8-line.l2,:root[data-r8-motion="lite"] .r8-eq.q3,:root[data-r8-motion="lite"] .r8-eq.q4{display:none!important}
+:root[data-r8-motion="lite"] .r8-motion-layer{opacity:.72}:root[data-r8-motion="lite"] .r7-light{filter:blur(10px);opacity:.08}
+
+/* Accessibility and hard stop for reduced motion */
+:root[data-r8-motion="off"] .r8-motion-layer,:root[data-r8-motion="off"] .r7-motion-stage{display:none!important}
+:root[data-r8-motion="off"] .r6-game-detail[data-r8-effect] .r6-hero-logo,:root[data-r8-motion="off"] .r6-game-card .r6-game-art img,:root[data-r8-motion="off"] .r6-feature-card img{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.r8-motion-layer,.r7-motion-stage{display:none!important}.r6-game-detail[data-r8-effect] .r6-hero-logo,.r6-game-card .r6-game-art img,.r6-feature-card img,.r6-package-card,.r6-package-card .add-btn{animation:none!important;transition:none!important}}
