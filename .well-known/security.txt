@@ -1,0 +1,5 @@
+Contact: https://wa.me/59177057379
+Preferred-Languages: es
+Canonical: https://frenchstorebo.com/.well-known/security.txt
+Policy: https://frenchstorebo.com/v2/terms.html
+Expires: 2027-08-16T00:00:00Z
