@@ -2,9 +2,11 @@ name: Test Web V2
 
 on:
   push:
-    branches: [web-v2-integration]
+    branches: [main, web-v2-integration]
     paths:
       - 'v2/**'
+      - 'robots.txt'
+      - 'sitemap.xml'
       - '.github/workflows/test-web-v2.yml'
   workflow_dispatch:
 
@@ -16,33 +18,69 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Check required files
         run: |
           test -s v2/index.html
           test -s v2/styles.css
           test -s v2/app.js
+          test -s v2/r8.css
+          test -s v2/r8.js
+          test -s v2/r8-icons.css
+          test -s v2/r8-icons.js
+          test -s v2/legal.css
+          test -s v2/legal.js
+          test -s v2/privacy.html
+          test -s v2/terms.html
+          test -s v2/refunds.html
+          test -s v2/cookies.html
+          test -s v2/about.html
+          test -s robots.txt
+          test -s sitemap.xml
+
       - name: Validate JavaScript syntax
-        run: node --check v2/app.js
+        run: |
+          node --check v2/app.js
+          node --check v2/r8.js
+          node --check v2/r8-icons.js
+          node --check v2/legal.js
+
       - name: Check critical frontend contracts
         run: |
           grep -q "create_wallet_order" v2/app.js
           grep -q "create_qr_order" v2/app.js
           grep -q "request_wallet_topup_v2" v2/app.js
           grep -q "admin_update_order_status" v2/app.js
-          grep -q "service_role" v2/app.js && exit 1 || true
-          grep -q "SUPABASE_SERVICE" v2/app.js && exit 1 || true
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2 --include='*.js' --include='*.html'
+
       - name: Check category separation
         run: |
           grep -q "Recargas por ID" v2/app.js
           grep -q "Recargas por Cuenta" v2/app.js
           grep -q "Streaming" v2/app.js
           grep -q "Gift Cards" v2/app.js
+
+      - name: Check launch legal and trust links
+        run: |
+          grep -q "privacy.html" v2/index.html
+          grep -q "terms.html" v2/index.html
+          grep -q "refunds.html" v2/index.html
+          grep -q "cookies.html" v2/index.html
+          grep -q "legalAccept" v2/index.html
+          grep -q "purchaseLegalAccept" v2/index.html
+          grep -q "frenchstorebo.com" sitemap.xml
+          grep -q "Sitemap: https://frenchstorebo.com/sitemap.xml" robots.txt
+
       - name: Start local preview
         run: |
           python3 -m http.server 8080 > /tmp/french-store-http.log 2>&1 &
           echo $! > /tmp/french-store-http.pid
           sleep 2
           curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/privacy.html >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/terms.html >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/refunds.html >/dev/null
+
       - name: Capture responsive screenshots
         run: |
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
@@ -51,10 +89,15 @@ jobs:
             exit 1
           fi
           mkdir -p screenshots
+          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=360,800 --virtual-time-budget=8000 --screenshot=screenshots/mobile-360.png http://127.0.0.1:8080/v2/index.html
           "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=390,844 --virtual-time-budget=8000 --screenshot=screenshots/mobile-390.png http://127.0.0.1:8080/v2/index.html
+          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=768,1024 --virtual-time-budget=8000 --screenshot=screenshots/tablet-768.png http://127.0.0.1:8080/v2/index.html
           "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,768 --virtual-time-budget=8000 --screenshot=screenshots/desktop-1366.png http://127.0.0.1:8080/v2/index.html
+          test -s screenshots/mobile-360.png
           test -s screenshots/mobile-390.png
+          test -s screenshots/tablet-768.png
           test -s screenshots/desktop-1366.png
+
       - name: Upload responsive screenshots
         uses: actions/upload-artifact@v4
         with:
