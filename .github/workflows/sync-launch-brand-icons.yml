@@ -1,0 +1,102 @@
+name: Sync launch brand icons
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-launch-brand-icons.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-brand-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Download verified brand artwork
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p tmp/brand-icons v2/assets/brands
+
+          curl -fL --retry 3 'https://www.riotgames.com/darkroom/800/9c08e3b3ce6281f252a4dfbf61357a11%3A75ab7e60b85225c6c7f19ae4024e27a6/lol-logo-rendered-hi-res.png' -o tmp/brand-icons/league-of-legends.img
+          curl -fL --retry 3 'https://www.riotgames.com/darkroom/800/9691de74fc891930fdb7d200d72396ec%3A36d04b23935d6c621156e13d621ffc15/v-lockup-horizontal-pos-off-white.png' -o tmp/brand-icons/valorant.img
+
+          fetch_play() {
+            local name="$1"
+            local base="$2"
+            if ! curl -fL --retry 2 "${base%=*}=w512-h512" -o "tmp/brand-icons/${name}.img"; then
+              curl -fL --retry 3 "$base" -o "tmp/brand-icons/${name}.img"
+            fi
+          }
+
+          fetch_play netflix 'https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI%3Dw240-h480'
+          fetch_play disney-plus 'https://play-lh.googleusercontent.com/AEX_3Bk5_SEZfR4fUcJsWiyqW_RRVcLED9AM2HMUVHAPVTZhZHfP2q3M35mRe4LtCXlb712DtkKwkZa_nJ-0%3Dw240-h480'
+          fetch_play crunchyroll 'https://play-lh.googleusercontent.com/FUEOotGzxEZqItvGGov0YBiOhZBCACxCM6kF37OtpWrCG9H6EyxSeY2G8PDXQGueLxlxtL3Xr0fbkvXaQ67NLg%3Dw240-h480'
+          fetch_play hbo-max 'https://play-lh.googleusercontent.com/wKJ5hN5CmSBWXPBVYYuRENzcEVb7FB6NyibjKqPT4SB0eoZ7Fww2jq-OhUDCxEPGALrSekQaazrHLSBwVb6T4A%3Dw240-h480'
+          fetch_play prime-video 'https://play-lh.googleusercontent.com/NnoDzfxkvlsAvU8jzoPeK8aaxbcU2sEH_btwgMQ2xI88_qtrNGQuf1vlFkxSiQODyKVFZ3-s71sU1MHyV-vc9Q%3Dw240-h480'
+          fetch_play spotify 'https://play-lh.googleusercontent.com/IzQgYCcnCFCD08GR-3bdtcT8xzOvrNkC84avGT5CwTX2VIqmTmKKJcP_Cd4JoBOdmCMlTndlOzV6hrthg2fOWA%3Dw240-h480'
+          fetch_play vix 'https://play-lh.googleusercontent.com/633te87O6OwdbHCgPfkE1atdsYLHNDwL6jdgx5-pFPQ29gbfLxBXXaJ7Ejvl5ec4BlOC62l3MedNwJ7asrvdug%3Dw240-h480'
+
+      - name: Normalize high-quality WebP assets
+        run: |
+          python -m pip install --quiet pillow
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageOps
+
+          src = Path('tmp/brand-icons')
+          dst = Path('v2/assets/brands')
+          dst.mkdir(parents=True, exist_ok=True)
+          logo_names = {'league-of-legends', 'valorant'}
+
+          for path in sorted(src.glob('*.img')):
+              with Image.open(path) as im:
+                  im = im.convert('RGBA')
+                  if path.stem in logo_names:
+                      canvas = Image.new('RGBA', (640, 360), (0, 0, 0, 0))
+                      fitted = ImageOps.contain(im, (580, 300), method=Image.Resampling.LANCZOS)
+                      x = (canvas.width - fitted.width) // 2
+                      y = (canvas.height - fitted.height) // 2
+                      canvas.alpha_composite(fitted, (x, y))
+                      out = canvas
+                  else:
+                      size = min(im.size)
+                      left = (im.width - size) // 2
+                      top = (im.height - size) // 2
+                      out = im.crop((left, top, left + size, top + size))
+                      out = out.resize((384, 384), Image.Resampling.LANCZOS)
+                  out.save(dst / f'{path.stem}.webp', 'WEBP', quality=92, method=6)
+          PY
+
+      - name: Validate generated assets
+        run: |
+          test "$(find v2/assets/brands -name '*.webp' | wc -l)" -eq 9
+          find v2/assets/brands -name '*.webp' -size +2k | grep -q .
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          expected = {'league-of-legends','valorant','netflix','disney-plus','crunchyroll','hbo-max','prime-video','spotify','vix'}
+          found = {p.stem for p in Path('v2/assets/brands').glob('*.webp')}
+          assert found == expected, (found, expected)
+          for p in Path('v2/assets/brands').glob('*.webp'):
+              with Image.open(p) as im:
+                  assert im.width >= 384 and im.height >= 360, (p, im.size)
+          PY
+
+      - name: Commit launch brand icons
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v2/assets/brands
+          if git diff --cached --quiet; then
+            echo 'Brand icons already up to date.'
+          else
+            git commit -m 'Add local official brand artwork for storefront'
+            git push origin HEAD:main
+          fi
