@@ -1,0 +1,38 @@
+/* THE FRENCH STORE — R8 official logo presentation */
+.r6-game-art img[data-r8-official-logo='1'],
+.r6-hero-logo img[data-r8-official-logo='1'],
+.r6-feature-card img[data-r8-official-logo='1']{
+  object-fit:contain!important;
+  transform:none!important;
+  box-sizing:border-box;
+}
+
+.r6-game-art img[data-r8-official-logo='1']{
+  padding:18px 24px;
+}
+
+.r6-hero-logo img[data-r8-official-logo='1']{
+  padding:18px;
+}
+
+.r6-feature-card img[data-r8-official-logo='1']{
+  padding:8px;
+}
+
+img[data-r8-official-key='lol']{
+  background:radial-gradient(circle at 50% 42%,#173642 0%,#081923 62%,#06131d 100%);
+}
+
+img[data-r8-official-key='valorant']{
+  background:linear-gradient(145deg,#ff4655,#e83d50 58%,#bf3042);
+}
+
+img[data-r8-official-key='marvel-rivals']{
+  background:linear-gradient(145deg,#f8f8f5,#e7e8e8);
+}
+
+@media(max-width:620px){
+  .r6-game-art img[data-r8-official-logo='1']{padding:13px 17px}
+  .r6-hero-logo img[data-r8-official-logo='1']{padding:10px}
+  .r6-feature-card img[data-r8-official-logo='1']{padding:6px}
+}
