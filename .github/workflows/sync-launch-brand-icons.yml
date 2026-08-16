@@ -22,16 +22,22 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p tmp/brand-icons v2/assets/brands
+          mkdir -p tmp/brand-icons tmp/valorant-logos v2/assets/brands
+          UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36'
 
-          curl -fL --retry 3 'https://www.riotgames.com/darkroom/800/9c08e3b3ce6281f252a4dfbf61357a11%3A75ab7e60b85225c6c7f19ae4024e27a6/lol-logo-rendered-hi-res.png' -o tmp/brand-icons/league-of-legends.img
-          curl -fL --retry 3 'https://www.riotgames.com/darkroom/800/9691de74fc891930fdb7d200d72396ec%3A36d04b23935d6c621156e13d621ffc15/v-lockup-horizontal-pos-off-white.png' -o tmp/brand-icons/valorant.img
+          curl -A "$UA" -fL --retry 3 'https://www.riotgames.com/darkroom/original/9a50f5b3bdcfb815580ef103ec9b6ee2%3Ad49b78b12cf185e10127cdf81b144a00/lol-logo-rendered-hi-res.png' -o tmp/brand-icons/league-of-legends.img
+          curl -A "$UA" -fL --retry 3 'https://www.riotgames.com/darkroom/original/529d413f0d04b52fa43ac4e0afae762a%3A5079209ca6c46089fe07ff56ed1cf3d1/valorant-logos.zip' -o tmp/valorant-logos.zip
+          unzip -q -o tmp/valorant-logos.zip -d tmp/valorant-logos
+          VALORANT_FILE="$(find tmp/valorant-logos -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) | sort | head -n 1)"
+          test -n "$VALORANT_FILE"
+          cp "$VALORANT_FILE" tmp/brand-icons/valorant.img
 
           fetch_play() {
             local name="$1"
             local base="$2"
-            if ! curl -fL --retry 2 "${base%=*}=w512-h512" -o "tmp/brand-icons/${name}.img"; then
-              curl -fL --retry 3 "$base" -o "tmp/brand-icons/${name}.img"
+            local high="${base/%3Dw240-h480/=w512-h512}"
+            if ! curl -A "$UA" -fL --retry 2 "$high" -o "tmp/brand-icons/${name}.img"; then
+              curl -A "$UA" -fL --retry 3 "$base" -o "tmp/brand-icons/${name}.img"
             fi
           }
 
@@ -77,7 +83,6 @@ jobs:
       - name: Validate generated assets
         run: |
           test "$(find v2/assets/brands -name '*.webp' | wc -l)" -eq 9
-          find v2/assets/brands -name '*.webp' -size +2k | grep -q .
           python - <<'PY'
           from pathlib import Path
           from PIL import Image
@@ -85,6 +90,7 @@ jobs:
           found = {p.stem for p in Path('v2/assets/brands').glob('*.webp')}
           assert found == expected, (found, expected)
           for p in Path('v2/assets/brands').glob('*.webp'):
+              assert p.stat().st_size > 1500, (p, p.stat().st_size)
               with Image.open(p) as im:
                   assert im.width >= 384 and im.height >= 360, (p, im.size)
           PY
