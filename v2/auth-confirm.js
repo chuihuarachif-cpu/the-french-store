@@ -51,10 +51,10 @@
     box.innerHTML = `
       <p style="margin:0 0 10px;color:#a9bfd0;line-height:1.45">${isRecovery
         ? 'Por seguridad, el enlace no cambia nada automáticamente. Pulsa el botón para validar tu recuperación.'
-        : 'Por seguridad, el enlace no confirma nada automáticamente. Pulsa el botón para confirmar que eres tú.'}</p>
+        : 'Último paso: pulsa el botón para confirmar tu correo y entrar automáticamente a FRENCH STORE.'}</p>
       <button id="authLinkConfirmButton" type="button" class="primary-btn full">${isRecovery
         ? 'Continuar recuperación'
-        : 'Confirmar mi correo'}</button>
+        : 'Confirmar y entrar'}</button>
       <button id="authLinkBackButton" type="button" class="ghost-btn full" style="margin-top:8px">Volver al inicio de sesión</button>`;
     const message = document.getElementById('loginMessage');
     message?.parentNode?.insertBefore(box, message);
@@ -75,7 +75,7 @@
     if (error || !data?.session) {
       if (button) {
         button.disabled = false;
-        button.textContent = kind === 'recovery' ? 'Continuar recuperación' : 'Confirmar mi correo';
+        button.textContent = kind === 'recovery' ? 'Continuar recuperación' : 'Confirmar y entrar';
       }
       const raw = String(error?.message || '').toLowerCase();
       if (raw.includes('expired') || raw.includes('invalid') || raw.includes('token')) {
