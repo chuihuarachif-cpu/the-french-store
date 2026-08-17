@@ -133,7 +133,7 @@
     removeChoiceBox();
     removeBackButton();
     clearNotice();
-    setHeading('Crear cuenta', 'Escribe tu correo, crea una contraseña y acepta los términos.');
+    setHeading('Crear cuenta', 'Escribe tu correo y crea una contraseña.');
     setVisible(emailLabel(), true);
     setVisible(passwordLabel(), true);
     setVisible(legalLabel(), true);
