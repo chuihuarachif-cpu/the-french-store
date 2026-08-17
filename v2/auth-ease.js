@@ -1,6 +1,6 @@
 /* FRENCH STORE — streamlined Auth UX.
-   Additive layer: improves login/signup messaging without changing Wallet,
-   checkout, pricing, providers or authorization rules. */
+   Additive layer: keeps Wallet, checkout, pricing, providers and authorization
+   rules untouched while making login/signup easier to understand on mobile. */
 (() => {
   'use strict';
 
@@ -41,20 +41,107 @@
     if(title) title.textContent = titleText;
     if(intro?.tagName === 'P') intro.textContent = introText;
   }
-  function setNormalFieldsHidden(hidden){
-    document.getElementById('loginEmail')?.closest('label')?.classList.toggle('hidden', hidden);
-    document.getElementById('loginPassword')?.closest('label')?.classList.toggle('hidden', hidden);
-    document.getElementById('legalAccept')?.closest('label')?.classList.toggle('hidden', hidden);
-    document.getElementById('loginSubmit')?.classList.toggle('hidden', hidden);
-    signupButton()?.classList.toggle('hidden', hidden);
-    document.getElementById('authExtraActions')?.classList.toggle('hidden', hidden);
+  function specialAuthFlow(){
+    const url = new URL(location.href);
+    return url.searchParams.get('confirm_signup') === '1' ||
+      url.searchParams.get('recover_account') === '1' ||
+      url.searchParams.get('reset') === '1' ||
+      /(?:[#&]type=recovery\b)/i.test(location.href);
   }
+  function setVisible(el, visible){
+    el?.classList.toggle('hidden', !visible);
+  }
+  function emailLabel(){ return document.getElementById('loginEmail')?.closest('label'); }
+  function passwordLabel(){ return document.getElementById('loginPassword')?.closest('label'); }
+  function legalLabel(){ return document.getElementById('legalAccept')?.closest('label'); }
+  function loginButton(){ return document.getElementById('loginSubmit'); }
+  function extraActions(){ return document.getElementById('authExtraActions'); }
   function removePendingBox(){ document.getElementById('authPendingBox')?.remove(); }
-  function restoreNormalAuth(){
+  function removeChoiceBox(){ document.getElementById('authChoiceBox')?.remove(); }
+  function removeBackButton(){ document.getElementById('authModeBack')?.remove(); }
+
+  function hideAllAuthControls(){
+    setVisible(emailLabel(), false);
+    setVisible(passwordLabel(), false);
+    setVisible(legalLabel(), false);
+    setVisible(loginButton(), false);
+    setVisible(signupButton(), false);
+    setVisible(extraActions(), false);
+  }
+
+  function addBackButton(){
+    removeBackButton();
+    const button = document.createElement('button');
+    button.id = 'authModeBack';
+    button.type = 'button';
+    button.className = 'ghost-btn full';
+    button.style.marginTop = '8px';
+    button.textContent = '← Volver';
+    button.addEventListener('click', showChoice);
+    messageEl()?.parentNode?.insertBefore(button, messageEl());
+  }
+
+  function configureExtraActionsForLogin(){
+    const actions = extraActions();
+    if(!actions) return;
+    setVisible(actions, true);
+    setVisible(document.getElementById('resendConfirmation'), false);
+    setVisible(document.getElementById('forgotPassword'), true);
+    actions.querySelector('small')?.classList.add('hidden');
+  }
+
+  function showChoice(){
+    if(specialAuthFlow()) return;
+    pendingEmail = '';
     removePendingBox();
-    setNormalFieldsHidden(false);
-    setHeading('Iniciar sesión', 'Usa tu correo para acceder a Wallet, Pedidos y Perfil.');
+    removeChoiceBox();
+    removeBackButton();
+    hideAllAuthControls();
     clearNotice();
+    setHeading('Acceder a FRENCH STORE', 'Elige cómo quieres continuar.');
+
+    const box = document.createElement('div');
+    box.id = 'authChoiceBox';
+    box.className = 'auth-recovery-box';
+    box.innerHTML = `
+      <button id="authChoiceLogin" type="button" class="primary-btn full">Ya tengo cuenta</button>
+      <button id="authChoiceSignup" type="button" class="secondary-btn full" style="margin-top:10px">Crear cuenta nueva</button>
+      <p style="margin:12px 0 0;text-align:center;color:#8fa7b6;font-size:.88rem;line-height:1.45">Solo necesitas correo y contraseña. Si creas una cuenta, confirmarás tu correo una sola vez.</p>`;
+    messageEl()?.parentNode?.insertBefore(box, messageEl());
+    document.getElementById('authChoiceLogin')?.addEventListener('click', showLoginMode);
+    document.getElementById('authChoiceSignup')?.addEventListener('click', showSignupMode);
+  }
+
+  function showLoginMode(){
+    removePendingBox();
+    removeChoiceBox();
+    removeBackButton();
+    clearNotice();
+    setHeading('Iniciar sesión', 'Escribe tu correo y contraseña.');
+    setVisible(emailLabel(), true);
+    setVisible(passwordLabel(), true);
+    setVisible(legalLabel(), false);
+    setVisible(loginButton(), true);
+    setVisible(signupButton(), false);
+    configureExtraActionsForLogin();
+    addBackButton();
+    document.getElementById('loginEmail')?.focus?.();
+  }
+
+  function showSignupMode(){
+    removePendingBox();
+    removeChoiceBox();
+    removeBackButton();
+    clearNotice();
+    setHeading('Crear cuenta', 'Escribe tu correo, crea una contraseña y acepta los términos.');
+    setVisible(emailLabel(), true);
+    setVisible(passwordLabel(), true);
+    setVisible(legalLabel(), true);
+    setVisible(loginButton(), false);
+    setVisible(signupButton(), true);
+    setVisible(extraActions(), false);
+    addBackButton();
+    document.getElementById('loginEmail')?.focus?.();
   }
 
   async function resendPending(){
@@ -97,7 +184,9 @@
   function showPending(email, created = true){
     pendingEmail = email;
     if(typeof openModal === 'function') openModal('authModal');
-    setNormalFieldsHidden(true);
+    removeChoiceBox();
+    removeBackButton();
+    hideAllAuthControls();
     setHeading('Revisa tu correo', created ? 'Tu cuenta ya fue creada. Falta confirmar tu correo.' : 'Tu cuenta existe, pero falta confirmar el correo.');
     removePendingBox();
 
@@ -117,7 +206,7 @@
     const msg = messageEl();
     msg?.parentNode?.insertBefore(box, msg);
     document.getElementById('authPendingResend')?.addEventListener('click', resendPending);
-    document.getElementById('authPendingBack')?.addEventListener('click', restoreNormalAuth);
+    document.getElementById('authPendingBack')?.addEventListener('click', showChoice);
     notice('Cuenta creada correctamente. Solo falta confirmar el correo.', 'success');
   }
 
@@ -192,7 +281,7 @@
         return;
       }
       if(code === 'invalid_credentials' || raw.includes('invalid login credentials')){
-        notice('Correo o contraseña incorrectos. Si aún no tienes cuenta, pulsa “Crear cuenta”.');
+        notice('Correo o contraseña incorrectos. Si aún no tienes cuenta, vuelve y pulsa “Crear cuenta nueva”.');
         return;
       }
       if(raw.includes('rate') || raw.includes('too many')){
@@ -207,7 +296,14 @@
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest?.('button');
-    if(!button || !button.closest('#authModal')) return;
+    if(!button) return;
+
+    if(button.id === 'authButton'){
+      setTimeout(() => { if(!specialAuthFlow()) showChoice(); }, 0);
+      return;
+    }
+
+    if(!button.closest('#authModal')) return;
     if(button.id === 'loginSubmit'){
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -221,5 +317,15 @@
     }
   }, true);
 
-  window.FSAuthEase = { showPending, restoreNormalAuth };
+  document.addEventListener('DOMContentLoaded', () => {
+    if(specialAuthFlow()) return;
+    setTimeout(() => {
+      const modal = document.getElementById('authModal');
+      if(!modal) return;
+      showChoice();
+      if(typeof closeModal === 'function') closeModal('authModal');
+    }, 0);
+  }, { once:true });
+
+  window.FSAuthEase = { showPending, restoreNormalAuth: showChoice, showChoice, showLoginMode, showSignupMode };
 })();
