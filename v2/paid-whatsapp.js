@@ -4,8 +4,8 @@
    Manual products keep the normal FS order code without inventing a provider tag.
 
    Performance note:
-   - Observe only DOM insertions. Do NOT observe class/disabled mutations, because this script itself
-     changes those attributes and could create a mutation feedback loop on mobile browsers.
+   - Observe ONLY child-list changes. Do NOT observe class/disabled mutations, because this script itself
+     changes those attributes and that can create a mutation feedback loop on mobile browsers.
    - Each paid button is prepared only once.
 */
 (() => {
@@ -92,20 +92,17 @@
   }
 
   function install() {
-    activatePaidButtons(document);
-
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node.nodeType !== 1) continue;
-          if (node.matches?.('.paid-order-btn')) activatePaidButtons(node.parentElement || document);
-          else if (node.querySelector?.('.paid-order-btn')) activatePaidButtons(node);
-        }
-      }
-    });
-
     const orders = $('ordersList');
     const qrModal = $('qrModal');
+    activatePaidButtons(document);
+
+    const observer = new MutationObserver(() => {
+      if (orders) activatePaidButtons(orders);
+      if (qrModal) activatePaidButtons(qrModal);
+    });
+
+    // Only DOM insert/remove events are observed. Attribute changes made by
+    // activatePaidButtons are intentionally NOT observed, preventing a loop.
     if (orders) observer.observe(orders, { childList: true, subtree: true });
     if (qrModal) observer.observe(qrModal, { childList: true, subtree: true });
   }
