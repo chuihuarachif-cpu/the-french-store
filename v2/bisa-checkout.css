@@ -3,6 +3,9 @@
 .status.paid-status{background:#0d6b3f;color:#dcffec;border:1px solid #29b66f;box-shadow:0 0 0 1px rgba(41,182,111,.08),0 0 16px rgba(41,182,111,.16);font-size:11px;padding:5px 10px}
 .paid-order-btn{border:1px solid #2bc978!important;background:linear-gradient(180deg,#23b96c,#11864b)!important;color:#f2fff8!important;border-radius:10px;padding:8px 12px;font-weight:800;box-shadow:0 8px 20px rgba(17,134,75,.18);cursor:default!important;opacity:1!important}
 .paid-order-btn.full{width:100%;padding:12px 16px;font-size:14px}
+.paid-order-btn.paid-whatsapp-active{cursor:pointer!important;transition:transform .12s ease,filter .12s ease,box-shadow .12s ease}
+.paid-order-btn.paid-whatsapp-active:hover{filter:brightness(1.07);box-shadow:0 10px 24px rgba(17,134,75,.26)}
+.paid-order-btn.paid-whatsapp-active:active{transform:scale(.985)}
 .payment-state{margin:12px 0 4px;padding:10px 12px;border-radius:12px;font-weight:800;text-align:center;border:1px solid #345160;background:#0a1d29;color:#d7e8ef}
 .payment-state.pending{border-color:#6d5a24;background:#312713;color:#ffe6a5}
 .payment-state.paid{border-color:#2bc978;background:#0c3a27;color:#caffdf;box-shadow:0 0 18px rgba(43,201,120,.12)}
