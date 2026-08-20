@@ -49,6 +49,17 @@
 
   function markDeliveredButton(button) {
     if (!button) return;
+    const record = button.closest?.('.record');
+    record?.querySelectorAll?.('.paid-status').forEach((badge) => badge.remove());
+
+    const stack = record?.querySelector?.('.order-status-stack');
+    if (stack && !Array.from(stack.children).some((node) => /entregado/i.test(node.textContent || ''))) {
+      const deliveredBadge = document.createElement('span');
+      deliveredBadge.className = 'status';
+      deliveredBadge.textContent = 'Entregado';
+      stack.appendChild(deliveredBadge);
+    }
+
     button.disabled = true;
     button.textContent = '✓ Entregado';
     button.classList.remove('paid-whatsapp-active');
@@ -56,6 +67,18 @@
     button.classList.add('delivered-order-btn');
     button.removeAttribute('title');
     button.dataset.paidWhatsappReady = '1';
+  }
+
+  function normalizeDeliveredRecords(root = document) {
+    root.querySelectorAll?.('.record').forEach((record) => {
+      const stack = record.querySelector('.order-status-stack');
+      const delivered = Array.from(stack?.children || []).some((node) => /entregado/i.test(node.textContent || ''));
+      if (!delivered) return;
+
+      record.querySelectorAll('.paid-status').forEach((badge) => badge.remove());
+      const paidButton = record.querySelector('.paid-order-btn');
+      if (paidButton) markDeliveredButton(paidButton);
+    });
   }
 
   async function orderDetails(orderCode) {
@@ -123,6 +146,7 @@
   }
 
   function activatePaidButtons(root = document) {
+    normalizeDeliveredRecords(root);
     root.querySelectorAll?.('.paid-order-btn').forEach((button) => {
       const recordText = String(button.closest('.record')?.textContent || '').toLowerCase();
       if (recordText.includes('entregado')) {
