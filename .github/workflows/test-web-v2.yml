@@ -2,7 +2,7 @@ name: Test Web V2
 
 on:
   push:
-    branches: [main, web-v2-integration]
+    branches: [main, web-v2-integration, fix-orders-catalog-20260819]
     paths:
       - 'v2/**'
       - 'robots.txt'
@@ -33,6 +33,7 @@ jobs:
           test -s v2/bisa-checkout.css
           test -s v2/bisa-checkout.js
           test -s v2/bisa-wallet.js
+          test -s v2/catalog-order.js
           test -s v2/paid-whatsapp.js
           test -s v2/privacy.html
           test -s v2/terms.html
@@ -50,6 +51,7 @@ jobs:
           node --check v2/legal.js
           node --check v2/bisa-checkout.js
           node --check v2/bisa-wallet.js
+          node --check v2/catalog-order.js
           node --check v2/paid-whatsapp.js
 
       - name: Check critical frontend contracts
@@ -65,8 +67,15 @@ jobs:
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
           grep -q "No \"Pagado\"/WhatsApp button" v2/bisa-wallet.js
           grep -q "B+G" v2/paid-whatsapp.js
+          grep -q "Observe only DOM insertions" v2/paid-whatsapp.js
+          grep -q "childList: true, subtree: true" v2/paid-whatsapp.js
+          ! grep -q "attributeFilter" v2/paid-whatsapp.js
+          grep -q "50+50 => 100" v2/catalog-order.js
+          grep -q "currentCategoryIsRechargeById" v2/catalog-order.js
+          grep -q "pureCurrency" v2/catalog-order.js
           grep -q "paid-order-btn" v2/bisa-checkout.css
           grep -q "bisa-wallet.js" v2/index.html
+          grep -q "catalog-order.js" v2/index.html
           grep -q "paid-whatsapp.js" v2/index.html
           grep -q "https://api.frenchstorebo.com" v2/index.html
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2 --include='*.js' --include='*.html'
@@ -98,6 +107,7 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/privacy.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/terms.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/refunds.html >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/catalog-order.js >/dev/null
 
       - name: Capture responsive screenshots
         run: |
