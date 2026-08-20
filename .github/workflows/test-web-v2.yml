@@ -67,10 +67,12 @@ jobs:
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
           grep -q "No \"Pagado\"/WhatsApp button" v2/bisa-wallet.js
           grep -q "B+G" v2/paid-whatsapp.js
-          grep -q "Observe only DOM insertions" v2/paid-whatsapp.js
+          grep -q "Observe ONLY child-list changes" v2/paid-whatsapp.js
           grep -q "childList: true, subtree: true" v2/paid-whatsapp.js
           ! grep -q "attributeFilter" v2/paid-whatsapp.js
           grep -q "50+50 => 100" v2/catalog-order.js
+          grep -q "500+500 => 1000" v2/catalog-order.js
+          grep -q "mlbbGemX2" v2/catalog-order.js
           grep -q "currentCategoryIsRechargeById" v2/catalog-order.js
           grep -q "pureCurrency" v2/catalog-order.js
           grep -q "paid-order-btn" v2/bisa-checkout.css
