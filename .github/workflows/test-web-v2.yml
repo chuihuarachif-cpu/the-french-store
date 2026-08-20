@@ -73,7 +73,7 @@ jobs:
           grep -q "terms.html" v2/index.html
           grep -q "refunds.html" v2/index.html
           grep -q "cookies.html" v2/index.html
-          grep -q "legalAccept" v2/index.html
+          grep -q "legalAccept" v2/legal.js
           grep -q "purchaseLegalAccept" v2/index.html
           grep -q "frenchstorebo.com" sitemap.xml
           grep -q "Sitemap: https://frenchstorebo.com/sitemap.xml" robots.txt
