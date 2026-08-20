@@ -37,10 +37,29 @@
     return CRITICAL_MODAL_IDS.some((id) => isOpen(byId(id)));
   }
 
+  function stopRepairTimerIfIdle() {
+    if (anyCriticalModalOpen() || !repairTimer) return;
+    clearInterval(repairTimer);
+    repairTimer = null;
+  }
+
+  function ensureRepairTimer() {
+    if (repairTimer) return;
+    repairTimer = window.setInterval(() => {
+      if (!anyCriticalModalOpen()) {
+        clearInterval(repairTimer);
+        repairTimer = null;
+        return;
+      }
+      repairOpenModals();
+    }, 750);
+  }
+
   function syncDocumentLock() {
     const locked = anyCriticalModalOpen();
     document.documentElement.classList.toggle('fs-modal-open', locked);
     document.body?.classList.toggle('fs-modal-open', locked);
+    if (!locked) stopRepairTimerIfIdle();
   }
 
   function qrIsReady(modal) {
@@ -117,6 +136,7 @@
     }
 
     syncDocumentLock();
+    ensureRepairTimer();
 
     requestAnimationFrame(() => {
       modal.scrollTop = 0;
@@ -142,6 +162,7 @@
       removeQrDelayHint(modal);
     }
     syncDocumentLock();
+    stopRepairTimerIfIdle();
   }
 
   function repairOpenModals() {
@@ -197,7 +218,10 @@
         }
       }
       if (!relevant) return;
-      queueMicrotask(repairOpenModals);
+      queueMicrotask(() => {
+        repairOpenModals();
+        if (anyCriticalModalOpen()) ensureRepairTimer();
+      });
     });
 
     observer.observe(document.body, {
@@ -206,10 +230,6 @@
       attributes: true,
       attributeFilter: ['class', 'aria-hidden']
     });
-
-    repairTimer = window.setInterval(() => {
-      if (anyCriticalModalOpen()) repairOpenModals();
-    }, 750);
   }
 
   function installCloseFallbacks() {
@@ -244,5 +264,6 @@
   window.addEventListener('pagehide', () => {
     clearTimeout(qrWatchdogTimer);
     if (repairTimer) clearInterval(repairTimer);
+    repairTimer = null;
   }, { once: true });
 })();
