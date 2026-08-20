@@ -1,9 +1,11 @@
 /* THE FRENCH STORE — themed admin order status modal.
-   Replaces the browser-native prompt used by adminOrderStatus without changing the RPC or status flow. */
+   Replaces the browser-native prompt used by adminOrderStatus without changing the RPC or status flow.
+   Also keeps the Admin > Pedidos tab as a real overview, including unpaid, delivered and cancelled orders. */
 (() => {
   'use strict';
 
   let pendingAction = null;
+  const originalLoadAdmin = loadAdmin;
 
   const STATUS_COPY = {
     PROCESSING: {
@@ -109,6 +111,77 @@
 
     return modal;
   }
+
+  function orderAdminNote(order) {
+    const status = String(order.status || '').toUpperCase();
+    if (status === 'PENDING_PAYMENT') return 'Esperando pago del cliente.';
+    if (status === 'DELIVERED') return 'Pedido finalizado y entregado.';
+    if (status === 'CANCELLED') return 'Pedido cancelado. No requiere gestión.';
+    if (status === 'REFUNDED') return 'Pedido reembolsado. No requiere gestión.';
+    if (status === 'PROCESSING') return 'Pedido en proceso de entrega.';
+    if (status === 'AWAITING_CODE') return 'Pago confirmado. Falta entregar el código manualmente.';
+    if (status === 'MANUAL_REQUIRED') return 'Pago confirmado. Requiere gestión manual.';
+    if (status === 'ERROR') return 'Pedido marcado con error para revisión.';
+    return order.requires_manual_action ? 'Requiere atención manual.' : '';
+  }
+
+  function orderAdminActions(order) {
+    const status = String(order.status || '').toUpperCase();
+    if (['PENDING_PAYMENT', 'DELIVERED', 'CANCELLED', 'REFUNDED'].includes(status)) return '';
+
+    const buttons = [];
+    if (status !== 'PROCESSING') {
+      buttons.push(`<button data-order-status="PROCESSING" data-id="${esc(order.id)}">Procesando</button>`);
+    }
+    if (status !== 'DELIVERED') {
+      buttons.push(`<button data-order-status="DELIVERED" data-id="${esc(order.id)}">Entregado</button>`);
+    }
+    if (status !== 'ERROR') {
+      buttons.push(`<button data-order-status="ERROR" data-id="${esc(order.id)}">Error</button>`);
+    }
+    return buttons.length ? `<div class="admin-actions">${buttons.join('')}</div>` : '';
+  }
+
+  async function loadAllAdminOrders() {
+    if (!admin) return;
+    const content = $('adminContent');
+    content.innerHTML = '<div class="record"><small>Cargando pedidos…</small></div>';
+
+    const { data, error } = await sb
+      .from('orders')
+      .select('id,order_code,customer_email,status,payment_method,total_amount,created_at,requires_manual_action,paid_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if (error) {
+      content.innerHTML = err(error);
+      return;
+    }
+
+    content.innerHTML = (data || []).map((o) => {
+      const note = orderAdminNote(o);
+      const paidText = o.paid_at ? ` · Pagado ${dateFmt(o.paid_at)}` : '';
+      return `<div class="record admin-order-overview" data-admin-order-status="${esc(String(o.status || ''))}">
+        <div class="record-top">
+          <div>
+            <b>${esc(o.order_code)} · ${money(o.total_amount)}</b>
+            <small>${esc(o.customer_email || 'Sin correo')} · ${esc(o.payment_method || '')} · ${dateFmt(o.created_at)}${paidText}</small>
+          </div>
+          ${statusHtml(o.status)}
+        </div>
+        ${note ? `<div class="record-meta"><span>${esc(note)}</span></div>` : ''}
+        ${orderAdminActions(o)}
+      </div>`;
+    }).join('') || empty('No hay pedidos registrados.');
+
+    bindAdminActions();
+  }
+
+  loadAdmin = async function themedLoadAdmin() {
+    if (!admin) return;
+    if (adminTab !== 'orders') return originalLoadAdmin();
+    return loadAllAdminOrders();
+  };
 
   adminOrderStatus = async function themedAdminOrderStatus(id, status) {
     const normalized = String(status || '').toUpperCase();
