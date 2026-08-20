@@ -28,7 +28,7 @@
     };
     if (map[code]) return map[code];
     if (String(code || '').startsWith('QR_NOT_REGENERABLE_')) return 'Este QR no puede regenerarse automáticamente. Actualiza Pedidos o contacta a soporte.';
-    return 'No se pudo completar la operación con BISA en este momento. Intenta nuevamente.';
+    return 'No se pudo completar la operación de pago en este momento. Intenta nuevamente.';
   }
 
   async function accessToken() {
@@ -87,12 +87,12 @@
     let img = box.querySelector('img');
     if (!img) {
       box.classList.remove('payment-complete-box');
-      box.innerHTML = '<img id="qrOrderImage" alt="QR BISA del pedido" loading="eager" decoding="async">';
+      box.innerHTML = '<img id="qrOrderImage" alt="QR de pago del pedido" loading="eager" decoding="async">';
       img = box.querySelector('img');
     }
     if (!img.id) {
       img.id = 'qrOrderImage';
-      img.alt = 'QR BISA del pedido';
+      img.alt = 'QR de pago del pedido';
       img.removeAttribute('src');
     }
 
@@ -115,7 +115,7 @@
 
     const notes = card.querySelectorAll('.security-note');
     if (notes[0]) {
-      notes[0].innerHTML = 'QR individual generado por <b>BISA/SIP</b>. Verifica el <b>monto exacto</b> en tu banca antes de pagar. La tienda marcará el pago únicamente cuando SIP lo confirme.';
+      notes[0].innerHTML = 'QR individual de pago. Verifica el <b>monto exacto</b> en tu banca antes de pagar. La tienda marcará el pago únicamente cuando reciba la confirmación automática.';
     }
 
     if (!verifyButton.dataset.bisaReady) {
@@ -155,7 +155,7 @@
 
     if (paid) {
       ui.state.className = 'payment-state paid';
-      ui.state.textContent = '✓ Pago confirmado por BISA';
+      ui.state.textContent = '✓ Pago confirmado';
       ui.verifyButton.textContent = '✓ Pagado';
       ui.verifyButton.className = 'paid-order-btn full';
       ui.verifyButton.disabled = true;
@@ -170,7 +170,7 @@
 
     ui.box.classList.remove('payment-complete-box');
     if (!ui.box.querySelector('img')) {
-      ui.box.innerHTML = '<img id="qrOrderImage" alt="QR BISA del pedido" loading="eager" decoding="async">';
+      ui.box.innerHTML = '<img id="qrOrderImage" alt="QR de pago del pedido" loading="eager" decoding="async">';
       ui.img = ui.box.querySelector('img');
     }
     if (data?.qr_image_base64) ui.img.src = `data:image/png;base64,${data.qr_image_base64}`;
@@ -178,9 +178,9 @@
 
     const paymentStatus = String(data?.payment_status || 'PENDING').toUpperCase();
     ui.state.className = 'payment-state pending';
-    ui.state.textContent = paymentStatus === 'CALLBACK_RECEIVED' ? 'Pago recibido · verificando con BISA…' : 'Pendiente de pago';
+    ui.state.textContent = paymentStatus === 'CALLBACK_RECEIVED' ? 'Pago recibido · verificando…' : 'Pendiente de pago';
     const expiry = data?.expires_at ? ` · Vence: ${dateFmt(data.expires_at)}` : '';
-    ui.meta.textContent = `${data?.alias ? `Referencia: ${data.alias}` : 'QR BISA'}${expiry}`;
+    ui.meta.textContent = `${data?.alias ? `Referencia: ${data.alias}` : 'QR de pago'}${expiry}`;
     ui.verifyButton.textContent = verifyingPayment ? 'Verificando…' : 'Verificar pago';
     ui.verifyButton.className = 'secondary-btn full verify-payment-btn';
     ui.verifyButton.disabled = verifyingPayment;
@@ -192,7 +192,7 @@
     stopQrPolling();
     ui.state.className = 'payment-state error';
     ui.state.textContent = message;
-    ui.meta.textContent = 'Tu pedido ya fue creado. No realices ningún pago si el QR oficial no aparece.';
+    ui.meta.textContent = 'Tu pedido ya fue creado. No realices ningún pago si el QR no aparece correctamente.';
     ui.img.removeAttribute('src');
     ui.verifyButton.textContent = 'Reintentar generar QR';
     ui.verifyButton.className = 'secondary-btn full';
@@ -249,7 +249,7 @@
     $('qrOrderCode').textContent = currentQrOrderCode ? `Pedido ${currentQrOrderCode}` : 'Pedido';
     $('qrOrderTotal').textContent = order.total_amount != null ? `Total: ${money(order.total_amount)}` : 'Preparando pago…';
     ui.state.className = 'payment-state pending';
-    ui.state.textContent = 'Generando QR BISA…';
+    ui.state.textContent = 'Generando QR…';
     ui.meta.textContent = 'Espera unos segundos. No cierres esta ventana mientras se genera el QR.';
     ui.img.removeAttribute('src');
     ui.verifyButton.disabled = true;

@@ -69,7 +69,7 @@
     if (map[code]) return map[code];
     if (String(code || '').startsWith('TOPUP_NOT_PENDING_')) return 'Esta solicitud ya no está pendiente.';
     if (String(code || '').startsWith('QR_NOT_REGENERABLE_')) return 'Este QR ya no puede regenerarse. Actualiza tu Wallet o contacta a soporte.';
-    return 'No se pudo completar la operación con BISA en este momento. Intenta nuevamente.';
+    return 'No se pudo completar la operación de pago en este momento. Intenta nuevamente.';
   }
 
   function ensureTopupUi() {
@@ -83,11 +83,11 @@
     let img = box.querySelector('img');
     if (!img) {
       box.classList.remove('payment-complete-box');
-      box.innerHTML = '<img id="topupBisaQrImage" alt="QR BISA para French Wallet" loading="eager" decoding="async">';
+      box.innerHTML = '<img id="topupBisaQrImage" alt="QR de carga para French Wallet" loading="eager" decoding="async">';
       img = box.querySelector('img');
     }
     img.id = 'topupBisaQrImage';
-    img.alt = 'QR BISA para French Wallet';
+    img.alt = 'QR de carga para French Wallet';
 
     let state = $('topupPaymentState');
     if (!state) {
@@ -107,8 +107,8 @@
     }
 
     const notes = card.querySelectorAll('.security-note');
-    if (notes[0]) notes[0].innerHTML = 'Escanea el <b>QR individual BISA/SIP</b> y verifica el <b>monto exacto</b> antes de pagar.';
-    if (notes[1]) notes[1].innerHTML = '<b>La acreditación es automática.</b> Cuando BISA confirme el pago, el saldo aparecerá en French Wallet sin que tengas que avisar por WhatsApp.';
+    if (notes[0]) notes[0].innerHTML = 'Escanea el <b>QR individual</b> y verifica el <b>monto exacto</b> antes de pagar.';
+    if (notes[1]) notes[1].innerHTML = '<b>La acreditación es automática.</b> Cuando el pago sea confirmado, el saldo aparecerá en French Wallet sin que tengas que avisar por WhatsApp.';
     if (notes[2]) notes[2].innerHTML = 'Si todavía no pagaste, puedes cancelar la solicitud. <b>No la canceles mientras tu banca esté procesando el pago.</b>';
 
     return { modal, card, box, img, state, meta, cancel };
@@ -139,7 +139,7 @@
     ui.cancel.classList.remove('hidden');
     ui.box.classList.remove('payment-complete-box');
     if (!ui.box.querySelector('img')) {
-      ui.box.innerHTML = '<img id="topupBisaQrImage" alt="QR BISA para French Wallet" loading="eager" decoding="async">';
+      ui.box.innerHTML = '<img id="topupBisaQrImage" alt="QR de carga para French Wallet" loading="eager" decoding="async">';
       ui.img = ui.box.querySelector('img');
     }
     if (data?.qr_image_base64) ui.img.src = `data:image/png;base64,${data.qr_image_base64}`;
@@ -149,7 +149,7 @@
     ui.state.className = 'payment-state pending';
     ui.state.textContent = status === 'CALLBACK_RECEIVED' ? 'Pago recibido · acreditando Wallet…' : 'Pendiente de pago';
     const expiry = data?.expires_at ? ` · Vence: ${dateFmt(data.expires_at)}` : '';
-    ui.meta.textContent = `${data?.alias ? `Referencia BISA: ${data.alias}` : 'QR BISA'}${expiry}`;
+    ui.meta.textContent = `${data?.alias ? `Referencia: ${data.alias}` : 'QR de carga'}${expiry}`;
   }
 
   function setTopupError(message) {
@@ -158,7 +158,7 @@
     stopTopupPolling();
     ui.state.className = 'payment-state error';
     ui.state.textContent = message;
-    ui.meta.textContent = 'No pagues si el QR oficial BISA no aparece correctamente.';
+    ui.meta.textContent = 'No pagues si el QR no aparece correctamente.';
     ui.img?.removeAttribute('src');
   }
 
@@ -197,7 +197,7 @@
     $('topupQrAmount').textContent = data?.amount != null ? `Carga de ${money(data.amount)}` : 'Preparando carga';
     $('topupQrReference').textContent = `Solicitud: ${data?.payment_reference || '—'}`;
     ui.state.className = 'payment-state pending';
-    ui.state.textContent = 'Generando QR BISA…';
+    ui.state.textContent = 'Generando QR…';
     ui.meta.textContent = 'Espera unos segundos. El monto se obtiene directamente de tu solicitud de Wallet.';
     ui.img.removeAttribute('src');
     ui.cancel.classList.remove('hidden');
@@ -233,7 +233,7 @@
         return;
       }
       $('topupAmount').value = '';
-      showNotice($('topupResult'), `Solicitud ${data.payment_reference} creada. El saldo se acreditará automáticamente cuando BISA confirme el pago.`, 'success');
+      showNotice($('topupResult'), `Solicitud ${data.payment_reference} creada. El saldo se acreditará automáticamente cuando el pago sea confirmado.`, 'success');
       await loadWallet();
       await openBisaTopupQr(data);
     } finally {
