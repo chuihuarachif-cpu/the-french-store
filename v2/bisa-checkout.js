@@ -340,15 +340,19 @@
     }
 
     $('ordersList').innerHTML = (data || []).map((o) => {
-      const paid = Boolean(o.paid_at) || String(o.status).toUpperCase() === 'PAID';
+      const status = String(o.status || '').toUpperCase();
+      const paid = Boolean(o.paid_at) || status === 'PAID';
       const paidBadge = paid ? '<span class="status paid-status">✓ Pagado</span>' : '';
-      const workflowBadge = String(o.status).toUpperCase() === 'PAID' ? '' : statusHtml(o.status);
-      const qrPending = o.payment_method === 'QR' && o.status === 'PENDING_PAYMENT' && !paid;
-      const actions = paid
-        ? '<div class="admin-actions"><button type="button" class="paid-order-btn" disabled>✓ Pagado</button></div>'
-        : qrPending
-          ? `<div class="admin-actions"><button type="button" class="secondary-btn qr-order-btn" data-order-qr="${esc(o.id)}">Pagar / Ver QR</button></div>`
-          : '';
+      const workflowBadge = status === 'PAID' ? '' : statusHtml(o.status);
+      const qrPending = o.payment_method === 'QR' && status === 'PENDING_PAYMENT' && !paid;
+      const finished = ['DELIVERED', 'CANCELLED', 'REFUNDED'].includes(status);
+      const actions = status === 'DELIVERED'
+        ? '<div class="admin-actions"><button type="button" class="delivered-order-btn" disabled>✓ Entregado</button></div>'
+        : paid && !finished
+          ? '<div class="admin-actions"><button type="button" class="paid-order-btn" disabled>✓ Pagado</button></div>'
+          : qrPending
+            ? `<div class="admin-actions"><button type="button" class="secondary-btn qr-order-btn" data-order-qr="${esc(o.id)}">Pagar / Ver QR</button></div>`
+            : '';
       return `<div class="record"><div class="record-top"><div><b>${esc(o.order_code)}</b><small>${dateFmt(o.created_at)} · ${esc(o.payment_method)}</small></div><div class="order-status-stack">${paidBadge}${workflowBadge}</div></div><div class="record-meta"><b>${money(o.total_amount)}</b>${o.customer_note ? `<span>${esc(o.customer_note)}</span>` : ''}</div>${actions}</div>`;
     }).join('') || '<div class="record"><small>Aún no tienes pedidos.</small></div>';
 
