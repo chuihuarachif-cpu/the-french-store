@@ -6,6 +6,7 @@
 .paid-order-btn.paid-whatsapp-active{cursor:pointer!important;transition:transform .12s ease,filter .12s ease,box-shadow .12s ease}
 .paid-order-btn.paid-whatsapp-active:hover{filter:brightness(1.07);box-shadow:0 10px 24px rgba(17,134,75,.26)}
 .paid-order-btn.paid-whatsapp-active:active{transform:scale(.985)}
+.delivered-order-btn{border:1px solid #4f8f78!important;background:linear-gradient(180deg,#173b31,#102b24)!important;color:#d9fff0!important;border-radius:10px;padding:8px 12px;font-weight:800;box-shadow:none!important;cursor:default!important;opacity:1!important}
 .payment-state{margin:12px 0 4px;padding:10px 12px;border-radius:12px;font-weight:800;text-align:center;border:1px solid #345160;background:#0a1d29;color:#d7e8ef}
 .payment-state.pending{border-color:#6d5a24;background:#312713;color:#ffe6a5}
 .payment-state.paid{border-color:#2bc978;background:#0c3a27;color:#caffdf;box-shadow:0 0 18px rgba(43,201,120,.12)}
@@ -23,4 +24,4 @@
 #qrPaymentState.paid~.qr-box::after{content:'PAGO CONFIRMADO';font:800 14px 'Orbitron',sans-serif;letter-spacing:.06em;color:#075b33}
 .payment-complete-box::before,.payment-complete-box::after{content:none!important}
 .qr-order-btn{font-weight:800}
-@media(max-width:620px){.order-status-stack{justify-content:flex-end;max-width:48%}.paid-order-btn{width:100%}.payment-complete-box,#qrPaymentState.paid~.qr-box{min-height:190px}}
+@media(max-width:620px){.order-status-stack{justify-content:flex-end;max-width:48%}.paid-order-btn,.delivered-order-btn{width:100%}.payment-complete-box,#qrPaymentState.paid~.qr-box{min-height:190px}}
