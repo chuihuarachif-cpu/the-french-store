@@ -17,6 +17,7 @@
 
   const byId = (id) => document.getElementById(id);
   const isOpen = (modal) => Boolean(modal?.classList.contains('open'));
+  const isCriticalModal = (node) => Boolean(node?.id && CRITICAL_MODAL_IDS.includes(node.id));
 
   function setImportant(el, property, value) {
     if (!el) return;
@@ -114,7 +115,7 @@
     if (modal.parentElement !== document.body) document.body.appendChild(modal);
 
     if (!modal.classList.contains('open')) modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
+    if (modal.getAttribute('aria-hidden') !== 'false') modal.setAttribute('aria-hidden', 'false');
 
     setImportant(modal, 'position', 'fixed');
     setImportant(modal, 'inset', '0px');
@@ -153,8 +154,8 @@
 
   function forceCloseModal(modal) {
     if (!modal) return;
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
+    if (modal.classList.contains('open')) modal.classList.remove('open');
+    if (modal.getAttribute('aria-hidden') !== 'true') modal.setAttribute('aria-hidden', 'true');
     clearForcedVisibility(modal);
     if (modal.id === 'qrModal') {
       clearTimeout(qrWatchdogTimer);
@@ -203,21 +204,19 @@
     };
   }
 
+  function mutationTouchesCriticalModal(record) {
+    if (record.type === 'attributes') return isCriticalModal(record.target);
+    if (record.type !== 'childList') return false;
+    if (record.target?.closest?.('.modal.open')) return true;
+    return [...record.addedNodes].some((node) => {
+      if (isCriticalModal(node)) return true;
+      return Boolean(node?.querySelector?.('#authModal,#cartModal,#qrModal,#topupQrModal,#orderCancelConfirmModal'));
+    });
+  }
+
   function installObservers() {
     const observer = new MutationObserver((records) => {
-      let relevant = false;
-      for (const record of records) {
-        if (record.type === 'childList') {
-          relevant = true;
-          break;
-        }
-        const target = record.target;
-        if (target?.id && CRITICAL_MODAL_IDS.includes(target.id)) {
-          relevant = true;
-          break;
-        }
-      }
-      if (!relevant) return;
+      if (!records.some(mutationTouchesCriticalModal)) return;
       queueMicrotask(() => {
         repairOpenModals();
         if (anyCriticalModalOpen()) ensureRepairTimer();
