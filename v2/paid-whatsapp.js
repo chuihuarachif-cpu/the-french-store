@@ -47,17 +47,32 @@
     return lines.length === 1 ? `🛒 ${lines[0]}` : `🛒 Productos:\n${lines.map((line) => `• ${line}`).join('\n')}`;
   }
 
+  function markDeliveredButton(button) {
+    if (!button) return;
+    button.disabled = true;
+    button.textContent = '✓ Entregado';
+    button.classList.remove('paid-whatsapp-active');
+    button.classList.remove('paid-order-btn');
+    button.classList.add('delivered-order-btn');
+    button.removeAttribute('title');
+    button.dataset.paidWhatsappReady = '1';
+  }
+
   async function orderDetails(orderCode) {
-    if (!orderCode || !session) return { tag: '', products: '' };
+    if (!orderCode || !session) return { tag: '', products: '', status: '', paid: false };
 
     const { data: order, error: orderError } = await sb
       .from('orders')
-      .select('id')
+      .select('id,status,paid_at')
       .eq('order_code', orderCode)
       .eq('user_id', session.user.id)
       .maybeSingle();
 
-    if (orderError || !order?.id) return { tag: '', products: '' };
+    if (orderError || !order?.id) return { tag: '', products: '', status: '', paid: false };
+
+    const status = String(order.status || '').toUpperCase();
+    const paid = Boolean(order.paid_at) || status === 'PAID';
+    if (status === 'DELIVERED') return { tag: '', products: '', status, paid };
 
     const { data: items, error: itemError } = await sb
       .from('order_items')
@@ -65,10 +80,12 @@
       .eq('order_id', order.id)
       .order('created_at', { ascending: true });
 
-    if (itemError) return { tag: '', products: '' };
+    if (itemError) return { tag: '', products: '', status, paid };
     return {
       tag: providerTagFromItems(items),
-      products: productSummary(items)
+      products: productSummary(items),
+      status,
+      paid
     };
   }
 
@@ -83,6 +100,12 @@
     button.textContent = 'Preparando WhatsApp…';
     try {
       const details = await orderDetails(orderCode);
+      if (details.status === 'DELIVERED') {
+        markDeliveredButton(button);
+        return;
+      }
+      if (!details.paid) return;
+
       const taggedCode = details.tag ? `${orderCode} [${details.tag}]` : orderCode;
       const message = [`✅ Pagado el pedido ${taggedCode}`, details.products].filter(Boolean).join('\n');
       window.open(
@@ -92,13 +115,20 @@
       );
     } finally {
       delete button.dataset.paidWhatsappBusy;
-      button.disabled = false;
-      button.textContent = oldText || '✓ Pagado';
+      if (!button.classList.contains('delivered-order-btn')) {
+        button.disabled = false;
+        button.textContent = oldText || '✓ Pagado';
+      }
     }
   }
 
   function activatePaidButtons(root = document) {
     root.querySelectorAll?.('.paid-order-btn').forEach((button) => {
+      const recordText = String(button.closest('.record')?.textContent || '').toLowerCase();
+      if (recordText.includes('entregado')) {
+        markDeliveredButton(button);
+        return;
+      }
       if (!/pagado/i.test(button.textContent || '')) return;
       if (button.dataset.paidWhatsappReady === '1') {
         if (button.disabled && button.dataset.paidWhatsappBusy !== '1') button.disabled = false;
