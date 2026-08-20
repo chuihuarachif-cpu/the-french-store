@@ -3,7 +3,7 @@
    - Pure in-game currency packages first.
    - Currency quantity ascending (smallest -> largest), independent of price.
    - Mobile Legends x2/Event diamonds use the EFFECTIVE delivered amount:
-       50+50 => 100, 150+150 => 300, etc.
+       50+50 => 100, 150+150 => 300, 500+500 => 1000, etc.
    - Passes/subscriptions/bundles stay after pure currency packages.
    - Other categories keep their existing order.
 
@@ -60,8 +60,10 @@
   function keyFor(name, game, node) {
     const text = String(name || '').trim();
     const mlbb = norm(game).includes('mobilelegends');
-    const mlbbEventDiamonds = mlbb && /diamant|diamond/i.test(text) && EVENT_RE.test(text);
-    const hasResource = RESOURCE_RE.test(text);
+    const mlbbLabeledEvent = mlbb && /diamant|diamond/i.test(text) && EVENT_RE.test(text);
+    const mlbbGemX2 = mlbb && /💎/.test(text) && /\d[\d.,]*\s*\+\s*\d[\d.,]*/.test(text);
+    const mlbbEventDiamonds = mlbbLabeledEvent || mlbbGemX2;
+    const hasResource = RESOURCE_RE.test(text) || mlbbGemX2;
     const passLike = PASS_RE.test(text);
     const pureCurrency = hasResource && (!passLike || mlbbEventDiamonds);
 
