@@ -30,6 +30,8 @@ jobs:
           test -s v2/r8-icons.js
           test -s v2/legal.css
           test -s v2/legal.js
+          test -s v2/bisa-checkout.css
+          test -s v2/bisa-checkout.js
           test -s v2/privacy.html
           test -s v2/terms.html
           test -s v2/refunds.html
@@ -44,6 +46,7 @@ jobs:
           node --check v2/r8.js
           node --check v2/r8-icons.js
           node --check v2/legal.js
+          node --check v2/bisa-checkout.js
 
       - name: Check critical frontend contracts
         run: |
@@ -51,6 +54,10 @@ jobs:
           grep -q "create_qr_order" v2/app.js
           grep -q "request_wallet_topup_v2" v2/app.js
           grep -q "admin_update_order_status" v2/app.js
+          grep -q "/bisa-sip/order-qr" v2/bisa-checkout.js
+          grep -q "/bisa-sip/order-status" v2/bisa-checkout.js
+          grep -q "paid-order-btn" v2/bisa-checkout.css
+          grep -q "https://api.frenchstorebo.com" v2/index.html
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2 --include='*.js' --include='*.html'
 
       - name: Check category separation
