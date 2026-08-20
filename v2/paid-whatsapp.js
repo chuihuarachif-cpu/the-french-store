@@ -22,8 +22,33 @@
     return modalMatch ? modalMatch[0].toUpperCase() : null;
   }
 
-  async function providerTag(orderCode) {
-    if (!orderCode || !session) return '';
+  function providerTagFromItems(items) {
+    const providers = new Set((items || []).map((item) => String(item.provider || '').trim().toLowerCase()));
+    const hasB = providers.has('bonoxs');
+    const hasG = providers.has('gameton');
+    if (hasB && hasG) return 'B+G';
+    if (hasB) return 'B';
+    if (hasG) return 'G';
+    return '';
+  }
+
+  function productSummary(items) {
+    const clean = (items || [])
+      .map((item) => ({
+        name: String(item.product_name || '').trim(),
+        quantity: Math.max(1, Number(item.quantity || 1))
+      }))
+      .filter((item) => item.name);
+
+    if (!clean.length) return '';
+    const visible = clean.slice(0, 4);
+    const lines = visible.map((item) => `${item.quantity > 1 ? `x${item.quantity} ` : ''}${item.name}`);
+    if (clean.length > visible.length) lines.push(`+ ${clean.length - visible.length} producto${clean.length - visible.length === 1 ? '' : 's'} más`);
+    return lines.length === 1 ? `🛒 ${lines[0]}` : `🛒 Productos:\n${lines.map((line) => `• ${line}`).join('\n')}`;
+  }
+
+  async function orderDetails(orderCode) {
+    if (!orderCode || !session) return { tag: '', products: '' };
 
     const { data: order, error: orderError } = await sb
       .from('orders')
@@ -32,22 +57,19 @@
       .eq('user_id', session.user.id)
       .maybeSingle();
 
-    if (orderError || !order?.id) return '';
+    if (orderError || !order?.id) return { tag: '', products: '' };
 
     const { data: items, error: itemError } = await sb
       .from('order_items')
-      .select('provider')
-      .eq('order_id', order.id);
+      .select('provider,product_name,quantity')
+      .eq('order_id', order.id)
+      .order('created_at', { ascending: true });
 
-    if (itemError) return '';
-
-    const providers = new Set((items || []).map((item) => String(item.provider || '').trim().toLowerCase()));
-    const hasB = providers.has('bonoxs');
-    const hasG = providers.has('gameton');
-    if (hasB && hasG) return 'B+G';
-    if (hasB) return 'B';
-    if (hasG) return 'G';
-    return '';
+    if (itemError) return { tag: '', products: '' };
+    return {
+      tag: providerTagFromItems(items),
+      products: productSummary(items)
+    };
   }
 
   async function sendPaidNotice(button) {
@@ -60,9 +82,9 @@
     button.disabled = true;
     button.textContent = 'Preparando WhatsApp…';
     try {
-      const tag = await providerTag(orderCode);
-      const taggedCode = tag ? `${orderCode} [${tag}]` : orderCode;
-      const message = `✅ Pagado el pedido ${taggedCode}`;
+      const details = await orderDetails(orderCode);
+      const taggedCode = details.tag ? `${orderCode} [${details.tag}]` : orderCode;
+      const message = [`✅ Pagado el pedido ${taggedCode}`, details.products].filter(Boolean).join('\n');
       window.open(
         `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`,
         '_blank',
