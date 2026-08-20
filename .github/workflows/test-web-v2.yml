@@ -32,6 +32,8 @@ jobs:
           test -s v2/legal.js
           test -s v2/bisa-checkout.css
           test -s v2/bisa-checkout.js
+          test -s v2/bisa-wallet.js
+          test -s v2/paid-whatsapp.js
           test -s v2/privacy.html
           test -s v2/terms.html
           test -s v2/refunds.html
@@ -47,6 +49,8 @@ jobs:
           node --check v2/r8-icons.js
           node --check v2/legal.js
           node --check v2/bisa-checkout.js
+          node --check v2/bisa-wallet.js
+          node --check v2/paid-whatsapp.js
 
       - name: Check critical frontend contracts
         run: |
@@ -56,7 +60,14 @@ jobs:
           grep -q "admin_update_order_status" v2/app.js
           grep -q "/bisa-sip/order-qr" v2/bisa-checkout.js
           grep -q "/bisa-sip/order-status" v2/bisa-checkout.js
+          grep -q "/bisa-sip/topup-qr" v2/bisa-wallet.js
+          grep -q "/bisa-sip/topup-status" v2/bisa-wallet.js
+          grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
+          grep -q "No \"Pagado\"/WhatsApp button" v2/bisa-wallet.js
+          grep -q "B+G" v2/paid-whatsapp.js
           grep -q "paid-order-btn" v2/bisa-checkout.css
+          grep -q "bisa-wallet.js" v2/index.html
+          grep -q "paid-whatsapp.js" v2/index.html
           grep -q "https://api.frenchstorebo.com" v2/index.html
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2 --include='*.js' --include='*.html'
 
