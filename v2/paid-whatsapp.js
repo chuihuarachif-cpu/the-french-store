@@ -49,6 +49,17 @@
 
   function markDeliveredButton(button) {
     if (!button) return;
+    const record = button.closest?.('.record');
+    record?.querySelectorAll?.('.paid-status').forEach((badge) => badge.remove());
+
+    const stack = record?.querySelector?.('.order-status-stack');
+    if (stack && !Array.from(stack.children).some((node) => /entregado/i.test(node.textContent || ''))) {
+      const deliveredBadge = document.createElement('span');
+      deliveredBadge.className = 'status';
+      deliveredBadge.textContent = 'Entregado';
+      stack.appendChild(deliveredBadge);
+    }
+
     button.disabled = true;
     button.textContent = '✓ Entregado';
     button.classList.remove('paid-whatsapp-active');
