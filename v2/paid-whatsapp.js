@@ -1,6 +1,7 @@
 /* THE FRENCH STORE — paid order WhatsApp action.
    The green button becomes clickable only after the UI already shows a backend-confirmed payment.
-   Provider tags are internal short codes only: B=BONOXS, G=Gameton, B+G=mixed, MANUAL=no B/G provider snapshot. */
+   Provider tags are internal short codes only: B=BONOXS, G=Gameton, B+G=mixed.
+   Manual products keep the normal FS order code without inventing a provider tag. */
 (() => {
   function orderCodeFromElement(element) {
     const record = element?.closest?.('.record');
@@ -14,7 +15,7 @@
   }
 
   async function providerTag(orderCode) {
-    if (!orderCode || !session) return 'MANUAL';
+    if (!orderCode || !session) return '';
 
     const { data: order, error: orderError } = await sb
       .from('orders')
@@ -23,14 +24,14 @@
       .eq('user_id', session.user.id)
       .maybeSingle();
 
-    if (orderError || !order?.id) return 'MANUAL';
+    if (orderError || !order?.id) return '';
 
     const { data: items, error: itemError } = await sb
       .from('order_items')
       .select('provider')
       .eq('order_id', order.id);
 
-    if (itemError) return 'MANUAL';
+    if (itemError) return '';
 
     const providers = new Set((items || []).map((item) => String(item.provider || '').trim().toLowerCase()));
     const hasB = providers.has('bonoxs');
@@ -38,7 +39,7 @@
     if (hasB && hasG) return 'B+G';
     if (hasB) return 'B';
     if (hasG) return 'G';
-    return 'MANUAL';
+    return '';
   }
 
   async function sendPaidNotice(button) {
@@ -50,7 +51,8 @@
     button.textContent = 'Preparando WhatsApp…';
     try {
       const tag = await providerTag(orderCode);
-      const message = `✅ Pagado el pedido ${orderCode} [${tag}]`;
+      const taggedCode = tag ? `${orderCode} [${tag}]` : orderCode;
+      const message = `✅ Pagado el pedido ${taggedCode}`;
       window.open(
         `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`,
         '_blank',
