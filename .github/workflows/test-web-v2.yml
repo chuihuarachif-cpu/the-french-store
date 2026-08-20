@@ -39,6 +39,8 @@ jobs:
           test -s v2/legal.js
           test -s v2/bisa-checkout.css
           test -s v2/bisa-checkout.js
+          test -s v2/order-cancel-ui.css
+          test -s v2/order-cancel-ui.js
           test -s v2/bisa-wallet.js
           test -s v2/catalog-order.js
           test -s v2/admin-order-ui.js
@@ -58,6 +60,7 @@ jobs:
           node --check v2/r8-icons.js
           node --check v2/legal.js
           node --check v2/bisa-checkout.js
+          node --check v2/order-cancel-ui.js
           node --check v2/bisa-wallet.js
           node --check v2/catalog-order.js
           node --check v2/admin-order-ui.js
@@ -71,6 +74,10 @@ jobs:
           grep -q "admin_update_order_status" v2/app.js
           grep -q "/bisa-sip/order-qr" v2/bisa-checkout.js
           grep -q "/bisa-sip/order-status" v2/bisa-checkout.js
+          grep -q "/bisa-sip/order-cancel" v2/order-cancel-ui.js
+          grep -q "PAYMENT_ALREADY_CONFIRMED" v2/order-cancel-ui.js
+          grep -q "Cancelar pedido" v2/order-cancel-ui.js
+          grep -q "orderCancelConfirmModal" v2/order-cancel-ui.js
           grep -q "/bisa-sip/topup-qr" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-status" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
@@ -90,6 +97,8 @@ jobs:
           grep -q "admin_update_order_status" v2/admin-order-ui.js
           grep -q "paid-order-btn" v2/bisa-checkout.css
           grep -q "bisa-wallet.js" v2/index.html
+          grep -q "order-cancel-ui.js" v2/index.html
+          grep -q "order-cancel-ui.css" v2/index.html
           grep -q "catalog-order.js" v2/index.html
           grep -q "admin-order-ui.js" v2/index.html
           grep -q "paid-whatsapp.js" v2/index.html
@@ -130,6 +139,7 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/refunds.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/catalog-order.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/admin-order-ui.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/order-cancel-ui.js >/dev/null
 
       - name: Capture responsive screenshots
         run: |
