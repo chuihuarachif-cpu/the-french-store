@@ -2,7 +2,14 @@ name: Test Web V2
 
 on:
   push:
-    branches: [main, web-v2-integration, fix-orders-catalog-20260819]
+    branches: [main, web-v2-integration]
+    paths:
+      - 'v2/**'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - '.github/workflows/test-web-v2.yml'
+  pull_request:
+    branches: [main]
     paths:
       - 'v2/**'
       - 'robots.txt'
@@ -34,6 +41,7 @@ jobs:
           test -s v2/bisa-checkout.js
           test -s v2/bisa-wallet.js
           test -s v2/catalog-order.js
+          test -s v2/admin-order-ui.js
           test -s v2/paid-whatsapp.js
           test -s v2/privacy.html
           test -s v2/terms.html
@@ -52,6 +60,7 @@ jobs:
           node --check v2/bisa-checkout.js
           node --check v2/bisa-wallet.js
           node --check v2/catalog-order.js
+          node --check v2/admin-order-ui.js
           node --check v2/paid-whatsapp.js
 
       - name: Check critical frontend contracts
@@ -67,6 +76,8 @@ jobs:
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
           grep -q "No \"Pagado\"/WhatsApp button" v2/bisa-wallet.js
           grep -q "B+G" v2/paid-whatsapp.js
+          grep -q "product_name,quantity" v2/paid-whatsapp.js
+          grep -q "🛒 Productos" v2/paid-whatsapp.js
           grep -q "Observe ONLY child-list changes" v2/paid-whatsapp.js
           grep -q "childList: true, subtree: true" v2/paid-whatsapp.js
           ! grep -q "attributeFilter" v2/paid-whatsapp.js
@@ -75,10 +86,18 @@ jobs:
           grep -q "mlbbGemX2" v2/catalog-order.js
           grep -q "currentCategoryIsRechargeById" v2/catalog-order.js
           grep -q "pureCurrency" v2/catalog-order.js
+          grep -q "themedAdminOrderStatus" v2/admin-order-ui.js
+          grep -q "admin_update_order_status" v2/admin-order-ui.js
           grep -q "paid-order-btn" v2/bisa-checkout.css
           grep -q "bisa-wallet.js" v2/index.html
           grep -q "catalog-order.js" v2/index.html
+          grep -q "admin-order-ui.js" v2/index.html
           grep -q "paid-whatsapp.js" v2/index.html
+          grep -q "QR individual de pago" v2/index.html
+          grep -q "QR individual de pago" v2/bisa-checkout.js
+          grep -q "Cuando el pago sea confirmado" v2/bisa-wallet.js
+          ! grep -q "Pago confirmado por BISA" v2/bisa-checkout.js
+          ! grep -q "Referencia BISA" v2/bisa-wallet.js
           grep -q "https://api.frenchstorebo.com" v2/index.html
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2 --include='*.js' --include='*.html'
 
@@ -110,6 +129,7 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/terms.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/refunds.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/catalog-order.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/admin-order-ui.js >/dev/null
 
       - name: Capture responsive screenshots
         run: |
