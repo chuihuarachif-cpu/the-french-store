@@ -1,0 +1,17 @@
+/* THE FRENCH STORE — BISA checkout states */
+.order-status-stack{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.status.paid-status{background:#0d6b3f;color:#dcffec;border:1px solid #29b66f;box-shadow:0 0 0 1px rgba(41,182,111,.08),0 0 16px rgba(41,182,111,.16);font-size:11px;padding:5px 10px}
+.paid-order-btn{border:1px solid #2bc978!important;background:linear-gradient(180deg,#23b96c,#11864b)!important;color:#f2fff8!important;border-radius:10px;padding:8px 12px;font-weight:800;box-shadow:0 8px 20px rgba(17,134,75,.18);cursor:default!important;opacity:1!important}
+.paid-order-btn.full{width:100%;padding:12px 16px;font-size:14px}
+.payment-state{margin:12px 0 4px;padding:10px 12px;border-radius:12px;font-weight:800;text-align:center;border:1px solid #345160;background:#0a1d29;color:#d7e8ef}
+.payment-state.pending{border-color:#6d5a24;background:#312713;color:#ffe6a5}
+.payment-state.paid{border-color:#2bc978;background:#0c3a27;color:#caffdf;box-shadow:0 0 18px rgba(43,201,120,.12)}
+.payment-state.error{border-color:#7a343b;background:#32181c;color:#ffc5ca}
+.qr-order-meta{margin:8px 0 14px;color:#96adba;font-size:12px;line-height:1.45;text-align:center;overflow-wrap:anywhere}
+.verify-payment-btn{margin-top:8px}
+.qr-help-btn{margin-top:8px}
+.payment-complete-box{min-height:210px;display:grid;place-items:center;align-content:center;gap:9px;background:linear-gradient(180deg,#f5fff9,#e5fff0)!important;border:3px solid #25b76b!important;color:#075b33!important}
+.payment-checkmark{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:#18a85d;color:#fff;font:800 58px/1 system-ui;box-shadow:0 14px 32px rgba(24,168,93,.25)}
+.payment-complete-title{font:800 14px 'Orbitron',sans-serif;letter-spacing:.06em;color:#075b33}
+.qr-order-btn{font-weight:800}
+@media(max-width:620px){.order-status-stack{justify-content:flex-end;max-width:48%}.paid-order-btn{width:100%}.payment-complete-box{min-height:190px}}
