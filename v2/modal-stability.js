@@ -59,16 +59,20 @@
   }
 
   function armQrWatchdog(modal) {
-    clearTimeout(qrWatchdogTimer);
-    qrWatchdogTimer = null;
     if (!modal || modal.id !== 'qrModal' || !isOpen(modal)) return;
 
     if (qrIsReady(modal)) {
+      clearTimeout(qrWatchdogTimer);
+      qrWatchdogTimer = null;
       removeQrDelayHint(modal);
       return;
     }
 
+    /* Do not restart the 12 s clock on every repair pass. */
+    if (qrWatchdogTimer) return;
+
     qrWatchdogTimer = setTimeout(() => {
+      qrWatchdogTimer = null;
       if (!isOpen(modal) || qrIsReady(modal)) return;
       const card = modal.querySelector('.modal-card');
       if (!card || card.querySelector('[data-modal-stability-hint]')) return;
