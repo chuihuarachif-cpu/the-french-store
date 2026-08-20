@@ -1,0 +1,14 @@
+/* THE FRENCH STORE — styled customer order cancellation */
+.order-cancel-btn{margin-top:8px;border-color:#8e3943!important;background:linear-gradient(180deg,#8b313b,#63232a)!important;color:#fff4f5!important;font-weight:800;box-shadow:0 8px 20px rgba(99,35,42,.2)}
+.order-list-cancel-btn{font-weight:800;border-color:#8e3943!important;background:linear-gradient(180deg,#7f3038,#5f2228)!important;color:#fff4f5!important}
+.order-cancel-confirm-card{border:1px solid rgba(239,92,107,.45)!important;box-shadow:0 24px 60px rgba(0,0,0,.48),0 0 24px rgba(173,49,61,.12)!important}
+.order-cancel-copy{color:#b7c9d2;line-height:1.55;margin:12px 0}
+.order-cancel-copy b{color:#ffd9dd}
+.order-cancel-code{margin:14px 0 18px;padding:11px 13px;border-radius:12px;border:1px solid rgba(117,179,205,.24);background:#071824;color:#d8edf6;font-weight:800;text-align:center;overflow-wrap:anywhere}
+.order-cancel-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.order-cancel-confirm-btn{font-weight:800}
+.order-cancel-toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));z-index:9999;max-width:min(92vw,520px);transform:translate(-50%,18px);opacity:0;pointer-events:none;padding:12px 16px;border-radius:14px;font-weight:800;text-align:center;transition:opacity .18s ease,transform .18s ease;box-shadow:0 18px 45px rgba(0,0,0,.38);backdrop-filter:blur(12px)}
+.order-cancel-toast.show{opacity:1;transform:translate(-50%,0)}
+.order-cancel-toast.success{background:rgba(9,75,47,.96);border:1px solid #27bd70;color:#e4fff0}
+.order-cancel-toast.error{background:rgba(91,29,36,.96);border:1px solid #d75a68;color:#ffe8eb}
+@media(max-width:620px){.order-cancel-actions{grid-template-columns:1fr}.order-list-cancel-btn{width:100%}.order-cancel-toast{bottom:calc(86px + env(safe-area-inset-bottom));font-size:13px}}
