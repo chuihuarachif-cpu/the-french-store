@@ -69,6 +69,18 @@
     button.dataset.paidWhatsappReady = '1';
   }
 
+  function normalizeDeliveredRecords(root = document) {
+    root.querySelectorAll?.('.record').forEach((record) => {
+      const stack = record.querySelector('.order-status-stack');
+      const delivered = Array.from(stack?.children || []).some((node) => /entregado/i.test(node.textContent || ''));
+      if (!delivered) return;
+
+      record.querySelectorAll('.paid-status').forEach((badge) => badge.remove());
+      const paidButton = record.querySelector('.paid-order-btn');
+      if (paidButton) markDeliveredButton(paidButton);
+    });
+  }
+
   async function orderDetails(orderCode) {
     if (!orderCode || !session) return { tag: '', products: '', status: '', paid: false };
 
@@ -134,6 +146,7 @@
   }
 
   function activatePaidButtons(root = document) {
+    normalizeDeliveredRecords(root);
     root.querySelectorAll?.('.paid-order-btn').forEach((button) => {
       const recordText = String(button.closest('.record')?.textContent || '').toLowerCase();
       if (recordText.includes('entregado')) {
