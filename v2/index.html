@@ -7,7 +7,7 @@
   <meta name="description" content="FRENCH STORE Bolivia: recargas para juegos, streaming y Gift Cards con precios en bolivianos, French Wallet y seguimiento de pedidos.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://jivaaripugjdpxjvjnsu.supabase.co wss://jivaaripugjdpxjvjnsu.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://jivaaripugjdpxjvjnsu.supabase.co wss://jivaaripugjdpxjvjnsu.supabase.co https://api.frenchstorebo.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <link rel="canonical" href="https://frenchstorebo.com/v2/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_BO">
@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="./r8.css">
   <link rel="stylesheet" href="./r8-icons.css">
   <link rel="stylesheet" href="./legal.css">
+  <link rel="stylesheet" href="./bisa-checkout.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -63,7 +64,7 @@
 
   <div id="cartModal" class="modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" data-close="cartModal">×</button><span class="eyebrow">TU COMPRA</span><h2>Carrito</h2><div id="cartItems" class="record-list"></div><div class="cart-total"><span>Total visual</span><strong id="cartTotal">Bs 0,00</strong></div><p class="security-note">El total definitivo se recalcula en Supabase al crear el pedido.</p><label class="legal-check"><input id="purchaseLegalAccept" type="checkbox"><span>Confirmo que revisé el producto y el precio, y acepto los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./refunds.html" target="_blank" rel="noopener noreferrer">política de entrega y reembolsos</a>.</span></label><div class="checkout-grid"><button id="checkoutWallet" class="primary-btn">Pagar con Wallet</button><button id="checkoutQR" class="secondary-btn">Pagar con QR</button></div><div id="checkoutResult" class="notice hidden"></div></div></div>
 
-  <div id="qrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" data-close="qrModal">×</button><span class="eyebrow">PAGO QR</span><h2 id="qrOrderCode">Pedido</h2><p id="qrOrderTotal"></p><div class="qr-box"><img src="../qr-pago.png" alt="QR de pago" loading="lazy" decoding="async"></div><p class="security-note">Verifica en tu banca: <b>Franz Chui</b> · <b>Banco Unión</b>. Si no coincide, no pagues.</p><button id="qrWhatsapp" class="primary-btn full">Ya pagué · Avisar por WhatsApp</button></div></div>
+  <div id="qrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" data-close="qrModal">×</button><span class="eyebrow">PAGO QR</span><h2 id="qrOrderCode">Pedido</h2><p id="qrOrderTotal"></p><div class="qr-box"><img alt="QR BISA del pedido" loading="eager" decoding="async"></div><p class="security-note">QR individual generado por BISA/SIP. Verifica el monto exacto en tu banca antes de pagar.</p><button id="qrWhatsapp" class="secondary-btn full">Verificar pago</button></div></div>
 
   <div id="topupQrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" data-close="topupQrModal">×</button><span class="eyebrow">CARGA FRENCH WALLET</span><h2 id="topupQrAmount">Paga exactamente</h2><div id="topupQrReference" class="notice success"></div><div class="qr-box"><img src="../qr-pago.png" alt="QR para cargar French Wallet" loading="lazy" decoding="async"></div><p class="security-note">Escanea este QR y paga el monto exacto. Verifica en tu banca: <b>Franz Chui</b> · <b>Banco Unión</b>. Si los datos no coinciden, no pagues.</p><p class="security-note"><b>Después de pagar, espera hasta 5 minutos.</b> El aviso ACH puede tardar un poco en llegar y la Wallet se acreditará cuando el pago sea validado. Si tarda más, no vuelvas a pagar: actualiza tu saldo o contáctanos.</p><p class="security-note">Si todavía no pagaste y cambiaste de opinión, puedes cancelar la solicitud. <b>No la canceles si ya realizaste el pago.</b></p><div class="checkout-grid"><button class="secondary-btn" data-close="topupQrModal">Cerrar</button><button id="cancelTopupRequest" class="danger-btn">Cancelar solicitud</button></div></div></div>
 
@@ -75,5 +76,6 @@
   <script src="./auth-ease.js" defer></script>
   <script src="./legal.js" defer></script>
   <script src="./auth-confirm.js" defer></script>
+  <script src="./bisa-checkout.js" defer></script>
 </body>
 </html>
