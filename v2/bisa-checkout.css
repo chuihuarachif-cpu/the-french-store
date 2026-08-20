@@ -13,5 +13,11 @@
 .payment-complete-box{min-height:210px;display:grid;place-items:center;align-content:center;gap:9px;background:linear-gradient(180deg,#f5fff9,#e5fff0)!important;border:3px solid #25b76b!important;color:#075b33!important}
 .payment-checkmark{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:#18a85d;color:#fff;font:800 58px/1 system-ui;box-shadow:0 14px 32px rgba(24,168,93,.25)}
 .payment-complete-title{font:800 14px 'Orbitron',sans-serif;letter-spacing:.06em;color:#075b33}
+/* Fallback visual: the paid state remains green even if another UI refresh reconstructs the QR box. */
+#qrPaymentState.paid~.qr-box{min-height:210px;display:grid;place-items:center;align-content:center;gap:8px;background:linear-gradient(180deg,#f5fff9,#e5fff0)!important;border:3px solid #25b76b!important;color:#075b33!important}
+#qrPaymentState.paid~.qr-box img{display:none!important}
+#qrPaymentState.paid~.qr-box::before{content:'✓';width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:#18a85d;color:#fff;font:800 58px/1 system-ui;box-shadow:0 14px 32px rgba(24,168,93,.25)}
+#qrPaymentState.paid~.qr-box::after{content:'PAGO CONFIRMADO';font:800 14px 'Orbitron',sans-serif;letter-spacing:.06em;color:#075b33}
+.payment-complete-box::before,.payment-complete-box::after{content:none!important}
 .qr-order-btn{font-weight:800}
-@media(max-width:620px){.order-status-stack{justify-content:flex-end;max-width:48%}.paid-order-btn{width:100%}.payment-complete-box{min-height:190px}}
+@media(max-width:620px){.order-status-stack{justify-content:flex-end;max-width:48%}.paid-order-btn{width:100%}.payment-complete-box,#qrPaymentState.paid~.qr-box{min-height:190px}}
