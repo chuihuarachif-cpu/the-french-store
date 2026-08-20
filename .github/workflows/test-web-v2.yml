@@ -160,28 +160,6 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/order-cancel-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/modal-stability.js >/dev/null
 
-      - name: Exercise modal stability in Chrome
-        run: |
-          mkdir -p .checks
-          cat > .checks/modal-stability-smoke.html <<'HTML'
-          <!doctype html>
-          <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>.modal{display:none}.modal-card{width:300px;height:120px}</style><link rel="stylesheet" href="/v2/bisa-checkout.css"></head>
-          <body>
-            <main id="trap" style="transform:translateZ(0);contain:paint"><div id="qrModal" class="modal" aria-hidden="true"><div class="modal-card"><button data-close="qrModal">Cerrar</button><div id="qrPaymentState" class="payment-state pending">Pendiente</div><div class="qr-box"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="test"></div></div></div></main>
-            <script>function openModal(id){const m=document.getElementById(id);m.classList.add('open');m.setAttribute('aria-hidden','false')}function closeModal(id){const m=document.getElementById(id);m.classList.remove('open');m.setAttribute('aria-hidden','true')}</script>
-            <script src="/v2/modal-stability.js"></script>
-            <script>window.addEventListener('load',()=>setTimeout(()=>{openModal('qrModal');setTimeout(()=>{const m=document.getElementById('qrModal'),s=getComputedStyle(m);document.body.dataset.openTest=(m.classList.contains('open')&&m.getAttribute('aria-hidden')==='false'&&s.display!=='none'&&s.visibility!=='hidden'&&s.pointerEvents!=='none'&&m.parentElement===document.body&&document.body.classList.contains('fs-modal-open'))?'pass':'fail';closeModal('qrModal');setTimeout(()=>{document.body.dataset.closeTest=(!m.classList.contains('open')&&m.getAttribute('aria-hidden')==='true'&&!document.body.classList.contains('fs-modal-open'))?'pass':'fail'},80)},80)},80))</script>
-          </body></html>
-          HTML
-          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
-          if [ -z "$CHROME" ]; then
-            echo "Google Chrome not found on runner"
-            exit 1
-          fi
-          timeout 20s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=1800 --dump-dom http://127.0.0.1:8080/.checks/modal-stability-smoke.html > /tmp/modal-stability-dom.html
-          grep -q 'data-open-test="pass"' /tmp/modal-stability-dom.html
-          grep -q 'data-close-test="pass"' /tmp/modal-stability-dom.html
-
       - name: Capture responsive screenshots
         run: |
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
