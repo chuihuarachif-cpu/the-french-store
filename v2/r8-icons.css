@@ -114,6 +114,26 @@ input:focus-visible{
   min-height:44px;
 }
 
+#authPasswordToggle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  align-self:flex-end;
+  margin:7px 0 0;
+  padding:5px 2px;
+  border:0;
+  background:transparent;
+  color:#8fdff4;
+  font:inherit;
+  font-size:.82rem;
+  font-weight:700;
+  cursor:pointer;
+}
+
+#authPasswordToggle:hover{
+  color:#d8f9ff;
+}
+
 @media(max-width:620px){
   .r6-game-art img[data-r8-official-logo='1']{padding:13px 17px}
   .r6-hero-logo img[data-r8-official-logo='1']{padding:10px}
