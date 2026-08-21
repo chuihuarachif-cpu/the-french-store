@@ -201,11 +201,12 @@ jobs:
           },50));
           </script></body></html>
           HTML
-          "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=1200 --dump-dom http://127.0.0.1:8080/v2/__modal-smoke.html > /tmp/modal-smoke-dom.txt
+          timeout 20s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=1200 --dump-dom http://127.0.0.1:8080/v2/__modal-smoke.html > /tmp/modal-smoke-dom.txt
           grep -q "MODAL_SMOKE_PASS" /tmp/modal-smoke-dom.txt
           rm -f v2/__modal-smoke.html
 
       - name: Capture responsive screenshots
+        timeout-minutes: 3
         run: |
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
           if [ -z "$CHROME" ]; then
@@ -213,10 +214,10 @@ jobs:
             exit 1
           fi
           mkdir -p screenshots
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=360,800 --virtual-time-budget=8000 --screenshot=screenshots/mobile-360.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=390,844 --virtual-time-budget=8000 --screenshot=screenshots/mobile-390.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=768,1024 --virtual-time-budget=8000 --screenshot=screenshots/tablet-768.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,768 --virtual-time-budget=8000 --screenshot=screenshots/desktop-1366.png http://127.0.0.1:8080/v2/index.html
+          timeout 25s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=360,800 --virtual-time-budget=8000 --screenshot=screenshots/mobile-360.png http://127.0.0.1:8080/v2/index.html
+          timeout 25s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=390,844 --virtual-time-budget=8000 --screenshot=screenshots/mobile-390.png http://127.0.0.1:8080/v2/index.html
+          timeout 25s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=768,1024 --virtual-time-budget=8000 --screenshot=screenshots/tablet-768.png http://127.0.0.1:8080/v2/index.html
+          timeout 25s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,768 --virtual-time-budget=8000 --screenshot=screenshots/desktop-1366.png http://127.0.0.1:8080/v2/index.html
           test -s screenshots/mobile-360.png
           test -s screenshots/mobile-390.png
           test -s screenshots/tablet-768.png
