@@ -188,8 +188,13 @@
     const cancelled = stateText.includes('cancelado');
     const generating = stateText.includes('generando') || verifyText.includes('generando');
 
-    button.hidden = paid || cancelled;
-    button.disabled = generating || !currentQrOrder().id;
+    // IMPORTANT: keep observer updates idempotent. The old code watched `disabled`
+    // and then wrote `button.disabled` inside its own callback, which can create a
+    // MutationObserver feedback loop and starve the browser event loop on mobile.
+    const shouldHide = paid || cancelled;
+    const shouldDisable = generating || !currentQrOrder().id;
+    if (button.hidden !== shouldHide) button.hidden = shouldHide;
+    if (button.disabled !== shouldDisable) button.disabled = shouldDisable;
   }
 
   function decorateOrdersList() {
@@ -225,7 +230,8 @@
         subtree: true,
         characterData: true,
         attributes: true,
-        attributeFilter: ['class', 'disabled']
+        // Do not observe `disabled`: syncQrCancelButton itself owns that attribute.
+        attributeFilter: ['class']
       });
     }
 
