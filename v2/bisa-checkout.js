@@ -4,10 +4,8 @@
   const API_BASE = 'https://api.frenchstorebo.com';
   const QR_CREATE_PATH = '/bisa-sip/order-qr';
   const QR_STATUS_PATH = '/bisa-sip/order-status';
-  // Audit 25: 10 s keeps the UI responsive while halving repeated Auth/SIP checks.
-  // Polling also pauses while the tab is hidden; BISA callback/Worker reconciliation keep running server-side.
-  const MAX_POLL_ATTEMPTS = 18;
-  const POLL_MS = 10000;
+  const MAX_POLL_ATTEMPTS = 24;
+  const POLL_MS = 5000;
 
   let currentQrOrderId = null;
   let currentQrOrderCode = null;
@@ -234,7 +232,6 @@
     qrPollAttempts = 0;
     qrPollTimer = setInterval(async () => {
       if (!$('qrModal')?.classList.contains('open')) return stopQrPolling();
-      if (document.visibilityState !== 'visible') return;
       qrPollAttempts += 1;
       await verifyCurrentPayment({ silent: true });
       if (qrPollAttempts >= MAX_POLL_ATTEMPTS) stopQrPolling();
@@ -301,11 +298,11 @@
           INVALID_CART: 'El carrito no es válido.',
           INVALID_CART_SIZE: 'El carrito contiene demasiados productos.'
         };
-        showNotice($('checkoutResult'), map[error.message] || error.message,'error');
+        showNotice($('checkoutResult'), map[error.message] || error.message, 'error');
         return;
       }
       if (!data?.ok || !data?.order_id) {
-        showNotice($('checkoutResult'), 'No se pudo crear el pedido.','error');
+        showNotice($('checkoutResult'), 'No se pudo crear el pedido.', 'error');
         return;
       }
 
