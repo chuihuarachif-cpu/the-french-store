@@ -83,6 +83,9 @@ jobs:
           grep -q "PAYMENT_ALREADY_CONFIRMED" v2/order-cancel-ui.js
           grep -q "Cancelar pedido" v2/order-cancel-ui.js
           grep -q "orderCancelConfirmModal" v2/order-cancel-ui.js
+          grep -q "FSModalStability" v2/order-cancel-ui.js
+          grep -q 'data-close="orderCancelConfirmModal"' v2/order-cancel-ui.js
+          grep -q "setCancellationBusy" v2/order-cancel-ui.js
           grep -q "/bisa-sip/topup-qr" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-status" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
@@ -105,12 +108,16 @@ jobs:
           grep -q "2147483000" v2/bisa-checkout.css
           grep -q "forceOpenModal" v2/modal-stability.js
           grep -q "forceCloseModal" v2/modal-stability.js
+          grep -q "normalizeClosedModal" v2/modal-stability.js
+          grep -q "clearForcedModalStyles" v2/modal-stability.js
+          grep -q "resetScroll: false" v2/modal-stability.js
+          grep -q "installPublicApi" v2/modal-stability.js
           grep -q "patchGlobalModalHelpers" v2/modal-stability.js
           grep -q "orderCancelConfirmModal" v2/modal-stability.js
           grep -q "Do not restart the 12 s clock" v2/modal-stability.js
-          grep -q "modal-stability.js" v2/index.html
+          grep -q "modal-stability.js?v=20260820-2036" v2/index.html
+          grep -q "order-cancel-ui.js?v=20260820-2036" v2/index.html
           grep -q "bisa-wallet.js" v2/index.html
-          grep -q "order-cancel-ui.js" v2/index.html
           grep -q "order-cancel-ui.css" v2/index.html
           grep -q "catalog-order.js" v2/index.html
           grep -q "admin-order-ui.js" v2/index.html
