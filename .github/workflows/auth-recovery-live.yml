@@ -1,0 +1,31 @@
+name: Auth Recovery Live
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'v2/auth-confirm.js'
+      - '.github/workflows/auth-recovery-live.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-auth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Wait for GitHub Pages publication
+        run: sleep 60
+
+      - name: Verify live recovery guard
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          curl --fail --retry 4 --retry-delay 10 -sS "https://frenchstorebo.com/v2/auth-confirm.js?deploy=${SHA}" -o /tmp/auth-confirm.js
+          test -s /tmp/auth-confirm.js
+          grep -q "FSAuthRecoveryGuard" /tmp/auth-confirm.js
+          grep -q "PASSWORD_RECOVERY" /tmp/auth-confirm.js
+          grep -q "Recuperación validada" /tmp/auth-confirm.js
+          node --check /tmp/auth-confirm.js
