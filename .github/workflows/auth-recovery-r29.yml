@@ -1,0 +1,86 @@
+name: Auth Recovery R29
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/auth-confirm.js'
+      - '.github/workflows/auth-recovery-r29.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recovery-race:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate recovery guard syntax and contracts
+        run: |
+          node --check v2/auth-confirm.js
+          grep -q "PASSWORD_RECOVERY" v2/auth-confirm.js
+          grep -q "FSAuthRecoveryGuard" v2/auth-confirm.js
+          grep -q "authRecoveryBox" v2/auth-confirm.js
+          grep -q "Recuperación validada" v2/auth-confirm.js
+
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8080 > /tmp/auth-r29-http.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8080/v2/auth-confirm.js >/dev/null
+
+      - name: Browser-test PASSWORD_RECOVERY survives late modal close
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          test -n "$CHROME"
+          cat > v2/__auth-recovery-r29.html <<'HTML'
+          <!doctype html><html><body>
+          <div id="authModal" class="modal" aria-hidden="true"><div class="modal-card">
+            <button id="closeAuth" data-close="authModal">×</button>
+            <h2>Iniciar sesión</h2><p>Escribe tu correo y contraseña.</p>
+            <label id="emailLabel">Correo<input id="loginEmail"></label>
+            <label id="passwordLabel">Contraseña<input id="loginPassword"></label>
+            <label id="legalLabel"><input id="legalAccept" type="checkbox"></label>
+            <button id="loginSubmit">Entrar</button>
+            <button>Crear cuenta</button>
+            <div id="authExtraActions"></div>
+            <div id="authRecoveryBox" class="hidden"><input id="recoveryPassword"><input id="recoveryPasswordConfirm"><button id="saveRecoveryPassword">Guardar</button></div>
+            <div id="loginMessage" class="notice hidden"></div>
+          </div></div>
+          <div id="result">WAIT</div>
+          <script>
+          window.showNotice=(el,msg,type)=>{el.textContent=msg;el.className='notice '+type;el.classList.remove('hidden')};
+          window.openModal=(id)=>{const m=document.getElementById(id);m.classList.add('open');m.setAttribute('aria-hidden','false')};
+          window.FSModalStability={open:window.openModal};
+          window.sb={auth:{
+            getSession:async()=>({data:{session:{user:{id:'test-user'}}}}),
+            verifyOtp:async()=>({data:{session:{user:{id:'test-user'}}},error:null}),
+            onAuthStateChange:(cb)=>{window.__authCb=cb;return{data:{subscription:{unsubscribe(){}}}}}
+          }};
+          </script>
+          <script src="./auth-confirm.js"></script>
+          <script>
+          addEventListener('DOMContentLoaded',()=>{
+            window.__authCb?.('PASSWORD_RECOVERY',{user:{id:'test-user'}});
+            setTimeout(()=>{
+              const m=document.getElementById('authModal');
+              m.classList.remove('open');
+              m.setAttribute('aria-hidden','true');
+            },120);
+            setTimeout(()=>{
+              const m=document.getElementById('authModal');
+              const box=document.getElementById('authRecoveryBox');
+              const title=m.querySelector('h2')?.textContent||'';
+              const ok=m.classList.contains('open') && m.getAttribute('aria-hidden')==='false' && !box.classList.contains('hidden') && /Crear nueva contraseña/i.test(title) && sessionStorage.getItem('fs_password_recovery')==='1';
+              document.getElementById('result').textContent=ok?'AUTH_RECOVERY_R29_PASS':'AUTH_RECOVERY_R29_FAIL';
+            },1100);
+          });
+          </script>
+          </body></html>
+          HTML
+          timeout 20s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=1800 --dump-dom http://127.0.0.1:8080/v2/__auth-recovery-r29.html > /tmp/auth-r29-dom.txt
+          grep -q 'AUTH_RECOVERY_R29_PASS' /tmp/auth-r29-dom.txt || { cat /tmp/auth-r29-dom.txt; exit 1; }
+          rm -f v2/__auth-recovery-r29.html
