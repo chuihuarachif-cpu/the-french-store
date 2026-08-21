@@ -1,8 +1,8 @@
 name: Vendor Supabase R31
 
 on:
-  push:
-    branches: [r31-runtime-bootstrap]
+  pull_request:
+    branches: [main]
     paths:
       - '.github/workflows/vendor-supabase-r31.yml'
 
@@ -11,9 +11,12 @@ permissions:
 
 jobs:
   vendor:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'r31-runtime-bootstrap'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: r31-runtime-bootstrap
 
       - uses: actions/setup-node@v4
         with:
@@ -45,11 +48,11 @@ jobs:
           # Vendored browser dependencies
 
           `supabase-2.112.3.js` is the official browser UMD bundle from `@supabase/supabase-js@2.112.3`.
-          It is stored locally so the storefront startup does not depend on a third-party CDN being reachable.
+          It is stored locally so storefront startup does not depend on a third-party CDN being reachable.
           Do not replace it without pinning and testing the exact new version first.
           EOF
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- v2/vendor/supabase-2.112.3.js v2/vendor/README.md
           git commit -m 'R31: vendor pinned Supabase browser client' || exit 0
-          git push
+          git push origin HEAD:r31-runtime-bootstrap
