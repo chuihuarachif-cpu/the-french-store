@@ -1,0 +1,68 @@
+name: QR Observer Loop
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/order-cancel-ui.js'
+      - '.github/workflows/qr-observer-loop.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qr-event-loop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate cancellation UI syntax and observer contract
+        run: |
+          node --check v2/order-cancel-ui.js
+          ! grep -q "attributeFilter: \['class', 'disabled'\]" v2/order-cancel-ui.js
+          grep -q "button.disabled !== shouldDisable" v2/order-cancel-ui.js
+
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8080 >/tmp/qr-loop-http.log 2>&1 &
+          sleep 2
+
+      - name: Browser-test QR modal does not starve the event loop
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          test -n "$CHROME"
+          cat > v2/__qr-observer-loop.html <<'HTML'
+          <!doctype html><html><body>
+          <div id="qrModal" class="modal" aria-hidden="true">
+            <div class="modal-card">
+              <div id="qrPaymentState" class="payment-state pending">Generando QR…</div>
+              <button id="qrWhatsapp">Generando…</button>
+            </div>
+          </div>
+          <div id="ordersList"></div>
+          <div id="result">WAIT</div>
+          <script>
+            window.session={access_token:'test'};
+            window.lastQrOrder={order_id:'00000000-0000-0000-0000-000000000001',order_code:'TEST'};
+            window.sb={auth:{getSession:async()=>({data:{session:window.session}})}};
+            window.loadOrders=async()=>{};
+            window.closeModal=(id)=>{const m=document.getElementById(id);m?.classList.remove('open')};
+          </script>
+          <script src="./order-cancel-ui.js"></script>
+          <script>
+            addEventListener('DOMContentLoaded',()=>{
+              setTimeout(()=>document.getElementById('qrModal').classList.add('open'),20);
+              setTimeout(()=>{
+                const btn=document.getElementById('qrCancelOrder');
+                const ok=!!btn && btn.disabled===true;
+                document.getElementById('result').textContent=ok?'QR_EVENT_LOOP_PASS':'QR_EVENT_LOOP_FAIL';
+              },300);
+            });
+          </script>
+          </body></html>
+          HTML
+          timeout 15s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=1000 --dump-dom http://127.0.0.1:8080/v2/__qr-observer-loop.html >/tmp/qr-loop-dom.txt
+          grep -q 'QR_EVENT_LOOP_PASS' /tmp/qr-loop-dom.txt || { cat /tmp/qr-loop-dom.txt; exit 1; }
+          rm -f v2/__qr-observer-loop.html
