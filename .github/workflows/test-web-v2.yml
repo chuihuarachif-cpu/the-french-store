@@ -5,7 +5,6 @@ on:
     branches: [main, web-v2-integration]
     paths:
       - 'v2/**'
-      - '404.html'
       - 'robots.txt'
       - 'sitemap.xml'
       - '.github/workflows/test-web-v2.yml'
@@ -13,7 +12,6 @@ on:
     branches: [main]
     paths:
       - 'v2/**'
-      - '404.html'
       - 'robots.txt'
       - 'sitemap.xml'
       - '.github/workflows/test-web-v2.yml'
@@ -30,7 +28,6 @@ jobs:
 
       - name: Check required files
         run: |
-          test -s 404.html
           test -s v2/index.html
           test -s v2/styles.css
           test -s v2/app.js
@@ -48,7 +45,6 @@ jobs:
           test -s v2/catalog-order.js
           test -s v2/admin-order-ui.js
           test -s v2/paid-whatsapp.js
-          test -s v2/modal-stability.js
           test -s v2/privacy.html
           test -s v2/terms.html
           test -s v2/refunds.html
@@ -69,7 +65,6 @@ jobs:
           node --check v2/catalog-order.js
           node --check v2/admin-order-ui.js
           node --check v2/paid-whatsapp.js
-          node --check v2/modal-stability.js
 
       - name: Check critical frontend contracts
         run: |
@@ -83,9 +78,6 @@ jobs:
           grep -q "PAYMENT_ALREADY_CONFIRMED" v2/order-cancel-ui.js
           grep -q "Cancelar pedido" v2/order-cancel-ui.js
           grep -q "orderCancelConfirmModal" v2/order-cancel-ui.js
-          grep -q "FSModalStability" v2/order-cancel-ui.js
-          grep -q 'data-close="orderCancelConfirmModal"' v2/order-cancel-ui.js
-          grep -q "setCancellationBusy" v2/order-cancel-ui.js
           grep -q "/bisa-sip/topup-qr" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-status" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
@@ -104,20 +96,8 @@ jobs:
           grep -q "themedAdminOrderStatus" v2/admin-order-ui.js
           grep -q "admin_update_order_status" v2/admin-order-ui.js
           grep -q "paid-order-btn" v2/bisa-checkout.css
-          grep -q "fs-modal-open" v2/bisa-checkout.css
-          grep -q "2147483000" v2/bisa-checkout.css
-          grep -q "forceOpenModal" v2/modal-stability.js
-          grep -q "forceCloseModal" v2/modal-stability.js
-          grep -q "normalizeClosedModal" v2/modal-stability.js
-          grep -q "clearForcedModalStyles" v2/modal-stability.js
-          grep -q "resetScroll: false" v2/modal-stability.js
-          grep -q "installPublicApi" v2/modal-stability.js
-          grep -q "patchGlobalModalHelpers" v2/modal-stability.js
-          grep -q "orderCancelConfirmModal" v2/modal-stability.js
-          grep -q "Do not restart the 12 s clock" v2/modal-stability.js
-          grep -q "modal-stability.js?v=20260820-2036" v2/index.html
-          grep -q "order-cancel-ui.js?v=20260820-2036" v2/index.html
           grep -q "bisa-wallet.js" v2/index.html
+          grep -q "order-cancel-ui.js" v2/index.html
           grep -q "order-cancel-ui.css" v2/index.html
           grep -q "catalog-order.js" v2/index.html
           grep -q "admin-order-ui.js" v2/index.html
@@ -125,8 +105,6 @@ jobs:
           grep -q "QR individual de pago" v2/index.html
           grep -q "QR individual de pago" v2/bisa-checkout.js
           grep -q "Cuando el pago sea confirmado" v2/bisa-wallet.js
-          grep -q "Sumaremos todos los productos seleccionados" v2/index.html
-          ! grep -q "Supabase al crear el pedido" v2/index.html
           ! grep -q "Pago confirmado por BISA" v2/bisa-checkout.js
           ! grep -q "Referencia BISA" v2/bisa-wallet.js
           grep -q "https://api.frenchstorebo.com" v2/index.html
@@ -149,15 +127,12 @@ jobs:
           grep -q "purchaseLegalAccept" v2/index.html
           grep -q "frenchstorebo.com" sitemap.xml
           grep -q "Sitemap: https://frenchstorebo.com/sitemap.xml" robots.txt
-          grep -q "Volver a FRENCH STORE" 404.html
-          grep -q 'content="noindex,follow"' 404.html
 
       - name: Start local preview
         run: |
           python3 -m http.server 8080 > /tmp/french-store-http.log 2>&1 &
           echo $! > /tmp/french-store-http.pid
           sleep 2
-          curl --fail http://127.0.0.1:8080/404.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/privacy.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/terms.html >/dev/null
@@ -165,7 +140,6 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/catalog-order.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/admin-order-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/order-cancel-ui.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/modal-stability.js >/dev/null
 
       - name: Capture responsive screenshots
         run: |

@@ -24,17 +24,4 @@
 #qrPaymentState.paid~.qr-box::after{content:'PAGO CONFIRMADO';font:800 14px 'Orbitron',sans-serif;letter-spacing:.06em;color:#075b33}
 .payment-complete-box::before,.payment-complete-box::after{content:none!important}
 .qr-order-btn{font-weight:800}
-
-/* Shared mobile modal safety. Critical dialogs are full-screen fixed overlays and
-   the page behind them cannot capture taps. modal-stability.js repairs any stale
-   class/aria state without touching payment or Auth logic. */
-html.fs-modal-open,body.fs-modal-open{overflow:hidden!important;overscroll-behavior:none!important}
-#authModal,#cartModal,#qrModal,#topupQrModal,#orderCancelConfirmModal{position:fixed!important;inset:0!important;z-index:2147483000!important;align-items:center!important;justify-content:center!important;padding:12px;background:rgba(0,5,9,.86)!important;overscroll-behavior:contain;touch-action:pan-y}
-#authModal.open,#cartModal.open,#qrModal.open,#topupQrModal.open,#orderCancelConfirmModal.open{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
-#authModal:not(.open),#cartModal:not(.open),#qrModal:not(.open),#topupQrModal:not(.open),#orderCancelConfirmModal:not(.open){pointer-events:none!important}
-#authModal .modal-card,#cartModal .modal-card,#qrModal .modal-card,#topupQrModal .modal-card,#orderCancelConfirmModal .modal-card{position:relative!important;z-index:1!important;max-height:calc(100dvh - 24px)!important;overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;pointer-events:auto!important}
-body.fs-modal-open #mainContent,body.fs-modal-open .topbar,body.fs-modal-open .bottom-nav,body.fs-modal-open .floating-whatsapp,body.fs-modal-open .site-legal-footer{pointer-events:none!important}
-body.fs-modal-open .modal.open,body.fs-modal-open .modal.open .modal-card{pointer-events:auto!important}
-.modal-stability-hint{margin:10px 0 12px!important;border-color:#7b6125!important;background:#342914!important;color:#ffe7a6!important;line-height:1.45}
-
-@media(max-width:620px){.order-status-stack{justify-content:flex-end;max-width:48%}.paid-order-btn,.delivered-order-btn{width:100%}.payment-complete-box,#qrPaymentState.paid~.qr-box{min-height:190px}#authModal.open,#cartModal.open,#qrModal.open,#topupQrModal.open,#orderCancelConfirmModal.open{padding:10px 10px calc(10px + env(safe-area-inset-bottom))!important}#authModal .modal-card,#cartModal .modal-card,#qrModal .modal-card,#topupQrModal .modal-card,#orderCancelConfirmModal .modal-card{width:100%!important;max-width:100%!important;max-height:calc(100dvh - 20px)!important}}
+@media(max-width:620px){.order-status-stack{justify-content:flex-end;max-width:48%}.paid-order-btn,.delivered-order-btn{width:100%}.payment-complete-box,#qrPaymentState.paid~.qr-box{min-height:190px}}

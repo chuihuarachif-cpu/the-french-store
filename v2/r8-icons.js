@@ -72,34 +72,6 @@
     scope.querySelectorAll?.('img[alt]').forEach(upgradeImage);
   }
 
-  function installAuthPolish() {
-    const password = document.getElementById('loginPassword');
-    if (password && !document.getElementById('authPasswordToggle')) {
-      const toggle = document.createElement('button');
-      toggle.id = 'authPasswordToggle';
-      toggle.type = 'button';
-      toggle.className = 'auth-password-toggle';
-      toggle.textContent = 'Mostrar contraseña';
-      toggle.setAttribute('aria-pressed', 'false');
-      toggle.addEventListener('click', () => {
-        const reveal = password.type === 'password';
-        password.type = reveal ? 'text' : 'password';
-        toggle.textContent = reveal ? 'Ocultar contraseña' : 'Mostrar contraseña';
-        toggle.setAttribute('aria-pressed', reveal ? 'true' : 'false');
-        password.focus({ preventScroll: true });
-      });
-      password.insertAdjacentElement('afterend', toggle);
-    }
-
-    ['loginMessage', 'checkoutResult', 'topupResult'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.setAttribute('role', 'status');
-      el.setAttribute('aria-live', 'polite');
-      el.setAttribute('aria-atomic', 'true');
-    });
-  }
-
   let queued = false;
   function queue(scope = document) {
     if (queued) return;
@@ -122,7 +94,6 @@
 
   function boot() {
     upgrade(document);
-    installAuthPolish();
     ['catalogList', 'featuredList'].forEach(id => {
       const target = document.getElementById(id);
       if (target) observer.observe(target, { childList: true, subtree: true });

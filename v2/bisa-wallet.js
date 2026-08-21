@@ -6,10 +6,8 @@
   const TOPUP_QR_PATH = '/bisa-sip/topup-qr';
   const TOPUP_STATUS_PATH = '/bisa-sip/topup-status';
   const TOPUP_CANCEL_PATH = '/bisa-sip/topup-cancel';
-  // Audit 25: reduce repeated Auth/SIP reads without changing automatic credit.
-  // Server-side callback/reconciliation continues even when this tab is hidden.
-  const POLL_MS = 10000;
-  const MAX_POLL_ATTEMPTS = 18;
+  const POLL_MS = 5000;
+  const MAX_POLL_ATTEMPTS = 24;
 
   let currentTopupId = null;
   let topupTimer = null;
@@ -182,7 +180,6 @@
     topupAttempts = 0;
     topupTimer = setInterval(async () => {
       if (!$('topupQrModal')?.classList.contains('open')) return stopTopupPolling();
-      if (document.visibilityState !== 'visible') return;
       topupAttempts += 1;
       await verifyTopup({ silent: true });
       if (topupAttempts >= MAX_POLL_ATTEMPTS) stopTopupPolling();

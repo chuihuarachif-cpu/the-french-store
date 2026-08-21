@@ -2,40 +2,8 @@
 (() => {
   const API_BASE = 'https://api.frenchstorebo.com';
   const ORDER_CANCEL_PATH = '/bisa-sip/order-cancel';
-  const cancellingOrders = new Set();
 
   const $id = (id) => document.getElementById(id);
-
-  function openCancellationModal(modal) {
-    if (!modal) return;
-    if (window.FSModalStability?.open) {
-      window.FSModalStability.open(modal.id);
-      return;
-    }
-    if (typeof window.openModal === 'function') {
-      window.openModal(modal.id);
-      return;
-    }
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
-  }
-
-  function closeCancellationModal(modal) {
-    if (!modal) return;
-    if (window.FSModalStability?.close) {
-      window.FSModalStability.close(modal.id);
-      return;
-    }
-    if (typeof window.closeModal === 'function') {
-      window.closeModal(modal.id);
-      return;
-    }
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
-    ['position', 'inset', 'z-index', 'display', 'visibility', 'opacity', 'pointer-events'].forEach((property) => {
-      modal.style.removeProperty(property);
-    });
-  }
 
   async function accessToken() {
     const { data } = await sb.auth.getSession();
@@ -104,28 +72,18 @@
     modal.setAttribute('aria-hidden', 'true');
     modal.innerHTML = `
       <div class="modal-card small-modal order-cancel-confirm-card" role="dialog" aria-modal="true" aria-labelledby="orderCancelConfirmTitle">
-        <button type="button" class="modal-close" data-order-cancel-close data-close="orderCancelConfirmModal" aria-label="Cerrar">×</button>
+        <button type="button" class="modal-close" data-order-cancel-close aria-label="Cerrar">×</button>
         <span class="eyebrow">CONFIRMACIÓN</span>
         <h2 id="orderCancelConfirmTitle">Cancelar pedido</h2>
         <p class="order-cancel-copy">Hazlo únicamente si <b>todavía no realizaste el pago</b>. Al confirmar, el QR dejará de ser válido y el pedido quedará cancelado.</p>
         <div id="orderCancelConfirmCode" class="order-cancel-code"></div>
         <div class="order-cancel-actions">
-          <button type="button" class="secondary-btn" data-order-cancel-close data-close="orderCancelConfirmModal">Volver</button>
+          <button type="button" class="secondary-btn" data-order-cancel-close>Volver</button>
           <button type="button" class="danger-btn order-cancel-confirm-btn" id="orderCancelConfirmButton">Sí, cancelar pedido</button>
         </div>
       </div>`;
     document.body.appendChild(modal);
     return modal;
-  }
-
-  function setCancellationBusy(modal, busy) {
-    const card = modal?.querySelector('.modal-card');
-    const confirmButton = $id('orderCancelConfirmButton');
-    if (card) card.setAttribute('aria-busy', busy ? 'true' : 'false');
-    if (confirmButton) {
-      confirmButton.disabled = busy;
-      confirmButton.textContent = busy ? 'Cancelando…' : 'Sí, cancelar pedido';
-    }
   }
 
   function askCancellation(orderCode) {
@@ -136,67 +94,65 @@
       if (code) code.textContent = orderCode ? `Pedido ${orderCode}` : 'Pedido seleccionado';
 
       let settled = false;
-      const closeButtons = [...modal.querySelectorAll('[data-order-cancel-close]')];
-      const cleanupHandlers = () => {
-        if (confirmButton) confirmButton.onclick = null;
-        closeButtons.forEach((button) => { button.onclick = null; });
-        modal.onclick = null;
-      };
       const finish = (value) => {
         if (settled) return;
         settled = true;
-        cleanupHandlers();
-        if (!value) closeCancellationModal(modal);
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        confirmButton.onclick = null;
+        modal.querySelectorAll('[data-order-cancel-close]').forEach((button) => { button.onclick = null; });
+        modal.onclick = null;
         resolve(value);
       };
 
-      setCancellationBusy(modal, false);
-      if (confirmButton) confirmButton.onclick = () => finish(true);
-      closeButtons.forEach((button) => { button.onclick = () => finish(false); });
+      confirmButton.disabled = false;
+      confirmButton.textContent = 'Sí, cancelar pedido';
+      confirmButton.onclick = () => finish(true);
+      modal.querySelectorAll('[data-order-cancel-close]').forEach((button) => { button.onclick = () => finish(false); });
       modal.onclick = (event) => { if (event.target === modal) finish(false); };
-      openCancellationModal(modal);
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
     });
   }
 
   async function cancelOrder(orderId, orderCode = '') {
-    if (!orderId || cancellingOrders.has(String(orderId))) return;
-
+    if (!orderId) return;
     const confirmed = await askCancellation(orderCode);
     if (!confirmed) return;
 
-    const key = String(orderId);
-    cancellingOrders.add(key);
     const modal = ensureConfirmModal();
-    setCancellationBusy(modal, true);
+    const confirmButton = $id('orderCancelConfirmButton');
+    confirmButton.disabled = true;
+    confirmButton.textContent = 'Cancelando…';
 
     try {
       const data = await cancelApi(orderId);
-      closeCancellationModal(modal);
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
 
-      if (String(lastQrOrder?.order_id || '') === key && $id('qrModal')?.classList.contains('open')) {
-        if (window.FSModalStability?.close) window.FSModalStability.close('qrModal');
-        else if (typeof window.closeModal === 'function') window.closeModal('qrModal');
+      if (String(lastQrOrder?.order_id || '') === String(orderId) && $id('qrModal')?.classList.contains('open')) {
+        closeModal('qrModal');
       }
-      if (String(lastQrOrder?.order_id || '') === key) lastQrOrder = null;
+      if (String(lastQrOrder?.order_id || '') === String(orderId)) lastQrOrder = null;
 
       await Promise.resolve(loadOrders()).catch(() => {});
       showToast(`Pedido ${data?.order_code || orderCode || ''} cancelado. El QR ya no es válido.`.replace(/\s+/g, ' ').trim(), 'success');
     } catch (error) {
-      closeCancellationModal(modal);
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
       const code = error?.code || error?.message;
       if (code === 'PAYMENT_ALREADY_CONFIRMED') {
         showToast(errorMessage(code), 'error');
         await Promise.resolve(loadOrders()).catch(() => {});
-        if (String(lastQrOrder?.order_id || '') === key && $id('qrModal')?.classList.contains('open')) {
+        if (String(lastQrOrder?.order_id || '') === String(orderId) && $id('qrModal')?.classList.contains('open')) {
           $id('qrWhatsapp')?.click();
         }
         return;
       }
       showToast(errorMessage(code), 'error');
     } finally {
-      cancellingOrders.delete(key);
-      setCancellationBusy(modal, false);
-      window.FSModalStability?.repair?.();
+      confirmButton.disabled = false;
+      confirmButton.textContent = 'Sí, cancelar pedido';
     }
   }
 
@@ -258,8 +214,7 @@
   }
 
   function install() {
-    const confirmModal = ensureConfirmModal();
-    closeCancellationModal(confirmModal);
+    ensureConfirmModal();
     syncQrCancelButton();
     decorateOrdersList();
 

@@ -27,7 +27,7 @@
   <link rel="stylesheet" href="./r8.css?v=20260820-0916">
   <link rel="stylesheet" href="./r8-icons.css?v=20260820-0916">
   <link rel="stylesheet" href="./legal.css?v=20260820-0916">
-  <link rel="stylesheet" href="./bisa-checkout.css?v=20260820-1813">
+  <link rel="stylesheet" href="./bisa-checkout.css?v=20260820-0916">
   <link rel="stylesheet" href="./order-cancel-ui.css?v=20260820-0916">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -66,7 +66,7 @@
 
   <div id="authModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" data-close="authModal">×</button><span class="eyebrow">FRENCH STORE</span><h2>Iniciar sesión</h2><p>Usa tu correo para acceder a Wallet, Pedidos y Perfil.</p><label>Correo<input id="loginEmail" type="email" autocomplete="email"></label><label>Contraseña<input id="loginPassword" type="password" autocomplete="current-password"></label><button id="loginSubmit" class="primary-btn full">Entrar</button><div id="loginMessage" class="notice hidden"></div></div></div>
 
-  <div id="cartModal" class="modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" data-close="cartModal">×</button><span class="eyebrow">TU COMPRA</span><h2>Carrito</h2><div id="cartItems" class="record-list"></div><div class="cart-total"><span>Total de tu compra</span><strong id="cartTotal">Bs 0,00</strong></div><p class="security-note">Sumaremos todos los productos seleccionados y verificaremos el total antes de generar el pago.</p><label class="legal-check"><input id="purchaseLegalAccept" type="checkbox"><span>Confirmo que revisé el producto y el precio, y acepto los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./refunds.html" target="_blank" rel="noopener noreferrer">política de entrega y reembolsos</a>.</span></label><div class="checkout-grid"><button id="checkoutWallet" class="primary-btn">Pagar con Wallet</button><button id="checkoutQR" class="secondary-btn">Pagar con QR</button></div><div id="checkoutResult" class="notice hidden"></div></div></div>
+  <div id="cartModal" class="modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" data-close="cartModal">×</button><span class="eyebrow">TU COMPRA</span><h2>Carrito</h2><div id="cartItems" class="record-list"></div><div class="cart-total"><span>Total visual</span><strong id="cartTotal">Bs 0,00</strong></div><p class="security-note">El total definitivo se recalcula en Supabase al crear el pedido.</p><label class="legal-check"><input id="purchaseLegalAccept" type="checkbox"><span>Confirmo que revisé el producto y el precio, y acepto los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./refunds.html" target="_blank" rel="noopener noreferrer">política de entrega y reembolsos</a>.</span></label><div class="checkout-grid"><button id="checkoutWallet" class="primary-btn">Pagar con Wallet</button><button id="checkoutQR" class="secondary-btn">Pagar con QR</button></div><div id="checkoutResult" class="notice hidden"></div></div></div>
 
   <div id="qrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" data-close="qrModal">×</button><span class="eyebrow">PAGO QR</span><h2 id="qrOrderCode">Pedido</h2><p id="qrOrderTotal"></p><div class="qr-box"><img alt="QR de pago del pedido" loading="eager" decoding="async"></div><p class="security-note">QR individual de pago. Verifica el monto exacto en tu banca antes de pagar.</p><button id="qrWhatsapp" class="secondary-btn full">Verificar pago</button></div></div>
 
@@ -81,11 +81,10 @@
   <script src="./legal.js?v=20260820-0916" defer></script>
   <script src="./auth-confirm.js?v=20260820-0916" defer></script>
   <script src="./bisa-checkout.js?v=20260820-0916" defer></script>
-  <script src="./order-cancel-ui.js?v=20260820-2036" defer></script>
+  <script src="./order-cancel-ui.js?v=20260820-0916" defer></script>
   <script src="./bisa-wallet.js?v=20260820-0916" defer></script>
   <script src="./catalog-order.js?v=20260820-0916" defer></script>
   <script src="./admin-order-ui.js?v=20260820-0916" defer></script>
   <script src="./paid-whatsapp.js?v=20260820-0916" defer></script>
-  <script src="./modal-stability.js?v=20260820-2036" defer></script>
 </body>
 </html>
