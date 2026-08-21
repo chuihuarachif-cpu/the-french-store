@@ -132,3 +132,121 @@
     document.getElementById('authLinkConfirmButton')?.addEventListener('click', () => verifyLink(tokenHash, kind), { once: true });
   }, { once: true });
 })();
+
+/* R29 recovery race guard.
+   The base app closes authModal whenever a session appears. During PASSWORD_RECOVERY
+   that races with legal.js, which needs the same modal open to collect a new password.
+   This bounded guard re-opens the recovery form after auth listeners settle. */
+(() => {
+  'use strict';
+
+  const FLAG = 'fs_password_recovery';
+  const RETRIES = [0, 250, 700, 1500, 3000, 5000];
+
+  function hasFlag() {
+    try { return sessionStorage.getItem(FLAG) === '1'; } catch { return false; }
+  }
+
+  function setFlag(value) {
+    try {
+      if (value) sessionStorage.setItem(FLAG, '1');
+      else sessionStorage.removeItem(FLAG);
+    } catch {}
+  }
+
+  function urlLooksLikeRecovery() {
+    const href = String(location.href || '');
+    try {
+      const url = new URL(href);
+      if (url.searchParams.get('reset') === '1') return true;
+      if (url.searchParams.get('recover_account') === '1') return true;
+    } catch {}
+    return /(?:[#&]type=recovery\b)/i.test(href);
+  }
+
+  function showRecoveryNotice(message, type = 'success') {
+    const el = document.getElementById('loginMessage');
+    if (!el) return;
+    if (typeof showNotice === 'function') showNotice(el, message, type);
+    else {
+      el.textContent = message;
+      el.className = `notice ${type}`.trim();
+      el.classList.remove('hidden');
+    }
+  }
+
+  function enterRecoveryUi() {
+    if (!hasFlag()) return false;
+    const modal = document.getElementById('authModal');
+    const box = document.getElementById('authRecoveryBox');
+    if (!modal || !box) return false;
+
+    document.getElementById('authChoiceBox')?.remove();
+    document.getElementById('authPendingBox')?.remove();
+    document.getElementById('authModeBack')?.remove();
+    document.getElementById('authLinkActionBox')?.remove();
+
+    document.getElementById('loginEmail')?.closest('label')?.classList.add('hidden');
+    document.getElementById('loginPassword')?.closest('label')?.classList.add('hidden');
+    document.getElementById('legalAccept')?.closest('label')?.classList.add('hidden');
+    document.getElementById('loginSubmit')?.classList.add('hidden');
+    document.getElementById('authExtraActions')?.classList.add('hidden');
+    [...modal.querySelectorAll('button')].forEach((button) => {
+      if (button.textContent.trim() === 'Crear cuenta') button.classList.add('hidden');
+    });
+
+    const card = modal.querySelector('.modal-card');
+    const title = card?.querySelector('h2');
+    const intro = title?.nextElementSibling;
+    if (title) title.textContent = 'Crear nueva contraseña';
+    if (intro?.tagName === 'P') intro.textContent = 'El enlace ya fue validado. Define la contraseña que usarás desde ahora.';
+
+    box.classList.remove('hidden');
+    if (window.FSModalStability?.open) window.FSModalStability.open('authModal');
+    else if (typeof openModal === 'function') openModal('authModal');
+    else {
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    showRecoveryNotice('Recuperación validada. Escribe y guarda tu nueva contraseña.', 'success');
+    return true;
+  }
+
+  async function retryRecoveryUi() {
+    if (!hasFlag()) return;
+    try {
+      const { data } = await sb.auth.getSession();
+      if (!data?.session) return;
+    } catch { return; }
+    enterRecoveryUi();
+  }
+
+  function scheduleRecoveryUi() {
+    RETRIES.forEach((delay) => setTimeout(retryRecoveryUi, delay));
+  }
+
+  try {
+    sb.auth.onAuthStateChange((event) => {
+      if (event !== 'PASSWORD_RECOVERY') return;
+      setFlag(true);
+      scheduleRecoveryUi();
+    });
+  } catch {}
+
+  document.addEventListener('click', (event) => {
+    const close = event.target.closest?.('[data-close="authModal"]');
+    if (close && hasFlag()) setFlag(false);
+  }, true);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (urlLooksLikeRecovery()) setFlag(true);
+    if (hasFlag()) scheduleRecoveryUi();
+  }, { once: true });
+
+  window.FSAuthRecoveryGuard = {
+    active: hasFlag,
+    show: enterRecoveryUi,
+    clear: () => setFlag(false)
+  };
+})();
