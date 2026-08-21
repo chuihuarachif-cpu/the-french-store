@@ -60,10 +60,12 @@
 
   if (!dependencyReady()) enterDegradedMode('SUPABASE_CLIENT_MISSING');
 
+  /* Only a failure in the core app bootstrap triggers degraded mode. Optional
+     presentation layers must never disable an otherwise healthy storefront. */
   window.addEventListener('error', (event) => {
     if (!(event instanceof ErrorEvent)) return;
     const source = String(event.filename || '');
-    if (!source || !/\/v2\//.test(source)) return;
+    if (!/\/v2\/app\.js(?:\?|$)/.test(source)) return;
     if (window.FSRuntimeHealth.state !== 'ready') enterDegradedMode('CORE_SCRIPT_ERROR');
   });
 
@@ -73,6 +75,7 @@
       return;
     }
     window.setTimeout(() => {
+      if (window.FSRuntimeHealth.state === 'degraded') return;
       const featured = byId('featuredList');
       const meta = byId('catalogMeta');
       const stillLoading = /cargando/i.test(String(featured?.textContent || '')) || /cargando/i.test(String(meta?.textContent || ''));
