@@ -104,18 +104,20 @@ jobs:
           grep -q "themedAdminOrderStatus" v2/admin-order-ui.js
           grep -q "admin_update_order_status" v2/admin-order-ui.js
           grep -q "paid-order-btn" v2/bisa-checkout.css
-          grep -q "fs-modal-open" v2/bisa-checkout.css
           grep -q "2147483000" v2/bisa-checkout.css
-          grep -q "forceOpenModal" v2/modal-stability.js
-          grep -q "forceCloseModal" v2/modal-stability.js
-          grep -q "normalizeClosedModal" v2/modal-stability.js
-          grep -q "clearForcedModalStyles" v2/modal-stability.js
-          grep -q "resetScroll: false" v2/modal-stability.js
+          ! grep -q "body.fs-modal-open" v2/bisa-checkout.css
+          ! grep -q "pointer-events:none.*#mainContent" v2/bisa-checkout.css
+          grep -q "clearLegacyPageLock" v2/modal-stability.js
+          grep -q "showModal" v2/modal-stability.js
+          grep -q "hideModal" v2/modal-stability.js
+          grep -q "patchGlobalHelpers" v2/modal-stability.js
           grep -q "installPublicApi" v2/modal-stability.js
-          grep -q "patchGlobalModalHelpers" v2/modal-stability.js
           grep -q "orderCancelConfirmModal" v2/modal-stability.js
-          grep -q "Do not restart the 12 s clock" v2/modal-stability.js
-          grep -q "modal-stability.js?v=20260820-2036" v2/index.html
+          grep -q "pageshow" v2/modal-stability.js
+          ! grep -q "MutationObserver" v2/modal-stability.js
+          ! grep -q "setInterval" v2/modal-stability.js
+          grep -q "modal-stability.js?v=20260820-2108" v2/index.html
+          grep -q "bisa-checkout.css?v=20260820-2108" v2/index.html
           grep -q "order-cancel-ui.js?v=20260820-2036" v2/index.html
           grep -q "bisa-wallet.js" v2/index.html
           grep -q "order-cancel-ui.css" v2/index.html
@@ -166,6 +168,42 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/admin-order-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/order-cancel-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/modal-stability.js >/dev/null
+
+      - name: Browser-test modal open and close
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          if [ -z "$CHROME" ]; then
+            echo "Google Chrome not found on runner"
+            exit 1
+          fi
+          cat > v2/__modal-smoke.html <<'HTML'
+          <!doctype html><html><head>
+          <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+          <link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./bisa-checkout.css">
+          </head><body>
+          <button id="backgroundButton">Fondo</button>
+          <div id="qrModal" class="modal" aria-hidden="true"><div class="modal-card"><button id="closeButton" data-close="qrModal">X</button><p>QR TEST</p></div></div>
+          <div id="result">WAIT</div>
+          <script src="./modal-stability.js"></script>
+          <script>
+          addEventListener('DOMContentLoaded',()=>setTimeout(()=>{
+            const m=document.getElementById('qrModal');
+            const r=document.getElementById('result');
+            const openCalled=window.FSModalStability?.open('qrModal')===true;
+            const csOpen=getComputedStyle(m);
+            const openOk=openCalled&&m.classList.contains('open')&&m.getAttribute('aria-hidden')==='false'&&csOpen.display==='flex'&&csOpen.pointerEvents==='auto'&&!document.body.classList.contains('fs-modal-open')&&!document.documentElement.classList.contains('fs-modal-open');
+            document.getElementById('closeButton').click();
+            setTimeout(()=>{
+              const csClosed=getComputedStyle(m);
+              const closeOk=!m.classList.contains('open')&&m.getAttribute('aria-hidden')==='true'&&csClosed.display==='none'&&csClosed.pointerEvents==='none'&&!document.body.classList.contains('fs-modal-open')&&!document.documentElement.classList.contains('fs-modal-open');
+              r.textContent=openOk&&closeOk?'MODAL_SMOKE_PASS':'MODAL_SMOKE_FAIL';
+            },50);
+          },50));
+          </script></body></html>
+          HTML
+          "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=1200 --dump-dom http://127.0.0.1:8080/v2/__modal-smoke.html > /tmp/modal-smoke-dom.txt
+          grep -q "MODAL_SMOKE_PASS" /tmp/modal-smoke-dom.txt
+          rm -f v2/__modal-smoke.html
 
       - name: Capture responsive screenshots
         run: |
