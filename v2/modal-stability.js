@@ -12,6 +12,26 @@
     'orderCancelConfirmModal'
   ];
 
+  const MODAL_FORCED_PROPS = [
+    'position',
+    'inset',
+    'z-index',
+    'display',
+    'visibility',
+    'opacity',
+    'pointer-events'
+  ];
+
+  const CARD_FORCED_PROPS = [
+    'position',
+    'z-index',
+    'max-height',
+    'overflow-y',
+    'pointer-events',
+    'width',
+    'min-height'
+  ];
+
   let qrWatchdogTimer = null;
   let repairTimer = null;
 
@@ -27,11 +47,11 @@
     el.style.setProperty(property, value, 'important');
   }
 
-  function clearForcedVisibility(modal) {
+  function clearForcedModalStyles(modal) {
     if (!modal) return;
-    ['display', 'visibility', 'opacity', 'pointer-events'].forEach((property) => {
-      modal.style.removeProperty(property);
-    });
+    MODAL_FORCED_PROPS.forEach((property) => modal.style.removeProperty(property));
+    const card = modal.querySelector('.modal-card');
+    CARD_FORCED_PROPS.forEach((property) => card?.style.removeProperty(property));
   }
 
   function anyCriticalModalOpen() {
@@ -108,8 +128,20 @@
     }, 12000);
   }
 
-  function forceOpenModal(modal) {
-    if (!modal) return;
+  function resetModalScrollOnce(modal, card) {
+    requestAnimationFrame(() => {
+      modal.scrollTop = 0;
+      if (card) card.scrollTop = 0;
+      const rect = card?.getBoundingClientRect?.();
+      if (card && rect && (rect.width < 40 || rect.height < 40)) {
+        setImportant(card, 'width', 'min(92vw, 520px)');
+        setImportant(card, 'min-height', '120px');
+      }
+    });
+  }
+
+  function forceOpenModal(modal, { resetScroll = false } = {}) {
+    if (!modal) return false;
 
     /* Keep the dialog outside any transformed/contained layout context. */
     if (modal.parentElement !== document.body) document.body.appendChild(modal);
@@ -132,38 +164,33 @@
       setImportant(card, 'max-height', 'calc(100dvh - 24px)');
       setImportant(card, 'overflow-y', 'auto');
       setImportant(card, 'pointer-events', 'auto');
-      card.style.removeProperty('transform');
-      card.style.removeProperty('opacity');
     }
 
     syncDocumentLock();
     ensureRepairTimer();
-
-    requestAnimationFrame(() => {
-      modal.scrollTop = 0;
-      if (card) card.scrollTop = 0;
-      const rect = card?.getBoundingClientRect?.();
-      if (card && rect && (rect.width < 40 || rect.height < 40)) {
-        setImportant(card, 'width', 'min(92vw, 520px)');
-        setImportant(card, 'min-height', '120px');
-      }
-    });
-
+    if (resetScroll) resetModalScrollOnce(modal, card);
     armQrWatchdog(modal);
+    return true;
   }
 
-  function forceCloseModal(modal) {
+  function normalizeClosedModal(modal) {
     if (!modal) return;
-    if (modal.classList.contains('open')) modal.classList.remove('open');
     if (modal.getAttribute('aria-hidden') !== 'true') modal.setAttribute('aria-hidden', 'true');
-    clearForcedVisibility(modal);
+    clearForcedModalStyles(modal);
     if (modal.id === 'qrModal') {
       clearTimeout(qrWatchdogTimer);
       qrWatchdogTimer = null;
       removeQrDelayHint(modal);
     }
+  }
+
+  function forceCloseModal(modal) {
+    if (!modal) return false;
+    if (modal.classList.contains('open')) modal.classList.remove('open');
+    normalizeClosedModal(modal);
     syncDocumentLock();
     stopRepairTimerIfIdle();
+    return true;
   }
 
   function repairOpenModals() {
@@ -171,10 +198,13 @@
       const modal = byId(id);
       if (!modal) return;
       if (isOpen(modal)) {
-        forceOpenModal(modal);
+        /* Repairs must never reset the user's scroll position. */
+        forceOpenModal(modal, { resetScroll: false });
         if (id === 'qrModal' && qrIsReady(modal)) removeQrDelayHint(modal);
-      } else if (modal.getAttribute('aria-hidden') === 'false') {
-        modal.setAttribute('aria-hidden', 'true');
+      } else {
+        /* If any module removed .open directly, also remove guard styles so an
+           invisible/stale overlay can never keep trapping taps. */
+        normalizeClosedModal(modal);
       }
     });
     syncDocumentLock();
@@ -188,7 +218,7 @@
       let result;
       if (previousOpenModal) result = previousOpenModal.apply(this, arguments);
       const modal = byId(id);
-      if (modal) forceOpenModal(modal);
+      if (modal) forceOpenModal(modal, { resetScroll: true });
       return result;
     };
 
@@ -239,7 +269,7 @@
       if (!CRITICAL_MODAL_IDS.includes(id)) return;
       setTimeout(() => {
         const modal = byId(id);
-        if (isOpen(modal)) forceCloseModal(modal);
+        if (modal) forceCloseModal(modal);
       }, 0);
     }, true);
 
@@ -250,8 +280,23 @@
     });
   }
 
+  function installPublicApi() {
+    window.FSModalStability = {
+      open(id) {
+        return forceOpenModal(byId(id), { resetScroll: true });
+      },
+      close(id) {
+        return forceCloseModal(byId(id));
+      },
+      repair() {
+        repairOpenModals();
+      }
+    };
+  }
+
   function install() {
     patchGlobalModalHelpers();
+    installPublicApi();
     installObservers();
     installCloseFallbacks();
     repairOpenModals();
