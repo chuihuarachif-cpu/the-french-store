@@ -1,4 +1,4 @@
 BISA storefront live smoke test: PASS
-Source commit: 7f719fa61e2fd4898649e45a66918e4defe29b70
-Checked at UTC: 2026-08-21T00:44:17Z
+Source commit: b3721e5e22b147b36f4793b7248ee0c048fe9d78
+Checked at UTC: 2026-08-21T01:25:44Z
 No order or QR was created by this test.
