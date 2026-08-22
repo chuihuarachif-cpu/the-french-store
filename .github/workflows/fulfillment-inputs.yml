@@ -1,0 +1,74 @@
+name: Fulfillment Inputs Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/fulfillment-inputs.js'
+      - 'v2/paid-whatsapp.js'
+      - 'v2/privacy.html'
+      - '.github/workflows/fulfillment-inputs.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/fulfillment-inputs.js'
+      - 'v2/paid-whatsapp.js'
+      - 'v2/privacy.html'
+      - '.github/workflows/fulfillment-inputs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check v2/fulfillment-inputs.js
+          node --check v2/paid-whatsapp.js
+
+      - name: Check fulfillment safety contracts
+        run: |
+          grep -q "checkout_input_requirements" v2/fulfillment-inputs.js
+          grep -q "fulfillment_version: 1" v2/fulfillment-inputs.js
+          grep -q "fulfillment-inputs.js" v2/paid-whatsapp.js
+          grep -q "same ID" v2/fulfillment-inputs.js
+          grep -q "Nunca te pediremos contraseña" v2/fulfillment-inputs.js
+          grep -q "childList: true, subtree: false" v2/fulfillment-inputs.js
+          ! grep -q "localStorage.setItem" v2/fulfillment-inputs.js
+          ! grep -q "sessionStorage.setItem" v2/fulfillment-inputs.js
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/fulfillment-inputs.js
+          ! grep -Eqi "gamerhub|bonoxs|gameton" v2/fulfillment-inputs.js
+
+      - name: Verify public requirements and private values
+        run: |
+          SUPABASE_URL="$(sed -n "s/^const SUPABASE_URL='\([^']*\)'.*/\1/p" v2/app.js | head -1)"
+          ANON_KEY="$(sed -n "s/^const SUPABASE_KEY='\([^']*\)'.*/\1/p" v2/app.js | head -1)"
+          test -n "$SUPABASE_URL"
+          test -n "$ANON_KEY"
+
+          code="$(curl -sS -o /tmp/requirements.json -w '%{http_code}' \
+            -H "apikey: $ANON_KEY" \
+            -H "Authorization: Bearer $ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/checkout_input_requirements?select=product_id,field_key,label&active=eq.true&limit=5")"
+          test "$code" = "200"
+          test "$(jq 'length' /tmp/requirements.json)" -gt 0
+          ! grep -Eqi "provider|secret|token" /tmp/requirements.json
+
+          private_code="$(curl -sS -o /tmp/private.json -w '%{http_code}' \
+            -H "apikey: $ANON_KEY" \
+            -H "Authorization: Bearer $ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/order_item_fulfillment_inputs?select=order_item_id&limit=1")"
+          test "$private_code" != "200"
+
+      - name: Start local preview and fetch module
+        run: |
+          python3 -m http.server 8080 >/tmp/fs-http.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8080/v2/fulfillment-inputs.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/privacy.html >/dev/null
