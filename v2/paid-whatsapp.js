@@ -186,3 +186,14 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });
   else install();
 })();
+
+// Load the isolated player/account fulfillment module after the core storefront
+// has wired checkout buttons. This keeps app.js/BISA/Wallet logic untouched.
+(() => {
+  if (document.querySelector('script[data-fs-fulfillment-module]')) return;
+  const script = document.createElement('script');
+  script.src = './fulfillment-inputs.js?v=20260822-0621';
+  script.defer = true;
+  script.dataset.fsFulfillmentModule = '1';
+  document.body.appendChild(script);
+})();
