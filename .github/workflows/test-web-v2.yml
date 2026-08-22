@@ -31,6 +31,16 @@ jobs:
           test -s v2/index.html
           test -s v2/styles.css
           test -s v2/app.js
+          test -s v2/bootstrap.js
+          test -s v2/config/storefront.js
+          test -s v2/core/runtime.js
+          test -s v2/core/navigation.js
+          test -s v2/core/ui.js
+          test -s v2/features/catalog.js
+          test -s v2/features/cart.js
+          test -s v2/features/auth.js
+          test -s v2/features/wallet.js
+          test -s v2/features/orders-admin.js
           test -s v2/r8.css
           test -s v2/r8.js
           test -s v2/r8-icons.css
@@ -44,7 +54,9 @@ jobs:
           test -s v2/bisa-wallet.js
           test -s v2/catalog-order.js
           test -s v2/admin-order-ui.js
+          test -s v2/admin-fulfillment-ui.js
           test -s v2/paid-whatsapp.js
+          test -s v2/fulfillment-inputs.js
           test -s v2/privacy.html
           test -s v2/terms.html
           test -s v2/refunds.html
@@ -56,22 +68,78 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check v2/app.js
+          node --check v2/bootstrap.js
+          node --check v2/config/storefront.js
+          node --check v2/core/runtime.js
+          node --check v2/core/navigation.js
+          node --check v2/core/ui.js
+          node --check v2/features/catalog.js
+          node --check v2/features/cart.js
+          node --check v2/features/auth.js
+          node --check v2/features/wallet.js
+          node --check v2/features/orders-admin.js
           node --check v2/r8.js
           node --check v2/r8-icons.js
           node --check v2/legal.js
+          node --check v2/auth-ease.js
+          node --check v2/auth-confirm.js
           node --check v2/bisa-checkout.js
           node --check v2/order-cancel-ui.js
           node --check v2/bisa-wallet.js
           node --check v2/catalog-order.js
           node --check v2/admin-order-ui.js
+          node --check v2/admin-fulfillment-ui.js
           node --check v2/paid-whatsapp.js
+          node --check v2/fulfillment-inputs.js
+
+      - name: Check modular architecture contracts
+        run: |
+          grep -q 'bootstrap.js' v2/index.html
+          ! grep -q '<script[^>]*app.js' v2/index.html
+          ! grep -q '<script[^>]*bisa-checkout.js' v2/index.html
+          ! grep -q '<script[^>]*bisa-wallet.js' v2/index.html
+          ! grep -q '<script[^>]*fulfillment-inputs.js' v2/index.html
+          ! grep -q '<script[^>]*admin-order-ui.js' v2/index.html
+          ! grep -q '<script[^>]*admin-fulfillment-ui.js' v2/index.html
+          ! grep -q '<script[^>]*r8.js' v2/index.html
+          ! grep -q '<link[^>]*bisa-checkout.css' v2/index.html
+          ! grep -q '<link[^>]*order-cancel-ui.css' v2/index.html
+          ! grep -q '<link[^>]*r8.css' v2/index.html
+          grep -q './config/storefront.js' v2/bootstrap.js
+          grep -q './core/runtime.js' v2/bootstrap.js
+          grep -q './core/navigation.js' v2/bootstrap.js
+          grep -q './features/catalog.js' v2/bootstrap.js
+          grep -q './features/cart.js' v2/bootstrap.js
+          grep -q './features/auth.js' v2/bootstrap.js
+          grep -q './features/wallet.js' v2/bootstrap.js
+          grep -q './features/orders-admin.js' v2/bootstrap.js
+          grep -q './core/ui.js' v2/bootstrap.js
+          grep -q './bisa-checkout.js' v2/bootstrap.js
+          grep -q './bisa-wallet.js' v2/bootstrap.js
+          grep -q './fulfillment-inputs.js' v2/bootstrap.js
+          grep -q './admin-order-ui.js' v2/bootstrap.js
+          grep -q './admin-fulfillment-ui.js' v2/bootstrap.js
+          grep -q './r8.js' v2/bootstrap.js
+          grep -q 'SCRIPT_LOAD_FAILED' v2/bootstrap.js
+          grep -q 'No se pudo cargar el módulo seguro de pago' v2/bootstrap.js
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('v2/bootstrap.js').read_text()
+          expected=['./config/storefront.js','./core/runtime.js','./core/navigation.js','./features/catalog.js','./features/cart.js','./features/auth.js','./features/wallet.js','./features/orders-admin.js','./core/ui.js']
+          pos=-1
+          for item in expected:
+              nxt=text.index(item)
+              assert nxt>pos, f'Core load order broken at {item}'
+              pos=nxt
+          assert text.index('./bisa-checkout.js') < text.index('./fulfillment-inputs.js')
+          PY
 
       - name: Check critical frontend contracts
         run: |
-          grep -q "create_wallet_order" v2/app.js
-          grep -q "create_qr_order" v2/app.js
-          grep -q "request_wallet_topup_v2" v2/app.js
-          grep -q "admin_update_order_status" v2/app.js
+          grep -q "create_wallet_order" v2/features/cart.js
+          grep -q "create_qr_order" v2/features/cart.js
+          grep -q "request_wallet_topup_v2" v2/features/wallet.js
+          grep -q "admin_update_order_status" v2/features/orders-admin.js
           grep -q "/bisa-sip/order-qr" v2/bisa-checkout.js
           grep -q "/bisa-sip/order-status" v2/bisa-checkout.js
           grep -q "/bisa-sip/order-cancel" v2/order-cancel-ui.js
@@ -96,12 +164,6 @@ jobs:
           grep -q "themedAdminOrderStatus" v2/admin-order-ui.js
           grep -q "admin_update_order_status" v2/admin-order-ui.js
           grep -q "paid-order-btn" v2/bisa-checkout.css
-          grep -q "bisa-wallet.js" v2/index.html
-          grep -q "order-cancel-ui.js" v2/index.html
-          grep -q "order-cancel-ui.css" v2/index.html
-          grep -q "catalog-order.js" v2/index.html
-          grep -q "admin-order-ui.js" v2/index.html
-          grep -q "paid-whatsapp.js" v2/index.html
           grep -q "QR individual de pago" v2/index.html
           grep -q "QR individual de pago" v2/bisa-checkout.js
           grep -q "Cuando el pago sea confirmado" v2/bisa-wallet.js
@@ -110,12 +172,15 @@ jobs:
           grep -q "https://api.frenchstorebo.com" v2/index.html
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2 --include='*.js' --include='*.html'
 
-      - name: Check category separation
+      - name: Check price and catalog source-of-truth separation
         run: |
-          grep -q "Recargas por ID" v2/app.js
-          grep -q "Recargas por Cuenta" v2/app.js
-          grep -q "Streaming" v2/app.js
-          grep -q "Gift Cards" v2/app.js
+          grep -q "Recargas por ID" v2/config/storefront.js
+          grep -q "Recargas por Cuenta" v2/config/storefront.js
+          grep -q "Streaming" v2/config/storefront.js
+          grep -q "Gift Cards" v2/config/storefront.js
+          grep -q "sb.from('productos')" v2/features/catalog.js
+          grep -q "id,juego,paquete,categoria,precio,activo" v2/features/catalog.js
+          ! grep -Eqi "precio_proveedor|tipo_cambio|gamerhub|bonoxs|gameton" v2/config/storefront.js
 
       - name: Check launch legal and trust links
         run: |
@@ -134,12 +199,25 @@ jobs:
           echo $! > /tmp/french-store-http.pid
           sleep 2
           curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/bootstrap.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/config/storefront.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/core/runtime.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/features/catalog.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/features/cart.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/privacy.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/terms.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/refunds.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/catalog-order.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/admin-order-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/order-cancel-ui.js >/dev/null
+
+      - name: Browser-test modular bootstrap
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          test -n "$CHROME"
+          timeout 25s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8080/v2/index.html > /tmp/bootstrap-dom.txt
+          grep -q 'data-fs-bootstrap="ready"' /tmp/bootstrap-dom.txt || { cat /tmp/bootstrap-dom.txt; cat /tmp/french-store-http.log; exit 1; }
+          ! grep -q 'No se pudo iniciar la tienda correctamente' /tmp/bootstrap-dom.txt
 
       - name: Capture responsive screenshots
         run: |
@@ -149,10 +227,10 @@ jobs:
             exit 1
           fi
           mkdir -p screenshots
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=360,800 --virtual-time-budget=8000 --screenshot=screenshots/mobile-360.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=390,844 --virtual-time-budget=8000 --screenshot=screenshots/mobile-390.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=768,1024 --virtual-time-budget=8000 --screenshot=screenshots/tablet-768.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,768 --virtual-time-budget=8000 --screenshot=screenshots/desktop-1366.png http://127.0.0.1:8080/v2/index.html
+          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=360,800 --virtual-time-budget=10000 --screenshot=screenshots/mobile-360.png http://127.0.0.1:8080/v2/index.html
+          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=390,844 --virtual-time-budget=10000 --screenshot=screenshots/mobile-390.png http://127.0.0.1:8080/v2/index.html
+          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=768,1024 --virtual-time-budget=10000 --screenshot=screenshots/tablet-768.png http://127.0.0.1:8080/v2/index.html
+          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,768 --virtual-time-budget=10000 --screenshot=screenshots/desktop-1366.png http://127.0.0.1:8080/v2/index.html
           test -s screenshots/mobile-360.png
           test -s screenshots/mobile-390.png
           test -s screenshots/tablet-768.png
