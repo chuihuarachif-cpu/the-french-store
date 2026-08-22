@@ -219,6 +219,42 @@ jobs:
           grep -q 'data-fs-bootstrap="ready"' /tmp/bootstrap-dom.txt || { cat /tmp/bootstrap-dom.txt; cat /tmp/french-store-http.log; exit 1; }
           ! grep -q 'No se pudo iniciar la tienda correctamente' /tmp/bootstrap-dom.txt
 
+      - name: Browser-test every lazy feature module
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          test -n "$CHROME"
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path('v2/index.html').read_text()
+          probe=r'''
+          <script>
+          window.__fsLazyErrors=[];
+          window.onerror=(message)=>{ window.__fsLazyErrors.push(String(message||'error')); };
+          window.addEventListener('unhandledrejection',(event)=>{ window.__fsLazyErrors.push(String(event.reason||'rejection')); });
+          window.addEventListener('load', async()=>{
+            const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
+            for(let i=0;i<100 && !window.FSFeatureLoader;i++) await sleep(100);
+            if(!window.FSFeatureLoader){ document.documentElement.dataset.fsLazyTest='no-loader'; return; }
+            try{
+              for(const name of ['checkout','wallet','orders','admin','catalog','motion']) await window.FSFeatureLoader.ensure(name);
+              await sleep(600);
+              document.documentElement.dataset.fsLazyFeatures=window.FSFeatureLoader.readyFeatures().sort().join(',');
+              document.documentElement.dataset.fsLazyTest=window.__fsLazyErrors.length?'runtime-error':'pass';
+              if(window.__fsLazyErrors.length) document.documentElement.dataset.fsLazyError=window.__fsLazyErrors[0].slice(0,80);
+            }catch(error){
+              document.documentElement.dataset.fsLazyTest='load-error';
+              document.documentElement.dataset.fsLazyError=String(error?.message||error).slice(0,80);
+            }
+          });
+          </script>
+          '''
+          Path('v2/__modular-lazy-test.html').write_text(src.replace('</body>',probe+'\n</body>'))
+          PY
+          timeout 35s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=22000 --dump-dom http://127.0.0.1:8080/v2/__modular-lazy-test.html > /tmp/lazy-dom.txt
+          grep -q 'data-fs-lazy-test="pass"' /tmp/lazy-dom.txt || { cat /tmp/lazy-dom.txt; cat /tmp/french-store-http.log; exit 1; }
+          grep -q 'data-fs-lazy-features="admin,catalog,checkout,motion,orders,wallet"' /tmp/lazy-dom.txt
+          rm -f v2/__modular-lazy-test.html
+
       - name: Capture responsive screenshots
         run: |
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
