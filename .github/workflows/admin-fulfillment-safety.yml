@@ -1,0 +1,43 @@
+name: Admin Fulfillment Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/admin-fulfillment-ui.js'
+      - 'v2/index.html'
+      - '.github/workflows/admin-fulfillment-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/admin-fulfillment-ui.js'
+      - 'v2/index.html'
+      - '.github/workflows/admin-fulfillment-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate module syntax
+        run: node --check v2/admin-fulfillment-ui.js
+
+      - name: Check admin-only data contract
+        run: |
+          grep -q "admin_get_order_fulfillment_inputs" v2/admin-fulfillment-ui.js
+          grep -q "admin-fulfillment-ui.js" v2/index.html
+          grep -q "FORMAT_VALID" v2/admin-fulfillment-ui.js
+          grep -q "Datos recarga" v2/admin-fulfillment-ui.js
+          ! grep -q "order_item_fulfillment_inputs" v2/admin-fulfillment-ui.js
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/admin-fulfillment-ui.js
+          ! grep -q "localStorage.setItem" v2/admin-fulfillment-ui.js
+          ! grep -q "sessionStorage.setItem" v2/admin-fulfillment-ui.js
+
+      - name: Verify no direct secret exposure in HTML
+        run: |
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/index.html v2/admin-fulfillment-ui.js
