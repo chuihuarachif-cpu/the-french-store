@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - 'v2/fulfillment-inputs.js'
+      - 'v2/bootstrap.js'
+      - 'v2/core/**'
+      - 'v2/features/**'
       - 'v2/index.html'
       - 'v2/privacy.html'
       - 'v2/terms.html'
@@ -14,6 +17,9 @@ on:
     branches: [main]
     paths:
       - 'v2/fulfillment-inputs.js'
+      - 'v2/bootstrap.js'
+      - 'v2/core/**'
+      - 'v2/features/**'
       - 'v2/index.html'
       - 'v2/privacy.html'
       - 'v2/terms.html'
@@ -34,18 +40,27 @@ jobs:
         run: |
           node --check v2/fulfillment-inputs.js
           node --check v2/paid-whatsapp.js
+          node --check v2/bootstrap.js
+          node --check v2/core/runtime.js
+          node --check v2/features/cart.js
 
       - name: Check fulfillment safety contracts
         run: |
           grep -q "checkout_input_requirements" v2/fulfillment-inputs.js
           grep -q "fulfillment_version: 1" v2/fulfillment-inputs.js
-          grep -q "fulfillment-inputs.js" v2/index.html
+          grep -q "fulfillment-inputs.js" v2/bootstrap.js
+          grep -q "bisa-checkout.js" v2/bootstrap.js
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('v2/bootstrap.js').read_text()
+          assert text.index("./bisa-checkout.js") < text.index("./fulfillment-inputs.js"), 'Fulfillment must load after final BISA checkout handler'
+          PY
           grep -q "mismo ID" v2/fulfillment-inputs.js
           grep -q "Nunca te pediremos contraseña" v2/fulfillment-inputs.js
           grep -q "childList: true, subtree: false" v2/fulfillment-inputs.js
           ! grep -q "localStorage.setItem" v2/fulfillment-inputs.js
           ! grep -q "sessionStorage.setItem" v2/fulfillment-inputs.js
-          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/fulfillment-inputs.js
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/fulfillment-inputs.js v2/bootstrap.js v2/core v2/features
           ! grep -Eqi "gamerhub|bonoxs|gameton" v2/fulfillment-inputs.js
           grep -q "Datos de juego para recargas" v2/privacy.html
           grep -q "ID de usuario/jugador" v2/terms.html
@@ -53,8 +68,8 @@ jobs:
 
       - name: Verify public requirements and private values
         run: |
-          SUPABASE_URL="$(sed -n "s/^const SUPABASE_URL='\([^']*\)'.*/\1/p" v2/app.js | head -1)"
-          ANON_KEY="$(sed -n "s/^const SUPABASE_KEY='\([^']*\)'.*/\1/p" v2/app.js | head -1)"
+          SUPABASE_URL="$(sed -n "s/^const SUPABASE_URL='\([^']*\)'.*/\1/p" v2/core/runtime.js | head -1)"
+          ANON_KEY="$(sed -n "s/^const SUPABASE_KEY='\([^']*\)'.*/\1/p" v2/core/runtime.js | head -1)"
           test -n "$SUPABASE_URL"
           test -n "$ANON_KEY"
 
@@ -72,10 +87,11 @@ jobs:
             "$SUPABASE_URL/rest/v1/order_item_fulfillment_inputs?select=order_item_id&limit=1")"
           test "$private_code" != "200"
 
-      - name: Start local preview and fetch module
+      - name: Start local preview and fetch modules
         run: |
           python3 -m http.server 8080 >/tmp/fs-http.log 2>&1 &
           sleep 2
+          curl --fail http://127.0.0.1:8080/v2/bootstrap.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/fulfillment-inputs.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/privacy.html >/dev/null
