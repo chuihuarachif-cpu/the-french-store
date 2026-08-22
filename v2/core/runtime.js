@@ -9,7 +9,7 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSe
 let inventory=[],category='Recargas por ID',cart=loadCart(),session=null,profile=null,admin=false,adminTab='topups',lastQrOrder=null,lastTopupRequest=null;
 const $=id=>document.getElementById(id);
 const money=n=>`Bs ${Number(n||0).toLocaleString('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[m]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const dateFmt=v=>v?new Intl.DateTimeFormat('es-BO',{dateStyle:'short',timeStyle:'short'}).format(new Date(v)):'—';
 const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
 function showNotice(el,msg,type=''){el.textContent=msg;el.className=`notice ${type}`.trim();el.classList.remove('hidden')}
