@@ -226,9 +226,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           src=Path('v2/index.html').read_text()
-          probe=r'''
-          <script>
-          window.__fsLazyErrors=[];
+          probe=r'''window.__fsLazyErrors=[];
           window.onerror=(message)=>{ window.__fsLazyErrors.push(String(message||'error')); };
           window.addEventListener('unhandledrejection',(event)=>{ window.__fsLazyErrors.push(String(event.reason||'rejection')); });
           window.addEventListener('load', async()=>{
@@ -246,14 +244,15 @@ jobs:
               document.documentElement.dataset.fsLazyError=String(error?.message||error).slice(0,80);
             }
           });
-          </script>
           '''
-          Path('v2/__modular-lazy-test.html').write_text(src.replace('</body>',probe+'\n</body>'))
+          Path('v2/__modular-lazy-test.js').write_text(probe)
+          Path('v2/__modular-lazy-test.html').write_text(src.replace('</body>','<script src="./__modular-lazy-test.js"></script>\n</body>'))
           PY
+          node --check v2/__modular-lazy-test.js
           timeout 35s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=22000 --dump-dom http://127.0.0.1:8080/v2/__modular-lazy-test.html > /tmp/lazy-dom.txt
           grep -q 'data-fs-lazy-test="pass"' /tmp/lazy-dom.txt || { cat /tmp/lazy-dom.txt; cat /tmp/french-store-http.log; exit 1; }
           grep -q 'data-fs-lazy-features="admin,catalog,checkout,motion,orders,wallet"' /tmp/lazy-dom.txt
-          rm -f v2/__modular-lazy-test.html
+          rm -f v2/__modular-lazy-test.html v2/__modular-lazy-test.js
 
       - name: Capture responsive screenshots
         run: |
