@@ -5,8 +5,11 @@ on:
     branches: [main]
     paths:
       - 'v2/index.html'
+      - 'v2/bootstrap.js'
       - 'v2/bisa-checkout.js'
       - 'v2/bisa-checkout.css'
+      - 'v2/core/**'
+      - 'v2/features/**'
       - '.github/workflows/smoke-bisa-web.yml'
   workflow_dispatch:
 
@@ -19,27 +22,35 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate local BISA assets
+      - name: Validate local BISA assets and lazy contract
         run: |
+          node --check v2/bootstrap.js
           node --check v2/bisa-checkout.js
           test -s v2/bisa-checkout.css
           grep -q 'https://api.frenchstorebo.com' v2/index.html
-          grep -q './bisa-checkout.js' v2/index.html
-          grep -q './bisa-checkout.css' v2/index.html
-          ! grep -E 'service_role|SUPABASE_SERVICE_ROLE' v2/bisa-checkout.js
+          grep -q './bootstrap.js' v2/index.html
+          grep -q './bisa-checkout.js' v2/bootstrap.js
+          grep -q './bisa-checkout.css' v2/bootstrap.js
+          grep -q "feature === 'wallet'" v2/bootstrap.js
+          ! grep -q '<script[^>]*bisa-checkout.js' v2/index.html
+          ! grep -q '<link[^>]*bisa-checkout.css' v2/index.html
+          ! grep -E 'service_role|SUPABASE_SERVICE_ROLE' v2/bisa-checkout.js v2/bootstrap.js
 
       - name: Wait for GitHub Pages/custom-domain publication
         run: sleep 60
 
-      - name: Verify live storefront and BISA assets
+      - name: Verify live storefront and BISA lazy assets
         run: |
           curl --fail --retry 4 --retry-delay 10 -sS https://frenchstorebo.com/v2/ -o /tmp/index.html
-          grep -q './bisa-checkout.js' /tmp/index.html
-          grep -q './bisa-checkout.css' /tmp/index.html
+          grep -q './bootstrap.js' /tmp/index.html
           grep -q 'https://api.frenchstorebo.com' /tmp/index.html
+          curl --fail --retry 4 --retry-delay 5 -sS https://frenchstorebo.com/v2/bootstrap.js -o /tmp/bootstrap.js
           curl --fail --retry 4 --retry-delay 5 -sS https://frenchstorebo.com/v2/bisa-checkout.js -o /tmp/bisa-checkout.js
           curl --fail --retry 4 --retry-delay 5 -sS https://frenchstorebo.com/v2/bisa-checkout.css -o /tmp/bisa-checkout.css
+          node --check /tmp/bootstrap.js
           node --check /tmp/bisa-checkout.js
+          grep -q './bisa-checkout.js' /tmp/bootstrap.js
+          grep -q './bisa-checkout.css' /tmp/bootstrap.js
           grep -q '/bisa-sip/order-qr' /tmp/bisa-checkout.js
           grep -q 'paid-order-btn' /tmp/bisa-checkout.css
 
@@ -48,7 +59,7 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           mkdir -p .checks
-          printf 'BISA storefront live smoke test: PASS\nSource commit: %s\nChecked at UTC: %s\nNo order or QR was created by this test.\n' "$SHA" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .checks/bisa-web-smoke.txt
+          printf 'BISA storefront live smoke test: PASS\nSource commit: %s\nChecked at UTC: %s\nBISA checkout is lazy-loaded through bootstrap.js.\nNo order or QR was created by this test.\n' "$SHA" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .checks/bisa-web-smoke.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add .checks/bisa-web-smoke.txt
