@@ -1,0 +1,60 @@
+name: R41 Player Verify and Legal Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/player-verify.js'
+      - 'v2/legal-account.js'
+      - 'v2/buy-now.js'
+      - 'v2/index.html'
+      - '.github/workflows/r41-player-verify-legal-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/player-verify.js'
+      - 'v2/legal-account.js'
+      - 'v2/buy-now.js'
+      - 'v2/index.html'
+      - '.github/workflows/r41-player-verify-legal-safety.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax
+        run: |
+          node --check v2/player-verify.js
+          node --check v2/legal-account.js
+          node --check v2/buy-now.js
+      - name: Player verification stays server mediated
+        run: |
+          set -euo pipefail
+          grep -Fq 'https://api.frenchstorebo.com/api/player-verify' v2/player-verify.js
+          grep -Fq 'Authorization:`Bearer ${currentSession.access_token}`' v2/player-verify.js
+          grep -Fq 'Verificar ID' v2/player-verify.js
+          grep -Fq 'Cuenta encontrada' v2/player-verify.js
+          ! grep -Eqi 'service_role|GAMERHUB_API|GAMERHUB_SECRET|api_secret|precio_proveedor|price_usd' v2/player-verify.js
+      - name: Legal acceptance is account-level, not cart-level
+        run: |
+          set -euo pipefail
+          grep -Fq 'id="legalAccept"' v2/index.html
+          ! grep -Fq 'id="purchaseLegalAccept"' v2/index.html
+          grep -Fq 'fs_terms_accepted' v2/legal-account.js
+          grep -Fq 'fs_privacy_accepted' v2/legal-account.js
+          grep -Fq 'fs_legal_accepted_at' v2/legal-account.js
+      - name: Both purchase actions remain
+        run: |
+          set -euo pipefail
+          grep -Fq 'Comprar ahora' v2/buy-now.js
+          grep -Fq 'Añadir al carrito' v2/buy-now.js
+          grep -Fq "openModal('cartModal')" v2/buy-now.js
+          grep -Fq 'id="checkoutWallet"' v2/index.html
+          grep -Fq 'id="checkoutQR"' v2/index.html

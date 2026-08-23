@@ -47,6 +47,9 @@ jobs:
           test -s v2/r8-icons.js
           test -s v2/legal.css
           test -s v2/legal.js
+          test -s v2/legal-account.js
+          test -s v2/player-verify.js
+          test -s v2/buy-now.js
           test -s v2/bisa-checkout.css
           test -s v2/bisa-checkout.js
           test -s v2/order-cancel-ui.css
@@ -81,6 +84,9 @@ jobs:
           node --check v2/r8.js
           node --check v2/r8-icons.js
           node --check v2/legal.js
+          node --check v2/legal-account.js
+          node --check v2/player-verify.js
+          node --check v2/buy-now.js
           node --check v2/auth-ease.js
           node --check v2/auth-confirm.js
           node --check v2/bisa-checkout.js
@@ -182,14 +188,24 @@ jobs:
           grep -q "id,juego,paquete,categoria,precio,activo" v2/features/catalog.js
           ! grep -Eqi "precio_proveedor|tipo_cambio|gamerhub|bonoxs|gameton" v2/config/storefront.js
 
-      - name: Check launch legal and trust links
+      - name: Check launch legal, player verify and direct-buy UX
         run: |
           grep -q "privacy.html" v2/index.html
           grep -q "terms.html" v2/index.html
           grep -q "refunds.html" v2/index.html
           grep -q "cookies.html" v2/index.html
-          grep -q "legalAccept" v2/legal.js
-          grep -q "purchaseLegalAccept" v2/index.html
+          grep -q 'id="legalAccept"' v2/index.html
+          ! grep -q 'id="purchaseLegalAccept"' v2/index.html
+          grep -q "fs_terms_accepted" v2/legal-account.js
+          grep -q "fs_privacy_accepted" v2/legal-account.js
+          grep -q "/api/player-verify" v2/player-verify.js
+          grep -q "Verificar ID" v2/player-verify.js
+          grep -q "Cuenta encontrada" v2/player-verify.js
+          grep -q "Comprar ahora" v2/buy-now.js
+          grep -q "Añadir al carrito" v2/buy-now.js
+          grep -q "./legal-account.js?v=20260823-1" v2/index.html
+          grep -q "./player-verify.js?v=20260823-1" v2/index.html
+          grep -q "./buy-now.js?v=20260823-2" v2/index.html
           grep -q "frenchstorebo.com" sitemap.xml
           grep -q "Sitemap: https://frenchstorebo.com/sitemap.xml" robots.txt
 
@@ -210,6 +226,9 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/catalog-order.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/admin-order-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/order-cancel-ui.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/legal-account.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/player-verify.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/buy-now.js >/dev/null
 
       - name: Browser-test modular bootstrap
         run: |
