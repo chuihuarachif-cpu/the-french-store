@@ -30,16 +30,17 @@ jobs:
           set -euo pipefail
           node --check v2/buy-now.js
           grep -Fq "Comprar ahora" v2/buy-now.js
+          grep -Fq "Añadir al carrito" v2/buy-now.js
           grep -Fq "FSFeatureLoader.ensure('checkout')" v2/buy-now.js
           grep -Fq "addToCart(productId)" v2/buy-now.js
           grep -Fq "openModal('cartModal')" v2/buy-now.js
-          grep -Fq "./buy-now.js?v=20260823-1" v2/index.html
+          grep -Fq "./buy-now.js?v=20260823-2" v2/index.html
           ! grep -Eqi "service_role|SUPABASE_SERVICE|GAMERHUB|BONOXS|GAMETON|create_qr_order|create_wallet_order" v2/buy-now.js
       - name: Existing checkout boundaries still present
         run: |
           set -euo pipefail
           grep -Fq 'id="checkoutWallet"' v2/index.html
           grep -Fq 'id="checkoutQR"' v2/index.html
-          grep -Fq 'id="purchaseLegalAccept"' v2/index.html
+          grep -Fq 'id="legalAccept"' v2/index.html
           test -s v2/fulfillment-inputs.js
           node --check v2/fulfillment-inputs.js
