@@ -1,11 +1,11 @@
-/* THE FRENCH STORE — R36 modular bootstrap.
+/* THE FRENCH STORE — R39 modular bootstrap.
    Loads the stable core in deterministic order and optional features only when needed.
    Safety: checkout/Wallet payment features fail closed if their module cannot be loaded.
    Loyalty is isolated and loaded only for authenticated accounts. */
 (() => {
   'use strict';
 
-  const VERSION = 'r36-modular-loyalty-20260823';
+  const VERSION = 'r39-rank-pass-cache-bust-20260823';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -109,8 +109,9 @@
       await loadScript('./r8-icons.js', 'fs-r8-icons-js');
     },
     loyalty: async () => {
-      await loadStyle('./loyalty.css', 'fs-loyalty-css');
-      await loadScript('./loyalty.js', 'fs-loyalty-js');
+      // Explicit query version prevents stale mobile/browser caches after a loyalty release.
+      await loadStyle('./loyalty.css?v=20260823-r38', 'fs-loyalty-css');
+      await loadScript('./loyalty.js?v=20260823-r38', 'fs-loyalty-js');
     }
   };
 
