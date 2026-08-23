@@ -37,15 +37,24 @@ jobs:
           node --check v2/loyalty.js
           node --check v2/bootstrap.js
           grep -Fq "get_my_loyalty_summary" v2/loyalty.js
+          grep -Fq "get_my_loyalty_launch_progress" v2/loyalty.js
           grep -Fq "purchase_my_loyalty_pass" v2/loyalty.js
           grep -Fq "redeem_my_rewards" v2/loyalty.js
+          grep -Fq "French Rank Pass" v2/loyalty.js
+          grep -Fq "Gold Rank" v2/loyalty-terms.html
+          grep -Fq "Diamond Rank" v2/loyalty-terms.html
+          grep -Fq "renderPublicRewardsReserve" v2/loyalty.js
+          grep -Fq "admin_view" v2/loyalty.js
+          grep -Fq "if (!l || l.program_launched === true || l.admin_view !== true) return '';" v2/loyalty.js
+          grep -Fq "if (!launched())" v2/loyalty.js
           grep -Fq "./loyalty.css" v2/bootstrap.js
           grep -Fq "./loyalty.js" v2/bootstrap.js
           grep -Fq "installLoyaltyAuthGate" v2/bootstrap.js
           grep -Fq "data-fs-membership" v2/loyalty.css
-          grep -Fq "Éclat" v2/loyalty.js
-          grep -Fq "Diamant Bleu" v2/loyalty.js
+          grep -Fq "fs-rank-intro" v2/loyalty.css
+          grep -Fq "fs-rewards-reserve" v2/loyalty.css
           grep -Fq "No tiene renovación automática" v2/loyalty-terms.html
+          grep -Fq "no genera puntos retroactivos" v2/loyalty-terms.html
           if grep -Eq '<script[^>]*loyalty.js' v2/index.html; then echo 'loyalty.js must stay lazy'; exit 1; fi
           if grep -Eq '<link[^>]*loyalty.css' v2/index.html; then echo 'loyalty.css must stay lazy'; exit 1; fi
           if grep -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/loyalty.js v2/loyalty-terms.html; then echo 'forbidden backend credential marker in loyalty frontend'; exit 1; fi
@@ -55,8 +64,8 @@ jobs:
           set -euo pipefail
           if grep -Eqi "gamerhub|bonoxs|gameton|precio_proveedor|tipo_cambio" v2/loyalty.js; then echo 'provider/pricing logic leaked into loyalty'; exit 1; fi
           if grep -Eqi "/bisa-sip/|create_qr_order|create_wallet_order" v2/loyalty.js; then echo 'payment core leaked into loyalty'; exit 1; fi
-          grep -Fq "Le Cercle se paga con French Wallet" v2/loyalty.js
-          grep -Fq "Rewarded Ads permanece desactivado" v2/loyalty.js
+          grep -Fq "Rank Pass se paga con French Wallet" v2/loyalty.js
+          grep -Fq "Rewarded Ads" v2/loyalty-terms.html
 
       - name: Start local preview
         run: |
