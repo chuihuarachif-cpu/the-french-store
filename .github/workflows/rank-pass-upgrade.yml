@@ -1,0 +1,72 @@
+name: Rank Pass Upgrade Safety
+
+on:
+  pull_request:
+    paths:
+      - 'v2/loyalty.js'
+      - 'v2/loyalty-rank-extras.js'
+      - 'v2/loyalty-rank-extras.css'
+      - 'v2/loyalty-terms.html'
+      - '.github/workflows/rank-pass-upgrade.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/loyalty.js'
+      - 'v2/loyalty-rank-extras.js'
+      - 'v2/loyalty-rank-extras.css'
+      - 'v2/loyalty-terms.html'
+
+permissions:
+  contents: read
+
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JavaScript syntax
+        run: |
+          node --check v2/loyalty.js
+          node --check v2/loyalty-rank-extras.js
+
+      - name: Isolation and secret safety
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          files = [Path('v2/loyalty.js'), Path('v2/loyalty-rank-extras.js'), Path('v2/loyalty-rank-extras.css')]
+          joined = '\n'.join(p.read_text(encoding='utf-8') for p in files)
+          forbidden = [
+              'service_role', 'GAMERHUB_API_KEY', 'GAMERHUB_API_SECRET',
+              'create_qr_order', 'create_wallet_order', '/v1/orders',
+              'provider_execution_map', 'provider_purchase_jobs'
+          ]
+          found = [token for token in forbidden if token in joined]
+          assert not found, f'Forbidden cross-domain tokens in Rank Pass extras: {found}'
+          base = Path('v2/loyalty.js').read_text(encoding='utf-8')
+          assert "./loyalty-rank-extras.js?v=20260823-1" in base
+          extras = Path('v2/loyalty-rank-extras.js').read_text(encoding='utf-8')
+          assert "get_my_loyalty_upgrade_quote" in extras
+          assert "upgrade_my_loyalty_pass" in extras
+          assert "data-fs-rank-upgrade" in extras
+          assert "setInterval(updateCountdown, 30000)" in extras
+          assert "loyalty-rank-extras.css?v=20260823-1" in extras
+          print('Rank Pass isolation checks OK')
+          PY
+
+      - name: Upgrade UX and legal contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          css = Path('v2/loyalty-rank-extras.css').read_text(encoding='utf-8')
+          terms = Path('v2/loyalty-terms.html').read_text(encoding='utf-8')
+          assert 'data-fs-membership="gold"' in css
+          assert 'data-fs-membership="diamond"' in css
+          assert 'prefers-reduced-motion:reduce' in css
+          assert 'Gold Rank a Diamond Rank' in terms
+          assert 'Bs 2,00' in terms
+          assert 'Bs 0,50' in terms
+          assert 'no añade días adicionales' in terms
+          assert len(css.encode('utf-8')) < 24000, 'Rank theme CSS grew too large for mobile'
+          print('Upgrade UX/legal checks OK')
+          PY
