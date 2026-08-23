@@ -1,10 +1,11 @@
-/* THE FRENCH STORE — R35 modular bootstrap.
+/* THE FRENCH STORE — R36 modular bootstrap.
    Loads the stable core in deterministic order and optional features only when needed.
-   Safety: checkout/Wallet payment features fail closed if their module cannot be loaded. */
+   Safety: checkout/Wallet payment features fail closed if their module cannot be loaded.
+   Loyalty is isolated and loaded only for authenticated accounts. */
 (() => {
   'use strict';
 
-  const VERSION = 'r35-modular-20260822-1041';
+  const VERSION = 'r36-modular-loyalty-20260823';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -106,6 +107,10 @@
       await loadStyle('./r8-icons.css', 'fs-r8-icons-css');
       await loadScript('./r8.js', 'fs-r8-js');
       await loadScript('./r8-icons.js', 'fs-r8-icons-js');
+    },
+    loyalty: async () => {
+      await loadStyle('./loyalty.css', 'fs-loyalty-css');
+      await loadScript('./loyalty.js', 'fs-loyalty-js');
     }
   };
 
@@ -196,6 +201,7 @@
       }
 
       if (target.dataset.nav === 'wallet') ensureFeature('wallet').catch(() => {});
+      if (target.dataset.nav === 'perfil') ensureFeature('loyalty').catch(() => {});
       if (target.dataset.nav === 'tienda' || target.dataset.category || target.dataset.r6Game || target.dataset.r6Feature || target.dataset.r6Back !== undefined) {
         ensureFeature('catalog').catch(() => {});
         ensureFeature('motion').catch(() => {});
@@ -218,11 +224,33 @@
     maybeLoadMotion();
   }
 
+  function installLoyaltyAuthGate() {
+    const loadForSession = async (newSession) => {
+      if (!newSession) {
+        delete document.documentElement.dataset.fsMembership;
+        return;
+      }
+      // Core auth owns the shared `session` variable. Make sure it is hydrated before
+      // the isolated loyalty file reads it; this avoids a cold-load race on persisted sessions.
+      try {
+        if (typeof refreshSession === 'function' && (!session || session.user?.id !== newSession.user?.id)) {
+          await refreshSession(newSession);
+        }
+      } catch {}
+      ensureFeature('loyalty').catch(() => {});
+    };
+    try {
+      sb.auth.getSession().then(({ data }) => loadForSession(data?.session || null)).catch(() => {});
+      sb.auth.onAuthStateChange((_event, newSession) => { setTimeout(() => loadForSession(newSession), 0); });
+    } catch {}
+  }
+
   async function boot() {
     document.documentElement.dataset.fsBootstrap = 'loading';
     try {
       await loadCore();
       installLazyTriggers();
+      installLoyaltyAuthGate();
       document.documentElement.dataset.fsBootstrap = 'ready';
       window.FSFeatureLoader = Object.freeze({
         version: VERSION,
