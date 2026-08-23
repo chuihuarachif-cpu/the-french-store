@@ -1,0 +1,97 @@
+name: Loyalty Safety
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'v2/loyalty.js'
+      - 'v2/loyalty.css'
+      - 'v2/loyalty-terms.html'
+      - 'v2/bootstrap.js'
+      - '.github/workflows/loyalty.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/loyalty.js'
+      - 'v2/loyalty.css'
+      - 'v2/loyalty-terms.html'
+      - 'v2/bootstrap.js'
+      - '.github/workflows/loyalty.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Static loyalty contracts
+        run: |
+          set -euo pipefail
+          test -s v2/loyalty.js
+          test -s v2/loyalty.css
+          test -s v2/loyalty-terms.html
+          node --check v2/loyalty.js
+          node --check v2/bootstrap.js
+          grep -q "get_my_loyalty_summary" v2/loyalty.js
+          grep -q "purchase_my_loyalty_pass" v2/loyalty.js
+          grep -q "redeem_my_rewards" v2/loyalty.js
+          grep -q "./loyalty.css" v2/bootstrap.js
+          grep -q "./loyalty.js" v2/bootstrap.js
+          grep -q "installLoyaltyAuthGate" v2/bootstrap.js
+          grep -q "data-fs-membership" v2/loyalty.css
+          grep -q "Éclat d.Or" v2/loyalty.js
+          grep -q "Diamant Bleu" v2/loyalty.js
+          grep -q "sin renovación automática" v2/loyalty-terms.html
+          ! grep -q '<script[^>]*loyalty.js' v2/index.html
+          ! grep -q '<link[^>]*loyalty.css' v2/index.html
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/loyalty.js v2/loyalty-terms.html
+
+      - name: Protect payment and catalog boundaries
+        run: |
+          set -euo pipefail
+          ! grep -Eqi "gamerhub|bonoxs|gameton|precio_proveedor|tipo_cambio" v2/loyalty.js
+          ! grep -Eqi "/bisa-sip/|create_qr_order|create_wallet_order" v2/loyalty.js
+          grep -q "Le Cercle se paga con French Wallet" v2/loyalty.js
+          grep -q "Rewarded Ads permanece desactivado" v2/loyalty.js
+
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8080 >/tmp/fs-loyalty-http.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/loyalty.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/loyalty.css >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/loyalty-terms.html >/dev/null
+
+      - name: Browser-load loyalty without session
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          test -n "$CHROME"
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path('v2/index.html').read_text()
+          probe=r'''window.__fsLoyaltyErrors=[];
+          window.onerror=(message)=>window.__fsLoyaltyErrors.push(String(message||'error'));
+          window.addEventListener('unhandledrejection',(e)=>window.__fsLoyaltyErrors.push(String(e.reason||'rejection')));
+          window.addEventListener('load',async()=>{
+            const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
+            for(let i=0;i<100 && !window.FSFeatureLoader;i++) await sleep(100);
+            if(!window.FSFeatureLoader){document.documentElement.dataset.fsLoyaltyTest='no-loader';return;}
+            try{
+              await window.FSFeatureLoader.ensure('loyalty');
+              await sleep(500);
+              document.documentElement.dataset.fsLoyaltyTest=window.__fsLoyaltyErrors.length?'runtime-error':'pass';
+              document.documentElement.dataset.fsLoyaltyLoaded=window.FSFeatureLoader.isReady('loyalty')?'yes':'no';
+            }catch(error){document.documentElement.dataset.fsLoyaltyTest='load-error';}
+          });'''
+          Path('v2/__loyalty-test.js').write_text(probe)
+          Path('v2/__loyalty-test.html').write_text(src.replace('</body>','<script src="./__loyalty-test.js"></script>\n</body>'))
+          PY
+          timeout 35s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=20000 --dump-dom http://127.0.0.1:8080/v2/__loyalty-test.html >/tmp/loyalty-dom.txt
+          grep -q 'data-fs-loyalty-test="pass"' /tmp/loyalty-dom.txt || { cat /tmp/loyalty-dom.txt; cat /tmp/fs-loyalty-http.log; exit 1; }
+          grep -q 'data-fs-loyalty-loaded="yes"' /tmp/loyalty-dom.txt
+          rm -f v2/__loyalty-test.js v2/__loyalty-test.html
