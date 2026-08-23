@@ -71,7 +71,7 @@
     if (raw.includes('INSUFFICIENT_WALLET_BALANCE')) return 'No tienes saldo suficiente en French Wallet para activar este rango.';
     if (raw.includes('WALLET_NOT_FOUND')) return 'Primero activa French Wallet en tu cuenta.';
     if (raw.includes('WALLET_BLOCKED')) return 'French Wallet no está disponible en este momento.';
-    if (raw.includes('ACTIVE_PASS_CHANGE_AFTER_EXPIRY')) return 'Tu rango actual sigue activo. Puedes renovarlo ahora; para cambiar de rango espera a su vencimiento.';
+    if (raw.includes('ACTIVE_PASS_CHANGE_AFTER_EXPIRY')) return 'Tu rango actual sigue activo. Si tienes Gold Rank puedes usar la mejora a Diamond; los demás cambios se realizan al vencer.';
     if (raw.includes('INSUFFICIENT_REWARD_POINTS')) return 'No tienes suficientes puntos disponibles para ese canje.';
     if (raw.includes('MIN_REDEEM_NOT_MET')) return 'Aún no alcanzaste el mínimo de puntos para canjear.';
     if (raw.includes('MAX_REDEEM_EXCEEDED')) return 'El canje supera el máximo permitido por operación.';
@@ -350,6 +350,17 @@
     });
   }
 
+  function loadRankExtras() {
+    if (document.getElementById('fs-loyalty-rank-extras-js')) return;
+    const script = document.createElement('script');
+    script.id = 'fs-loyalty-rank-extras-js';
+    script.src = './loyalty-rank-extras.js?v=20260823-1';
+    script.async = false;
+    script.addEventListener('error', () => console.warn('FRENCH STORE Rank extras failed to load; base Rank Pass remains available.'), { once: true });
+    document.head.appendChild(script);
+  }
+
   window.FSLoyalty = Object.freeze({ version: VERSION, refresh: () => fetchSummary(true) });
   init();
+  loadRankExtras();
 })();
