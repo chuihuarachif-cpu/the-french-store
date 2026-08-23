@@ -1,0 +1,44 @@
+/* THE FRENCH STORE — Rank Pass extras v1
+   Visual-only layer loaded by authenticated loyalty module. */
+
+.fs-rank-extras{display:grid;gap:12px}
+.fs-rank-countdown{margin-left:auto;min-width:150px;display:grid;gap:2px;text-align:right;padding:8px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(2,13,23,.55)}
+.fs-rank-countdown span{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:#8faabd}.fs-rank-countdown strong{font-size:.88rem;color:#f6fbff}
+
+.fs-rank-upgrade-card{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:17px;border-radius:18px;border:1px solid rgba(77,220,255,.42);background:linear-gradient(135deg,rgba(4,43,63,.93),rgba(5,18,32,.98));box-shadow:0 12px 28px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.05)}
+.fs-rank-upgrade-card:before{content:"";position:absolute;inset:-40% 35% -50% -10%;pointer-events:none;background:radial-gradient(circle,rgba(89,228,255,.15),transparent 62%);transform:rotate(-12deg)}
+.fs-rank-upgrade-card.muted{opacity:.72;grid-template-columns:1fr}
+.fs-rank-upgrade-copy,.fs-rank-upgrade-action{position:relative;z-index:1}.fs-rank-upgrade-copy h4,.fs-rank-max-card h4{margin:4px 0 0;color:#f2fcff}.fs-rank-upgrade-copy p,.fs-rank-max-card p{margin:7px 0 0;color:#a7bdca;line-height:1.48}
+.fs-rank-upgrade-copy>small{display:block;margin-top:9px;color:#8fa8b9;font-size:.76rem;line-height:1.45}
+.fs-rank-upgrade-rules{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.fs-rank-upgrade-rules span{padding:5px 8px;border-radius:999px;border:1px solid rgba(105,221,250,.18);background:rgba(71,199,231,.07);font-size:.69rem;color:#d9f8ff}
+.fs-rank-upgrade-action{min-width:176px;display:grid;gap:4px;text-align:center;padding:13px;border-radius:15px;border:1px solid rgba(105,226,255,.2);background:rgba(2,17,29,.54)}.fs-rank-upgrade-action>span,.fs-rank-upgrade-action>small{color:#96afbf;font-size:.72rem}.fs-rank-upgrade-action>strong{font-size:1.45rem;color:#d8f9ff;text-shadow:0 0 14px rgba(83,219,255,.26)}.fs-rank-upgrade-action button{margin-top:6px}
+
+.fs-rank-max-card{position:relative;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr);gap:13px;align-items:center;padding:14px 16px;border:1px solid rgba(87,224,255,.35);border-radius:16px;background:linear-gradient(135deg,rgba(6,42,60,.78),rgba(6,17,30,.92))}.fs-rank-max-card:after{content:"◆  ◇  ◆";position:absolute;right:14px;top:8px;color:rgba(145,240,255,.12);font-size:1.2rem;letter-spacing:.25em}.fs-rank-max-gem{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:rgba(88,220,255,.1);border:1px solid rgba(113,229,255,.22);font-size:1.4rem;filter:drop-shadow(0 0 10px rgba(74,215,255,.36))}
+
+/* Gold Rank stays deliberately restrained: warm accents, no full-page premium effects. */
+html[data-fs-membership="gold"] .profile-card{box-shadow:0 0 0 1px rgba(243,194,64,.08),0 10px 24px rgba(89,59,5,.08)}
+html[data-fs-membership="gold"] .profile-card .avatar{border:1px solid rgba(244,198,74,.45);box-shadow:0 0 12px rgba(222,166,37,.12)}
+html[data-fs-membership="gold"] .fs-rank-countdown{border-color:rgba(243,194,64,.22);background:rgba(46,31,5,.22)}
+html[data-fs-membership="gold"] .fs-rank-countdown strong{color:#ffe6a0}
+
+/* Diamond Rank is intentionally much more visible than Gold, without heavy images. */
+html[data-fs-membership="diamond"] .topbar{position:relative;border-bottom-color:rgba(91,230,255,.7)!important;box-shadow:0 8px 34px rgba(39,196,255,.16),inset 0 -1px 0 rgba(192,249,255,.16)!important}
+html[data-fs-membership="diamond"] .topbar:after{content:"";position:absolute;left:-35%;bottom:-1px;width:34%;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(220,253,255,.96),rgba(85,226,255,.74),transparent);filter:drop-shadow(0 0 5px rgba(83,226,255,.62));animation:fsDiamondSweep 7s ease-in-out infinite}
+html[data-fs-membership="diamond"] .brand{filter:drop-shadow(0 0 9px rgba(70,220,255,.22))}html[data-fs-membership="diamond"] .brand b{letter-spacing:.025em}
+html[data-fs-membership="diamond"] .profile-panel{border-color:rgba(75,219,255,.26);box-shadow:0 0 0 1px rgba(64,212,255,.06),0 0 36px rgba(35,177,233,.08)}
+html[data-fs-membership="diamond"] .profile-card{position:relative;overflow:hidden;border:1px solid rgba(91,231,255,.58)!important;box-shadow:0 0 0 1px rgba(203,250,255,.06),0 0 26px rgba(50,203,255,.15),inset 0 0 26px rgba(62,206,255,.045)!important;background-image:linear-gradient(135deg,rgba(42,196,238,.055),transparent 42%)}
+html[data-fs-membership="diamond"] .profile-card:before{content:"";position:absolute;inset:-60% 48% -60% -16%;pointer-events:none;background:linear-gradient(112deg,transparent 42%,rgba(210,252,255,.14) 49%,rgba(104,232,255,.08) 52%,transparent 60%);transform:translateX(-75%);animation:fsDiamondCardGlint 8s ease-in-out infinite}
+html[data-fs-membership="diamond"] .profile-card:after{content:"◆  ◇  ◆";position:absolute;right:11px;top:8px;color:rgba(145,240,255,.22);letter-spacing:.24em;font-size:.92rem;text-shadow:0 0 9px rgba(90,229,255,.28)}
+html[data-fs-membership="diamond"] .profile-card .avatar{position:relative;border:1px solid rgba(152,243,255,.72);box-shadow:0 0 0 3px rgba(62,210,255,.08),0 0 20px rgba(66,215,255,.26);background-image:linear-gradient(145deg,rgba(72,220,255,.16),rgba(31,104,190,.09))}
+html[data-fs-membership="diamond"] .fs-rank-countdown{border-color:rgba(94,229,255,.38);background:linear-gradient(145deg,rgba(5,40,58,.56),rgba(4,19,32,.65));box-shadow:inset 0 0 16px rgba(59,211,255,.045),0 0 14px rgba(55,206,255,.06)}
+html[data-fs-membership="diamond"] .fs-rank-countdown strong{color:#d8fbff;text-shadow:0 0 10px rgba(83,226,255,.26)}
+html[data-fs-membership="diamond"] .bottom-nav{border-top-color:rgba(72,219,255,.28);box-shadow:0 -8px 30px rgba(34,169,229,.08)}html[data-fs-membership="diamond"] .bottom-nav button.active{filter:drop-shadow(0 0 8px rgba(80,224,255,.28))}
+html[data-fs-membership="diamond"] .primary-btn{box-shadow:0 0 0 1px rgba(114,234,255,.08),0 8px 22px rgba(45,184,239,.11)}
+html[data-fs-membership="diamond"] .fs-pass-diamond.active{box-shadow:0 0 0 1px rgba(171,244,255,.14),0 0 28px rgba(63,211,255,.14),0 14px 32px rgba(0,0,0,.24)}
+
+@keyframes fsDiamondSweep{0%,20%{left:-35%;opacity:0}35%{opacity:1}60%{left:102%;opacity:1}70%,100%{left:102%;opacity:0}}
+@keyframes fsDiamondCardGlint{0%,72%{transform:translateX(-75%);opacity:0}80%{opacity:1}92%{transform:translateX(235%);opacity:.8}100%{transform:translateX(235%);opacity:0}}
+
+@media(max-width:700px){.fs-rank-upgrade-card{grid-template-columns:1fr}.fs-rank-upgrade-action{min-width:0}.fs-rank-countdown{width:100%;margin-left:0;text-align:left}.fs-active-pass{flex-wrap:wrap}}
+@media(max-width:420px){.fs-rank-upgrade-card{padding:14px}.fs-rank-upgrade-rules{display:grid}.fs-rank-max-card{padding:13px}}
+@media(prefers-reduced-motion:reduce){html[data-fs-membership="diamond"] .topbar:after,html[data-fs-membership="diamond"] .profile-card:before{animation:none!important;display:none}}
