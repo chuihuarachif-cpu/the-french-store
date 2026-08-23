@@ -225,13 +225,23 @@
   }
 
   function installLoyaltyAuthGate() {
-    const loadForSession = (signedIn) => {
-      if (signedIn) ensureFeature('loyalty').catch(() => {});
-      else delete document.documentElement.dataset.fsMembership;
+    const loadForSession = async (newSession) => {
+      if (!newSession) {
+        delete document.documentElement.dataset.fsMembership;
+        return;
+      }
+      // Core auth owns the shared `session` variable. Make sure it is hydrated before
+      // the isolated loyalty file reads it; this avoids a cold-load race on persisted sessions.
+      try {
+        if (typeof refreshSession === 'function' && (!session || session.user?.id !== newSession.user?.id)) {
+          await refreshSession(newSession);
+        }
+      } catch {}
+      ensureFeature('loyalty').catch(() => {});
     };
     try {
-      sb.auth.getSession().then(({ data }) => loadForSession(!!data?.session)).catch(() => {});
-      sb.auth.onAuthStateChange((_event, newSession) => loadForSession(!!newSession));
+      sb.auth.getSession().then(({ data }) => loadForSession(data?.session || null)).catch(() => {});
+      sb.auth.onAuthStateChange((_event, newSession) => { setTimeout(() => loadForSession(newSession), 0); });
     } catch {}
   }
 
