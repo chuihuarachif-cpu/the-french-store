@@ -1,11 +1,11 @@
-/* THE FRENCH STORE — Le Cercle French + French Rewards v2
+/* THE FRENCH STORE — French Rank Pass + French Rewards v3
    Isolated authenticated loyalty UI. No provider logic, no BISA modification,
-   no service-role, no catalog category changes. Pass purchases use French Wallet
-   through authenticated RPCs; rewards are awarded server-side on DELIVERED orders. */
+   no service-role, no catalog category changes. Rank Pass purchases use French Wallet
+   through authenticated RPCs; Rewards are awarded server-side only after launch. */
 (() => {
   'use strict';
 
-  const VERSION = 'le-cercle-v2-auto-launch-20260823';
+  const VERSION = 'french-rank-pass-v3-20260823';
   const state = { summary: null, launch: null, loading: null, mounted: false };
   const root = document.documentElement;
 
@@ -26,6 +26,10 @@
     return state.launch?.program_launched === true;
   }
 
+  function adminView() {
+    return state.launch?.admin_view === true;
+  }
+
   function clearTheme() {
     delete root.dataset.fsMembership;
     const chip = document.getElementById('fsLoyaltyChip');
@@ -41,7 +45,7 @@
       const panel = document.createElement('section');
       panel.id = 'fsLoyaltyPanel';
       panel.className = 'fs-loyalty-panel';
-      panel.innerHTML = '<div class="fs-loyalty-loading">Cargando French Rewards…</div>';
+      panel.innerHTML = '<div class="fs-loyalty-loading">Cargando French Rank Pass…</div>';
       if (profileActions) profilePanel.insertBefore(panel, profileActions);
       else profilePanel.appendChild(panel);
     }
@@ -52,7 +56,7 @@
       chip.id = 'fsLoyaltyChip';
       chip.type = 'button';
       chip.className = 'fs-loyalty-chip hidden';
-      chip.setAttribute('aria-label', 'Abrir French Rewards');
+      chip.setAttribute('aria-label', 'Abrir French Rank Pass');
       chip.onclick = () => { try { navigate('perfil'); } catch {} };
       topActions.prepend(chip);
     }
@@ -63,11 +67,11 @@
 
   function errorMessage(error) {
     const raw = text(error?.message || error);
-    if (raw.includes('LOYALTY_NOT_LAUNCHED')) return 'French Rewards todavía está cumpliendo su meta de lanzamiento. Se activará automáticamente al alcanzarla.';
-    if (raw.includes('INSUFFICIENT_WALLET_BALANCE')) return 'No tienes saldo suficiente en French Wallet para activar este nivel.';
+    if (raw.includes('LOYALTY_NOT_LAUNCHED')) return 'French Rewards todavía está en construcción. El Rank Pass sí puede estar activo, pero los puntos aún no se generan ni se canjean.';
+    if (raw.includes('INSUFFICIENT_WALLET_BALANCE')) return 'No tienes saldo suficiente en French Wallet para activar este rango.';
     if (raw.includes('WALLET_NOT_FOUND')) return 'Primero activa French Wallet en tu cuenta.';
     if (raw.includes('WALLET_BLOCKED')) return 'French Wallet no está disponible en este momento.';
-    if (raw.includes('ACTIVE_PASS_CHANGE_AFTER_EXPIRY')) return 'Tu nivel actual sigue activo. Puedes renovarlo ahora; para cambiar de nivel espera a su vencimiento.';
+    if (raw.includes('ACTIVE_PASS_CHANGE_AFTER_EXPIRY')) return 'Tu rango actual sigue activo. Puedes renovarlo ahora; para cambiar de rango espera a su vencimiento.';
     if (raw.includes('INSUFFICIENT_REWARD_POINTS')) return 'No tienes suficientes puntos disponibles para ese canje.';
     if (raw.includes('MIN_REDEEM_NOT_MET')) return 'Aún no alcanzaste el mínimo de puntos para canjear.';
     if (raw.includes('MAX_REDEEM_EXCEEDED')) return 'El canje supera el máximo permitido por operación.';
@@ -100,14 +104,14 @@
     })().catch((error) => {
       console.warn('FRENCH STORE loyalty unavailable:', text(error?.message || error).slice(0, 100));
       clearTheme();
-      renderError('French Rewards no está disponible temporalmente. Tus compras y Wallet siguen funcionando normalmente.');
+      renderError('French Rank Pass no está disponible temporalmente. Tus compras y Wallet siguen funcionando normalmente.');
       return null;
     }).finally(() => { state.loading = null; });
     return state.loading;
   }
 
   function applyTheme() {
-    const pass = launched() ? state.summary?.active_pass : null;
+    const pass = state.summary?.active_pass || null;
     const theme = text(pass?.theme);
     if (theme === 'gold' || theme === 'diamond') root.dataset.fsMembership = theme;
     else delete root.dataset.fsMembership;
@@ -117,26 +121,29 @@
     const points = int(state.summary?.points_available);
     chip.classList.remove('hidden');
     chip.dataset.theme = theme || 'base';
-    if (!launched()) {
+
+    if (pass) {
+      chip.innerHTML = `${theme === 'diamond' ? '💎' : '🏆'} <span>${html(pass.name)}</span>`;
+    } else if (launched()) {
+      chip.innerHTML = `⭐ <span>${points.toLocaleString('es-BO')} pts</span>`;
+    } else if (adminView()) {
       chip.innerHTML = '🎯 <span>Meta Rewards</span>';
     } else {
-      chip.innerHTML = pass
-        ? `${theme === 'diamond' ? '💎' : '✨'} <span>${html(pass.name)}</span>`
-        : `⭐ <span>${points.toLocaleString('es-BO')} pts</span>`;
+      chip.innerHTML = '🎮 <span>Rank Pass</span>';
     }
   }
 
-  function planBenefits(plan) {
+  function planBenefits(plan, isLaunched) {
     if (plan.code === 'DIAMANT_BLEU') return [
-      'x2 French Rewards en compras elegibles',
-      'Ahorro premium devuelto como Rewards',
-      'Tema visual Diamant Bleu en tu cuenta',
+      'Tema Diamond Rank e insignia premium desde ahora',
+      isLaunched ? 'x2 French Rewards en compras elegibles' : 'x2 French Rewards cuando el programa se lance',
+      isLaunched ? 'Bonus de miembro superior, limitado por margen seguro' : 'Bonus Diamond reservado para cuando Rewards esté activo',
       '30 días · sin renovación automática'
     ];
     return [
-      'x1.5 French Rewards en compras elegibles',
-      'Ahorro extra devuelto como Rewards',
-      'Tema visual Éclat d’Or en tu cuenta',
+      'Tema Gold Rank e insignia dorada desde ahora',
+      isLaunched ? 'x1.5 French Rewards en compras elegibles' : 'x1.5 French Rewards cuando el programa se lance',
+      isLaunched ? 'Bonus de miembro, limitado por margen seguro' : 'Bonus Gold reservado para cuando Rewards esté activo',
       '30 días · sin renovación automática'
     ];
   }
@@ -144,22 +151,23 @@
   function planCard(plan, activePass, isLaunched) {
     const same = activePass?.code === plan.code;
     const blockedByPass = !!activePass && !same;
-    const blocked = !isLaunched || blockedByPass;
-    const benefits = planBenefits(plan).map((item) => `<li>${html(item)}</li>`).join('');
+    const benefits = planBenefits(plan, isLaunched).map((item) => `<li>${html(item)}</li>`).join('');
     const action = same ? 'Renovar +30 días' : 'Activar con Wallet';
-    const label = !isLaunched ? 'Se habilita con French Rewards' : (blockedByPass ? 'Disponible al vencer tu nivel actual' : action);
-    return `<article class="fs-pass-card fs-pass-${html(plan.theme)} ${same ? 'active' : ''} ${!isLaunched ? 'prelaunch' : ''}">
-      <div class="fs-pass-title"><span>${plan.theme === 'diamond' ? '💎' : '✨'}</span><div><b>${html(plan.name)}</b><small>${html(plan.subtitle)}</small></div></div>
+    const label = blockedByPass ? 'Disponible al vencer tu rango actual' : action;
+    const reserve = !isLaunched ? '<span class="fs-pass-reserve">Rewards en reserva</span>' : '';
+    return `<article class="fs-pass-card fs-pass-${html(plan.theme)} ${same ? 'active' : ''}">
+      ${reserve}
+      <div class="fs-pass-title"><span>${plan.theme === 'diamond' ? '💎' : '🏆'}</span><div><b>${html(plan.name)}</b><small>${html(plan.subtitle)}</small></div></div>
       <div class="fs-pass-price"><strong>${bob(plan.price_bob)}</strong><span>/ ${int(plan.duration_days)} días</span></div>
       <ul>${benefits}</ul>
-      <button class="${plan.theme === 'diamond' ? 'primary-btn' : 'secondary-btn'} full" data-fs-pass-buy="${html(plan.code)}" ${blocked ? 'disabled' : ''}>${html(label)}</button>
+      <button class="${plan.theme === 'diamond' ? 'primary-btn' : 'secondary-btn'} full" data-fs-pass-buy="${html(plan.code)}" ${blockedByPass ? 'disabled' : ''}>${html(label)}</button>
     </article>`;
   }
 
   function recentRows(rows) {
     if (!Array.isArray(rows) || !rows.length) return '<p class="fs-loyalty-muted">Todavía no tienes movimientos de Rewards.</p>';
     const labels = {
-      PURCHASE_REWARD: 'Compra entregada', PASS_BONUS: 'Beneficio Le Cercle', REDEMPTION: 'Canje a Wallet',
+      PURCHASE_REWARD: 'Compra entregada', PASS_BONUS: 'Bonus Rank Pass', REDEMPTION: 'Canje a Wallet',
       REFUND_REVERSAL: 'Ajuste por reembolso', AD_REWARD: 'Rewarded Ads', ADMIN_ADJUSTMENT: 'Ajuste'
     };
     return rows.map((row) => {
@@ -180,17 +188,52 @@
 
   function renderLaunchGoal() {
     const l = state.launch;
-    if (!l || l.program_launched === true) return '';
-    return `<section class="fs-launch-goal">
-      <div class="fs-launch-goal-head"><div><span class="eyebrow">META DE LANZAMIENTO</span><h3>French Rewards se activará automáticamente</h3></div><span class="fs-launch-lock">🎯</span></div>
-      <p>No necesitas pedir que lo activemos. Cuando la tienda alcance las tres metas de seguridad, French Rewards y Le Cercle quedarán habilitados automáticamente desde el siguiente estado entregado que complete la meta.</p>
+    if (!l || l.program_launched === true || l.admin_view !== true) return '';
+    return `<section class="fs-launch-goal fs-admin-launch-goal">
+      <div class="fs-launch-goal-head"><div><span class="eyebrow">ADMIN · META INTERNA</span><h3>Progreso real de French Rewards</h3></div><span class="fs-launch-lock">🎯</span></div>
+      <p>Este detalle es privado del administrador. Los clientes solo ven que Rewards está en construcción.</p>
       <div class="fs-launch-progress">
         ${progressRow('Pedidos entregados', l.delivered_orders, l.min_delivered_orders)}
         ${progressRow('Clientes distintos', l.unique_buyers, l.min_unique_buyers)}
         ${progressRow('Margen elegible acumulado', l.eligible_margin_bob, l.min_eligible_margin_bob, 'bob')}
       </div>
-      <small>La meta usa pedidos realmente entregados y margen elegible; no depende solo del volumen de ventas. Esto evita lanzar un programa que pueda comprometer la rentabilidad.</small>
+      <small>El lanzamiento sigue siendo automático al cumplirse simultáneamente las tres condiciones.</small>
     </section>`;
+  }
+
+  function renderPublicRewardsReserve() {
+    return `<section class="fs-rewards-reserve">
+      <div class="fs-reserve-icon">⭐</div>
+      <div><span class="eyebrow">FRENCH REWARDS</span><h3>En construcción</h3>
+      <p>Estamos preparando el sistema de puntos y canjes para que sea sostenible y seguro. No necesitas hacer nada: cuando esté listo se habilitará automáticamente.</p>
+      <small>Tu Rank Pass funciona desde ahora. Antes del lanzamiento de Rewards no se generan puntos ni se realizan canjes.</small></div>
+    </section>`;
+  }
+
+  function renderRankIntro() {
+    return `<section class="fs-rank-intro">
+      <div class="fs-rank-intro-icon">🎮</div>
+      <div><span class="eyebrow">¿QUÉ ES FRENCH RANK PASS?</span><h3>Tu rango gamer dentro de FRENCH STORE</h3>
+      <p>Es una membresía opcional de 30 días pagada con French Wallet. Activa de inmediato un estilo exclusivo en tu cuenta y, cuando French Rewards esté disponible, el rango vigente aplica automáticamente su multiplicador y bonus.</p>
+      <div class="fs-rank-pills"><span>✓ Sin renovación automática</span><span>✓ Tema exclusivo inmediato</span><span>✓ Rewards limitado por margen</span></div>
+      <small>Si Rewards todavía está en construcción, comprar un Rank Pass no crea puntos retroactivos. Si Rewards se activa mientras tu rango sigue vigente, sus beneficios de puntos empiezan desde ese momento.</small></div>
+    </section>`;
+  }
+
+  function renderRewardsLive(s) {
+    const available = int(s.points_available);
+    const pending = int(s.points_pending);
+    const minRedeem = int(s.min_redeem_points || 500);
+    const maxRedeem = Math.min(int(s.max_redeem_points || 10000), Math.floor(available / 100) * 100);
+    const canRedeem = maxRedeem >= minRedeem;
+    return `<div class="fs-reward-balance-grid">
+        <div class="fs-reward-balance"><span>Disponibles</span><strong>${available.toLocaleString('es-BO')} pts</strong><small>${int(s.points_per_bob)} pts = Bs 1,00</small></div>
+        <div class="fs-reward-balance secondary"><span>Pendientes</span><strong>${pending.toLocaleString('es-BO')} pts</strong><small>Se liberan después del período de seguridad.</small></div>
+      </div>
+      <div class="fs-redeem-box"><div><b>Canjear a French Wallet</b><small>Mínimo ${minRedeem.toLocaleString('es-BO')} puntos. Los puntos se convierten en saldo de Wallet.</small></div>
+        <div class="fs-redeem-actions"><input id="fsRedeemPoints" type="number" inputmode="numeric" min="${minRedeem}" max="${Math.max(maxRedeem,minRedeem)}" step="100" value="${canRedeem ? minRedeem : ''}" placeholder="${minRedeem}"><button class="secondary-btn" data-fs-redeem ${canRedeem ? '' : 'disabled'}>Canjear</button></div>
+      </div>
+      <div class="fs-recent-rewards"><h4>Actividad reciente</h4>${recentRows(s.recent)}</div>`;
   }
 
   function render() {
@@ -206,36 +249,27 @@
     const s = state.summary;
     const l = state.launch;
     if (!s || !l) {
-      panel.innerHTML = '<div class="fs-loyalty-loading">Cargando French Rewards…</div>';
+      panel.innerHTML = '<div class="fs-loyalty-loading">Cargando French Rank Pass…</div>';
       return;
     }
 
     const isLaunched = l.program_launched === true;
-    const available = int(s.points_available);
-    const pending = int(s.points_pending);
-    const minRedeem = int(s.min_redeem_points || 500);
-    const maxRedeem = Math.min(int(s.max_redeem_points || 10000), Math.floor(available / 100) * 100);
-    const canRedeem = isLaunched && maxRedeem >= minRedeem;
-    const active = isLaunched ? s.active_pass : null;
+    const active = s.active_pass || null;
     const passStatus = active
-      ? `<div class="fs-active-pass"><span>${active.theme === 'diamond' ? '💎' : '✨'}</span><div><small>LE CERCLE ACTIVO</small><b>${html(active.name)}</b><em>Hasta ${html(date(active.ends_at))}</em></div></div>`
-      : `<p class="fs-loyalty-muted">${isLaunched ? 'No tienes una membresía Le Cercle activa.' : 'Le Cercle se habilitará automáticamente junto con French Rewards.'}</p>`;
+      ? `<div class="fs-active-pass"><span>${active.theme === 'diamond' ? '💎' : '🏆'}</span><div><small>FRENCH RANK PASS ACTIVO</small><b>${html(active.name)}</b><em>Hasta ${html(date(active.ends_at))}</em></div></div>`
+      : '<p class="fs-loyalty-muted">No tienes un French Rank Pass activo.</p>';
 
     panel.innerHTML = `
-      <div class="fs-loyalty-head"><div><span class="eyebrow">FRENCH REWARDS</span><h3>${isLaunched ? 'Tus puntos y beneficios' : 'Próximo programa de beneficios'}</h3></div><button class="icon-btn" data-fs-loyalty-refresh aria-label="Actualizar Rewards">↻</button></div>
-      ${renderLaunchGoal()}
-      <div class="fs-reward-balance-grid ${isLaunched ? '' : 'prelaunch'}">
-        <div class="fs-reward-balance"><span>Disponibles</span><strong>${available.toLocaleString('es-BO')} pts</strong><small>${int(s.points_per_bob)} pts = Bs 1,00</small></div>
-        <div class="fs-reward-balance secondary"><span>Pendientes</span><strong>${pending.toLocaleString('es-BO')} pts</strong><small>${isLaunched ? 'Se liberan después del período de seguridad.' : 'Los Rewards comenzarán cuando se complete la meta.'}</small></div>
-      </div>
-      <div class="fs-redeem-box ${isLaunched ? '' : 'prelaunch'}"><div><b>Canjear a French Wallet</b><small>${isLaunched ? `Mínimo ${minRedeem.toLocaleString('es-BO')} puntos. Los puntos se convierten en saldo real de Wallet.` : 'El canje permanecerá bloqueado hasta el lanzamiento automático.'}</small></div>
-        <div class="fs-redeem-actions"><input id="fsRedeemPoints" type="number" inputmode="numeric" min="${minRedeem}" max="${Math.max(maxRedeem,minRedeem)}" step="100" value="${canRedeem ? minRedeem : ''}" placeholder="${minRedeem}" ${isLaunched ? '' : 'disabled'}><button class="secondary-btn" data-fs-redeem ${canRedeem ? '' : 'disabled'}>Canjear</button></div>
-      </div>
-      <div class="fs-cercle-section"><div class="fs-cercle-heading"><span class="eyebrow">LE CERCLE FRENCH</span><h3>Tu membresía de FRENCH STORE</h3><p>Mejores beneficios sin alterar el precio base de pago: el ahorro se devuelve como French Rewards y cada producto conserva un margen de seguridad.</p></div>${passStatus}
+      <div class="fs-loyalty-head"><div><span class="eyebrow">FRENCH RANK PASS</span><h3>Sube de rango. Personaliza tu cuenta.</h3></div><button class="icon-btn" data-fs-loyalty-refresh aria-label="Actualizar Rank Pass">↻</button></div>
+      ${renderRankIntro()}
+      <div class="fs-cercle-section">${passStatus}
         <div class="fs-pass-grid">${(s.plans || []).map((plan) => planCard(plan, active, isLaunched)).join('')}</div>
-        <p class="fs-loyalty-fine">Le Cercle se paga con French Wallet, dura 30 días y no se renueva automáticamente. Los puntos varían según el producto y se generan únicamente cuando el pedido queda entregado. Rewarded Ads permanece desactivado hasta contar con una integración publicitaria verificada. <a href="./loyalty-terms.html" target="_blank" rel="noopener noreferrer">Ver condiciones.</a></p>
+        <p class="fs-loyalty-fine">El Rank Pass se paga con French Wallet, dura 30 días y nunca se renueva automáticamente. Gold y Diamond cambian visualmente tu cuenta desde el momento de activación. Los multiplicadores y bonus de puntos solo operan cuando French Rewards está activo. <a href="./loyalty-terms.html" target="_blank" rel="noopener noreferrer">Ver condiciones.</a></p>
       </div>
-      ${isLaunched ? `<div class="fs-recent-rewards"><h4>Actividad reciente</h4>${recentRows(s.recent)}</div>` : ''}`;
+      <div class="fs-rewards-divider"></div>
+      <div class="fs-loyalty-head"><div><span class="eyebrow">FRENCH REWARDS</span><h3>${isLaunched ? 'Tus puntos y beneficios' : 'Próximo programa de beneficios'}</h3></div></div>
+      ${renderLaunchGoal()}
+      ${isLaunched ? renderRewardsLive(s) : renderPublicRewardsReserve()}`;
   }
 
   function renderError(message) {
@@ -247,11 +281,13 @@
   }
 
   async function purchasePass(code, button) {
-    if (!launched()) { window.alert(errorMessage(new Error('LOYALTY_NOT_LAUNCHED'))); return; }
     const plan = state.summary?.plans?.find?.((item) => item.code === code);
     if (!plan) return;
     const verb = state.summary?.active_pass?.code === code ? 'renovar' : 'activar';
-    if (!window.confirm(`¿Quieres ${verb} ${plan.name} por ${bob(plan.price_bob)} usando French Wallet? No hay renovación automática.`)) return;
+    const rewardsNote = launched()
+      ? 'Los beneficios de Rewards se aplican mientras el rango esté vigente.'
+      : 'French Rewards aún está en construcción; el tema se activa ahora y los puntos solo empezarán si Rewards se lanza mientras este rango siga vigente.';
+    if (!window.confirm(`¿Quieres ${verb} ${plan.name} por ${bob(plan.price_bob)} usando French Wallet?\n\n${rewardsNote}\n\nNo hay renovación automática.`)) return;
     const old = button.textContent;
     button.disabled = true; button.textContent = 'Procesando…';
     try {
