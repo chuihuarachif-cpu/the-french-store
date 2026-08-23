@@ -1,0 +1,45 @@
+name: Buy Now Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/buy-now.js'
+      - 'v2/index.html'
+      - '.github/workflows/buy-now.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/buy-now.js'
+      - 'v2/index.html'
+      - '.github/workflows/buy-now.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static Buy Now safety
+        run: |
+          set -euo pipefail
+          node --check v2/buy-now.js
+          grep -Fq "Comprar ahora" v2/buy-now.js
+          grep -Fq "FSFeatureLoader.ensure('checkout')" v2/buy-now.js
+          grep -Fq "addToCart(productId)" v2/buy-now.js
+          grep -Fq "openModal('cartModal')" v2/buy-now.js
+          grep -Fq "./buy-now.js?v=20260823-1" v2/index.html
+          ! grep -Eqi "service_role|SUPABASE_SERVICE|GAMERHUB|BONOXS|GAMETON|create_qr_order|create_wallet_order" v2/buy-now.js
+      - name: Existing checkout boundaries still present
+        run: |
+          set -euo pipefail
+          grep -Fq 'id="checkoutWallet"' v2/index.html
+          grep -Fq 'id="checkoutQR"' v2/index.html
+          grep -Fq 'id="purchaseLegalAccept"' v2/index.html
+          test -s v2/fulfillment-inputs.js
+          node --check v2/fulfillment-inputs.js
