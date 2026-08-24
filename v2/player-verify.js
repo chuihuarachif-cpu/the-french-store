@@ -1,12 +1,15 @@
-/* THE FRENCH STORE — Player Verify v1
+/* THE FRENCH STORE — Player Verify v2
    Customer-facing ID/account verification for Recargas por ID.
    The browser never receives provider credentials, provider codes or reseller prices.
-   Verification is advisory UX; the backend still re-verifies before any automated fulfillment. */
+   Automatic verification is used only for products backed by a provider-verifiable route.
+   Requirements marked [MANUAL_ONLY] remain checkout requirements but are never sent to
+   the provider-verification endpoint as if they were automatically verifiable. */
 (() => {
   'use strict';
 
-  const VERSION = 'player-verify-v1-20260823';
+  const VERSION = 'player-verify-v2-20260824';
   const API_URL = 'https://api.frenchstorebo.com/api/player-verify';
+  const MANUAL_PREFIX = '[MANUAL_ONLY]';
   const state = {
     requirementsLoaded: false,
     requirementsLoading: null,
@@ -22,6 +25,11 @@
   const norm = (value) => text(value)
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
 
+  function publicHelp(raw) {
+    const value = text(raw);
+    return value.startsWith(MANUAL_PREFIX) ? value.slice(MANUAL_PREFIX.length).trim() : value;
+  }
+
   function injectStyles() {
     if (document.getElementById('fsPlayerVerifyStyles')) return;
     const style = document.createElement('style');
@@ -36,9 +44,7 @@
     document.head.appendChild(style);
   }
 
-  function gameScope(game) {
-    return norm(game);
-  }
+  function gameScope(game) { return norm(game); }
 
   function productGame(product) {
     try { return typeof canonicalGame === 'function' ? canonicalGame(product?.juego) : text(product?.juego); }
@@ -48,16 +54,14 @@
   function activeIdProductsForGame(game) {
     try {
       return (Array.isArray(inventory) ? inventory : []).filter((product) =>
-        product?.activo === true &&
-        text(product?.categoria) === 'Recargas por ID' &&
-        productGame(product) === game
+        product?.activo === true && text(product?.categoria) === 'Recargas por ID' && productGame(product) === game
       );
     } catch { return []; }
   }
 
-  async function loadRequirements() {
-    if (state.requirementsLoaded) return true;
-    if (state.requirementsLoading) return state.requirementsLoading;
+  async function loadRequirements(force = false) {
+    if (state.requirementsLoaded && !force) return true;
+    if (state.requirementsLoading && !force) return state.requirementsLoading;
     state.requirementsLoading = (async () => {
       try {
         const { data, error } = await sb
@@ -72,6 +76,7 @@
           const id = Number(row.product_id);
           if (!Number.isSafeInteger(id)) return;
           if (!map.has(id)) map.set(id, []);
+          const rawHelp = text(row.help_text);
           map.get(id).push({
             key: text(row.field_key),
             label: text(row.label) || text(row.field_key),
@@ -80,7 +85,8 @@
             minLength: Math.max(0, Number(row.min_length || 0)),
             maxLength: Math.min(160, Math.max(1, Number(row.max_length || 80))),
             placeholder: text(row.placeholder),
-            helpText: text(row.help_text),
+            helpText: publicHelp(rawHelp),
+            manualOnly: rawHelp.startsWith(MANUAL_PREFIX),
             options: Array.isArray(row.options) ? row.options : [],
             sortOrder: Number(row.sort_order || 0)
           });
@@ -91,32 +97,30 @@
       } catch {
         state.requirementsLoaded = false;
         return false;
-      } finally {
-        state.requirementsLoading = null;
-      }
+      } finally { state.requirementsLoading = null; }
     })();
     return state.requirementsLoading;
   }
 
-  function requirementsForProduct(productId) {
-    return state.byProduct.get(Number(productId)) || [];
-  }
+  function requirementsForProduct(productId) { return state.byProduct.get(Number(productId)) || []; }
 
   function verificationContext(game) {
     const products = activeIdProductsForGame(game);
     const candidates = products
       .map((product) => ({ product, requirements: requirementsForProduct(product.id) }))
-      .filter((entry) => entry.requirements.length > 0)
+      .filter((entry) => entry.requirements.length > 0 && entry.requirements.some((req) => req.manualOnly !== true))
       .sort((a,b) => Number(a.product.precio || 0) - Number(b.product.precio || 0));
     if (!candidates.length) return null;
 
-    // Choose one existing sellable package whose required fields represent the game.
-    // The backend independently validates that this product has an EXACT GamerHub map.
+    // Only provider-verifiable requirement rows participate in the automatic verify call.
+    // [MANUAL_ONLY] rows are deliberately excluded so a manual package can never be
+    // presented to /api/player-verify as if it had an official automatic route.
     const chosen = candidates[0];
     const unique = new Map();
-    candidates.forEach(({ requirements }) => requirements.forEach((req) => {
-      if (!unique.has(req.key)) unique.set(req.key, req);
-    }));
+    candidates.forEach(({ requirements }) => requirements
+      .filter((req) => req.manualOnly !== true)
+      .forEach((req) => { if (!unique.has(req.key)) unique.set(req.key, req); }));
+    if (!unique.size) return null;
     return {
       productId: Number(chosen.product.id),
       requirements: [...unique.values()].sort((a,b) => a.sortOrder - b.sortOrder),
@@ -156,15 +160,19 @@
         : `<span aria-hidden="true">🔎</span><span>${message}</span>`;
   }
 
+  function signalChange(scope) {
+    document.dispatchEvent(new CustomEvent('fs:player-verify-change', { detail:{ scope } }));
+  }
+
   function clearVerified(scope) {
-    state.verifiedByScope.delete(scope);
+    const changed = state.verifiedByScope.delete(scope);
+    if (changed) signalChange(scope);
   }
 
   function currentValues(panel) {
     const values = {};
     panel?.querySelectorAll('[data-pv-key]').forEach((control) => {
-      const key = text(control.dataset.pvKey);
-      const value = text(control.value);
+      const key = text(control.dataset.pvKey), value = text(control.value);
       if (key && value) values[key] = value;
     });
     return values;
@@ -207,10 +215,7 @@
 
     const values = currentValues(panel);
     const invalid = validateValues(context.requirements, values);
-    if (invalid) {
-      setResult(resultBox,'error',html(invalid));
-      return;
-    }
+    if (invalid) { setResult(resultBox,'error',html(invalid)); return; }
 
     button.disabled = true;
     button.textContent = 'Verificando…';
@@ -226,18 +231,9 @@
         body:JSON.stringify({ product_id:productId, inputs:values })
       });
       const data = await response.json().catch(() => null);
-      if (response.status === 401) {
-        setResult(resultBox,'error','Tu sesión venció. Vuelve a iniciar sesión para verificar.');
-        return;
-      }
-      if (response.status === 429) {
-        setResult(resultBox,'error','Hiciste demasiadas verificaciones. Espera un momento y vuelve a intentar.');
-        return;
-      }
-      if (!response.ok || !data?.ok) {
-        setResult(resultBox,'error',html(data?.message || 'La verificación está temporalmente no disponible.'));
-        return;
-      }
+      if (response.status === 401) { setResult(resultBox,'error','Tu sesión venció. Vuelve a iniciar sesión para verificar.'); return; }
+      if (response.status === 429) { setResult(resultBox,'error','Hiciste demasiadas verificaciones. Espera un momento y vuelve a intentar.'); return; }
+      if (!response.ok || !data?.ok) { setResult(resultBox,'error',html(data?.message || 'La verificación está temporalmente no disponible.')); return; }
       if (data.verified !== true) {
         clearVerified(scope);
         setResult(resultBox,'error',html(data?.message || 'No encontramos una cuenta válida con esos datos.'));
@@ -246,20 +242,12 @@
 
       const displayName = text(data.display_name);
       state.verifiedByScope.set(scope, {
-        game,
-        productId,
-        productIds: context.productIds,
-        inputs:{ ...values },
-        displayName,
-        verifiedAt:Date.now()
+        game, productId, productIds:context.productIds, inputs:{ ...values }, displayName, verifiedAt:Date.now()
       });
-      setResult(
-        resultBox,
-        'ok',
-        displayName
-          ? `<strong>${html(displayName)}</strong><span> · ID encontrado</span>`
-          : '<strong>Cuenta encontrada</strong><span> · datos válidos</span>'
-      );
+      setResult(resultBox,'ok',displayName
+        ? `<strong>${html(displayName)}</strong><span> · ID encontrado</span>`
+        : '<strong>Cuenta encontrada</strong><span> · datos válidos</span>');
+      signalChange(scope);
       syncCartInputs();
     } catch {
       setResult(resultBox,'error','No se pudo conectar con la verificación. Intenta nuevamente.');
@@ -273,12 +261,9 @@
     const box = document.getElementById('fulfillmentInputs');
     if (!box) return;
     box.querySelectorAll('[data-fs-scope][data-fs-key]').forEach((control) => {
-      const scope = text(control.dataset.fsScope);
-      const key = text(control.dataset.fsKey);
-      const record = state.verifiedByScope.get(scope);
-      const value = text(record?.inputs?.[key]);
-      if (!record || !value) return;
-      if (text(control.value) === value) return;
+      const scope = text(control.dataset.fsScope), key = text(control.dataset.fsKey);
+      const record = state.verifiedByScope.get(scope), value = text(record?.inputs?.[key]);
+      if (!record || !value || text(control.value) === value) return;
       control.value = value;
       control.dispatchEvent(new Event('input', { bubbles:true }));
       control.dispatchEvent(new Event('change', { bubbles:true }));
@@ -286,8 +271,7 @@
   }
 
   function renderPanel(detail, game, context) {
-    const scope = gameScope(game);
-    const existing = state.verifiedByScope.get(scope);
+    const scope = gameScope(game), existing = state.verifiedByScope.get(scope);
     let panel = detail.querySelector('.fs-player-verify');
     if (!panel) {
       panel = document.createElement('section');
@@ -299,19 +283,17 @@
     panel.dataset.pvGame = game;
     panel.dataset.pvProductId = String(context.productId);
     panel.innerHTML = `
-      <div class="fs-player-verify-head"><span class="fs-player-verify-step">1</span><div><b>Ingresa y verifica tu ID</b><small>Comprobaremos que la cuenta exista antes de que pagues. Nunca pediremos contraseña ni códigos de acceso.</small></div></div>
+      <div class="fs-player-verify-head"><span class="fs-player-verify-step">1</span><div><b>Ingresa y verifica tu ID</b><small>Comprobaremos que la cuenta exista antes de habilitar los paquetes. Nunca pediremos contraseña ni códigos de acceso.</small></div></div>
       <div class="fs-player-fields">${context.requirements.map((req) => fieldMarkup(scope, req, existing?.inputs || {})).join('')}</div>
       <div class="fs-player-actions"><button type="button" class="fs-player-verify-btn">Verificar ID</button><div class="fs-player-result" role="status" aria-live="polite"></div></div>
-      <p class="fs-player-privacy">La verificación solo confirma los datos necesarios para la recarga. El proveedor se vuelve a validar en el servidor antes de una entrega automática.</p>`;
+      <p class="fs-player-privacy">La verificación solo confirma los datos necesarios para la recarga. El servidor vuelve a comprobarlos antes de una entrega automática.</p>`;
 
     const result = panel.querySelector('.fs-player-result');
-    if (existing) {
-      setResult(result,'ok',existing.displayName
-        ? `<strong>${html(existing.displayName)}</strong><span> · ID encontrado</span>`
-        : '<strong>Cuenta encontrada</strong><span> · datos válidos</span>');
-    } else {
-      setResult(result,'','Escribe tus datos y pulsa “Verificar ID”.');
-    }
+    if (existing) setResult(result,'ok',existing.displayName
+      ? `<strong>${html(existing.displayName)}</strong><span> · ID encontrado</span>`
+      : '<strong>Cuenta encontrada</strong><span> · datos válidos</span>');
+    else setResult(result,'','Escribe tus datos y pulsa “Verificar ID”.');
+
     panel.querySelector('.fs-player-verify-btn')?.addEventListener('click', () => verifyPanel(panel));
     panel.querySelectorAll('[data-pv-key]').forEach((control) => {
       control.addEventListener('input', () => {
@@ -334,7 +316,7 @@
       detail.querySelector('.fs-player-verify')?.remove();
       return;
     }
-    const game = text(detail.querySelector('.r6-hero-copy h3')?.textContent);
+    const game = text(detail.querySelector('.r6-hero-copy h3')?.textContent || detail.dataset.fsGame);
     if (!game) return;
     const loaded = await loadRequirements();
     if (!loaded) return;
@@ -352,6 +334,15 @@
     requestAnimationFrame(() => decorateCurrentDetail());
   }
 
+  function loadDetailLayout() {
+    if (document.getElementById('fs-detail-layout-v2')) return;
+    const script = document.createElement('script');
+    script.id = 'fs-detail-layout-v2';
+    script.src = './detail-layout-v2.js?v=20260824-1';
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
   function install() {
     injectStyles();
     const catalog = document.getElementById('catalogList');
@@ -365,12 +356,14 @@
       }
     },true);
     loadRequirements().then(scheduleDecorate);
+    loadDetailLayout();
     scheduleDecorate();
   }
 
   window.FSPlayerVerify = Object.freeze({
     version:VERSION,
     refresh:scheduleDecorate,
+    reloadRequirements:() => loadRequirements(true).then(() => { scheduleDecorate(); return state.requirementsLoaded; }),
     syncCartInputs,
     verifiedForProduct:(productId) => {
       const id = Number(productId);
@@ -378,7 +371,12 @@
         if (record.productIds?.has(id)) return { ...record, productIds:undefined };
       }
       return null;
-    }
+    },
+    verifiedForGame:(game) => {
+      const record = state.verifiedByScope.get(gameScope(game));
+      return record ? { ...record, productIds:undefined } : null;
+    },
+    inputsForGame:(game) => ({ ...(state.verifiedByScope.get(gameScope(game))?.inputs || {}) })
   });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',install,{once:true});
