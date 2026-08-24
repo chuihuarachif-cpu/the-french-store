@@ -1,0 +1,27 @@
+{
+  "id": "/v2/",
+  "name": "FRENCH STORE Bolivia",
+  "short_name": "FRENCH STORE",
+  "description": "Recargas para juegos, streaming, Gift Cards y French Wallet en Bolivia.",
+  "lang": "es-BO",
+  "start_url": "/v2/",
+  "scope": "/v2/",
+  "display": "standalone",
+  "background_color": "#050b12",
+  "theme_color": "#06111d",
+  "categories": ["shopping", "entertainment"],
+  "icons": [
+    {
+      "src": "/v2/assets/brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/v2/assets/brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
