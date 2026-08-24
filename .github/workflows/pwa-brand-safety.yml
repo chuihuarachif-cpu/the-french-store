@@ -10,6 +10,9 @@ on:
       - 'v2/manifest.webmanifest'
       - 'v2/sw.js'
       - 'v2/pwa-init.js'
+      - 'v2/pwa-install-ui.js'
+      - 'v2/pwa-install.css'
+      - 'v2/navigation-history.js'
       - 'v2/brand-ui.js'
       - 'v2/brand-motion.css'
       - 'v2/assets/brand/**'
@@ -23,6 +26,9 @@ on:
       - 'v2/manifest.webmanifest'
       - 'v2/sw.js'
       - 'v2/pwa-init.js'
+      - 'v2/pwa-install-ui.js'
+      - 'v2/pwa-install.css'
+      - 'v2/navigation-history.js'
       - 'v2/brand-ui.js'
       - 'v2/brand-motion.css'
       - 'v2/assets/brand/**'
@@ -45,6 +51,9 @@ jobs:
           test -s v2/manifest.webmanifest
           test -s v2/sw.js
           test -s v2/pwa-init.js
+          test -s v2/pwa-install-ui.js
+          test -s v2/pwa-install.css
+          test -s v2/navigation-history.js
           test -s v2/brand-ui.js
           test -s v2/brand-motion.css
           test -s v2/assets/brand/icon-192.png
@@ -59,6 +68,8 @@ jobs:
         run: |
           node --check v2/sw.js
           node --check v2/pwa-init.js
+          node --check v2/pwa-install-ui.js
+          node --check v2/navigation-history.js
           node --check v2/brand-ui.js
 
       - name: Validate manifest contract
@@ -72,6 +83,7 @@ jobs:
           assert data['scope']=='/v2/'
           assert data['display']=='standalone'
           assert data['theme_color']=='#06111d'
+          assert data.get('prefer_related_applications') is False
           icons={(i['sizes'], i['type'], i['purpose']) for i in data['icons']}
           assert ('192x192','image/png','any') in icons
           assert ('512x512','image/png','any') in icons
@@ -86,9 +98,15 @@ jobs:
           grep -q './brand-motion.css?v=20260823-1' v2/index.html
           grep -q './brand-ui.js?v=20260823-1' v2/index.html
           grep -q './pwa-init.js?v=20260823-1' v2/index.html
+          grep -q './pwa-install-ui.js?v=20260823-1' v2/index.html
+          grep -q './pwa-install.css?v=20260823-1' v2/index.html
+          grep -q './navigation-history.js?v=20260823-1' v2/index.html
+          grep -q 'beforeinstallprompt' v2/pwa-install-ui.js
+          grep -q 'history.pushState' v2/navigation-history.js
+          grep -q "addEventListener('popstate'" v2/navigation-history.js
           grep -q './assets/brand/french-store-mascot.webp' v2/brand-ui.js
           ! grep -Eq "addEventListener\(['\"]fetch|caches\.|CacheStorage" v2/sw.js
-          ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/brand-ui.js v2/brand-motion.css v2/manifest.webmanifest
+          ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/pwa-install-ui.js v2/navigation-history.js v2/brand-ui.js v2/brand-motion.css v2/pwa-install.css v2/manifest.webmanifest
 
       - name: Serve and fetch PWA resources locally
         run: |
@@ -98,6 +116,9 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/manifest.webmanifest >/dev/null
           curl --fail http://127.0.0.1:8080/v2/sw.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/pwa-init.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/pwa-install-ui.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/pwa-install.css >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/navigation-history.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/brand-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/brand-motion.css >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
