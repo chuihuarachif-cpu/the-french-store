@@ -7,8 +7,10 @@
   "start_url": "/v2/",
   "scope": "/v2/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#050b12",
   "theme_color": "#06111d",
+  "prefer_related_applications": false,
   "categories": ["shopping", "entertainment"],
   "icons": [
     {
