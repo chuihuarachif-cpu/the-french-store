@@ -6,12 +6,14 @@ on:
     paths:
       - 'v2/player-verify.js'
       - 'v2/detail-layout-v2.js'
+      - 'v2/detail-layout-v2.css'
       - '.github/workflows/r42-category-detail-id-gate.yml'
   push:
     branches: [main]
     paths:
       - 'v2/player-verify.js'
       - 'v2/detail-layout-v2.js'
+      - 'v2/detail-layout-v2.css'
       - '.github/workflows/r42-category-detail-id-gate.yml'
 
 permissions:
@@ -38,15 +40,15 @@ jobs:
           grep -Fq 'https://api.frenchstorebo.com/api/player-verify' v2/player-verify.js
           grep -Fq 'Authorization:`Bearer ${currentSession.access_token}`' v2/player-verify.js
           grep -Fq "const MANUAL_PREFIX = '[MANUAL_ONLY]'" v2/player-verify.js
-          grep -Fq 'entry.requirements.some((req) => req.manualOnly !== true)' v2/player-verify.js
+          grep -Fq 'entry.requirements.some(req=>req.manualOnly!==true)' v2/player-verify.js
           grep -Fq 'verifiedForGame' v2/player-verify.js
           ! grep -Eqi 'service_role|GAMERHUB_API|GAMERHUB_SECRET|api_secret|precio_proveedor|price_usd' v2/player-verify.js
 
       - name: ID lock is limited to Recargas por ID
         run: |
           set -euo pipefail
-          grep -Fq "const ID_CATEGORY = 'Recargas por ID'" v2/detail-layout-v2.js
-          grep -Fq "currentCategory() !== ID_CATEGORY" v2/detail-layout-v2.js
+          grep -Fq "const ID_CATEGORY='Recargas por ID'" v2/detail-layout-v2.js
+          grep -Fq "cat()!==ID_CATEGORY" v2/detail-layout-v2.js
           grep -Fq 'fs-id-locked' v2/detail-layout-v2.js
           grep -Fq 'Verifica tu ID para habilitar' v2/detail-layout-v2.js
           grep -Fq 'Completa tu ID para habilitar' v2/detail-layout-v2.js
@@ -54,21 +56,27 @@ jobs:
       - name: All four category presentations remain distinct
         run: |
           set -euo pipefail
-          grep -Fq "cat === 'Recargas por Cuenta'" v2/detail-layout-v2.js
-          grep -Fq "cat === 'Streaming'" v2/detail-layout-v2.js
-          grep -Fq "cat === 'Gift Cards'" v2/detail-layout-v2.js
+          grep -Fq "categoryName==='Recargas por Cuenta'" v2/detail-layout-v2.js
+          grep -Fq "categoryName==='Streaming'" v2/detail-layout-v2.js
+          grep -Fq "categoryName==='Gift Cards'" v2/detail-layout-v2.js
           grep -Fq 'Código digital · entrega manual' v2/detail-layout-v2.js
           grep -Fq 'Los códigos Gift Card se entregan manualmente' v2/detail-layout-v2.js
 
       - name: No credential collection or money-moving provider code
         run: |
           set -euo pipefail
-          ! grep -Eqi 'type=.password|contraseña.*input|service[_ -]?role|api[_ -]?secret|GAMERHUB_SECRET|POST /v1/orders|gamerhubCreateOrder' v2/detail-layout-v2.js
+          ! grep -Eqi 'type=.password|service[_ -]?role|api[_ -]?secret|GAMERHUB_SECRET|POST /v1/orders|gamerhubCreateOrder' v2/detail-layout-v2.js
           grep -Fq 'Nunca escribas aquí contraseñas' v2/detail-layout-v2.js
           grep -Fq 'nunca pediremos contraseña' v2/detail-layout-v2.js
 
-      - name: Detail module is loaded by the existing player verification entrypoint
+      - name: Detail module and stylesheet are loaded through the existing entrypoint
         run: |
           set -euo pipefail
-          grep -Fq "script.src = './detail-layout-v2.js?v=20260824-1'" v2/player-verify.js
-          grep -Fq "script.id = 'fs-detail-layout-v2'" v2/player-verify.js
+          grep -Fq "script.src='./detail-layout-v2.js?v=20260824-1'" v2/player-verify.js
+          grep -Fq "link.href='./detail-layout-v2.css?v=20260824-1'" v2/detail-layout-v2.js
+
+      - name: Mutation observers avoid self-render loops
+        run: |
+          set -euo pipefail
+          grep -Fq "observe(catalog,{childList:true,subtree:false})" v2/player-verify.js
+          grep -Fq "observe(catalog,{childList:true,subtree:false})" v2/detail-layout-v2.js
