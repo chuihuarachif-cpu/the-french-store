@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r36-modular-loyalty-rewarded-ui-20260824';
+  const VERSION = 'r36-modular-loyalty-rewarded-ui-20260824-r43';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -67,11 +67,9 @@
     ];
     for (const file of files) await loadScript(file);
 
-    // Preserve the historical patch order immediately after the former app.js.
     await loadScript('https://cdn.jsdelivr.net/gh/chuihuarachif-cpu/the-french-store@e886e90ef48bf24cdbed8e4388b4d4849b24aac1/v2/r6.js', 'fs-r6-js');
     await loadScript('https://cdn.jsdelivr.net/gh/chuihuarachif-cpu/the-french-store@e886e90ef48bf24cdbed8e4388b4d4849b24aac1/v2/r7fix.js', 'fs-r7fix-js');
 
-    // Auth/legal are security/identity behavior, not optional decoration.
     await loadScript('./auth-ease.js', 'fs-auth-ease-js');
     await loadScript('./legal.js', 'fs-legal-js');
     await loadScript('./auth-confirm.js', 'fs-auth-confirm-js');
@@ -80,16 +78,19 @@
   const FEATURE_LOADERS = {
     checkout: async () => {
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
+      await loadScript('./automation-capabilities.js', 'fs-automation-capabilities-js');
       await loadScript('./bisa-checkout.js', 'fs-bisa-checkout-js');
       // Fulfillment must wrap the final QR handler, so it loads after BISA checkout.
       await loadScript('./fulfillment-inputs.js', 'fs-fulfillment-inputs-js');
+      // This decorator never confirms payment; it only changes customer messaging
+      // after BISA has already confirmed payment on the backend.
+      await loadScript('./automatic-order-ui.js', 'fs-automatic-order-ui-js');
     },
     wallet: async () => {
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
       await loadScript('./bisa-wallet.js', 'fs-bisa-wallet-js');
     },
     orders: async () => {
-      // Orders must have the real BISA loadOrders implementation before decorators.
       await ensureFeature('checkout');
       await loadStyle('./order-cancel-ui.css', 'fs-order-cancel-css');
       await loadScript('./order-cancel-ui.js', 'fs-order-cancel-js');
@@ -215,7 +216,6 @@
       }
     }, true);
 
-    // Load motion only after there is real catalog/featured content to animate.
     const maybeLoadMotion = () => {
       if (document.querySelector('.r6-game-card,.r6-feature-card,.r6-game-detail')) ensureFeature('motion').catch(() => {});
     };
@@ -233,8 +233,6 @@
         delete document.documentElement.dataset.fsMembership;
         return;
       }
-      // Core auth owns the shared `session` variable. Make sure it is hydrated before
-      // the isolated loyalty file reads it; this avoids a cold-load race on persisted sessions.
       try {
         if (typeof refreshSession === 'function' && (!session || session.user?.id !== newSession.user?.id)) {
           await refreshSession(newSession);
