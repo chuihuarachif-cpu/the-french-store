@@ -42,7 +42,17 @@ jobs:
           grep -Fq "const MANUAL_PREFIX = '[MANUAL_ONLY]'" v2/player-verify.js
           grep -Fq 'entry.requirements.some(req=>req.manualOnly!==true)' v2/player-verify.js
           grep -Fq 'verifiedForGame' v2/player-verify.js
+          grep -Fq 'cuenta verificada' v2/player-verify.js
           ! grep -Eqi 'service_role|GAMERHUB_API|GAMERHUB_SECRET|api_secret|precio_proveedor|price_usd' v2/player-verify.js
+
+      - name: Automatic ID routes cannot fall back to text-only unlock
+        run: |
+          set -euo pipefail
+          grep -Fq 'hasAutomaticRequirements' v2/detail-layout-v2.js
+          grep -Fq 'reqs.some(req=>req.manualOnly!==true)' v2/detail-layout-v2.js
+          grep -Fq 'const ready=needsVerification?verified:manualValid(game)' v2/detail-layout-v2.js
+          grep -Fq 'FSPlayerVerify?.verifiedForGame?.(game)' v2/detail-layout-v2.js
+          grep -Fq 'ID verificado · paquetes habilitados' v2/detail-layout-v2.js
 
       - name: ID lock is limited to Recargas por ID
         run: |
@@ -72,8 +82,8 @@ jobs:
       - name: Detail module and stylesheet are loaded through the existing entrypoint
         run: |
           set -euo pipefail
-          grep -Fq "script.src='./detail-layout-v2.js?v=20260824-1'" v2/player-verify.js
-          grep -Fq "link.href='./detail-layout-v2.css?v=20260824-1'" v2/detail-layout-v2.js
+          grep -Fq "script.src='./detail-layout-v2.js?v=20260824-2'" v2/player-verify.js
+          grep -Fq "link.href='./detail-layout-v2.css?v=20260824-2'" v2/detail-layout-v2.js
 
       - name: Mutation observers avoid self-render loops
         run: |

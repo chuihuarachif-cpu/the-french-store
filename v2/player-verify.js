@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'player-verify-v2-20260824';
+  const VERSION = 'player-verify-v2-20260824-r43';
   const API_URL = 'https://api.frenchstorebo.com/api/player-verify';
   const MANUAL_PREFIX = '[MANUAL_ONLY]';
   const state = { loaded:false, loading:null, byProduct:new Map(), verified:new Map(), scheduled:false };
@@ -77,7 +77,7 @@
       if(!response.ok||!data?.ok){setResult(result,'error',html(data?.message||'La verificación está temporalmente no disponible.'));return}
       if(data.verified!==true){clear(scope);setResult(result,'error',html(data?.message||'No encontramos una cuenta válida con esos datos.'));return}
       const displayName=text(data.display_name);state.verified.set(scope,{game,productId,productIds:ctx.productIds,inputs:{...values},displayName,verifiedAt:Date.now()});
-      setResult(result,'ok',displayName?`<strong>${html(displayName)}</strong><span> · ID encontrado</span>`:'<strong>Cuenta encontrada</strong><span> · datos válidos</span>');signal(scope);syncCartInputs();
+      setResult(result,'ok',displayName?`<strong>${html(displayName)}</strong><span> · cuenta verificada</span>`:'<strong>Cuenta encontrada</strong><span> · datos verificados</span>');signal(scope);syncCartInputs();
     }catch{setResult(result,'error','No se pudo conectar con la verificación. Intenta nuevamente.')}finally{button.disabled=false;button.textContent='Verificar ID'}
   }
 
@@ -85,17 +85,17 @@
 
   function renderPanel(detail,game,ctx){
     const scope=gameScope(game),existing=state.verified.get(scope);let panel=detail.querySelector('.fs-player-verify');
-    if(panel&&panel.dataset.pvGame===game&&panel.dataset.pvProductId===String(ctx.productId)) return panel;
-    panel?.remove(); panel=document.createElement('section');panel.className='fs-player-verify';panel.dataset.pvGame=game;panel.dataset.pvProductId=String(ctx.productId);
-    panel.innerHTML=`<div class="fs-player-verify-head"><span class="fs-player-verify-step">1</span><div><b>Ingresa y verifica tu ID</b><small>Comprobaremos que la cuenta exista antes de habilitar los paquetes. Nunca pediremos contraseña ni códigos de acceso.</small></div></div><div class="fs-player-fields">${ctx.requirements.map(r=>fieldMarkup(scope,r,existing?.inputs||{})).join('')}</div><div class="fs-player-actions"><button type="button" class="fs-player-verify-btn">Verificar ID</button><div class="fs-player-result" role="status" aria-live="polite"></div></div><p class="fs-player-privacy">La verificación solo confirma los datos necesarios para la recarga. El servidor vuelve a comprobarlos antes de una entrega automática.</p>`;
-    const result=panel.querySelector('.fs-player-result'); if(existing)setResult(result,'ok',existing.displayName?`<strong>${html(existing.displayName)}</strong><span> · ID encontrado</span>`:'<strong>Cuenta encontrada</strong><span> · datos válidos</span>');else setResult(result,'','Escribe tus datos y pulsa “Verificar ID”.');
-    panel.querySelector('.fs-player-verify-btn')?.addEventListener('click',()=>verifyPanel(panel)); panel.querySelectorAll('[data-pv-key]').forEach(c=>c.addEventListener('input',()=>{if(state.verified.has(scope)){clear(scope);setResult(result,'','Los datos cambiaron. Verifica nuevamente el ID.')}}));
-    const head=detail.querySelector('.r6-packages-head'); if(head?.parentNode)head.parentNode.insertBefore(panel,head);else detail.appendChild(panel);return panel;
+    if(panel&&panel.dataset.pvGame===game&&panel.dataset.pvProductId===String(ctx.productId)){detail.querySelector('.fs-manual-id-panel')?.remove();return panel}
+    panel?.remove();detail.querySelector('.fs-manual-id-panel')?.remove();panel=document.createElement('section');panel.className='fs-player-verify';panel.dataset.pvGame=game;panel.dataset.pvProductId=String(ctx.productId);
+    panel.innerHTML=`<div class="fs-player-verify-head"><span class="fs-player-verify-step">1</span><div><b>Ingresa y verifica tu ID</b><small>Comprobaremos que la cuenta exista y te mostraremos el nombre encontrado antes de habilitar los paquetes. Nunca pediremos contraseña ni códigos de acceso.</small></div></div><div class="fs-player-fields">${ctx.requirements.map(r=>fieldMarkup(scope,r,existing?.inputs||{})).join('')}</div><div class="fs-player-actions"><button type="button" class="fs-player-verify-btn">Verificar ID</button><div class="fs-player-result" role="status" aria-live="polite"></div></div><p class="fs-player-privacy">La verificación solo confirma los datos necesarios para la recarga. El servidor vuelve a comprobarlos antes de una entrega automática.</p>`;
+    const result=panel.querySelector('.fs-player-result'); if(existing)setResult(result,'ok',existing.displayName?`<strong>${html(existing.displayName)}</strong><span> · cuenta verificada</span>`:'<strong>Cuenta encontrada</strong><span> · datos verificados</span>');else setResult(result,'','Escribe tus datos y pulsa “Verificar ID”.');
+    panel.querySelector('.fs-player-verify-btn')?.addEventListener('click',()=>verifyPanel(panel));panel.querySelectorAll('[data-pv-key]').forEach(c=>c.addEventListener('input',()=>{if(state.verified.has(scope)){clear(scope);setResult(result,'','Los datos cambiaron. Verifica nuevamente el ID.')}}));
+    const head=detail.querySelector('.r6-packages-head');if(head?.parentNode)head.parentNode.insertBefore(panel,head);else detail.appendChild(panel);requestAnimationFrame(()=>{try{window.FSDetailLayout?.refresh?.()}catch{}});return panel;
   }
 
   async function decorate(){state.scheduled=false;injectStyles();const detail=document.querySelector('#catalogList .r6-game-detail');if(!detail)return;let cat='';try{cat=text(category)}catch{};if(cat!=='Recargas por ID'){detail.querySelector('.fs-player-verify')?.remove();return}const game=text(detail.dataset.fsGame||detail.querySelector('.r6-hero-copy h3')?.textContent||detail.querySelector('.fs-detail-description h3')?.textContent);if(!game)return;if(!await loadRequirements())return;const ctx=contextFor(game);if(!ctx){detail.querySelector('.fs-player-verify')?.remove();return}renderPanel(detail,game,ctx)}
   function schedule(){if(state.scheduled)return;state.scheduled=true;requestAnimationFrame(()=>decorate())}
-  function loadDetailLayout(){if(document.getElementById('fs-detail-layout-v2'))return;const script=document.createElement('script');script.id='fs-detail-layout-v2';script.src='./detail-layout-v2.js?v=20260824-1';script.defer=true;document.head.appendChild(script)}
+  function loadDetailLayout(){if(document.getElementById('fs-detail-layout-v2'))return;const script=document.createElement('script');script.id='fs-detail-layout-v2';script.src='./detail-layout-v2.js?v=20260824-2';script.defer=true;document.head.appendChild(script)}
 
   function install(){injectStyles();const catalog=document.getElementById('catalogList');if(catalog)new MutationObserver(schedule).observe(catalog,{childList:true,subtree:false});const cartBox=document.getElementById('cartItems');if(cartBox)new MutationObserver(()=>requestAnimationFrame(syncCartInputs)).observe(cartBox,{childList:true,subtree:true});document.addEventListener('click',e=>{if(e.target.closest?.('[data-r6-game],[data-r6-feature],[data-r6-back],[data-cat],[data-add],[data-fs-buy-now]')){schedule();requestAnimationFrame(syncCartInputs)}},true);loadRequirements().then(schedule);loadDetailLayout();schedule()}
 

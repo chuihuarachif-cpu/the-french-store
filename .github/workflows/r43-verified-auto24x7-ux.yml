@@ -1,0 +1,93 @@
+name: R43 Verified ID and Auto24x7 UX Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/automation-capabilities.js'
+      - 'v2/automatic-order-ui.js'
+      - 'v2/paid-whatsapp.js'
+      - 'v2/player-verify.js'
+      - 'v2/detail-layout-v2.js'
+      - 'v2/bootstrap.js'
+      - 'v2/index.html'
+      - '.github/workflows/r43-verified-auto24x7-ux.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/automation-capabilities.js'
+      - 'v2/automatic-order-ui.js'
+      - 'v2/paid-whatsapp.js'
+      - 'v2/player-verify.js'
+      - 'v2/detail-layout-v2.js'
+      - 'v2/bootstrap.js'
+      - 'v2/index.html'
+      - '.github/workflows/r43-verified-auto24x7-ux.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: JavaScript syntax
+        run: |
+          set -euo pipefail
+          node --check v2/automation-capabilities.js
+          node --check v2/automatic-order-ui.js
+          node --check v2/paid-whatsapp.js
+          node --check v2/player-verify.js
+          node --check v2/detail-layout-v2.js
+          node --check v2/bootstrap.js
+
+      - name: Real verification owns automatic ID unlock
+        run: |
+          set -euo pipefail
+          grep -Fq '/api/player-verify' v2/player-verify.js
+          grep -Fq 'data.verified!==true' v2/player-verify.js
+          grep -Fq 'display_name' v2/player-verify.js
+          grep -Fq 'cuenta verificada' v2/player-verify.js
+          grep -Fq 'const ready=needsVerification?verified:manualValid(game)' v2/detail-layout-v2.js
+          grep -Fq 'reqs.some(req=>req.manualOnly!==true)' v2/detail-layout-v2.js
+
+      - name: Automatic promise uses live sanitized capability only
+        run: |
+          set -euo pipefail
+          grep -Fq '/api/storefront-automation-capabilities' v2/automation-capabilities.js
+          grep -Fq 'const loaded = await load(true);' v2/automation-capabilities.js
+          grep -Fq 'mode?.known === true && mode?.automatic === true' v2/paid-whatsapp.js
+          grep -Fq 'mode?.known === true && mode?.automatic === true' v2/automatic-order-ui.js
+          grep -Fq 'Recarga automática en proceso' v2/paid-whatsapp.js
+          grep -Fq 'se acreditará a la cuenta verificada' v2/automatic-order-ui.js
+
+      - name: Manual paid flow remains available
+        run: |
+          set -euo pipefail
+          grep -Fq '✅ Pagado el pedido' v2/paid-whatsapp.js
+          grep -Fq 'Avisar pedido pagado por WhatsApp' v2/paid-whatsapp.js
+          grep -Fq 'return false;' v2/paid-whatsapp.js
+
+      - name: Customer modules cannot move provider money or expose secrets
+        run: |
+          set -euo pipefail
+          ! grep -Eqi 'service[_ -]?role|SUPABASE_SERVICE|GAMERHUB_SECRET|api[_ -]?secret|provider_product_code|provider_sku_code|precio_proveedor|price_usd|create.?provider.?order|POST /v1/orders' \
+            v2/automation-capabilities.js v2/automatic-order-ui.js v2/paid-whatsapp.js v2/player-verify.js v2/detail-layout-v2.js
+
+      - name: Checkout loads capability before payment decorators
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('v2/bootstrap.js').read_text()
+          assert text.index('./automation-capabilities.js') < text.index('./bisa-checkout.js')
+          assert text.index('./bisa-checkout.js') < text.index('./fulfillment-inputs.js')
+          assert text.index('./fulfillment-inputs.js') < text.index('./automatic-order-ui.js')
+          PY
+          grep -Fq './bootstrap.js?v=20260824-r43' v2/index.html
+          grep -Fq './player-verify.js?v=20260823-1&build=20260824-r43' v2/index.html
