@@ -1,0 +1,95 @@
+name: R44 Google Auth and 24x7 Legal Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/auth-google.js'
+      - 'v2/legal-account.js'
+      - 'v2/index.html'
+      - 'v2/terms.html'
+      - 'v2/privacy.html'
+      - 'v2/refunds.html'
+      - 'v2/features/cart.js'
+      - '.github/workflows/r44-google-auth-legal-24x7.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/auth-google.js'
+      - 'v2/legal-account.js'
+      - 'v2/index.html'
+      - 'v2/terms.html'
+      - 'v2/privacy.html'
+      - 'v2/refunds.html'
+      - 'v2/features/cart.js'
+      - '.github/workflows/r44-google-auth-legal-24x7.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: JavaScript syntax
+        run: |
+          set -euo pipefail
+          node --check v2/auth-google.js
+          node --check v2/legal-account.js
+          node --check v2/features/cart.js
+
+      - name: Google OAuth is fail-safe and secret-free
+        run: |
+          set -euo pipefail
+          grep -Fq "signInWithOAuth" v2/auth-google.js
+          grep -Fq "provider: 'google'" v2/auth-google.js
+          grep -Fq "https://frenchstorebo.com/v2/" v2/auth-google.js
+          grep -Fq "/auth/v1/settings" v2/auth-google.js
+          grep -Fq "data?.external?.google === true" v2/auth-google.js
+          grep -Fq "credentials: 'omit'" v2/auth-google.js
+          ! grep -Eqi 'client_secret|googleusercontent\.com|provider_token|service_role' v2/auth-google.js
+          grep -Fq './auth-google.js?v=20260824-r44' v2/index.html
+
+      - name: OAuth legal acceptance is account-level
+        run: |
+          set -euo pipefail
+          grep -Fq "const LEGAL_VERSION = '2026-08-24'" v2/legal-account.js
+          grep -Fq 'fs_terms_accepted: true' v2/legal-account.js
+          grep -Fq 'fs_privacy_accepted: true' v2/legal-account.js
+          grep -Fq 'sb.auth.updateUser' v2/legal-account.js
+          grep -Fq "provider === 'google'" v2/legal-account.js
+          grep -Fq './legal-account.js?v=20260824-r44' v2/index.html
+
+      - name: Verified ID and automatic delivery are disclosed
+        run: |
+          set -euo pipefail
+          grep -Fq 'automático 24/7' v2/terms.html
+          grep -Fq 'verificación previa del ID' v2/terms.html
+          grep -Fq 'Zone ID' v2/terms.html
+          grep -Fq 'mismo destino verificado' v2/terms.html
+          grep -Fq 'Inicio de sesión con Google' v2/privacy.html
+          grep -Fq 'no recibe ni almacena la contraseña' v2/privacy.html
+          grep -Fq 'Recargas automáticas 24/7' v2/refunds.html
+          grep -Fq 'mismo destino verificado' v2/refunds.html
+
+      - name: Gift Cards remain manual and categories remain separate
+        run: |
+          set -euo pipefail
+          grep -Fq '<strong>Gift Cards:</strong> códigos digitales cuya entrega permanece manual' v2/terms.html
+          grep -Fq 'Los códigos Gift Card se entregan manualmente' v2/refunds.html
+          grep -Fq 'Recargas por ID' v2/terms.html
+          grep -Fq 'Recargas por Cuenta' v2/terms.html
+          grep -Fq 'Streaming' v2/terms.html
+
+      - name: Multi-unit purchase remains supported
+        run: |
+          set -euo pipefail
+          grep -Fq 'Math.min(99,x.quantity+1)' v2/features/cart.js
+          grep -Fq 'quantity:Number(i.quantity)' v2/features/cart.js
+          grep -Fq 'data-plus' v2/features/cart.js
+          grep -Fq 'data-minus' v2/features/cart.js
