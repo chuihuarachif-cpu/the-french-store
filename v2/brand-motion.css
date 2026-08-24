@@ -1,0 +1,64 @@
+/* FRENCH STORE — isolated brand mascot motion.
+   Visual-only layer. Does not touch checkout, Auth, Wallet, pricing or catalog logic. */
+.hero-gem.fs-brand-ready {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-width: 0;
+  isolation: isolate;
+  font-size: 0;
+}
+
+.hero-gem.fs-brand-ready::before {
+  content: '';
+  position: absolute;
+  width: min(290px, 25vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(43, 218, 255, .17), rgba(10, 92, 142, .07) 48%, transparent 72%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: -1;
+  animation: fsBrandAura 3.8s ease-in-out infinite;
+}
+
+.fs-hero-mascot {
+  display: block;
+  width: min(340px, 28vw);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, .42)) drop-shadow(0 0 20px rgba(62, 220, 255, .22));
+  transform-origin: 50% 55%;
+  animation: fsBrandFloat 5.4s ease-in-out infinite, fsBrandGlow 3.2s ease-in-out infinite;
+}
+
+@keyframes fsBrandFloat {
+  0%, 100% { transform: translate3d(0, 2px, 0) scale(1); }
+  50% { transform: translate3d(0, -8px, 0) scale(1.015); }
+}
+
+@keyframes fsBrandGlow {
+  0%, 100% { filter: drop-shadow(0 14px 28px rgba(0, 0, 0, .42)) drop-shadow(0 0 16px rgba(62, 220, 255, .18)); }
+  50% { filter: drop-shadow(0 16px 30px rgba(0, 0, 0, .45)) drop-shadow(0 0 29px rgba(62, 220, 255, .38)); }
+}
+
+@keyframes fsBrandAura {
+  0%, 100% { opacity: .55; transform: scale(.96); }
+  50% { opacity: .9; transform: scale(1.04); }
+}
+
+@media (max-width: 900px) {
+  .hero-gem.fs-brand-ready { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-hero-mascot,
+  .hero-gem.fs-brand-ready::before {
+    animation: none !important;
+  }
+}

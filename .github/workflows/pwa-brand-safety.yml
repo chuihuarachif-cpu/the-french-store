@@ -1,0 +1,105 @@
+name: PWA Brand Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'favicon.ico'
+      - 'index.html'
+      - 'v2/index.html'
+      - 'v2/manifest.webmanifest'
+      - 'v2/sw.js'
+      - 'v2/pwa-init.js'
+      - 'v2/brand-ui.js'
+      - 'v2/brand-motion.css'
+      - 'v2/assets/brand/**'
+      - '.github/workflows/pwa-brand-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'favicon.ico'
+      - 'index.html'
+      - 'v2/index.html'
+      - 'v2/manifest.webmanifest'
+      - 'v2/sw.js'
+      - 'v2/pwa-init.js'
+      - 'v2/brand-ui.js'
+      - 'v2/brand-motion.css'
+      - 'v2/assets/brand/**'
+      - '.github/workflows/pwa-brand-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-pwa-brand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check isolated PWA and brand files
+        run: |
+          set -euo pipefail
+          test -s favicon.ico
+          test -s v2/manifest.webmanifest
+          test -s v2/sw.js
+          test -s v2/pwa-init.js
+          test -s v2/brand-ui.js
+          test -s v2/brand-motion.css
+          test -s v2/assets/brand/icon-192.png
+          test -s v2/assets/brand/icon-512.png
+          test -s v2/assets/brand/french-store-mascot.webp
+          file favicon.ico | grep -qi 'icon\|MS Windows'
+          file v2/assets/brand/icon-192.png | grep -qi 'PNG image data, 192 x 192'
+          file v2/assets/brand/icon-512.png | grep -qi 'PNG image data, 512 x 512'
+          file v2/assets/brand/french-store-mascot.webp | grep -qi 'Web/P image'
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check v2/sw.js
+          node --check v2/pwa-init.js
+          node --check v2/brand-ui.js
+
+      - name: Validate manifest contract
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path('v2/manifest.webmanifest').read_text())
+          assert data['id']=='/v2/'
+          assert data['start_url']=='/v2/'
+          assert data['scope']=='/v2/'
+          assert data['display']=='standalone'
+          assert data['theme_color']=='#06111d'
+          icons={(i['sizes'], i['type'], i['purpose']) for i in data['icons']}
+          assert ('192x192','image/png','any') in icons
+          assert ('512x512','image/png','any') in icons
+          PY
+
+      - name: Check storefront wiring and safe network behavior
+        run: |
+          set -euo pipefail
+          grep -q 'rel="manifest" href="./manifest.webmanifest"' v2/index.html
+          grep -q 'rel="icon" href="/favicon.ico"' v2/index.html
+          grep -q 'rel="icon" href="/favicon.ico"' index.html
+          grep -q './brand-motion.css?v=20260823-1' v2/index.html
+          grep -q './brand-ui.js?v=20260823-1' v2/index.html
+          grep -q './pwa-init.js?v=20260823-1' v2/index.html
+          grep -q './assets/brand/french-store-mascot.webp' v2/brand-ui.js
+          ! grep -Eq "addEventListener\(['\"]fetch|caches\.|CacheStorage" v2/sw.js
+          ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/brand-ui.js v2/brand-motion.css v2/manifest.webmanifest
+
+      - name: Serve and fetch PWA resources locally
+        run: |
+          python3 -m http.server 8080 >/tmp/fs-pwa-http.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8080/favicon.ico >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/manifest.webmanifest >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/sw.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/pwa-init.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/brand-ui.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/brand-motion.css >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.png >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/brand/french-store-mascot.webp >/dev/null
