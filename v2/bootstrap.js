@@ -101,6 +101,7 @@
     admin: async () => {
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
       await loadScript('./admin-fulfillment-ui.js', 'fs-admin-fulfillment-js');
+      await loadScript('./admin-streaming-prices.js', 'fs-admin-streaming-prices-js');
     },
     motion: async () => {
       await loadStyle('./r8.css', 'fs-r8-css');
