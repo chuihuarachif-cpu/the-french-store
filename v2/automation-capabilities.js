@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'automation-capabilities-v1-20260824';
+  const VERSION = 'automation-capabilities-v1-20260824-r43';
   const API_URL = 'https://api.frenchstorebo.com/api/storefront-automation-capabilities';
   const state = { loaded:false, loading:null, byProduct:new Map() };
 
@@ -65,7 +65,9 @@
 
   async function classifyProducts(values) {
     const ids = [...new Set((Array.isArray(values) ? values : []).map(productId).filter(Boolean))];
-    const loaded = await load();
+    // Payment/order messaging always refreshes this signal so a browser tab cannot
+    // promise automatic delivery from an earlier gate state.
+    const loaded = await load(true);
     if (!loaded || !ids.length) return { known:false, automatic:false, mixed:false };
     const flags = ids.map((id) => isAutomatic(id));
     const automatic = flags.every(Boolean);
