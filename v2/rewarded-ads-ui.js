@@ -165,27 +165,32 @@
     state.saving = true;
     hideStatusMessage();
     render();
+
+    let feedback = 'No se pudo guardar la preferencia. Intenta nuevamente.';
+    let feedbackKind = 'error';
+    let saved = false;
+
     try {
       const { data, error } = await sb.rpc('set_my_rewarded_ad_opt_in', { p_enabled: enabled === true });
       if (error) throw error;
       if (!data || data.ok !== true) throw new Error('REWARDED_AD_PREF_SAVE_INVALID');
       state.prefs = { ...(state.prefs || {}), ...data, auto_offers_enabled: data.auto_offers_enabled === true };
-      render();
-      statusMessage(
-        enabled
-          ? 'Preferencia activada. Cuando el servicio esté disponible, solo recibirás invitaciones opcionales en momentos seguros.'
-          : 'Preferencia desactivada. No recibirás ofertas automáticas; el botón manual seguirá disponible.',
-        'success'
-      );
+      feedback = enabled
+        ? 'Preferencia activada. Cuando el servicio esté disponible, solo recibirás invitaciones opcionales en momentos seguros.'
+        : 'Preferencia desactivada. No recibirás ofertas automáticas; el botón manual seguirá disponible.';
+      feedbackKind = 'success';
+      saved = true;
       window.dispatchEvent(new CustomEvent('fs:rewarded-ad-preference-changed', { detail: { enabled: data.auto_offers_enabled === true } }));
     } catch (error) {
       console.warn('FRENCH STORE rewarded ads preference save failed:', text(error?.message || error).slice(0, 100));
       await load(true);
-      statusMessage('No se pudo guardar la preferencia. Intenta nuevamente.', 'error');
     } finally {
       state.saving = false;
       render();
+      statusMessage(feedback, feedbackKind);
     }
+
+    return saved;
   }
 
   async function requestManualOpportunity(kind) {
