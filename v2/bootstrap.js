@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r36-modular-loyalty-20260823';
+  const VERSION = 'r36-modular-loyalty-rewarded-ui-20260824';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -111,6 +111,8 @@
     loyalty: async () => {
       await loadStyle('./loyalty.css', 'fs-loyalty-css');
       await loadScript('./loyalty.js', 'fs-loyalty-js');
+      await loadStyle('./rewarded-ads.css', 'fs-rewarded-ads-css');
+      await loadScript('./rewarded-ads-ui.js', 'fs-rewarded-ads-js');
     }
   };
 
