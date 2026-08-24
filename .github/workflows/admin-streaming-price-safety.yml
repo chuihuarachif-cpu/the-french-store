@@ -1,0 +1,50 @@
+name: Admin Streaming Price Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/admin-streaming-prices.js'
+      - 'v2/bootstrap.js'
+      - '.github/workflows/admin-streaming-price-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/admin-streaming-prices.js'
+      - 'v2/bootstrap.js'
+      - '.github/workflows/admin-streaming-price-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript
+        run: |
+          node --check v2/admin-streaming-prices.js
+          node --check v2/bootstrap.js
+
+      - name: Check isolated admin pricing contract
+        run: |
+          set -euo pipefail
+          grep -q "admin_update_streaming_price" v2/admin-streaming-prices.js
+          grep -q "eq('categoria', 'Streaming')" v2/admin-streaming-prices.js
+          grep -q "dataAdminTab\|dataset.adminTab = 'streaming'\|data-admin-tab=\\\"streaming\\\"" v2/admin-streaming-prices.js
+          grep -q "admin-streaming-prices.js" v2/bootstrap.js
+          grep -q "if (!admin)" v2/admin-streaming-prices.js
+          grep -q "p_product_id" v2/admin-streaming-prices.js
+          grep -q "p_sale_price" v2/admin-streaming-prices.js
+          grep -q "precio final" v2/admin-streaming-prices.js
+
+      - name: Check pricing separation and secret hygiene
+        run: |
+          set -euo pipefail
+          ! grep -Eqi "service_role|SUPABASE_SERVICE|BISA_SIP|GAMERHUB|BONOXS|GAMETON" v2/admin-streaming-prices.js
+          ! grep -q "from('productos').update\|from(\"productos\").update" v2/admin-streaming-prices.js
+          ! grep -q "Recargas por ID\|Recargas por Cuenta\|Gift Cards\|Pase Semanal\|MLBB" v2/admin-streaming-prices.js
+          grep -q "checkout always recalculates" v2/admin-streaming-prices.js
