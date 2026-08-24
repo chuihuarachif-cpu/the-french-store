@@ -100,7 +100,7 @@
     setTimeout(() => location.assign(CLEAN_URL), 700);
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function initAuthConfirmation() {
     const params = new URL(location.href).searchParams;
     const tokenHash = params.get('token_hash');
     const isSignup = params.get('confirm_signup') === '1';
@@ -126,9 +126,15 @@
     notice(
       isRecovery
         ? 'Enlace recibido. Pulsa “Continuar recuperación” para validarlo.'
-        : 'Enlace recibido. Pulsa “Confirmar mi correo” para terminar.',
+        : 'Enlace recibido. Pulsa “Confirmar y entrar” para terminar.',
       'success'
     );
     document.getElementById('authLinkConfirmButton')?.addEventListener('click', () => verifyLink(tokenHash, kind), { once: true });
-  }, { once: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAuthConfirmation, { once: true });
+  } else {
+    initAuthConfirmation();
+  }
 })();
