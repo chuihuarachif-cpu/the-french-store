@@ -1,0 +1,53 @@
+/* THE FRENCH STORE — Rewarded Ads profile-only styling.
+   Deliberately avoids fixed overlays, banners and z-index takeover. */
+.fs-rewarded-ads-panel{
+  margin-top:18px;
+  padding:18px;
+  border:1px solid rgba(77,214,255,.22);
+  border-radius:20px;
+  background:linear-gradient(180deg,rgba(6,21,34,.88),rgba(5,15,25,.96));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+.fs-rewarded-ads-panel.hidden{display:none!important}
+.fs-rewarded-ads-loading{padding:14px;color:#9fb4c7}
+.fs-rewarded-ads-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.fs-rewarded-ads-head h3{margin:4px 0 0;font-size:1.18rem}
+.fs-rewarded-ads-status{flex:0 0 auto;padding:6px 9px;border-radius:999px;font-size:.75rem;font-weight:700;border:1px solid rgba(255,255,255,.1)}
+.fs-rewarded-ads-status.building{background:rgba(255,184,77,.09);color:#ffd08a;border-color:rgba(255,184,77,.25)}
+.fs-rewarded-ads-status.ready{background:rgba(55,213,145,.09);color:#83efba;border-color:rgba(55,213,145,.25)}
+.fs-rewarded-ads-intro{margin:0 0 14px;color:#b8c8d7;line-height:1.48}
+.fs-rewarded-ads-value{display:grid;gap:3px;padding:13px 14px;border-radius:15px;background:rgba(31,186,236,.075);border:1px solid rgba(63,203,247,.15);margin-bottom:14px}
+.fs-rewarded-ads-value span,.fs-rewarded-ads-value small{color:#91a9bc;font-size:.82rem}
+.fs-rewarded-ads-value strong{color:#dff8ff;font-size:1.04rem}
+.fs-rewarded-ads-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);cursor:pointer}
+.fs-rewarded-ads-toggle-row>span:first-child{display:grid;gap:4px}
+.fs-rewarded-ads-toggle-row b{font-size:.96rem}
+.fs-rewarded-ads-toggle-row small{color:#8fa4b7;line-height:1.4}
+.fs-toggle-control{position:relative;display:inline-flex;flex:0 0 auto;width:48px;height:28px}
+.fs-toggle-control input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.fs-toggle-control i{display:block;width:48px;height:28px;border-radius:999px;background:#293948;border:1px solid rgba(255,255,255,.12);transition:background .18s ease,border-color .18s ease}
+.fs-toggle-control i::after{content:"";display:block;width:20px;height:20px;border-radius:50%;background:#d8e4ec;margin:3px;transition:transform .18s ease}
+.fs-toggle-control input:checked+i{background:rgba(21,183,229,.34);border-color:rgba(67,215,255,.5)}
+.fs-toggle-control input:checked+i::after{transform:translateX(20px);background:#8cecff}
+.fs-toggle-control input:focus-visible+i{outline:2px solid #65dfff;outline-offset:2px}
+.fs-toggle-control input:disabled+i{opacity:.58}
+.fs-rewarded-ads-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.fs-rewarded-ads-actions button{min-height:44px}
+.fs-rewarded-ads-message{margin-top:12px;padding:11px 12px;border-radius:13px;border:1px solid rgba(255,255,255,.09);font-size:.88rem;line-height:1.42}
+.fs-rewarded-ads-message.hidden{display:none!important}
+.fs-rewarded-ads-message.info{background:rgba(56,149,204,.09);color:#bcecff;border-color:rgba(66,194,239,.2)}
+.fs-rewarded-ads-message.success{background:rgba(42,190,119,.08);color:#a6f2cc;border-color:rgba(42,190,119,.2)}
+.fs-rewarded-ads-message.error{background:rgba(217,72,87,.1);color:#ffc1c8;border-color:rgba(217,72,87,.24)}
+.fs-rewarded-ads-safety{display:grid;gap:4px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.07)}
+.fs-rewarded-ads-safety b{color:#d8f7ff}
+.fs-rewarded-ads-safety span,.fs-rewarded-ads-fine{color:#869bad;font-size:.82rem;line-height:1.45}
+.fs-rewarded-ads-fine{margin:10px 0 0}
+@media (max-width:620px){
+  .fs-rewarded-ads-panel{padding:15px;border-radius:17px}
+  .fs-rewarded-ads-head{align-items:center}
+  .fs-rewarded-ads-actions{grid-template-columns:1fr}
+  .fs-rewarded-ads-toggle-row{align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){
+  .fs-toggle-control i,.fs-toggle-control i::after{transition:none}
+}
