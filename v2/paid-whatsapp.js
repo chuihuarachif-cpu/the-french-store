@@ -6,6 +6,9 @@
    Automatic/manual classification comes only from the sanitized Worker capability
    signal. If that signal is unavailable, this module fails closed to the manual flow
    and never promises automatic delivery.
+
+   Performance note: Observe ONLY child-list changes. Do NOT observe attribute
+   changes made by this module, preventing a mutation feedback loop on mobile.
 */
 (() => {
   'use strict';
@@ -144,7 +147,7 @@
 
     const { data: items, error: itemError } = await sb
       .from('order_items')
-      .select('provider,product_id,product_name,quantity')
+      .select('provider,product_name,quantity,product_id')
       .eq('order_id', order.id)
       .order('created_at', { ascending: true });
 
