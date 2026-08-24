@@ -187,7 +187,12 @@
     removeChoiceBox();
     removeBackButton();
     hideAllAuthControls();
-    setHeading('Revisa tu correo', created ? 'Tu cuenta ya fue creada. Falta confirmar tu correo.' : 'Tu cuenta existe, pero falta confirmar el correo.');
+    setHeading(
+      created ? 'Revisa tu correo o recupera tu acceso' : 'Revisa tu correo',
+      created
+        ? 'Por seguridad no confirmamos desde esta pantalla si el correo era nuevo o ya tenía una cuenta.'
+        : 'Tu cuenta existe, pero falta confirmar el correo.'
+    );
     removePendingBox();
 
     const box = document.createElement('div');
@@ -196,10 +201,12 @@
     const gmail = /@gmail\.com$/i.test(email);
     box.innerHTML = `
       <div style="text-align:center;font-size:2rem;margin-bottom:6px" aria-hidden="true">📧</div>
-      <p style="margin:0 0 8px;text-align:center;color:#eaf7ff;font-weight:700">Enviamos la confirmación a:</p>
+      <p style="margin:0 0 8px;text-align:center;color:#eaf7ff;font-weight:700">Correo usado:</p>
       <p style="margin:0 0 12px;text-align:center;color:#7eeeff;overflow-wrap:anywhere"><b>${escapeHtml(email)}</b></p>
-      <p style="margin:0 0 14px;color:#a9bfd0;line-height:1.5">Abre el correo de FRENCH STORE, toca el enlace y pulsa <b>“Confirmar y entrar”</b>. Después quedarás con la sesión iniciada automáticamente.</p>
-      <p style="margin:0 0 14px;color:#8fa7b6;font-size:.88rem;line-height:1.45">Si no aparece, revisa Spam y Promociones. No necesitas volver a crear la cuenta.</p>
+      <p style="margin:0 0 14px;color:#a9bfd0;line-height:1.5">${created
+        ? 'Si este correo es nuevo, revisa el mensaje de confirmación. Si ya tenías una cuenta, vuelve a “Ya tengo cuenta” y usa <b>“Olvidé mi contraseña”</b> si no recuerdas la clave.'
+        : 'Abre el correo de FRENCH STORE, toca el enlace y pulsa <b>“Confirmar y entrar”</b>. Después quedarás con la sesión iniciada automáticamente.'}</p>
+      <p style="margin:0 0 14px;color:#8fa7b6;font-size:.88rem;line-height:1.45">Si esperas una confirmación y no aparece, revisa Spam y Promociones. No crees la cuenta repetidamente.</p>
       ${gmail ? '<a class="primary-btn full" style="display:flex;justify-content:center;text-decoration:none" href="https://mail.google.com/mail/u/0/#inbox" target="_blank" rel="noopener noreferrer">📧 Abrir Gmail</a>' : ''}
       <button id="authPendingResend" type="button" class="secondary-btn full" style="margin-top:8px">Reenviar correo</button>
       <button id="authPendingBack" type="button" class="ghost-btn full" style="margin-top:8px">Volver</button>`;
@@ -207,7 +214,12 @@
     msg?.parentNode?.insertBefore(box, msg);
     document.getElementById('authPendingResend')?.addEventListener('click', resendPending);
     document.getElementById('authPendingBack')?.addEventListener('click', showChoice);
-    notice('Cuenta creada correctamente. Solo falta confirmar el correo.', 'success');
+    notice(
+      created
+        ? 'Solicitud procesada. Revisa tu correo o vuelve para recuperar la contraseña si ya tenías cuenta.'
+        : 'La cuenta necesita confirmar el correo antes de iniciar sesión.',
+      'success'
+    );
   }
 
   function escapeHtml(value){
@@ -243,7 +255,7 @@
         if(raw.includes('rate') || raw.includes('security purposes') || raw.includes('too many')){
           notice('Se hicieron demasiados intentos. Espera un minuto y vuelve a intentarlo.');
         }else{
-          notice('No se pudo crear la cuenta en este momento. Intenta nuevamente en unos minutos.');
+          notice('No se pudo procesar el registro en este momento. Intenta nuevamente en unos minutos.');
         }
         return;
       }
@@ -252,6 +264,9 @@
         setTimeout(() => { if(typeof closeModal === 'function') closeModal('authModal'); }, 350);
         return;
       }
+      // Supabase intentionally obscures whether an email already exists. A successful
+      // signup response without a session therefore MUST NOT be presented as proof that
+      // a brand-new account was created.
       showPending(email, true);
     } finally {
       if(button){ button.disabled = false; button.textContent = 'Crear cuenta'; }
@@ -281,7 +296,7 @@
         return;
       }
       if(code === 'invalid_credentials' || raw.includes('invalid login credentials')){
-        notice('Correo o contraseña incorrectos. Si aún no tienes cuenta, vuelve y pulsa “Crear cuenta nueva”.');
+        notice('Correo o contraseña incorrectos. Si no recuerdas la contraseña, usa “Olvidé mi contraseña”. Si aún no tienes cuenta, vuelve y pulsa “Crear cuenta nueva”.');
         return;
       }
       if(raw.includes('rate') || raw.includes('too many')){

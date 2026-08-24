@@ -1,0 +1,81 @@
+name: Auth and Cancel UX Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/auth-ease.js'
+      - 'v2/legal.js'
+      - 'v2/auth-confirm.js'
+      - 'v2/order-cancel-ui.js'
+      - 'v2/bootstrap.js'
+      - '.github/workflows/auth-cancel-ux-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/auth-ease.js'
+      - 'v2/legal.js'
+      - 'v2/auth-confirm.js'
+      - 'v2/order-cancel-ui.js'
+      - 'v2/bootstrap.js'
+      - '.github/workflows/auth-cancel-ux-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check v2/auth-ease.js
+          node --check v2/legal.js
+          node --check v2/auth-confirm.js
+          node --check v2/order-cancel-ui.js
+
+      - name: Check official Supabase Auth flow
+        run: |
+          set -euo pipefail
+          grep -q "sb.auth.signInWithPassword" v2/auth-ease.js
+          grep -q "sb.auth.signUp" v2/auth-ease.js
+          grep -q "sb.auth.resetPasswordForEmail" v2/legal.js
+          grep -q "sb.auth.updateUser({ password" v2/legal.js
+          grep -q "sb.auth.verifyOtp" v2/auth-confirm.js
+          grep -q "email_not_confirmed" v2/auth-ease.js
+          grep -q "invalid_credentials" v2/auth-ease.js
+          grep -q "Olvidé mi contraseña" v2/auth-ease.js
+          grep -q "Supabase intentionally obscures whether an email already exists" v2/auth-ease.js
+          grep -q "Solicitud procesada. Revisa tu correo o vuelve para recuperar la contraseña" v2/auth-ease.js
+          ! grep -q "Cuenta creada correctamente. Solo falta confirmar el correo." v2/auth-ease.js
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/auth-ease.js v2/legal.js v2/auth-confirm.js
+
+      - name: Check auth module ownership and load order
+        run: |
+          set -euo pipefail
+          grep -q "./auth-ease.js" v2/bootstrap.js
+          grep -q "./legal.js" v2/bootstrap.js
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('v2/bootstrap.js').read_text()
+          assert s.index('./features/auth.js') < s.index('./auth-ease.js') < s.index('./legal.js') < s.index('./auth-confirm.js')
+          a=Path('v2/auth-ease.js').read_text()
+          assert "event.stopImmediatePropagation()" in a
+          assert "if(button.id === 'loginSubmit')" in a
+          assert "if(button.textContent.trim() === 'Crear cuenta')" in a
+          PY
+
+      - name: Check fail-closed cancellation messages
+        run: |
+          set -euo pipefail
+          grep -q "/bisa-sip/order-cancel" v2/order-cancel-ui.js
+          grep -q "PAYMENT_ALREADY_CONFIRMED" v2/order-cancel-ui.js
+          grep -q "BANK_AUTH_UNAVAILABLE" v2/order-cancel-ui.js
+          grep -q "BANK_STATUS_UNAVAILABLE" v2/order-cancel-ui.js
+          grep -q "BANK_QR_DISABLE_FAILED" v2/order-cancel-ui.js
+          grep -q "CANCELLATION_TEMPORARILY_UNAVAILABLE" v2/order-cancel-ui.js
+          grep -q "El pedido sigue sin cambios" v2/order-cancel-ui.js
+          ! grep -R -E "service_role|SUPABASE_SERVICE|BISA_SIP_PROD" v2/order-cancel-ui.js

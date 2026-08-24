@@ -40,9 +40,13 @@
       ORDER_NOT_FOUND: 'No se encontró este pedido o no pertenece a tu cuenta.',
       ORDER_NOT_CANCELLABLE: 'Este pedido ya no puede cancelarse.',
       PAYMENT_ALREADY_CONFIRMED: 'El pago ya fue confirmado. El pedido no puede cancelarse.',
-      INVALID_ORDER_ID: 'El pedido no es válido.'
+      INVALID_ORDER_ID: 'El pedido no es válido.',
+      BANK_AUTH_UNAVAILABLE: 'Por seguridad no se canceló el pedido porque no pudimos iniciar la verificación bancaria. Intenta nuevamente en unos minutos.',
+      BANK_STATUS_UNAVAILABLE: 'Por seguridad no se canceló el pedido porque no pudimos confirmar su estado con BISA. Intenta nuevamente en unos minutos.',
+      BANK_QR_DISABLE_FAILED: 'BISA respondió, pero no pudimos inhabilitar el QR de forma segura. El pedido no fue cancelado. Intenta nuevamente en unos minutos.',
+      CANCELLATION_TEMPORARILY_UNAVAILABLE: 'No se pudo completar la cancelación de forma segura. El pedido sigue sin cambios. Intenta nuevamente en unos minutos.'
     };
-    return map[code] || 'No se pudo cancelar el pedido en este momento. Intenta nuevamente.';
+    return map[code] || 'No se pudo cancelar el pedido en este momento. El pedido sigue sin cambios. Intenta nuevamente.';
   }
 
   function showToast(message, type = 'success') {
