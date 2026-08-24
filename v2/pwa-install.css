@@ -1,0 +1,19 @@
+/* FRENCH STORE — install button presentation only. */
+.fs-install-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.fs-install-btn[disabled] {
+  opacity: .72;
+  cursor: progress;
+}
+
+@media (max-width: 620px) {
+  .fs-install-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}
