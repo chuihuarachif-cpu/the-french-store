@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /v2/preview-r8.html
 
 Sitemap: https://frenchstorebo.com/sitemap.xml
