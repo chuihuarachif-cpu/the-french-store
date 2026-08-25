@@ -1,16 +1,21 @@
-/* THE FRENCH STORE — voluntary Rewarded Ads preference UI.
-   Isolated profile-only shell. It does NOT load an ad network, award points,
-   modify checkout/Wallet/BISA, or display overlays/popups.
-   Server-side Rewarded Ads remain fail-closed until an official provider is integrated. */
+/* THE FRENCH STORE — R47 voluntary Rewards preference + invitation UI.
+   CPX Research is never loaded just by visiting the store or enabling the toggle.
+   This module only renders FRENCH STORE-owned invitations. The third-party provider
+   loads after an authenticated user explicitly taps an opportunity. Reward credit
+   remains server-authoritative and fail-closed. */
 (() => {
   'use strict';
 
-  const VERSION = 'rewarded-ads-profile-v1-20260824';
+  const VERSION = 'rewarded-opportunities-v2-20260825';
+  const SAFE_BROWSE_VIEWS = new Set(['view-inicio', 'view-tienda', 'view-perfil']);
+  const POST_PURCHASE_KEY = 'fs:reward-prompt:order:';
+  const AUTO_PROMPT_KEY = 'fs:reward-auto-prompt-shown';
   const state = {
     prefs: null,
     loading: null,
     mounted: false,
-    saving: false
+    saving: false,
+    autoPromptOpen: false
   };
 
   const text = (value) => String(value ?? '').trim();
@@ -35,7 +40,7 @@
       panel = document.createElement('section');
       panel.id = 'fsRewardedAdsPanel';
       panel.className = 'fs-rewarded-ads-panel hidden';
-      panel.setAttribute('aria-label', 'Ganar French Points con anuncios voluntarios');
+      panel.setAttribute('aria-label', 'Ganar FRENCH Points con oportunidades voluntarias');
       const actions = profile.querySelector('.profile-actions');
       if (actions) profile.insertBefore(panel, actions);
       else profile.appendChild(panel);
@@ -63,7 +68,18 @@
 
   function pointsValue(prefs) {
     const perBob = Math.max(1, Math.trunc(Number(prefs?.points_per_bob || 100)));
-    return `${perBob.toLocaleString('es-BO')} French Points = Bs 1,00`;
+    return `${perBob.toLocaleString('es-BO')} FRENCH Points = Bs 1,00`;
+  }
+
+  function providerState(p) {
+    const productionReady = p?.provider_connected === true
+      && p?.provider_live === true
+      && p?.rewarded_ads_enabled === true
+      && p?.program_launched === true;
+    const testReady = p?.provider_connected === true
+      && p?.provider_test_mode === true
+      && p?.test_access_allowed === true;
+    return { productionReady, testReady, opportunities: p?.manual_opportunities_allowed === true };
   }
 
   function render() {
@@ -73,42 +89,48 @@
     if (!authenticated()) {
       panel.classList.add('hidden');
       panel.innerHTML = '';
+      removeAutoPrompt();
       return;
     }
 
     panel.classList.remove('hidden');
     const p = state.prefs;
     if (!p) {
-      panel.innerHTML = '<div class="fs-rewarded-ads-loading">Cargando opciones de French Points…</div>';
+      panel.innerHTML = '<div class="fs-rewarded-ads-loading">Cargando opciones de FRENCH Points…</div>';
       return;
     }
 
     const autoEnabled = p.auto_offers_enabled === true;
-    const networkReady = p.rewarded_ads_enabled === true && p.provider_connected === true;
-    const statusLabel = networkReady ? 'Disponible' : 'Preparando proveedor';
-    const statusClass = networkReady ? 'ready' : 'building';
+    const ps = providerState(p);
+    const statusLabel = ps.productionReady ? 'Disponible'
+      : ps.testReady ? 'CPX en pruebas'
+        : p.provider_connected === true ? 'Proveedor conectado · preparando lanzamiento'
+          : 'Preparando proveedor';
+    const statusClass = ps.productionReady ? 'ready' : ps.testReady ? 'testing' : 'building';
+    const surveysDisabled = ps.opportunities ? '' : 'disabled';
+    const videoDisabled = p.manual_watch_allowed === true ? '' : 'disabled';
 
     panel.innerHTML = `
       <div class="fs-rewarded-ads-head">
         <div>
           <span class="eyebrow">FRENCH POINTS · OPCIONAL</span>
-          <h3>Gana puntos por iniciativa propia</h3>
+          <h3>Gana puntos cuando tú quieras</h3>
         </div>
         <span class="fs-rewarded-ads-status ${statusClass}">${html(statusLabel)}</span>
       </div>
 
-      <p class="fs-rewarded-ads-intro">No habrá banners ni anuncios permanentes en FRENCH STORE. Tú decides si quieres ver oportunidades para ganar puntos.</p>
+      <p class="fs-rewarded-ads-intro">Las oportunidades son voluntarias. Activar avisos no carga una red externa ni inicia una encuesta: primero verás una invitación de FRENCH STORE y tú decides si abrirla.</p>
 
       <div class="fs-rewarded-ads-value">
-        <span>Valor de referencia</span>
+        <span>Valor de referencia en la tienda</span>
         <strong>${html(pointsValue(p))}</strong>
-        <small>Los puntos canjeables pasan a French Wallet según las reglas de French Rewards.</small>
+        <small>La cantidad obtenida depende del valor que el proveedor confirme al servidor. Una oportunidad puede no tener recompensa si no genera un importe válido.</small>
       </div>
 
       <label class="fs-rewarded-ads-toggle-row">
         <span>
-          <b>Avisarme automáticamente cuando haya una oportunidad</b>
-          <small>OFF por defecto. Si lo activas, solo se podrán ofrecer anuncios en momentos seguros y nunca durante una compra o pago.</small>
+          <b>Avisarme cuando haya una oportunidad</b>
+          <small>OFF por defecto. Si lo activas, podremos mostrar invitaciones discretas solo en Inicio, Tienda o Perfil. Nunca dentro de carrito, checkout, QR, Wallet, Pedidos, login o Admin.</small>
         </span>
         <span class="fs-toggle-control">
           <input id="fsRewardedAdsOptIn" type="checkbox" ${autoEnabled ? 'checked' : ''} ${state.saving ? 'disabled' : ''}>
@@ -117,18 +139,21 @@
       </label>
 
       <div class="fs-rewarded-ads-actions">
-        <button type="button" class="secondary-btn" data-fs-rewarded-action="ad">▶ Ver anuncio ahora</button>
-        <button type="button" class="secondary-btn" data-fs-rewarded-action="offers">📝 Ver oportunidades</button>
+        <button type="button" class="secondary-btn" data-fs-rewarded-action="video" ${videoDisabled}>🎬 Video recompensado</button>
+        <button type="button" class="secondary-btn" data-fs-rewarded-action="offers" ${surveysDisabled}>📝 Encuestas y recompensas</button>
       </div>
+      ${p.manual_watch_allowed === true ? '' : '<small class="fs-rewarded-ads-action-note">Los videos recompensados permanecerán desactivados hasta que un proveedor de video sea aprobado. CPX se usa únicamente para encuestas/oportunidades.</small>'}
 
       <div id="fsRewardedAdsMessage" class="fs-rewarded-ads-message hidden" role="status" aria-live="polite"></div>
 
       <div class="fs-rewarded-ads-safety">
-        <b>Tu tienda sigue limpia.</b>
-        <span>Nunca se mostrarán anuncios dentro de carrito, checkout, QR BISA, French Wallet, Pedidos, inicio de sesión o Admin. Desactivar esta opción impide ofertas automáticas, pero siempre podrás usar “Ver anuncio ahora” por voluntad propia.</span>
+        <b>Privacidad por diseño.</b>
+        <span>CPX solo se carga después de tocar una oportunidad. FRENCH STORE usa un identificador opaco específico para CPX y no le envía automáticamente tu correo, contraseña, saldo Wallet, UUID interno ni datos de tus recargas.</span>
       </div>
 
-      ${networkReady ? '' : '<p class="fs-rewarded-ads-fine">La preferencia ya queda guardada en tu cuenta, pero todavía no se muestran anuncios ni se generan puntos por publicidad. La integración permanecerá bloqueada hasta conectar y validar un proveedor oficial.</p>'}
+      ${ps.productionReady ? '' : ps.testReady
+        ? '<p class="fs-rewarded-ads-fine">Modo de certificación disponible únicamente para administración. Los eventos de prueba no acreditan puntos reales.</p>'
+        : '<p class="fs-rewarded-ads-fine">El proveedor ya puede estar técnicamente conectado, pero los Rewards públicos siguen bloqueados hasta completar la certificación y los controles de lanzamiento.</p>'}
     `;
   }
 
@@ -146,13 +171,14 @@
       if (!data || data.ok !== true) throw new Error('REWARDED_AD_PREFS_INVALID');
       state.prefs = data;
       render();
+      setTimeout(maybeShowAutoPrompt, 120);
       return data;
     })().catch((error) => {
-      console.warn('FRENCH STORE rewarded ads preferences unavailable:', text(error?.message || error).slice(0, 100));
+      console.warn('FRENCH STORE rewarded opportunities unavailable:', text(error?.message || error).slice(0, 100));
       const panel = ensureShell();
       if (panel && authenticated()) {
         panel.classList.remove('hidden');
-        panel.innerHTML = '<div class="notice error">Las opciones para ganar puntos con anuncios no están disponibles temporalmente. La tienda, tus compras y French Wallet siguen funcionando normalmente.</div>';
+        panel.innerHTML = '<div class="notice error">Las oportunidades para ganar puntos no están disponibles temporalmente. La tienda, tus compras y French Wallet siguen funcionando normalmente.</div>';
       }
       return null;
     }).finally(() => { state.loading = null; });
@@ -161,7 +187,7 @@
   }
 
   async function saveOptIn(enabled) {
-    if (!authenticated() || state.saving) return;
+    if (!authenticated() || state.saving) return false;
     state.saving = true;
     hideStatusMessage();
     render();
@@ -176,13 +202,15 @@
       if (!data || data.ok !== true) throw new Error('REWARDED_AD_PREF_SAVE_INVALID');
       state.prefs = { ...(state.prefs || {}), ...data, auto_offers_enabled: data.auto_offers_enabled === true };
       feedback = enabled
-        ? 'Preferencia activada. Cuando el servicio esté disponible, solo recibirás invitaciones opcionales en momentos seguros.'
-        : 'Preferencia desactivada. No recibirás ofertas automáticas; el botón manual seguirá disponible.';
+        ? 'Avisos activados. Verás solo invitaciones opcionales en zonas seguras; ningún proveedor se carga hasta que tú aceptes.'
+        : 'Avisos desactivados. No recibirás invitaciones durante la navegación; después de una compra todavía podremos ofrecerte una recompensa opcional independiente.';
       feedbackKind = 'success';
       saved = true;
       window.dispatchEvent(new CustomEvent('fs:rewarded-ad-preference-changed', { detail: { enabled: data.auto_offers_enabled === true } }));
+      if (!enabled) removeAutoPrompt();
+      else setTimeout(maybeShowAutoPrompt, 250);
     } catch (error) {
-      console.warn('FRENCH STORE rewarded ads preference save failed:', text(error?.message || error).slice(0, 100));
+      console.warn('FRENCH STORE reward preference save failed:', text(error?.message || error).slice(0, 100));
       await load(true);
     } finally {
       state.saving = false;
@@ -193,26 +221,164 @@
     return saved;
   }
 
+  async function openProvider({ orderCode = null, purpose = 'MANUAL' } = {}) {
+    const provider = window.FSRewardedAdsProvider;
+    if (!provider || provider.provider !== 'cpx' || typeof provider.open !== 'function') throw new Error('PROVIDER_NOT_READY');
+    return provider.open({ order_code: orderCode, purpose });
+  }
+
   async function requestManualOpportunity(kind) {
     hideStatusMessage();
     const p = state.prefs || {};
 
-    if (!(p.rewarded_ads_enabled === true && p.provider_connected === true)) {
-      statusMessage('Todavía no hay un proveedor de anuncios activado. No se mostrará publicidad ni se acreditarán puntos hasta que la integración oficial esté lista.', 'info');
+    if (kind === 'video') {
+      if (p.manual_watch_allowed !== true) {
+        statusMessage('Los videos recompensados todavía no están habilitados. Puedes usar Encuestas y recompensas cuando CPX esté disponible.', 'info');
+        return;
+      }
+      statusMessage('El proveedor de video todavía no está conectado a esta versión.', 'info');
       return;
     }
 
-    const provider = window.FSRewardedAdsProvider;
-    if (!provider || typeof provider.open !== 'function') {
-      statusMessage('No hay una oportunidad disponible en este momento. Intenta más tarde.', 'info');
+    if (p.manual_opportunities_allowed !== true) {
+      statusMessage('CPX todavía no está disponible públicamente. La integración permanece bloqueada hasta completar la certificación.', 'info');
       return;
     }
 
     try {
-      await provider.open({ type: kind, voluntary: true });
-    } catch {
-      statusMessage('No se pudo abrir una oportunidad en este momento. Intenta más tarde.', 'error');
+      await openProvider({ purpose: 'MANUAL' });
+    } catch (error) {
+      const code = text(error?.code || error?.message);
+      statusMessage(code === 'REWARDS_NOT_AVAILABLE'
+        ? 'No hay una oportunidad disponible en este momento.'
+        : 'No se pudo abrir CPX en este momento. Intenta más tarde.', code === 'REWARDS_NOT_AVAILABLE' ? 'info' : 'error');
     }
+  }
+
+  function currentSafeBrowseView() {
+    const active = document.querySelector('.view.active');
+    return active && SAFE_BROWSE_VIEWS.has(active.id) ? active.id : null;
+  }
+
+  function anotherModalIsOpen() {
+    return !!document.querySelector('.modal.open:not(#fsCpxRewardsModal)');
+  }
+
+  function removeAutoPrompt() {
+    document.getElementById('fsRewardAutoPrompt')?.remove();
+    state.autoPromptOpen = false;
+  }
+
+  function maybeShowAutoPrompt() {
+    const p = state.prefs || {};
+    if (!authenticated() || p.auto_offers_enabled !== true || p.manual_opportunities_allowed !== true) return;
+    if (!currentSafeBrowseView() || anotherModalIsOpen() || document.getElementById('fsRewardAutoPrompt')) return;
+    try { if (sessionStorage.getItem(AUTO_PROMPT_KEY) === '1') return; } catch {}
+
+    const prompt = document.createElement('aside');
+    prompt.id = 'fsRewardAutoPrompt';
+    prompt.className = 'fs-reward-auto-prompt';
+    prompt.setAttribute('role', 'status');
+    prompt.innerHTML = `
+      <button class="fs-reward-prompt-close" type="button" data-fs-auto-dismiss aria-label="Cerrar">×</button>
+      <span class="eyebrow">FRENCH REWARDS</span>
+      <b>Hay una oportunidad opcional</b>
+      <p>Si quieres, puedes abrir CPX y buscar una encuesta para ganar FRENCH Points. La recompensa depende del importe validado.</p>
+      <button type="button" class="secondary-btn full" data-fs-auto-open>Ver oportunidades</button>`;
+    document.body.appendChild(prompt);
+    state.autoPromptOpen = true;
+    try { sessionStorage.setItem(AUTO_PROMPT_KEY, '1'); } catch {}
+
+    prompt.querySelector('[data-fs-auto-dismiss]')?.addEventListener('click', removeAutoPrompt);
+    prompt.querySelector('[data-fs-auto-open]')?.addEventListener('click', async () => {
+      removeAutoPrompt();
+      try { await openProvider({ purpose: 'AUTO_PROMPT' }); } catch {}
+    });
+  }
+
+  function extractOrderCode(value) {
+    const match = text(value).toUpperCase().match(/FS-\d{6}-[A-Z0-9]{4}/);
+    return match ? match[0] : null;
+  }
+
+  function postPurchaseSeen(code) {
+    try { return sessionStorage.getItem(`${POST_PURCHASE_KEY}${code}`) === '1'; } catch { return false; }
+  }
+
+  function markPostPurchaseSeen(code) {
+    try { sessionStorage.setItem(`${POST_PURCHASE_KEY}${code}`, '1'); } catch {}
+  }
+
+  function postPurchaseCopy() {
+    const pass = state.prefs?.active_pass || null;
+    if (pass) {
+      return {
+        title: `¿Quieres aumentar tus Rewards con ${text(pass.name) || 'tu Rank Pass'}?`,
+        body: 'Abre una oportunidad opcional. Los puntos extra dependen exclusivamente del valor que CPX confirme al servidor; no se promete un multiplicador fijo.'
+      };
+    }
+    return {
+      title: '¿Quieres ganar FRENCH Points extra?',
+      body: 'Puedes abrir una oportunidad opcional después de esta compra. La cantidad depende del valor que CPX confirme al servidor.'
+    };
+  }
+
+  function renderPostPurchasePrompt(code, anchor) {
+    if (!code || !anchor || !authenticated() || state.prefs?.manual_opportunities_allowed !== true || postPurchaseSeen(code)) return;
+    if (document.querySelector(`[data-fs-post-purchase-code="${CSS.escape(code)}"]`)) return;
+
+    const copy = postPurchaseCopy();
+    const card = document.createElement('div');
+    card.className = 'fs-post-purchase-reward-card';
+    card.dataset.fsPostPurchaseCode = code;
+    card.innerHTML = `
+      <div><span class="eyebrow">BONUS OPCIONAL</span><b>${html(copy.title)}</b><p>${html(copy.body)}</p></div>
+      <div class="fs-post-purchase-actions">
+        <button type="button" class="secondary-btn" data-fs-post-dismiss>Ahora no</button>
+        <button type="button" class="primary-btn" data-fs-post-open>Ver oportunidad</button>
+      </div>`;
+    anchor.insertAdjacentElement('afterend', card);
+    markPostPurchaseSeen(code);
+
+    card.querySelector('[data-fs-post-dismiss]')?.addEventListener('click', () => card.remove());
+    card.querySelector('[data-fs-post-open]')?.addEventListener('click', async () => {
+      const button = card.querySelector('[data-fs-post-open]');
+      if (button) { button.disabled = true; button.textContent = 'Abriendo…'; }
+      try {
+        await openProvider({ orderCode: code, purpose: 'MANUAL' });
+        card.remove();
+      } catch {
+        if (button) { button.disabled = false; button.textContent = 'Intentar nuevamente'; }
+      }
+    });
+  }
+
+  function inspectQrPostPurchase() {
+    const qrState = document.getElementById('qrPaymentState');
+    if (!qrState?.classList.contains('paid')) return;
+    const code = extractOrderCode(document.getElementById('qrOrderCode')?.textContent);
+    const anchor = document.getElementById('qrOrderMeta') || qrState;
+    renderPostPurchasePrompt(code, anchor);
+  }
+
+  function inspectWalletPostPurchase() {
+    const result = document.getElementById('checkoutResult');
+    if (!result || result.classList.contains('hidden') || !result.classList.contains('success')) return;
+    const code = extractOrderCode(result.textContent);
+    if (code) renderPostPurchasePrompt(code, result);
+  }
+
+  function installObservers() {
+    const qrModal = document.getElementById('qrModal');
+    if (qrModal) new MutationObserver(() => setTimeout(inspectQrPostPurchase, 0)).observe(qrModal, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+    const checkoutResult = document.getElementById('checkoutResult');
+    if (checkoutResult) new MutationObserver(() => setTimeout(inspectWalletPostPurchase, 0)).observe(checkoutResult, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+    document.addEventListener('click', (event) => {
+      if (event.target.closest?.('[data-nav]')) setTimeout(maybeShowAutoPrompt, 450);
+    });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(maybeShowAutoPrompt, 300); });
   }
 
   function onChange(event) {
@@ -223,11 +389,12 @@
   function onClick(event) {
     const button = event.target.closest?.('[data-fs-rewarded-action]');
     if (!button) return;
-    requestManualOpportunity(button.dataset.fsRewardedAction || 'ad');
+    requestManualOpportunity(button.dataset.fsRewardedAction || 'offers');
   }
 
   async function init() {
     ensureShell();
+    installObservers();
     if (!authenticated()) {
       try {
         const { data } = await sb.auth.getSession();
@@ -235,11 +402,14 @@
       } catch { render(); return; }
     }
     await load(true);
+    inspectQrPostPurchase();
+    inspectWalletPostPurchase();
 
     try {
       sb.auth.onAuthStateChange((_event, newSession) => {
         if (!newSession) {
           state.prefs = null;
+          removeAutoPrompt();
           render();
         } else {
           setTimeout(() => load(true), 0);
@@ -251,7 +421,8 @@
   window.FSRewardedAdsUI = Object.freeze({
     version: VERSION,
     refresh: () => load(true),
-    request: (kind = 'ad') => requestManualOpportunity(kind)
+    request: (kind = 'offers') => requestManualOpportunity(kind),
+    inspectPostPurchase: () => { inspectQrPostPurchase(); inspectWalletPostPurchase(); }
   });
 
   init();
