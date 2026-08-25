@@ -1,0 +1,56 @@
+name: R56 Official Social Links
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/index.html'
+      - 'v2/legal.css'
+      - '.github/workflows/r56-official-social-links.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/index.html'
+      - 'v2/legal.css'
+      - '.github/workflows/r56-official-social-links.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify official links and safe external navigation
+        run: |
+          set -euo pipefail
+          grep -Fq 'https://www.tiktok.com/@frenchstore?_r=1&amp;_t=ZM-92gu8segzm8' v2/index.html
+          grep -Fq 'https://youtube.com/@frenchstore1?si=kXZtoXiCq52dvBhW' v2/index.html
+          grep -Fq 'https://www.facebook.com/share/1LeZV8aqQ3/' v2/index.html
+          [ "$(grep -o 'target="_blank" rel="noopener noreferrer" aria-label="[^"]* oficial de FRENCH STORE' v2/index.html | wc -l)" -eq 3 ]
+
+      - name: Verify professional social UI contract
+        run: |
+          set -euo pipefail
+          grep -Fq 'class="official-socials"' v2/index.html
+          grep -Fq 'class="social-link social-tiktok"' v2/index.html
+          grep -Fq 'class="social-link social-youtube"' v2/index.html
+          grep -Fq 'class="social-link social-facebook"' v2/index.html
+          grep -Fq '.official-socials{' v2/legal.css
+          grep -Fq '.social-links{' v2/legal.css
+          grep -Fq './legal.css?v=20260825-r56' v2/index.html
+
+      - name: Preserve legal and support footer links
+        run: |
+          set -euo pipefail
+          grep -Fq './terms.html' v2/index.html
+          grep -Fq './privacy.html' v2/index.html
+          grep -Fq './refunds.html' v2/index.html
+          grep -Fq 'https://wa.me/59177057379' v2/index.html
+
+      - name: No secrets added
+        run: |
+          set -euo pipefail
+          ! grep -Eqi 'service_role|client_secret|private_key|BISA_SIP_PROD_PASSWORD|GAMERHUB_CF_ACCESS_CLIENT_SECRET' v2/index.html v2/legal.css
