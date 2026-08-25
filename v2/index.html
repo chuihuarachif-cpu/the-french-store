@@ -14,7 +14,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://jivaaripugjdpxjvjnsu.supabase.co wss://jivaaripugjdpxjvjnsu.supabase.co https://api.frenchstorebo.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://jivaaripugjdpxjvjnsu.supabase.co wss://jivaaripugjdpxjvjnsu.supabase.co https://api.frenchstorebo.com; frame-src 'self' https://offers.cpx-research.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <link rel="canonical" href="https://frenchstorebo.com/v2/">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="192x192" href="./assets/brand/icon-192.png">
@@ -36,6 +36,9 @@
   <link rel="stylesheet" href="./legal.css?v=20260820-0916">
   <link rel="stylesheet" href="./brand-motion.css?v=20260823-1">
   <link rel="stylesheet" href="./pwa-install.css?v=20260823-1">
+  <link rel="stylesheet" href="./notifications.css?v=20260825-r47">
+  <link rel="stylesheet" href="./rank-pass-premium.css?v=20260825-r47">
+  <link rel="stylesheet" href="./cpx-rewards.css?v=20260825-r47">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -79,7 +82,11 @@
 
   <div id="topupQrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" data-close="topupQrModal">×</button><span class="eyebrow">CARGA FRENCH WALLET</span><h2 id="topupQrAmount">Preparando carga</h2><div id="topupQrReference" class="notice success"></div><div class="qr-box"><img alt="QR de carga para French Wallet" loading="eager" decoding="async"></div><p class="security-note">Escanea el QR individual y verifica el monto exacto antes de pagar.</p><p class="security-note"><b>La acreditación es automática.</b> Cuando el pago sea confirmado, el saldo aparecerá en French Wallet sin que tengas que avisar por WhatsApp.</p><p class="security-note">Si todavía no pagaste, puedes cancelar la solicitud. <b>No la canceles mientras tu banca esté procesando el pago.</b></p><div class="checkout-grid"><button class="secondary-btn" data-close="topupQrModal">Cerrar</button><button id="cancelTopupRequest" class="danger-btn">Cancelar solicitud</button></div></div></div>
 
+  <script src="./notifications.js?v=20260825-r47" defer></script>
   <script src="./bootstrap.js?v=20260824-r44" defer></script>
+  <script src="./rank-pass-premium.js?v=20260825-r47" defer></script>
+  <script src="./rank-pass-premium-ready.js?v=20260825-r47" defer></script>
+  <script src="./cpx-rewards-provider.js?v=20260825-r47" defer></script>
   <script src="./auth-google.js?v=20260824-r44" defer></script>
   <!-- R44 supersedes historical cache reference ./legal-account.js?v=20260823-1 -->
   <script src="./legal-account.js?v=20260824-r44" defer></script>

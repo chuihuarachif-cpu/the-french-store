@@ -40,21 +40,41 @@ jobs:
           grep -q 'get_my_rewarded_ad_preferences' v2/rewarded-ads-ui.js
           grep -q 'set_my_rewarded_ad_opt_in' v2/rewarded-ads-ui.js
           grep -q 'auto_offers_enabled' v2/rewarded-ads-ui.js
-          grep -q 'Ver anuncio ahora' v2/rewarded-ads-ui.js
-          grep -q 'No habrá banners ni anuncios permanentes' v2/rewarded-ads-ui.js
+          grep -q 'manual_opportunities_allowed' v2/rewarded-ads-ui.js
+          grep -q 'manual_watch_allowed' v2/rewarded-ads-ui.js
+          grep -q 'Avisarme cuando haya una oportunidad' v2/rewarded-ads-ui.js
+          grep -q 'Video recompensado' v2/rewarded-ads-ui.js
+          grep -q 'Encuestas y recompensas' v2/rewarded-ads-ui.js
           grep -q 'provider_connected === true' v2/rewarded-ads-ui.js
+          grep -q 'provider_live === true' v2/rewarded-ads-ui.js
+          grep -q 'program_launched === true' v2/rewarded-ads-ui.js
+          grep -q 'SAFE_BROWSE_VIEWS' v2/rewarded-ads-ui.js
           grep -q 'FSRewardedAdsProvider' v2/rewarded-ads-ui.js
           grep -q "loadStyle('./rewarded-ads.css'" v2/bootstrap.js
           grep -q "loadScript('./rewarded-ads-ui.js'" v2/bootstrap.js
 
-      - name: Block ad networks, point minting and critical integrations
+      - name: Block direct ad-network loading, point minting and critical integrations
         run: |
           set -euo pipefail
-          ! grep -Eiq 'adsense|doubleclick|adsterra|monetag|adgate|bitlabs|cpx|propeller|onclick=|<script' v2/rewarded-ads-ui.js v2/rewarded-ads.css
+          ! grep -Eiq 'adsense|doubleclick|adsterra|monetag|adgate|bitlabs|propeller|onclick=|<script' v2/rewarded-ads-ui.js v2/rewarded-ads.css
+          ! grep -Eiq 'https?://|<iframe|iframe\.src' v2/rewarded-ads-ui.js
+          ! grep -Fq "document.createElement('iframe')" v2/rewarded-ads-ui.js
+          ! grep -Fq 'document.createElement("iframe")' v2/rewarded-ads-ui.js
           ! grep -Eiq 'loyalty_points_ledger|AD_REWARD|redeem_my_rewards|purchase_my_loyalty_pass' v2/rewarded-ads-ui.js
           ! grep -Eiq 'BISA|order-cancel|checkoutQR|checkoutWallet|wallet_transactions|SUPABASE_SERVICE_ROLE|service_role|GAMERHUB|BONOXS|Gameton' v2/rewarded-ads-ui.js
-          ! grep -Eq 'position:[[:space:]]*fixed|z-index' v2/rewarded-ads.css
           ! grep -Eq 'fetch\(|XMLHttpRequest|WebSocket|EventSource' v2/rewarded-ads-ui.js
+
+      - name: Check first-party prompt boundaries
+        run: |
+          set -euo pipefail
+          grep -q '\.fs-reward-auto-prompt' v2/rewarded-ads.css
+          grep -q '\.fs-post-purchase-reward-card' v2/rewarded-ads.css
+          grep -q 'data-fs-auto-open' v2/rewarded-ads-ui.js
+          grep -q 'data-fs-post-open' v2/rewarded-ads-ui.js
+          grep -q "view-inicio'.*view-tienda'.*view-perfil" v2/rewarded-ads-ui.js
+          grep -q "qrState?.classList.contains('paid')" v2/rewarded-ads-ui.js
+          grep -q "result.classList.contains('success')" v2/rewarded-ads-ui.js
+          grep -q '@media (prefers-reduced-motion:reduce)' v2/rewarded-ads.css
 
       - name: Confirm Rewarded Ads remains loyalty-only lazy load
         run: |
