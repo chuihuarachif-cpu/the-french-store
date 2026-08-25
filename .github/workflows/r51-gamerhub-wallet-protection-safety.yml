@@ -1,0 +1,65 @@
+name: R51 GamerHub Wallet Protection Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/admin-gamerhub-wallet.js'
+      - 'v2/bootstrap.js'
+      - 'v2/index.html'
+      - '.github/workflows/r51-gamerhub-wallet-protection-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/admin-gamerhub-wallet.js'
+      - 'v2/bootstrap.js'
+      - 'v2/index.html'
+      - '.github/workflows/r51-gamerhub-wallet-protection-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript
+        run: |
+          set -euo pipefail
+          node --check v2/admin-gamerhub-wallet.js
+          node --check v2/bootstrap.js
+
+      - name: Verify admin-only RPC surface
+        run: |
+          set -euo pipefail
+          grep -Fq "admin_gamerhub_wallet_state" v2/admin-gamerhub-wallet.js
+          grep -Fq "admin_gamerhub_wallet_add" v2/admin-gamerhub-wallet.js
+          grep -Fq "admin_gamerhub_wallet_consume" v2/admin-gamerhub-wallet.js
+          grep -Fq "if (!admin) return" v2/admin-gamerhub-wallet.js
+          ! grep -Eq "from\(['\"]fx_usdt_inventory|from\(['\"]fx_usdt_inventory_ledger" v2/admin-gamerhub-wallet.js
+
+      - name: Verify protection policy messaging
+        run: |
+          set -euo pipefail
+          grep -Fq "No añade los Bs 0,25" v2/admin-gamerhub-wallet.js
+          grep -Fq "mayor valor entre Binance RAW y tu costo medio real" v2/admin-gamerhub-wallet.js
+          grep -Fq "Costo medio real" v2/admin-gamerhub-wallet.js
+          grep -Fq "Tasa usada para GamerHub" v2/admin-gamerhub-wallet.js
+
+      - name: Verify lazy Admin integration and cache bust
+        run: |
+          set -euo pipefail
+          grep -Fq "admin-gamerhub-wallet.js?v=20260825-r51" v2/bootstrap.js
+          grep -Fq "r51-gamerhub-wallet-protection-20260825" v2/bootstrap.js
+          grep -Fq "bootstrap.js?v=20260825-r51" v2/index.html
+
+      - name: Guard secrets and provider execution
+        run: |
+          set -euo pipefail
+          ! grep -Eqi "service_role|SUPABASE_SERVICE|client_secret|private[_-]?key|GAMERHUB_SECRET|api[_-]?secret" v2/admin-gamerhub-wallet.js v2/bootstrap.js
+          ! grep -Eqi "create.?provider.?order|POST /v1/orders|provider_sku_code|provider_product_code|precio_proveedor" v2/admin-gamerhub-wallet.js
+          grep -Fq "never moves provider money" v2/admin-gamerhub-wallet.js
+          grep -Fq "never purchases provider products" v2/admin-gamerhub-wallet.js
