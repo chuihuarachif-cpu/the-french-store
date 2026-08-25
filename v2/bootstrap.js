@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r50-mlbb-weekly-popular-20260825';
+  const VERSION = 'r51-gamerhub-wallet-protection-20260825';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -105,6 +105,7 @@
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
       await loadScript('./admin-fulfillment-ui.js', 'fs-admin-fulfillment-js');
       await loadScript('./admin-streaming-prices.js?v=20260825-r49', 'fs-admin-streaming-prices-js');
+      await loadScript('./admin-gamerhub-wallet.js?v=20260825-r51', 'fs-admin-gamerhub-wallet-js');
     },
     motion: async () => {
       await loadStyle('./r8.css', 'fs-r8-css');
