@@ -112,10 +112,10 @@
       await loadScript('./r8-icons.js', 'fs-r8-icons-js');
     },
     loyalty: async () => {
-      await loadStyle('./loyalty.css?v=20260825-r49', 'fs-loyalty-css');
-      await loadScript('./loyalty.js?v=20260825-r49', 'fs-loyalty-js');
-      await loadStyle('./rewarded-ads.css?v=20260825-r49', 'fs-rewarded-ads-css');
-      await loadScript('./rewarded-ads-ui.js?v=20260825-r49', 'fs-rewarded-ads-js');
+      await loadStyle('./loyalty.css', 'fs-loyalty-css');
+      await loadScript('./loyalty.js', 'fs-loyalty-js');
+      await loadStyle('./rewarded-ads.css', 'fs-rewarded-ads-css');
+      await loadScript('./rewarded-ads-ui.js', 'fs-rewarded-ads-js');
       await loadStyle('./profile-cleanup.css?v=20260825-r49', 'fs-profile-cleanup-css');
     }
   };
