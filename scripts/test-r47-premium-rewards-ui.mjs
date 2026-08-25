@@ -98,13 +98,15 @@ assert.equal(autoBlock.includes("addEventListener('click'"), true);
 assert.equal(autoBlock.includes("openProvider({ purpose: 'AUTO_PROMPT' })"), true);
 
 // Post-purchase opportunity is also first-party and is mounted only after trusted paid UI states.
+// The explicit click uses MANUAL at the browser boundary; the backend converts any eligible
+// session carrying order_code to POST_PURCHASE after server-side ownership/payment checks.
 const postStart = rewardsUi.indexOf('function renderPostPurchasePrompt');
 const postEnd = rewardsUi.indexOf('function inspectQrPostPurchase', postStart);
 assert.ok(postStart >= 0 && postEnd > postStart);
 const postBlock = rewardsUi.slice(postStart, postEnd);
 assert.equal(postBlock.includes('data-fs-post-open'), true);
 assert.equal(postBlock.includes("addEventListener('click'"), true);
-assert.equal(postBlock.includes("openProvider({ orderCode: code, purpose: 'AUTO_PROMPT' })"), true);
+assert.equal(postBlock.includes("openProvider({ orderCode: code, purpose: 'MANUAL' })"), true);
 assert.equal(rewardsUi.includes("qrState?.classList.contains('paid')"), true);
 assert.equal(rewardsUi.includes("result.classList.contains('success')"), true);
 
