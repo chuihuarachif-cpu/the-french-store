@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r49-profile-cleanup-streaming-fix-20260825';
+  const VERSION = 'r50-mlbb-weekly-popular-20260825';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -98,7 +98,8 @@
       await loadScript('./paid-whatsapp.js', 'fs-paid-whatsapp-js');
     },
     catalog: async () => {
-      await loadScript('./catalog-order.js', 'fs-catalog-order-js');
+      await loadStyle('./weekly-pass-feature.css?v=20260825-r50', 'fs-weekly-pass-feature-css');
+      await loadScript('./catalog-order.js?v=20260825-r50', 'fs-catalog-order-js');
     },
     admin: async () => {
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
