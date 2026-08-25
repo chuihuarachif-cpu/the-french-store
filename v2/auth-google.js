@@ -1,13 +1,13 @@
-/* THE FRENCH STORE — R45 Google OAuth login.
-   Additive, fail-safe layer. The Google button is shown only when Supabase Auth
-   reports that Google is enabled. Provider detection retries briefly because a
-   newly enabled OAuth provider can take a short moment to propagate. Retries are
-   bounded and network checks time out, so Auth can never keep the storefront busy.
+/* THE FRENCH STORE — R46 Google OAuth login.
+   Additive, fail-safe layer. Google is the preferred entry point when Supabase
+   reports that the provider is enabled. Existing email/password users keep a
+   secondary fallback, and email signup stays reachable only from that fallback
+   while Google Auth is still in Testing.
    No Google client secret or provider token is stored or logged here. */
 (() => {
   'use strict';
 
-  const VERSION = 'google-oauth-v2-20260824-r45';
+  const VERSION = 'google-oauth-v3-20260824-r46';
   const AUTH_SETTINGS_URL = 'https://jivaaripugjdpxjvjnsu.supabase.co/auth/v1/settings';
   const REDIRECT_TO = 'https://frenchstorebo.com/v2/';
   const PROVIDER_CACHE_MS = 5000;
@@ -81,6 +81,72 @@
     } catch {}
   }
 
+  function applyEmailFallbackChoice(currentBox) {
+    if (!currentBox) return;
+    const login = currentBox.querySelector('#authChoiceLogin');
+    const signup = currentBox.querySelector('#authChoiceSignup');
+
+    if (login) {
+      login.textContent = 'Entrar con correo';
+      login.className = 'secondary-btn full';
+      login.style.marginTop = '10px';
+      login.style.fontWeight = '600';
+    }
+
+    // New customers are guided to Google. The email signup flow is deliberately
+    // kept reachable only after entering the email fallback so existing rollout
+    // continuity is preserved while Google remains in Testing.
+    if (signup) {
+      signup.classList.add('hidden');
+      signup.setAttribute('aria-hidden', 'true');
+      signup.tabIndex = -1;
+    }
+
+    let note = currentBox.querySelector('#authTransitionNote');
+    if (!note) {
+      note = document.createElement('p');
+      note.id = 'authTransitionNote';
+      note.style.cssText = 'margin:10px 0 0;text-align:center;color:#8fa7b6;font-size:.82rem;line-height:1.45';
+      note.textContent = 'Google es la opción recomendada. Si ya tenías una cuenta con contraseña, usa “Entrar con correo”.';
+      const legal = currentBox.querySelector('#authGoogleLegal');
+      if (legal) currentBox.insertBefore(note, legal);
+      else currentBox.appendChild(note);
+    }
+  }
+
+  function ensureEmailSignupFallback() {
+    const title = document.querySelector('#authModal .modal-card h2');
+    const emailLabel = document.getElementById('loginEmail')?.closest('label');
+    const loginSubmit = document.getElementById('loginSubmit');
+    const loginMode = title?.textContent?.trim() === 'Iniciar sesión' &&
+      emailLabel && !emailLabel.classList.contains('hidden') &&
+      loginSubmit && !loginSubmit.classList.contains('hidden');
+
+    if (!loginMode) {
+      document.getElementById('authLegacySignupFallback')?.remove();
+      return;
+    }
+    if (document.getElementById('authLegacySignupFallback')) return;
+
+    const back = document.getElementById('authModeBack');
+    const message = document.getElementById('loginMessage');
+    const parent = back?.parentNode || message?.parentNode;
+    if (!parent) return;
+
+    const button = document.createElement('button');
+    button.id = 'authLegacySignupFallback';
+    button.type = 'button';
+    button.className = 'ghost-btn full';
+    button.style.marginTop = '8px';
+    button.textContent = 'Crear cuenta con correo (alternativa)';
+    button.addEventListener('click', () => {
+      try { window.FSAuthEase?.showSignupMode?.(); } catch {}
+    });
+
+    if (back) parent.insertBefore(button, back);
+    else parent.insertBefore(button, message || null);
+  }
+
   async function signInWithGoogle(button) {
     if (button?.dataset.busy === '1') return;
     if (button) {
@@ -144,7 +210,10 @@
 
   async function decorateChoice() {
     const box = recognizeChoiceBox();
-    if (!box || document.getElementById('authChoiceGoogle')) return;
+    if (!box) return;
+
+    applyEmailFallbackChoice(box);
+    if (document.getElementById('authChoiceGoogle')) return;
 
     if (!await googleProviderEnabled()) {
       scheduleProviderRetry();
@@ -161,6 +230,7 @@
     google.className = 'secondary-btn full';
     google.style.cssText = 'margin-bottom:10px;background:#fff;color:#202124;border-color:#dadce0;font-weight:700;';
     google.textContent = 'G  Continuar con Google';
+    google.setAttribute('aria-label', 'Continuar con Google, opción recomendada');
     google.addEventListener('click', () => signInWithGoogle(google));
     currentBox.insertBefore(google, first);
     currentBox.dataset.googleOauthDecorated = '1';
@@ -173,6 +243,8 @@
       legal.innerHTML = 'Al continuar aceptas los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.';
       currentBox.appendChild(legal);
     }
+
+    applyEmailFallbackChoice(currentBox);
   }
 
   function scheduleDecorate() {
@@ -180,6 +252,7 @@
     decorateTimer = setTimeout(() => {
       decorateTimer = null;
       decorateChoice().catch(() => {});
+      ensureEmailSignupFallback();
     }, 0);
   }
 
@@ -187,6 +260,14 @@
     if (observer || !document.documentElement) return;
     observer = new MutationObserver(scheduleDecorate);
     observer.observe(document.documentElement, { childList: true, subtree: true });
+    document.addEventListener('click', (event) => {
+      if (event.target.closest?.('#authChoiceLogin,#authModeBack,#authButton')) {
+        setTimeout(() => {
+          decorateChoice().catch(() => {});
+          ensureEmailSignupFallback();
+        }, 0);
+      }
+    }, true);
     scheduleDecorate();
   }
 
