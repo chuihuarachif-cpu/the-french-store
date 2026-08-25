@@ -5,14 +5,16 @@ on:
     branches: [main]
     paths:
       - 'v2/index.html'
+      - 'v2/bootstrap.js'
       - 'v2/notifications.js'
       - 'v2/notifications.css'
       - 'v2/rank-pass-premium.js'
       - 'v2/rank-pass-premium-ready.js'
       - 'v2/rank-pass-premium.css'
+      - 'v2/rewarded-ads-ui.js'
+      - 'v2/rewarded-ads.css'
       - 'v2/cpx-rewards-provider.js'
       - 'v2/cpx-rewards.css'
-      - 'v2/reward-opportunity-invites.js'
       - 'v2/privacy.html'
       - 'v2/terms.html'
       - 'v2/cookies.html'
@@ -22,14 +24,16 @@ on:
     branches: [main]
     paths:
       - 'v2/index.html'
+      - 'v2/bootstrap.js'
       - 'v2/notifications.js'
       - 'v2/notifications.css'
       - 'v2/rank-pass-premium.js'
       - 'v2/rank-pass-premium-ready.js'
       - 'v2/rank-pass-premium.css'
+      - 'v2/rewarded-ads-ui.js'
+      - 'v2/rewarded-ads.css'
       - 'v2/cpx-rewards-provider.js'
       - 'v2/cpx-rewards.css'
-      - 'v2/reward-opportunity-invites.js'
       - 'v2/privacy.html'
       - 'v2/terms.html'
       - 'v2/cookies.html'
@@ -56,8 +60,8 @@ jobs:
             v2/notifications.js \
             v2/rank-pass-premium.js \
             v2/rank-pass-premium-ready.js \
-            v2/cpx-rewards-provider.js \
-            v2/reward-opportunity-invites.js; do
+            v2/rewarded-ads-ui.js \
+            v2/cpx-rewards-provider.js; do
             test -s "$f"
             node --check "$f"
           done
@@ -72,7 +76,7 @@ jobs:
           set -euo pipefail
           ! grep -REn 'SUPABASE_SERVICE_ROLE_KEY|service_role|CPX_APP_SECURITY_HASH|GAMERHUB_API|BISA.*PASSWORD' \
             v2/notifications.js v2/rank-pass-premium.js v2/rank-pass-premium-ready.js \
-            v2/cpx-rewards-provider.js v2/reward-opportunity-invites.js
+            v2/rewarded-ads-ui.js v2/cpx-rewards-provider.js
           grep -Fq 'id="checkoutWallet"' v2/index.html
           grep -Fq 'id="checkoutQR"' v2/index.html
           grep -Fq 'id="qrModal"' v2/index.html
@@ -84,9 +88,17 @@ jobs:
           set -euo pipefail
           grep -Fq "ALLOWED_WALL_ORIGIN = 'https://offers.cpx-research.com'" v2/cpx-rewards-provider.js
           grep -Fq "type === 'ad'" v2/cpx-rewards-provider.js
-          grep -Fq "auto_offers_enabled" v2/reward-opportunity-invites.js
-          grep -Fq "onAction:" v2/reward-opportunity-invites.js
+          grep -Fq 'VIDEO_REWARD_PROVIDER_NOT_AVAILABLE' v2/cpx-rewards-provider.js
+          grep -Fq 'manual_opportunities_allowed' v2/rewarded-ads-ui.js
+          grep -Fq 'auto_offers_enabled' v2/rewarded-ads-ui.js
+          grep -Fq 'SAFE_BROWSE_VIEWS' v2/rewarded-ads-ui.js
+          grep -Fq 'data-fs-auto-open' v2/rewarded-ads-ui.js
+          grep -Fq 'data-fs-post-open' v2/rewarded-ads-ui.js
+          grep -Fq 'FSRewardedAdsProvider' v2/rewarded-ads-ui.js
+          ! grep -Fq 'offers.cpx-research.com' v2/rewarded-ads-ui.js
           ! grep -REn '<iframe[^>]+src="https://offers\.cpx-research\.com|src="https://offers\.cpx-research\.com' v2/index.html
+          test ! -e v2/reward-opportunity-invites.js
+          ! grep -Fq 'reward-opportunity-invites.js' v2/index.html
 
       - name: Guard Rank visual hierarchy and accessibility
         run: |
@@ -97,3 +109,18 @@ jobs:
           grep -Fq 'Keep the FRENCH STORE brand cyan/blue' v2/rank-pass-premium.css
           grep -Fq 'aria-modal' v2/notifications.js
           grep -Fq "event.key === 'Escape'" v2/notifications.js
+
+      - name: Confirm profile Rewards remains loyalty-only lazy load
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('v2/bootstrap.js').read_text()
+          start=s.index('loyalty: async () => {')
+          end=s.index('\n    }\n  };', start)
+          block=s[start:end]
+          assert "./rewarded-ads.css" in block
+          assert "./rewarded-ads-ui.js" in block
+          core=s[s.index('async function loadCore()'):s.index('const FEATURE_LOADERS')]
+          assert 'rewarded-ads' not in core
+          PY
