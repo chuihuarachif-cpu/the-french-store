@@ -43,13 +43,18 @@
     if (intro?.tagName === 'P') intro.textContent = 'Continúa con Google para acceder de forma rápida y segura.';
   }
 
-  function showChoice(){
-    if (specialAuthFlow()) return;
-    hideLegacyPublicAuth();
-    setHeading();
-    document.getElementById('authChoiceBox')?.remove();
+  function ensureChoiceBox(){
+    let box = document.getElementById('authChoiceBox');
+    if (box) {
+      if (!document.getElementById('authGoogleHost')) {
+        const host = document.createElement('div');
+        host.id = 'authGoogleHost';
+        box.prepend(host);
+      }
+      return box;
+    }
 
-    const box = document.createElement('div');
+    box = document.createElement('div');
     box.id = 'authChoiceBox';
     box.className = 'auth-recovery-box';
     box.innerHTML = `
@@ -59,6 +64,14 @@
       </p>`;
     const message = document.getElementById('loginMessage');
     message?.parentNode?.insertBefore(box, message);
+    return box;
+  }
+
+  function showChoice(){
+    if (specialAuthFlow()) return;
+    hideLegacyPublicAuth();
+    setHeading();
+    ensureChoiceBox();
     window.FSGoogleAuth?.refresh?.().catch?.(() => {});
   }
 
