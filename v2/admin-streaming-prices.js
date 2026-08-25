@@ -1,6 +1,6 @@
 /* THE FRENCH STORE — Admin-only manual final prices for Streaming.
    Isolated from provider costs and every other pricing category/rule.
-   Security and current product identity are enforced again in Supabase. */
+   Security is enforced again in Supabase by admin_update_streaming_price(). */
 (() => {
   'use strict';
 
@@ -12,6 +12,7 @@
 
   function errorMessage(error) {
     const raw = String(error?.message || error || '');
+    const code = String(error?.code || '');
     if (raw.includes('AUTH_REQUIRED') || raw.includes('JWT')) return 'Tu sesión venció. Inicia sesión nuevamente.';
     if (raw.includes('ADMIN_REQUIRED')) return 'Esta función está disponible únicamente para administradores.';
     if (raw.includes('STREAMING_ONLY')) return 'Solo se pueden editar productos de la categoría Streaming.';
@@ -19,6 +20,7 @@
     if (raw.includes('INVALID_STREAMING_IDENTITY')) return 'No pudimos identificar este producto de Streaming. Recarga la lista.';
     if (raw.includes('STREAMING_IDENTITY_AMBIGUOUS')) return 'Hay más de un producto activo con el mismo nombre. No se guardó ningún cambio.';
     if (raw.includes('PRODUCT_NOT_FOUND')) return 'La lista estaba desactualizada. Ya la recargamos; vuelve a guardar el precio.';
+    if (code === 'PGRST202' || /schema cache|Could not find the function/i.test(raw)) return 'El servidor está actualizando sus funciones. Recarga la página e inténtalo nuevamente.';
     if (raw.includes('Failed to fetch') || raw.includes('NetworkError')) return 'No hubo conexión con el servidor. Revisa tu conexión y vuelve a intentar.';
     return 'No se pudo guardar el precio. La lista se recargará para evitar datos desactualizados.';
   }
@@ -89,6 +91,40 @@
     content.insertAdjacentHTML('afterbegin', `<div class="notice error" role="status">${esc(message)}</div>`);
   }
 
+  async function resolveCurrentProductId(id, button) {
+    const parsed = Number(id);
+    if (!Number.isSafeInteger(parsed) || parsed <= 0) return null;
+
+    const row = button.closest('[data-streaming-product]');
+    const game = String(row?.dataset.streamingGame || '').trim();
+    const pack = String(row?.dataset.streamingPackage || '').trim();
+    if (!game || !pack) return parsed;
+
+    // Re-resolve the visible row immediately before saving. If that read ever fails,
+    // the already-rendered current ID is still safer than silently changing another row.
+    const { data, error } = await sb
+      .from('productos')
+      .select('id')
+      .eq('categoria', 'Streaming')
+      .eq('activo', true)
+      .eq('juego', game)
+      .eq('paquete', pack)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) return parsed;
+    const freshId = Number(data?.id);
+    return Number.isSafeInteger(freshId) && freshId > 0 ? freshId : parsed;
+  }
+
+  async function saveByIdentity(game, pack, value) {
+    return sb.rpc('admin_update_streaming_price_by_identity', {
+      p_game: game,
+      p_package: pack,
+      p_sale_price: Number(value.toFixed(2))
+    });
+  }
+
   async function saveStreamingPrice(id, button) {
     if (!admin) return;
     const input = document.querySelector(`[data-streaming-price-input="${CSS.escape(String(id))}"]`);
@@ -101,7 +137,8 @@
     const row = button.closest('[data-streaming-product]');
     const game = String(row?.dataset.streamingGame || '').trim();
     const pack = String(row?.dataset.streamingPackage || '').trim();
-    if (!game || !pack) {
+    const currentId = await resolveCurrentProductId(id, button);
+    if (!currentId || !game || !pack) {
       await reloadStreamingWithNotice('No pudimos identificar este producto. Ya recargamos la lista; vuelve a intentarlo.');
       return;
     }
@@ -110,12 +147,18 @@
     button.disabled = true;
     button.textContent = 'Guardando…';
     try {
-      const { data, error } = await sb.rpc('admin_update_streaming_price_by_identity', {
-        p_game: game,
-        p_package: pack,
+      // Primary path uses the long-standing RPC that is already present in the
+      // PostgREST schema cache. Identity-based fallback handles a truly stale row.
+      let result = await sb.rpc('admin_update_streaming_price', {
+        p_product_id: currentId,
         p_sale_price: Number(value.toFixed(2))
       });
 
+      if (result.error && String(result.error?.message || result.error).includes('PRODUCT_NOT_FOUND')) {
+        result = await saveByIdentity(game, pack, value);
+      }
+
+      const { data, error } = result;
       if (error) {
         const message = errorMessage(error);
         if (String(error?.message || error).includes('PRODUCT_NOT_FOUND') ||
@@ -135,10 +178,12 @@
       if (title) title.textContent = `${game} · ${money(newPrice)}`;
       showRowMessage(id, `Precio actualizado a ${money(newPrice)}. Los pedidos nuevos usarán este valor.`, 'success');
 
+      // Refresh this browser's public catalog immediately. Other clients receive the
+      // new database price on their next catalog load; checkout always recalculates
+      // the authoritative price in Supabase.
       if (typeof loadProducts === 'function') await loadProducts().catch(() => {});
     } catch (error) {
-      const message = errorMessage(error);
-      showRowMessage(id, message, 'error');
+      showRowMessage(id, errorMessage(error), 'error');
     } finally {
       button.disabled = false;
       button.textContent = oldText;
