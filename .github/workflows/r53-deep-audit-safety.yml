@@ -58,14 +58,15 @@ jobs:
           grep -Fq "checkout always recalculates" v2/admin-streaming-prices.js
           ! grep -q "from('productos').update\|from(\"productos\").update" v2/admin-streaming-prices.js
 
-      - name: New customer signup remains Google-first
+      - name: Public auth remains Google-only
         run: |
           set -euo pipefail
           grep -Fq "function addSignupButton(){ return null }" v2/core/ui.js
-          grep -Fq "authChoiceSignup" v2/core/ui.js
-          grep -Fq "authLegacySignupFallback" v2/core/ui.js
-          grep -Fq "Continúa con Google" v2/index.html
-          grep -Fq "respaldo para cuentas existentes y administración" v2/index.html
+          grep -Fq "Continúa con Google para acceder a FRENCH STORE" v2/index.html
+          grep -Fq 'label class="hidden">Correo' v2/index.html
+          grep -Fq 'label class="hidden">Contraseña' v2/index.html
+          grep -Fq 'id="loginSubmit" class="primary-btn full hidden"' v2/index.html
+          ! grep -Fq "respaldo para cuentas existentes y administración" v2/index.html
 
       - name: Cache bust and secret hygiene
         run: |
