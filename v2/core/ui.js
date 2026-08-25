@@ -28,13 +28,11 @@ function wireUI(){
   document.querySelectorAll('[data-admin-tab]').forEach(b=>b.onclick=()=>{adminTab=b.dataset.adminTab;document.querySelectorAll('[data-admin-tab]').forEach(x=>x.classList.toggle('active',x===b));loadAdmin()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal.open').forEach(m=>closeModal(m.id))});
 }
-function addSignupButton(){
-  const btn=document.createElement('button');
-  btn.className='secondary-btn full';btn.style.marginTop='8px';btn.textContent='Crear cuenta';btn.onclick=signUp;
-  $('loginSubmit').after(btn);
-}
+// New customer registration is Google-only. Email/password login remains available
+// as a recovery/admin fallback, but the browser no longer creates email signup controls.
+function addSignupButton(){ return null }
 async function init(){
-  wireUI();addSignupButton();renderCartCounters();
+  wireUI();renderCartCounters();
   await Promise.all([loadProducts(),refreshSession()]);
   sb.auth.onAuthStateChange(async(_event,newSession)=>{await refreshSession(newSession);if(newSession)closeModal('authModal')});
 }
