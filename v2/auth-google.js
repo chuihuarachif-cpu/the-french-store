@@ -19,6 +19,32 @@
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  function specialAuthFlow(){
+    const url = new URL(location.href);
+    return url.searchParams.get('confirm_signup') === '1' ||
+      url.searchParams.get('recover_account') === '1' ||
+      url.searchParams.get('reset') === '1' ||
+      /(?:[#&]type=recovery\b)/i.test(location.href);
+  }
+
+  function sanitizePublicAuth(){
+    if (specialAuthFlow()) return;
+    const modal = document.getElementById('authModal');
+    if (!modal) return;
+    document.getElementById('loginEmail')?.closest('label')?.classList.add('hidden');
+    document.getElementById('loginPassword')?.closest('label')?.classList.add('hidden');
+    document.getElementById('legalAccept')?.closest('label')?.classList.add('hidden');
+    document.getElementById('loginSubmit')?.classList.add('hidden');
+    document.getElementById('authExtraActions')?.classList.add('hidden');
+    document.getElementById('authChoiceLogin')?.remove();
+    document.getElementById('authChoiceSignup')?.remove();
+    document.getElementById('authLegacySignupFallback')?.remove();
+    document.getElementById('authModeBack')?.remove();
+    modal.querySelectorAll('button').forEach((button) => {
+      if (button.textContent.trim() === 'Crear cuenta') button.classList.add('hidden');
+    });
+  }
+
   async function waitForAuthRuntime(timeoutMs = 10000) {
     const started = Date.now();
     while (Date.now() - started < timeoutMs) {
@@ -122,7 +148,17 @@
   }
 
   async function decorateChoice() {
-    const box = document.getElementById('authChoiceBox');
+    if (specialAuthFlow()) return;
+    sanitizePublicAuth();
+    let box = document.getElementById('authChoiceBox');
+    const message = document.getElementById('loginMessage');
+    if (!box && message?.parentNode) {
+      box = document.createElement('div');
+      box.id = 'authChoiceBox';
+      box.className = 'auth-recovery-box';
+      box.innerHTML = '<div id="authGoogleHost"></div><p style="margin:12px 0 0;text-align:center;color:#8fa7b6;font-size:.86rem;line-height:1.45">FRENCH STORE no recibe tu contraseña de Google.</p>';
+      message.parentNode.insertBefore(box, message);
+    }
     const host = document.getElementById('authGoogleHost') || box;
     if (!box || !host || document.getElementById('authChoiceGoogle')) return;
 
@@ -153,7 +189,11 @@
 
   function installObserver() {
     if (observer || !document.documentElement) return;
-    observer = new MutationObserver(() => { decorateChoice().catch(() => {}); });
+    sanitizePublicAuth();
+    observer = new MutationObserver(() => {
+      sanitizePublicAuth();
+      decorateChoice().catch(() => {});
+    });
     observer.observe(document.documentElement, { childList: true, subtree: true });
     decorateChoice().catch(() => {});
   }
@@ -165,6 +205,7 @@
     version: VERSION,
     refresh: async () => {
       stopProviderRetry(true);
+      sanitizePublicAuth();
       const enabled = await googleProviderEnabled(true);
       if (enabled) await decorateChoice();
       else scheduleProviderRetry();
