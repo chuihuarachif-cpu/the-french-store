@@ -1,0 +1,51 @@
+name: R48 Delivery Mode and Payment Action Safety
+
+on:
+  pull_request:
+    paths:
+      - 'v2/bootstrap.js'
+      - 'v2/storefront-safety-overlays.js'
+      - 'v2/delivery-mode-badges.js'
+      - 'v2/delivery-mode-badges.css'
+      - 'v2/payment-action-guard.js'
+      - 'v2/admin-auto-delivery-guard.js'
+      - 'scripts/test-r48-delivery-payment-safety.mjs'
+      - '.github/workflows/r48-delivery-payment-safety.yml'
+  push:
+    branches: [ main ]
+    paths:
+      - 'v2/bootstrap.js'
+      - 'v2/storefront-safety-overlays.js'
+      - 'v2/delivery-mode-badges.js'
+      - 'v2/delivery-mode-badges.css'
+      - 'v2/payment-action-guard.js'
+      - 'v2/admin-auto-delivery-guard.js'
+      - 'scripts/test-r48-delivery-payment-safety.mjs'
+      - '.github/workflows/r48-delivery-payment-safety.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax
+        run: |
+          set -euo pipefail
+          node --check v2/storefront-safety-overlays.js
+          node --check v2/delivery-mode-badges.js
+          node --check v2/payment-action-guard.js
+          node --check v2/admin-auto-delivery-guard.js
+          node --check v2/bootstrap.js
+      - name: R48 contracts
+        run: node scripts/test-r48-delivery-payment-safety.mjs
+      - name: No privileged secrets in new frontend modules
+        run: |
+          set -euo pipefail
+          ! grep -Eiq 'SUPABASE_SERVICE_ROLE|service_role|CPX_APP_SECURITY_HASH|AYET_PUBLISHER_API_KEY|GAMERHUB_API_KEY|BISA_SIP_PROD_PASSWORD' \
+            v2/storefront-safety-overlays.js \
+            v2/delivery-mode-badges.js \
+            v2/payment-action-guard.js \
+            v2/admin-auto-delivery-guard.js
