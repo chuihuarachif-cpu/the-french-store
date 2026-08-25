@@ -1,8 +1,9 @@
 /* THE FRENCH STORE — R45 Google OAuth login.
    Additive, fail-safe layer. The Google button is shown only when Supabase Auth
-   reports that Google is enabled. Provider detection retries safely because a newly
-   enabled OAuth provider can take a short moment to propagate. No Google client
-   secret or provider token is stored or logged here. */
+   reports that Google is enabled. Provider detection retries briefly because a
+   newly enabled OAuth provider can take a short moment to propagate. Retries are
+   bounded and network checks time out, so Auth can never keep the storefront busy.
+   No Google client secret or provider token is stored or logged here. */
 (() => {
   'use strict';
 
@@ -11,11 +12,15 @@
   const REDIRECT_TO = 'https://frenchstorebo.com/v2/';
   const PROVIDER_CACHE_MS = 5000;
   const PROVIDER_RETRY_MS = 2000;
+  const PROVIDER_RETRY_LIMIT = 5;
+  const PROVIDER_FETCH_TIMEOUT_MS = 2500;
   let googleEnabledPromise = null;
   let googleEnabledCheckedAt = 0;
   let observer = null;
   let retryTimer = null;
+  let retryAttempts = 0;
   let decorateTimer = null;
+  let lastChoiceBox = null;
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -30,6 +35,26 @@
     return false;
   }
 
+  async function fetchAuthSettings() {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), PROVIDER_FETCH_TIMEOUT_MS);
+    try {
+      const response = await fetch(AUTH_SETTINGS_URL, {
+        method: 'GET',
+        headers: { apikey: SUPABASE_KEY, Accept: 'application/json' },
+        cache: 'no-store',
+        credentials: 'omit',
+        signal: controller.signal
+      });
+      if (!response.ok) return null;
+      return await response.json().catch(() => null);
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   async function googleProviderEnabled(force = false) {
     const cacheFresh = Date.now() - googleEnabledCheckedAt < PROVIDER_CACHE_MS;
     if (googleEnabledPromise && !force && cacheFresh) return googleEnabledPromise;
@@ -37,19 +62,8 @@
     googleEnabledCheckedAt = Date.now();
     googleEnabledPromise = (async () => {
       if (!await waitForAuthRuntime()) return false;
-      try {
-        const response = await fetch(AUTH_SETTINGS_URL, {
-          method: 'GET',
-          headers: { apikey: SUPABASE_KEY, Accept: 'application/json' },
-          cache: 'no-store',
-          credentials: 'omit'
-        });
-        if (!response.ok) return false;
-        const data = await response.json().catch(() => null);
-        return data?.external?.google === true;
-      } catch {
-        return false;
-      }
+      const data = await fetchAuthSettings();
+      return data?.external?.google === true;
     })();
     return googleEnabledPromise;
   }
@@ -77,16 +91,13 @@
     try {
       if (!await googleProviderEnabled(true)) {
         showMessage('El acceso con Google todavía no está disponible. Intenta nuevamente en unos segundos o usa tu correo.');
-        scheduleProviderRetry();
         return;
       }
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: REDIRECT_TO }
       });
-      if (error) {
-        showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente o usa tu correo.');
-      }
+      if (error) showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente o usa tu correo.');
     } catch {
       showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente o usa tu correo.');
     } finally {
@@ -98,14 +109,15 @@
     }
   }
 
-  function stopProviderRetry() {
-    if (!retryTimer) return;
-    clearTimeout(retryTimer);
+  function stopProviderRetry(resetAttempts = false) {
+    if (retryTimer) clearTimeout(retryTimer);
     retryTimer = null;
+    if (resetAttempts) retryAttempts = 0;
   }
 
   function scheduleProviderRetry() {
-    if (retryTimer || !document.getElementById('authChoiceBox')) return;
+    if (retryTimer || retryAttempts >= PROVIDER_RETRY_LIMIT || !document.getElementById('authChoiceBox')) return;
+    retryAttempts += 1;
     retryTimer = setTimeout(async () => {
       retryTimer = null;
       if (!document.getElementById('authChoiceBox') || document.getElementById('authChoiceGoogle')) return;
@@ -115,8 +127,23 @@
     }, PROVIDER_RETRY_MS);
   }
 
-  async function decorateChoice() {
+  function recognizeChoiceBox() {
     const box = document.getElementById('authChoiceBox');
+    if (!box) {
+      lastChoiceBox = null;
+      stopProviderRetry(true);
+      return null;
+    }
+    if (box !== lastChoiceBox) {
+      lastChoiceBox = box;
+      stopProviderRetry(true);
+      googleEnabledCheckedAt = 0;
+    }
+    return box;
+  }
+
+  async function decorateChoice() {
+    const box = recognizeChoiceBox();
     if (!box || document.getElementById('authChoiceGoogle')) return;
 
     if (!await googleProviderEnabled()) {
@@ -137,7 +164,7 @@
     google.addEventListener('click', () => signInWithGoogle(google));
     currentBox.insertBefore(google, first);
     currentBox.dataset.googleOauthDecorated = '1';
-    stopProviderRetry();
+    stopProviderRetry(true);
 
     if (!document.getElementById('authGoogleLegal')) {
       const legal = document.createElement('p');
@@ -169,6 +196,7 @@
   window.FSGoogleAuth = Object.freeze({
     version: VERSION,
     refresh: async () => {
+      stopProviderRetry(true);
       const enabled = await googleProviderEnabled(true);
       if (enabled) await decorateChoice();
       else scheduleProviderRetry();
