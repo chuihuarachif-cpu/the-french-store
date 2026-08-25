@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r36-modular-loyalty-rewarded-ui-20260824-r43';
+  const VERSION = 'r49-profile-cleanup-streaming-fix-20260825';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -103,7 +103,7 @@
     admin: async () => {
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
       await loadScript('./admin-fulfillment-ui.js', 'fs-admin-fulfillment-js');
-      await loadScript('./admin-streaming-prices.js', 'fs-admin-streaming-prices-js');
+      await loadScript('./admin-streaming-prices.js?v=20260825-r49', 'fs-admin-streaming-prices-js');
     },
     motion: async () => {
       await loadStyle('./r8.css', 'fs-r8-css');
@@ -112,10 +112,11 @@
       await loadScript('./r8-icons.js', 'fs-r8-icons-js');
     },
     loyalty: async () => {
-      await loadStyle('./loyalty.css', 'fs-loyalty-css');
-      await loadScript('./loyalty.js', 'fs-loyalty-js');
-      await loadStyle('./rewarded-ads.css', 'fs-rewarded-ads-css');
-      await loadScript('./rewarded-ads-ui.js', 'fs-rewarded-ads-js');
+      await loadStyle('./loyalty.css?v=20260825-r49', 'fs-loyalty-css');
+      await loadScript('./loyalty.js?v=20260825-r49', 'fs-loyalty-js');
+      await loadStyle('./rewarded-ads.css?v=20260825-r49', 'fs-rewarded-ads-css');
+      await loadScript('./rewarded-ads-ui.js?v=20260825-r49', 'fs-rewarded-ads-js');
+      await loadStyle('./profile-cleanup.css?v=20260825-r49', 'fs-profile-cleanup-css');
     }
   };
 
