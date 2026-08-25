@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r51-gamerhub-wallet-protection-20260825';
+  const VERSION = 'r52-streaming-save-fix-20260825';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -81,10 +81,7 @@
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
       await loadScript('./automation-capabilities.js', 'fs-automation-capabilities-js');
       await loadScript('./bisa-checkout.js', 'fs-bisa-checkout-js');
-      // Fulfillment must wrap the final QR handler, so it loads after BISA checkout.
       await loadScript('./fulfillment-inputs.js', 'fs-fulfillment-inputs-js');
-      // This decorator never confirms payment; it only changes customer messaging
-      // after BISA has already confirmed payment on the backend.
       await loadScript('./automatic-order-ui.js', 'fs-automatic-order-ui-js');
     },
     wallet: async () => {
@@ -104,7 +101,7 @@
     admin: async () => {
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
       await loadScript('./admin-fulfillment-ui.js', 'fs-admin-fulfillment-js');
-      await loadScript('./admin-streaming-prices.js?v=20260825-r49', 'fs-admin-streaming-prices-js');
+      await loadScript('./admin-streaming-prices.js?v=20260825-r52', 'fs-admin-streaming-prices-js');
       await loadScript('./admin-gamerhub-wallet.js?v=20260825-r51', 'fs-admin-gamerhub-wallet-js');
     },
     motion: async () => {
