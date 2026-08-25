@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r52-streaming-save-fix-20260825';
+  const VERSION = 'r53-deep-audit-fixes-20260825';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -101,7 +101,7 @@
     admin: async () => {
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
       await loadScript('./admin-fulfillment-ui.js', 'fs-admin-fulfillment-js');
-      await loadScript('./admin-streaming-prices.js?v=20260825-r52', 'fs-admin-streaming-prices-js');
+      await loadScript('./admin-streaming-prices.js?v=20260825-r53', 'fs-admin-streaming-prices-js');
       await loadScript('./admin-gamerhub-wallet.js?v=20260825-r51', 'fs-admin-gamerhub-wallet-js');
     },
     motion: async () => {
@@ -181,11 +181,11 @@
         if (handled) return;
       }
 
-      if (target.dataset.nav === 'pedidos' && !featureReady.has('orders')) {
-        event.preventDefault();event.stopImmediatePropagation();
-        try { await ensureFeature('orders'); navigate('pedidos'); }
-        catch { navigate('pedidos'); }
-        return;
+      // Orders base rendering already lives in core. Do not consume the first tap while
+      // optional cancellation/WhatsApp helpers load; navigate immediately and warm them
+      // in the background. This fixes the mobile first-tap dead navigation regression.
+      if (target.dataset.nav === 'pedidos') {
+        ensureFeature('orders').catch(() => {});
       }
 
       if (target.id === 'refreshOrders' && !featureReady.has('orders')) {
