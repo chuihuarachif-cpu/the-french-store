@@ -73,6 +73,7 @@
     await loadScript('./auth-ease.js', 'fs-auth-ease-js');
     await loadScript('./legal.js', 'fs-legal-js');
     await loadScript('./auth-confirm.js', 'fs-auth-confirm-js');
+    await loadScript('./storefront-safety-overlays.js', 'fs-storefront-safety-overlays-js');
   }
 
   const FEATURE_LOADERS = {

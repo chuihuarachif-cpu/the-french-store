@@ -1,0 +1,67 @@
+/* THE FRENCH STORE — R48 delivery mode badges.
+   Presentation only. The authoritative automatic/manual decision comes from
+   FSAutomationCapabilities (Worker sanitized capability endpoint). */
+
+.fs-delivery-badge{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  max-width:100%;
+  margin-top:5px;
+  padding:3px 8px;
+  border-radius:999px;
+  font-size:.70rem;
+  font-weight:800;
+  line-height:1.2;
+  letter-spacing:.01em;
+  white-space:normal;
+}
+
+.fs-delivery-badge.is-auto{
+  color:#aef7ff;
+  background:rgba(0,190,230,.11);
+  border:1px solid rgba(87,224,255,.34);
+  box-shadow:0 0 0 1px rgba(87,224,255,.04) inset;
+}
+
+.fs-delivery-badge.is-manual{
+  color:#ffe6a8;
+  background:rgba(190,135,33,.11);
+  border:1px solid rgba(244,191,79,.31);
+}
+
+.package-name .fs-delivery-badge,
+.r6-package-copy .fs-delivery-badge{
+  display:flex;
+}
+
+.fs-delivery-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:8px;
+}
+
+.fs-delivery-legend .fs-delivery-badge{
+  margin-top:0;
+}
+
+.fs-admin-auto-lock-note{
+  margin-top:9px;
+  padding:8px 10px;
+  border-radius:10px;
+  color:#aef7ff;
+  background:rgba(0,190,230,.09);
+  border:1px solid rgba(87,224,255,.24);
+  font-size:.78rem;
+  line-height:1.35;
+}
+
+button.fs-auto-delivery-locked{
+  opacity:.72;
+  cursor:not-allowed;
+}
+
+@media(max-width:560px){
+  .fs-delivery-badge{font-size:.67rem;padding:3px 7px}
+}
