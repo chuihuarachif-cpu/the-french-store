@@ -1,13 +1,10 @@
-/* THE FRENCH STORE — R46 Google OAuth login.
-   Additive, fail-safe layer. Google is the preferred entry point when Supabase
-   reports that the provider is enabled. Existing email/password users keep a
-   secondary fallback, and email signup stays reachable only from that fallback
-   while Google Auth is still in Testing.
-   No Google client secret or provider token is stored or logged here. */
+/* THE FRENCH STORE — R54 Google-only public OAuth login.
+   Google OAuth is the only public sign-in entry point. No Google client secret,
+   provider token or service-role key is stored or logged in the browser. */
 (() => {
   'use strict';
 
-  const VERSION = 'google-oauth-v3-20260824-r46';
+  const VERSION = 'google-oauth-v4-20260825-r54';
   const AUTH_SETTINGS_URL = 'https://jivaaripugjdpxjvjnsu.supabase.co/auth/v1/settings';
   const REDIRECT_TO = 'https://frenchstorebo.com/v2/';
   const PROVIDER_CACHE_MS = 5000;
@@ -19,8 +16,6 @@
   let observer = null;
   let retryTimer = null;
   let retryAttempts = 0;
-  let decorateTimer = null;
-  let lastChoiceBox = null;
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -58,7 +53,6 @@
   async function googleProviderEnabled(force = false) {
     const cacheFresh = Date.now() - googleEnabledCheckedAt < PROVIDER_CACHE_MS;
     if (googleEnabledPromise && !force && cacheFresh) return googleEnabledPromise;
-
     googleEnabledCheckedAt = Date.now();
     googleEnabledPromise = (async () => {
       if (!await waitForAuthRuntime()) return false;
@@ -81,72 +75,6 @@
     } catch {}
   }
 
-  function applyEmailFallbackChoice(currentBox) {
-    if (!currentBox) return;
-    const login = currentBox.querySelector('#authChoiceLogin');
-    const signup = currentBox.querySelector('#authChoiceSignup');
-
-    if (login) {
-      login.textContent = 'Entrar con correo';
-      login.className = 'secondary-btn full';
-      login.style.marginTop = '10px';
-      login.style.fontWeight = '600';
-    }
-
-    // New customers are guided to Google. The email signup flow is deliberately
-    // kept reachable only after entering the email fallback so existing rollout
-    // continuity is preserved while Google remains in Testing.
-    if (signup) {
-      signup.classList.add('hidden');
-      signup.setAttribute('aria-hidden', 'true');
-      signup.tabIndex = -1;
-    }
-
-    let note = currentBox.querySelector('#authTransitionNote');
-    if (!note) {
-      note = document.createElement('p');
-      note.id = 'authTransitionNote';
-      note.style.cssText = 'margin:10px 0 0;text-align:center;color:#8fa7b6;font-size:.82rem;line-height:1.45';
-      note.textContent = 'Google es la opción recomendada. Si ya tenías una cuenta con contraseña, usa “Entrar con correo”.';
-      const legal = currentBox.querySelector('#authGoogleLegal');
-      if (legal) currentBox.insertBefore(note, legal);
-      else currentBox.appendChild(note);
-    }
-  }
-
-  function ensureEmailSignupFallback() {
-    const title = document.querySelector('#authModal .modal-card h2');
-    const emailLabel = document.getElementById('loginEmail')?.closest('label');
-    const loginSubmit = document.getElementById('loginSubmit');
-    const loginMode = title?.textContent?.trim() === 'Iniciar sesión' &&
-      emailLabel && !emailLabel.classList.contains('hidden') &&
-      loginSubmit && !loginSubmit.classList.contains('hidden');
-
-    if (!loginMode) {
-      document.getElementById('authLegacySignupFallback')?.remove();
-      return;
-    }
-    if (document.getElementById('authLegacySignupFallback')) return;
-
-    const back = document.getElementById('authModeBack');
-    const message = document.getElementById('loginMessage');
-    const parent = back?.parentNode || message?.parentNode;
-    if (!parent) return;
-
-    const button = document.createElement('button');
-    button.id = 'authLegacySignupFallback';
-    button.type = 'button';
-    button.className = 'ghost-btn full';
-    button.style.marginTop = '8px';
-    button.textContent = 'Crear cuenta con correo (alternativa)';
-    button.addEventListener('click', () => {
-      try { window.FSAuthEase?.showSignupMode?.(); } catch {}
-    });
-
-    if (back) parent.insertBefore(button, back);
-    else parent.insertBefore(button, message || null);
-  }
-
   async function signInWithGoogle(button) {
     if (button?.dataset.busy === '1') return;
     if (button) {
@@ -156,16 +84,16 @@
     }
     try {
       if (!await googleProviderEnabled(true)) {
-        showMessage('El acceso con Google todavía no está disponible. Intenta nuevamente en unos segundos o usa tu correo.');
+        showMessage('El acceso con Google no está disponible temporalmente. Intenta nuevamente en unos segundos.');
         return;
       }
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: REDIRECT_TO }
       });
-      if (error) showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente o usa tu correo.');
+      if (error) showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente.');
     } catch {
-      showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente o usa tu correo.');
+      showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente.');
     } finally {
       if (button) {
         delete button.dataset.busy;
@@ -193,47 +121,25 @@
     }, PROVIDER_RETRY_MS);
   }
 
-  function recognizeChoiceBox() {
-    const box = document.getElementById('authChoiceBox');
-    if (!box) {
-      lastChoiceBox = null;
-      stopProviderRetry(true);
-      return null;
-    }
-    if (box !== lastChoiceBox) {
-      lastChoiceBox = box;
-      stopProviderRetry(true);
-      googleEnabledCheckedAt = 0;
-    }
-    return box;
-  }
-
   async function decorateChoice() {
-    const box = recognizeChoiceBox();
-    if (!box) return;
-
-    applyEmailFallbackChoice(box);
-    if (document.getElementById('authChoiceGoogle')) return;
+    const box = document.getElementById('authChoiceBox');
+    const host = document.getElementById('authGoogleHost') || box;
+    if (!box || !host || document.getElementById('authChoiceGoogle')) return;
 
     if (!await googleProviderEnabled()) {
       scheduleProviderRetry();
       return;
     }
 
-    const currentBox = document.getElementById('authChoiceBox');
-    const first = currentBox?.querySelector('#authChoiceLogin');
-    if (!currentBox || !first || document.getElementById('authChoiceGoogle')) return;
-
     const google = document.createElement('button');
     google.id = 'authChoiceGoogle';
     google.type = 'button';
     google.className = 'secondary-btn full';
-    google.style.cssText = 'margin-bottom:10px;background:#fff;color:#202124;border-color:#dadce0;font-weight:700;';
+    google.style.cssText = 'background:#fff;color:#202124;border-color:#dadce0;font-weight:700;';
     google.textContent = 'G  Continuar con Google';
-    google.setAttribute('aria-label', 'Continuar con Google, opción recomendada');
+    google.setAttribute('aria-label', 'Continuar con Google');
     google.addEventListener('click', () => signInWithGoogle(google));
-    currentBox.insertBefore(google, first);
-    currentBox.dataset.googleOauthDecorated = '1';
+    host.appendChild(google);
     stopProviderRetry(true);
 
     if (!document.getElementById('authGoogleLegal')) {
@@ -241,34 +147,15 @@
       legal.id = 'authGoogleLegal';
       legal.style.cssText = 'margin:10px 0 0;text-align:center;color:#8fa7b6;font-size:.78rem;line-height:1.4';
       legal.innerHTML = 'Al continuar aceptas los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.';
-      currentBox.appendChild(legal);
+      box.appendChild(legal);
     }
-
-    applyEmailFallbackChoice(currentBox);
-  }
-
-  function scheduleDecorate() {
-    if (decorateTimer) return;
-    decorateTimer = setTimeout(() => {
-      decorateTimer = null;
-      decorateChoice().catch(() => {});
-      ensureEmailSignupFallback();
-    }, 0);
   }
 
   function installObserver() {
     if (observer || !document.documentElement) return;
-    observer = new MutationObserver(scheduleDecorate);
+    observer = new MutationObserver(() => { decorateChoice().catch(() => {}); });
     observer.observe(document.documentElement, { childList: true, subtree: true });
-    document.addEventListener('click', (event) => {
-      if (event.target.closest?.('#authChoiceLogin,#authModeBack,#authButton')) {
-        setTimeout(() => {
-          decorateChoice().catch(() => {});
-          ensureEmailSignupFallback();
-        }, 0);
-      }
-    }, true);
-    scheduleDecorate();
+    decorateChoice().catch(() => {});
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', installObserver, { once: true });
