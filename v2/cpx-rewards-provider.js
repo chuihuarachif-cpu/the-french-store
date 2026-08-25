@@ -7,7 +7,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'cpx-rewards-provider-v1-20260825';
+  const VERSION = 'cpx-rewards-provider-v2-20260825';
   const API_BASE = 'https://api.frenchstorebo.com';
   const SESSION_PATH = '/api/rewards/cpx/session';
   const ALLOWED_WALL_ORIGIN = 'https://offers.cpx-research.com';
@@ -101,7 +101,7 @@
     if (title) {
       const pass = sessionData?.active_pass?.name;
       title.textContent = sessionData?.post_purchase === true && pass
-        ? `Multiplica tus puntos · ${pass}`
+        ? `Aumenta tus Rewards · ${pass}`
         : sessionData?.post_purchase === true
           ? 'Gana puntos extra por tu compra'
           : 'Encuestas y recompensas';
@@ -115,7 +115,12 @@
     document.body.classList.add('modal-open');
   }
 
-  async function open({ purpose = 'MANUAL', order_code: orderCode = null } = {}) {
+  async function open({ type = 'offers', purpose = 'MANUAL', order_code: orderCode = null } = {}) {
+    if (type === 'ad') {
+      const error = new Error('VIDEO_REWARD_PROVIDER_NOT_AVAILABLE');
+      error.code = 'VIDEO_REWARD_PROVIDER_NOT_AVAILABLE';
+      throw error;
+    }
     if (opening) return false;
     opening = true;
     try {
