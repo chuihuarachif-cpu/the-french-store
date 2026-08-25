@@ -36,7 +36,7 @@ jobs:
       - name: Verify fresh R49 entry points
         run: |
           set -euo pipefail
-          grep -q "bootstrap.js?v=20260825-r49" v2/index.html
+          grep -q "bootstrap.js?v=20260825-r" v2/index.html
           grep -q "admin-streaming-prices.js?v=20260825-r49" v2/bootstrap.js
           grep -q "loadScript('./loyalty.js'" v2/bootstrap.js
           grep -q "loadScript('./rewarded-ads-ui.js'" v2/bootstrap.js

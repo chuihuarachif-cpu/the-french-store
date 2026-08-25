@@ -1,10 +1,10 @@
 /* THE FRENCH STORE — deterministic package ordering for Recargas por ID.
    Goal:
-   - Pure in-game currency packages first.
-   - Currency quantity ascending (smallest -> largest), independent of price.
+   - Mobile Legends normal Pase Semanal is the first package and marked POPULAR.
+   - Pure in-game currency packages follow, ordered by delivered quantity ascending.
    - Mobile Legends x2/Event diamonds use the EFFECTIVE delivered amount:
        50+50 => 100, 150+150 => 300, 500+500 => 1000, etc.
-   - Passes/subscriptions/bundles stay after pure currency packages.
+   - Other passes/subscriptions/bundles stay after pure currency packages.
    - Other categories keep their existing order.
 
    This is presentation-only. It does not change prices, product IDs, providers or checkout data.
@@ -24,6 +24,10 @@
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '');
+  }
+
+  function isFeaturedMlbbWeeklyPass(game, name) {
+    return norm(game).includes('mobilelegends') && norm(name) === 'pasesemanal';
   }
 
   function parseCountToken(token) {
@@ -60,6 +64,7 @@
   function keyFor(name, game, node) {
     const text = String(name || '').trim();
     const mlbb = norm(game).includes('mobilelegends');
+    const featuredWeeklyPass = isFeaturedMlbbWeeklyPass(game, text);
     const mlbbLabeledEvent = mlbb && /diamant|diamond/i.test(text) && EVENT_RE.test(text);
     const mlbbGemX2 = mlbb && /💎/.test(text) && /\d[\d.,]*\s*\+\s*\d[\d.,]*/.test(text);
     const mlbbEventDiamonds = mlbbLabeledEvent || mlbbGemX2;
@@ -68,8 +73,8 @@
     const pureCurrency = hasResource && (!passLike || mlbbEventDiamonds);
 
     return {
-      group: pureCurrency ? 0 : 1,
-      quantity: pureCurrency ? quantityFromName(text) : Number.POSITIVE_INFINITY,
+      group: featuredWeeklyPass ? -1 : (pureCurrency ? 0 : 1),
+      quantity: featuredWeeklyPass ? -1 : (pureCurrency ? quantityFromName(text) : Number.POSITIVE_INFINITY),
       price: priceFromNode(node),
       name: text
     };
@@ -87,6 +92,23 @@
       return typeof category !== 'undefined' && category === 'Recargas por ID';
     } catch {
       return false;
+    }
+  }
+
+  function decorateFeaturedNode(node, game, name) {
+    if (!node) return;
+    const featured = isFeaturedMlbbWeeklyPass(game, name);
+    node.classList.toggle('fs-featured-weekly-pass', featured);
+
+    const existing = node.querySelector(':scope > .fs-popular-badge');
+    if (featured && !existing) {
+      const badge = document.createElement('span');
+      badge.className = 'fs-popular-badge';
+      badge.textContent = 'POPULAR';
+      badge.setAttribute('aria-label', 'Producto popular');
+      node.appendChild(badge);
+    } else if (!featured && existing) {
+      existing.remove();
     }
   }
 
@@ -121,6 +143,10 @@
       (node) => node.querySelector('.r6-package-copy strong')?.textContent || '',
       game
     );
+    cards.forEach((node) => {
+      const name = node.querySelector('.r6-package-copy strong')?.textContent || '';
+      decorateFeaturedNode(node, game, name);
+    });
   }
 
   function sortLegacyCatalog() {
@@ -137,6 +163,10 @@
         (node) => node.querySelector('.package-name')?.textContent || '',
         game
       );
+      rows.forEach((node) => {
+        const name = node.querySelector('.package-name')?.textContent || '';
+        decorateFeaturedNode(node, game, name);
+      });
     });
   }
 
