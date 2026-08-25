@@ -33,13 +33,13 @@ jobs:
           node --check v2/bootstrap.js
           node --check v2/admin-streaming-prices.js
 
-      - name: Verify fresh lazy modules
+      - name: Verify fresh R49 entry points
         run: |
           set -euo pipefail
           grep -q "bootstrap.js?v=20260825-r49" v2/index.html
           grep -q "admin-streaming-prices.js?v=20260825-r49" v2/bootstrap.js
-          grep -q "loyalty.js?v=20260825-r49" v2/bootstrap.js
-          grep -q "rewarded-ads-ui.js?v=20260825-r49" v2/bootstrap.js
+          grep -q "loadScript('./loyalty.js'" v2/bootstrap.js
+          grep -q "loadScript('./rewarded-ads-ui.js'" v2/bootstrap.js
           grep -q "profile-cleanup.css?v=20260825-r49" v2/bootstrap.js
 
       - name: Verify compact Profile presentation
