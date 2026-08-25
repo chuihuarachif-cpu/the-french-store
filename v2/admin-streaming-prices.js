@@ -1,6 +1,6 @@
 /* THE FRENCH STORE — Admin-only manual final prices for Streaming.
    Isolated from provider costs and every other pricing category/rule.
-   Security is enforced again in Supabase by admin_update_streaming_price(). */
+   Security and current product identity are enforced again in Supabase. */
 (() => {
   'use strict';
 
@@ -12,12 +12,15 @@
 
   function errorMessage(error) {
     const raw = String(error?.message || error || '');
-    if (raw.includes('AUTH_REQUIRED')) return 'Tu sesión venció. Inicia sesión nuevamente.';
+    if (raw.includes('AUTH_REQUIRED') || raw.includes('JWT')) return 'Tu sesión venció. Inicia sesión nuevamente.';
     if (raw.includes('ADMIN_REQUIRED')) return 'Esta función está disponible únicamente para administradores.';
     if (raw.includes('STREAMING_ONLY')) return 'Solo se pueden editar productos de la categoría Streaming.';
     if (raw.includes('INVALID_STREAMING_PRICE')) return 'Usa un precio válido entre Bs 0,50 y Bs 5.000,00.';
+    if (raw.includes('INVALID_STREAMING_IDENTITY')) return 'No pudimos identificar este producto de Streaming. Recarga la lista.';
+    if (raw.includes('STREAMING_IDENTITY_AMBIGUOUS')) return 'Hay más de un producto activo con el mismo nombre. No se guardó ningún cambio.';
     if (raw.includes('PRODUCT_NOT_FOUND')) return 'La lista estaba desactualizada. Ya la recargamos; vuelve a guardar el precio.';
-    return 'No se pudo guardar el precio. Intenta nuevamente.';
+    if (raw.includes('Failed to fetch') || raw.includes('NetworkError')) return 'No hubo conexión con el servidor. Revisa tu conexión y vuelve a intentar.';
+    return 'No se pudo guardar el precio. La lista se recargará para evitar datos desactualizados.';
   }
 
   function ensureStreamingTab() {
@@ -86,32 +89,6 @@
     content.insertAdjacentHTML('afterbegin', `<div class="notice error" role="status">${esc(message)}</div>`);
   }
 
-  async function resolveCurrentProductId(id, button) {
-    const parsed = Number(id);
-    if (!Number.isSafeInteger(parsed) || parsed <= 0) return null;
-
-    const row = button.closest('[data-streaming-product]');
-    const game = String(row?.dataset.streamingGame || '').trim();
-    const pack = String(row?.dataset.streamingPackage || '').trim();
-    if (!game || !pack) return parsed;
-
-    // Resolve by the product identity immediately before saving. This protects the
-    // admin from a stale browser row if a record was recreated with a new numeric id.
-    const { data, error } = await sb
-      .from('productos')
-      .select('id')
-      .eq('categoria', 'Streaming')
-      .eq('activo', true)
-      .eq('juego', game)
-      .eq('paquete', pack)
-      .limit(1)
-      .maybeSingle();
-
-    if (error) throw error;
-    const freshId = Number(data?.id);
-    return Number.isSafeInteger(freshId) && freshId > 0 ? freshId : null;
-  }
-
   async function saveStreamingPrice(id, button) {
     if (!admin) return;
     const input = document.querySelector(`[data-streaming-price-input="${CSS.escape(String(id))}"]`);
@@ -121,44 +98,47 @@
       return;
     }
 
+    const row = button.closest('[data-streaming-product]');
+    const game = String(row?.dataset.streamingGame || '').trim();
+    const pack = String(row?.dataset.streamingPackage || '').trim();
+    if (!game || !pack) {
+      await reloadStreamingWithNotice('No pudimos identificar este producto. Ya recargamos la lista; vuelve a intentarlo.');
+      return;
+    }
+
     const oldText = button.textContent;
     button.disabled = true;
     button.textContent = 'Guardando…';
     try {
-      const currentId = await resolveCurrentProductId(id, button);
-      if (!currentId) {
-        await reloadStreamingWithNotice('La lista de Streaming cambió. Ya la actualizamos; vuelve a guardar el precio.');
-        return;
-      }
-
-      const { data, error } = await sb.rpc('admin_update_streaming_price', {
-        p_product_id: currentId,
+      const { data, error } = await sb.rpc('admin_update_streaming_price_by_identity', {
+        p_game: game,
+        p_package: pack,
         p_sale_price: Number(value.toFixed(2))
       });
+
       if (error) {
-        if (String(error?.message || error).includes('PRODUCT_NOT_FOUND')) {
-          await reloadStreamingWithNotice(errorMessage(error));
+        const message = errorMessage(error);
+        if (String(error?.message || error).includes('PRODUCT_NOT_FOUND') ||
+            String(error?.message || error).includes('STREAMING_IDENTITY_AMBIGUOUS')) {
+          await reloadStreamingWithNotice(message);
           return;
         }
-        showRowMessage(id, errorMessage(error), 'error');
+        showRowMessage(id, message, 'error');
         return;
       }
 
       const newPrice = Number(data?.new_price ?? value);
       if (input) input.value = newPrice.toFixed(2);
-      const row = button.closest('[data-streaming-product]');
       const current = row?.querySelector('[data-streaming-current]');
       if (current) current.textContent = money(newPrice);
       const title = row?.querySelector('.record-top b');
-      if (title) title.textContent = `${title.textContent.split(' · ')[0]} · ${money(newPrice)}`;
+      if (title) title.textContent = `${game} · ${money(newPrice)}`;
       showRowMessage(id, `Precio actualizado a ${money(newPrice)}. Los pedidos nuevos usarán este valor.`, 'success');
 
-      // Refresh this browser's public catalog immediately. Other clients receive the
-      // new database price on their next catalog load; checkout always recalculates
-      // the authoritative price in Supabase.
       if (typeof loadProducts === 'function') await loadProducts().catch(() => {});
     } catch (error) {
-      showRowMessage(id, errorMessage(error), 'error');
+      const message = errorMessage(error);
+      showRowMessage(id, message, 'error');
     } finally {
       button.disabled = false;
       button.textContent = oldText;
@@ -201,8 +181,6 @@
     return loadStreamingPrices();
   };
 
-  // refreshAdmin was bound before lazy Admin modules existed, so rebind it to the
-  // final composed loadAdmin function now that this module is active.
   const refresh = document.getElementById('refreshAdmin');
   if (refresh) refresh.onclick = () => loadAdmin();
   ensureStreamingTab();

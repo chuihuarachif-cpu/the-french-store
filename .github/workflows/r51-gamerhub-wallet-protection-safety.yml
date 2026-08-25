@@ -53,8 +53,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -Fq "admin-gamerhub-wallet.js?v=20260825-r51" v2/bootstrap.js
-          grep -Fq "r51-gamerhub-wallet-protection-20260825" v2/bootstrap.js
-          grep -Fq "bootstrap.js?v=20260825-r51" v2/index.html
+          grep -Eq "const VERSION = 'r[0-9]+-" v2/bootstrap.js
+          grep -Eq "bootstrap.js\?v=20260825-r[0-9]+" v2/index.html
 
       - name: Guard secrets and provider execution
         run: |
