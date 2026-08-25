@@ -1,4 +1,4 @@
-name: R54 Google Only Public Auth
+name: R54-R55 Google Only Public Auth
 
 on:
   pull_request:
@@ -34,15 +34,13 @@ jobs:
       - name: Public auth is Google-only
         run: |
           set -euo pipefail
-          grep -Fq "google-oauth-v4-20260825-r54" v2/auth-google.js
+          grep -Eq "google-oauth-v[45]-20260825-r(54|55)" v2/auth-google.js
           grep -Fq "provider: 'google'" v2/auth-google.js
           grep -Fq "authChoiceGoogle" v2/auth-google.js
           grep -Fq "authGoogleHost" v2/auth-ease.js
           grep -Fq "Continúa con Google" v2/auth-ease.js
-          ! grep -Fq "Entrar con correo" v2/auth-google.js
-          ! grep -Fq "Crear cuenta con correo (alternativa)" v2/auth-google.js
-          ! grep -Fq "authLegacySignupFallback" v2/auth-ease.js
-          ! grep -Fq "authChoiceSignup" v2/auth-ease.js
+          ! grep -Fq "Entrar con correo" v2/auth-google.js v2/auth-ease.js
+          ! grep -Fq "Crear cuenta con correo (alternativa)" v2/auth-google.js v2/auth-ease.js
           ! grep -Fq "signUpFriendly" v2/auth-ease.js
 
       - name: Stale public email UI is removed fail-safe
@@ -51,6 +49,7 @@ jobs:
           grep -Fq "sanitizePublicAuth" v2/auth-google.js
           grep -Fq "authChoiceLogin')?.remove" v2/auth-google.js
           grep -Fq "authChoiceSignup')?.remove" v2/auth-google.js
+          grep -Fq "authLegacySignupFallback')?.remove" v2/auth-google.js
           grep -Fq "loginEmail')?.closest('label')?.classList.add('hidden')" v2/auth-google.js
           grep -Fq "loginPassword')?.closest('label')?.classList.add('hidden')" v2/auth-google.js
 
@@ -63,8 +62,15 @@ jobs:
           grep -Fq "PROVIDER_FETCH_TIMEOUT_MS = 2500" v2/auth-google.js
           ! grep -Eqi 'client_secret|provider_token|service_role|googleusercontent\.com' v2/auth-google.js v2/auth-ease.js
 
+      - name: Single Google button remains race-safe
+        run: |
+          set -euo pipefail
+          grep -Fq "googleMountInProgress" v2/auth-google.js
+          grep -Fq "dedupeGoogleButtons" v2/auth-google.js
+          grep -Fq "currentHost.replaceChildren(google)" v2/auth-google.js
+
       - name: Email provider is not disabled by frontend code
         run: |
           set -euo pipefail
           ! grep -Eqi 'disable.*email|email.*disabled|signOut.*email' v2/auth-google.js v2/auth-ease.js
-          echo 'R54 removes the public email entry point only. Supabase Email is disabled later after a successful admin Google-login test.'
+          echo 'Public login is Google-only. Supabase Email provider remains a separate server-side configuration until explicitly disabled.'
