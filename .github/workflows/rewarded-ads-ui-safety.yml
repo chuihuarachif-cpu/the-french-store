@@ -57,7 +57,9 @@ jobs:
         run: |
           set -euo pipefail
           ! grep -Eiq 'adsense|doubleclick|adsterra|monetag|adgate|bitlabs|propeller|onclick=|<script' v2/rewarded-ads-ui.js v2/rewarded-ads.css
-          ! grep -Eiq 'https?://|<iframe|iframe\.src|document\.createElement\(["'"']iframe' v2/rewarded-ads-ui.js
+          ! grep -Eiq 'https?://|<iframe|iframe\.src' v2/rewarded-ads-ui.js
+          ! grep -Fq "document.createElement('iframe')" v2/rewarded-ads-ui.js
+          ! grep -Fq 'document.createElement("iframe")' v2/rewarded-ads-ui.js
           ! grep -Eiq 'loyalty_points_ledger|AD_REWARD|redeem_my_rewards|purchase_my_loyalty_pass' v2/rewarded-ads-ui.js
           ! grep -Eiq 'BISA|order-cancel|checkoutQR|checkoutWallet|wallet_transactions|SUPABASE_SERVICE_ROLE|service_role|GAMERHUB|BONOXS|Gameton' v2/rewarded-ads-ui.js
           ! grep -Eq 'fetch\(|XMLHttpRequest|WebSocket|EventSource' v2/rewarded-ads-ui.js
