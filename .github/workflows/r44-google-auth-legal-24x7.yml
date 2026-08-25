@@ -53,7 +53,7 @@ jobs:
           grep -Fq "data?.external?.google === true" v2/auth-google.js
           grep -Fq "credentials: 'omit'" v2/auth-google.js
           ! grep -Eqi 'client_secret|googleusercontent\.com|provider_token|service_role' v2/auth-google.js
-          grep -Fq './auth-google.js?v=20260824-r44' v2/index.html
+          grep -Fq './auth-google.js?v=20260825-r54' v2/index.html
 
       - name: OAuth legal acceptance is account-level
         run: |
