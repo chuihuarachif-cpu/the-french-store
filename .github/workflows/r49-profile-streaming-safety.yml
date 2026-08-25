@@ -1,0 +1,70 @@
+name: R49 Profile and Streaming Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/index.html'
+      - 'v2/bootstrap.js'
+      - 'v2/profile-cleanup.css'
+      - 'v2/admin-streaming-prices.js'
+      - '.github/workflows/r49-profile-streaming-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/index.html'
+      - 'v2/bootstrap.js'
+      - 'v2/profile-cleanup.css'
+      - 'v2/admin-streaming-prices.js'
+      - '.github/workflows/r49-profile-streaming-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript
+        run: |
+          node --check v2/bootstrap.js
+          node --check v2/admin-streaming-prices.js
+
+      - name: Verify fresh lazy modules
+        run: |
+          set -euo pipefail
+          grep -q "bootstrap.js?v=20260825-r49" v2/index.html
+          grep -q "admin-streaming-prices.js?v=20260825-r49" v2/bootstrap.js
+          grep -q "loyalty.js?v=20260825-r49" v2/bootstrap.js
+          grep -q "rewarded-ads-ui.js?v=20260825-r49" v2/bootstrap.js
+          grep -q "profile-cleanup.css?v=20260825-r49" v2/bootstrap.js
+
+      - name: Verify compact Profile presentation
+        run: |
+          set -euo pipefail
+          grep -q "#view-perfil .fs-rank-intro" v2/profile-cleanup.css
+          grep -q "#view-perfil .fs-rewarded-ads-safety" v2/profile-cleanup.css
+          grep -q "#view-perfil .fs-rewarded-ads-fine" v2/profile-cleanup.css
+          grep -q "#view-perfil .fs-rewarded-ads-status" v2/profile-cleanup.css
+          ! grep -Eq "#view-wallet|#view-admin|#cartModal|#qrModal" v2/profile-cleanup.css
+
+      - name: Verify Streaming stale-row recovery
+        run: |
+          set -euo pipefail
+          grep -q "admin_update_streaming_price" v2/admin-streaming-prices.js
+          grep -q "resolveCurrentProductId" v2/admin-streaming-prices.js
+          grep -q "data-streaming-game" v2/admin-streaming-prices.js
+          grep -q "data-streaming-package" v2/admin-streaming-prices.js
+          grep -q "eq('categoria', 'Streaming')" v2/admin-streaming-prices.js
+          grep -q "p_product_id: currentId" v2/admin-streaming-prices.js
+          grep -q "p_sale_price" v2/admin-streaming-prices.js
+          ! grep -q "from('productos').update\|from(\"productos\").update" v2/admin-streaming-prices.js
+
+      - name: Secret and scope hygiene
+        run: |
+          set -euo pipefail
+          ! grep -Eqi "service_role|SUPABASE_SERVICE|private[_-]?key|client_secret" v2/profile-cleanup.css v2/admin-streaming-prices.js v2/bootstrap.js
+          grep -q "checkout always recalculates" v2/admin-streaming-prices.js
