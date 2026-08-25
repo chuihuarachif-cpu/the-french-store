@@ -1,0 +1,43 @@
+/* THE FRENCH STORE — R49 profile cleanup.
+   Presentation-only: reduces redundant customer-facing explanations without
+   changing Rank Pass, Rewards, ads, Wallet, checkout or pricing behavior. */
+
+#view-perfil .fs-rank-intro,
+#view-perfil .fs-loyalty-fine,
+#view-perfil .fs-rewarded-ads-intro,
+#view-perfil .fs-rewarded-ads-value small,
+#view-perfil .fs-rewarded-ads-toggle-row small,
+#view-perfil .fs-rewarded-ads-action-note,
+#view-perfil .fs-rewarded-ads-safety,
+#view-perfil .fs-rewarded-ads-fine,
+#view-perfil .fs-rewarded-ads-status {
+  display: none !important;
+}
+
+#view-perfil .fs-rewarded-ads-panel {
+  gap: 14px;
+}
+
+#view-perfil .fs-rewarded-ads-head {
+  margin-bottom: 0;
+}
+
+#view-perfil .fs-rewarded-ads-value {
+  margin: 0;
+}
+
+#view-perfil .fs-rewarded-ads-toggle-row {
+  margin-top: 0;
+}
+
+#view-perfil .fs-rewarded-ads-actions {
+  margin-top: 0;
+}
+
+@media (max-width: 640px) {
+  #view-perfil .fs-rewarded-ads-panel,
+  #view-perfil .fs-cercle-section {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
