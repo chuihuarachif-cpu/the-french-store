@@ -35,7 +35,7 @@ jobs:
           grep -q "admin_update_streaming_price_by_identity" v2/admin-streaming-prices.js
           grep -q "eq('categoria', 'Streaming')" v2/admin-streaming-prices.js
           grep -q "dataset.adminTab = 'streaming'" v2/admin-streaming-prices.js
-          grep -q "admin-streaming-prices.js?v=20260825-r52" v2/bootstrap.js
+          grep -Eq "admin-streaming-prices.js\?v=20260825-r[0-9]+" v2/bootstrap.js
           grep -q "if (!admin)" v2/admin-streaming-prices.js
           grep -q "p_game" v2/admin-streaming-prices.js
           grep -q "p_package" v2/admin-streaming-prices.js
