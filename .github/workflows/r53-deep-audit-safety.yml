@@ -1,0 +1,76 @@
+name: R53 Deep Audit Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/bootstrap.js'
+      - 'v2/core/ui.js'
+      - 'v2/admin-streaming-prices.js'
+      - 'v2/index.html'
+      - '.github/workflows/r53-deep-audit-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/bootstrap.js'
+      - 'v2/core/ui.js'
+      - 'v2/admin-streaming-prices.js'
+      - 'v2/index.html'
+      - '.github/workflows/r53-deep-audit-safety.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript
+        run: |
+          set -euo pipefail
+          node --check v2/bootstrap.js
+          node --check v2/core/ui.js
+          node --check v2/admin-streaming-prices.js
+
+      - name: Orders first tap must remain immediate
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('v2/bootstrap.js').read_text()
+          start=s.index("if (target.dataset.nav === 'pedidos')")
+          end=s.index("if (target.id === 'refreshOrders'", start)
+          block=s[start:end]
+          assert "ensureFeature('orders').catch" in block
+          assert 'preventDefault' not in block
+          assert 'stopImmediatePropagation' not in block
+          PY
+
+      - name: Streaming admin save is server authoritative and resilient
+        run: |
+          set -euo pipefail
+          grep -Fq "admin_update_streaming_price" v2/admin-streaming-prices.js
+          grep -Fq "admin_update_streaming_price_by_identity" v2/admin-streaming-prices.js
+          grep -Fq "resolveCurrentProductId" v2/admin-streaming-prices.js
+          grep -Fq "PGRST202" v2/admin-streaming-prices.js
+          grep -Fq "checkout always recalculates" v2/admin-streaming-prices.js
+          ! grep -q "from('productos').update\|from(\"productos\").update" v2/admin-streaming-prices.js
+
+      - name: New customer signup remains Google-first
+        run: |
+          set -euo pipefail
+          grep -Fq "function addSignupButton(){ return null }" v2/core/ui.js
+          grep -Fq "authChoiceSignup" v2/core/ui.js
+          grep -Fq "authLegacySignupFallback" v2/core/ui.js
+          grep -Fq "Continúa con Google" v2/index.html
+          grep -Fq "respaldo para cuentas existentes y administración" v2/index.html
+
+      - name: Cache bust and secret hygiene
+        run: |
+          set -euo pipefail
+          grep -Fq "r53-deep-audit-fixes-20260825" v2/bootstrap.js
+          grep -Fq "admin-streaming-prices.js?v=20260825-r53" v2/bootstrap.js
+          grep -Fq "bootstrap.js?v=20260825-r53" v2/index.html
+          ! grep -Eqi "service_role|SUPABASE_SERVICE|client_secret|private[_-]?key|provider_token" v2/bootstrap.js v2/core/ui.js v2/admin-streaming-prices.js v2/index.html
