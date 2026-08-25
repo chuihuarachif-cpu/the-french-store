@@ -1,5 +1,6 @@
-/* THE FRENCH STORE — Rewarded Ads profile-only styling.
-   Deliberately avoids fixed overlays, banners and z-index takeover. */
+/* THE FRENCH STORE — voluntary Rewards styling.
+   Third-party content is never embedded here. Fixed invitation UI is first-party,
+   opt-in, frequency-limited and excluded from checkout/payment-sensitive views. */
 .fs-rewarded-ads-panel{
   margin-top:18px;
   padding:18px;
@@ -14,6 +15,7 @@
 .fs-rewarded-ads-head h3{margin:4px 0 0;font-size:1.18rem}
 .fs-rewarded-ads-status{flex:0 0 auto;padding:6px 9px;border-radius:999px;font-size:.75rem;font-weight:700;border:1px solid rgba(255,255,255,.1)}
 .fs-rewarded-ads-status.building{background:rgba(255,184,77,.09);color:#ffd08a;border-color:rgba(255,184,77,.25)}
+.fs-rewarded-ads-status.testing{background:rgba(92,173,255,.1);color:#b9ddff;border-color:rgba(92,173,255,.26)}
 .fs-rewarded-ads-status.ready{background:rgba(55,213,145,.09);color:#83efba;border-color:rgba(55,213,145,.25)}
 .fs-rewarded-ads-intro{margin:0 0 14px;color:#b8c8d7;line-height:1.48}
 .fs-rewarded-ads-value{display:grid;gap:3px;padding:13px 14px;border-radius:15px;background:rgba(31,186,236,.075);border:1px solid rgba(63,203,247,.15);margin-bottom:14px}
@@ -33,6 +35,8 @@
 .fs-toggle-control input:disabled+i{opacity:.58}
 .fs-rewarded-ads-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .fs-rewarded-ads-actions button{min-height:44px}
+.fs-rewarded-ads-actions button:disabled{opacity:.5;cursor:not-allowed;filter:saturate(.55)}
+.fs-rewarded-ads-action-note{display:block;margin-top:8px;color:#849bad;font-size:.76rem;line-height:1.4}
 .fs-rewarded-ads-message{margin-top:12px;padding:11px 12px;border-radius:13px;border:1px solid rgba(255,255,255,.09);font-size:.88rem;line-height:1.42}
 .fs-rewarded-ads-message.hidden{display:none!important}
 .fs-rewarded-ads-message.info{background:rgba(56,149,204,.09);color:#bcecff;border-color:rgba(66,194,239,.2)}
@@ -42,12 +46,31 @@
 .fs-rewarded-ads-safety b{color:#d8f7ff}
 .fs-rewarded-ads-safety span,.fs-rewarded-ads-fine{color:#869bad;font-size:.82rem;line-height:1.45}
 .fs-rewarded-ads-fine{margin:10px 0 0}
+
+/* First-party navigation invitation. No provider iframe is created until user action. */
+.fs-reward-auto-prompt{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:10800;width:min(360px,calc(100vw - 32px));display:grid;gap:8px;padding:16px 44px 16px 16px;border-radius:18px;border:1px solid rgba(87,220,255,.3);background:linear-gradient(150deg,rgba(7,31,47,.98),rgba(4,14,25,.99));box-shadow:0 20px 54px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.045);backdrop-filter:blur(14px);animation:fsRewardPromptIn .2s ease-out both}
+.fs-reward-auto-prompt>b{font-size:1rem;color:#effbff}.fs-reward-auto-prompt p{margin:0;color:#a9bdca;font-size:.84rem;line-height:1.45}.fs-reward-auto-prompt .eyebrow{font-size:.65rem}.fs-reward-prompt-close{position:absolute;right:10px;top:9px;width:30px;height:30px;border-radius:10px;border:0;background:rgba(255,255,255,.035);color:#a8bac5;font:inherit;font-size:1.25rem;cursor:pointer}.fs-reward-prompt-close:focus-visible{outline:2px solid #78e6ff;outline-offset:2px}
+html[data-fs-membership="gold"] .fs-reward-auto-prompt{border-color:rgba(245,199,74,.4);background:radial-gradient(circle at 92% 0,rgba(244,190,48,.1),transparent 36%),linear-gradient(150deg,rgba(43,31,8,.98),rgba(5,16,25,.99))}html[data-fs-membership="gold"] .fs-reward-auto-prompt .eyebrow{color:#f5cf69}
+html[data-fs-membership="diamond"] .fs-reward-auto-prompt{border-color:rgba(91,230,255,.52);background:radial-gradient(circle at 92% 0,rgba(79,224,255,.15),transparent 39%),linear-gradient(150deg,rgba(5,45,63,.99),rgba(4,14,27,.99));box-shadow:0 22px 60px rgba(0,0,0,.42),0 0 30px rgba(43,193,240,.13)}html[data-fs-membership="diamond"] .fs-reward-auto-prompt .eyebrow{color:#92efff}
+
+/* Post-purchase invitation stays inline in the already-confirmed order/payment result. */
+.fs-post-purchase-reward-card{margin-top:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px;border-radius:16px;border:1px solid rgba(80,216,255,.24);background:linear-gradient(145deg,rgba(7,29,44,.82),rgba(5,17,29,.9));box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
+.fs-post-purchase-reward-card>div:first-child{display:grid;gap:4px}.fs-post-purchase-reward-card b{color:#edfaff}.fs-post-purchase-reward-card p{margin:0;color:#9fb5c3;font-size:.82rem;line-height:1.43}.fs-post-purchase-actions{display:flex;gap:8px;align-items:center}.fs-post-purchase-actions button{white-space:nowrap}
+html[data-fs-membership="gold"] .fs-post-purchase-reward-card{border-color:rgba(244,197,70,.34);background:linear-gradient(145deg,rgba(43,31,7,.62),rgba(6,19,30,.9))}html[data-fs-membership="gold"] .fs-post-purchase-reward-card .eyebrow{color:#f3cf6e}
+html[data-fs-membership="diamond"] .fs-post-purchase-reward-card{border-color:rgba(89,229,255,.47);background:radial-gradient(circle at 90% 0,rgba(82,224,255,.12),transparent 40%),linear-gradient(145deg,rgba(5,42,59,.76),rgba(5,17,30,.94));box-shadow:0 0 24px rgba(48,198,241,.09),inset 0 1px 0 rgba(208,252,255,.04)}html[data-fs-membership="diamond"] .fs-post-purchase-reward-card .eyebrow{color:#95f1ff}
+
+@keyframes fsRewardPromptIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
 @media (max-width:620px){
   .fs-rewarded-ads-panel{padding:15px;border-radius:17px}
   .fs-rewarded-ads-head{align-items:center}
   .fs-rewarded-ads-actions{grid-template-columns:1fr}
   .fs-rewarded-ads-toggle-row{align-items:flex-start}
+  .fs-reward-auto-prompt{right:12px;left:12px;bottom:calc(82px + env(safe-area-inset-bottom));width:auto}
+  .fs-post-purchase-reward-card{grid-template-columns:1fr}
+  .fs-post-purchase-actions{display:grid;grid-template-columns:1fr 1fr}
 }
+@media (max-width:390px){.fs-post-purchase-actions{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){
   .fs-toggle-control i,.fs-toggle-control i::after{transition:none}
+  .fs-reward-auto-prompt{animation:none}
 }
