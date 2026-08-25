@@ -1,0 +1,78 @@
+name: R50 MLBB Weekly Pass Popular Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/catalog-order.js'
+      - 'v2/weekly-pass-feature.css'
+      - 'v2/bootstrap.js'
+      - 'v2/index.html'
+      - '.github/workflows/r50-mlbb-weekly-popular-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/catalog-order.js'
+      - 'v2/weekly-pass-feature.css'
+      - 'v2/bootstrap.js'
+      - 'v2/index.html'
+      - '.github/workflows/r50-mlbb-weekly-popular-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript
+        run: |
+          set -euo pipefail
+          node --check v2/catalog-order.js
+          node --check v2/bootstrap.js
+
+      - name: Verify exact normal Weekly Pass targeting
+        run: |
+          set -euo pipefail
+          grep -Fq "norm(game).includes('mobilelegends') && norm(name) === 'pasesemanal'" v2/catalog-order.js
+          grep -Fq "group: featuredWeeklyPass ? -1" v2/catalog-order.js
+          grep -Fq "fs-featured-weekly-pass" v2/catalog-order.js
+          grep -Fq "fs-popular-badge" v2/catalog-order.js
+          grep -Fq "POPULAR" v2/catalog-order.js
+
+      - name: Verify aura and reduced motion
+        run: |
+          set -euo pipefail
+          grep -Fq "#catalogList .fs-featured-weekly-pass" v2/weekly-pass-feature.css
+          grep -Fq "@keyframes fs-weekly-pass-aura" v2/weekly-pass-feature.css
+          grep -Fq "@media (prefers-reduced-motion: reduce)" v2/weekly-pass-feature.css
+          grep -Fq "#catalogList .fs-popular-badge" v2/weekly-pass-feature.css
+
+      - name: Verify lazy loading and cache busting
+        run: |
+          set -euo pipefail
+          grep -Fq "weekly-pass-feature.css?v=20260825-r50" v2/bootstrap.js
+          grep -Fq "catalog-order.js?v=20260825-r50" v2/bootstrap.js
+          grep -Fq "bootstrap.js?v=20260825-r50" v2/index.html
+
+      - name: Guard critical business boundaries
+        run: |
+          set -euo pipefail
+          ! grep -Eqi "service_role|SUPABASE_SERVICE|client_secret|private[_-]?key" v2/catalog-order.js v2/weekly-pass-feature.css v2/bootstrap.js
+          ! grep -Eqi "checkoutQR|checkoutWallet|wallet_transactions|BISA|GAMERHUB_SECRET|BONOXS|GAMETON" v2/catalog-order.js v2/weekly-pass-feature.css
+          grep -Fq "This is presentation-only. It does not change prices, product IDs, providers or checkout data." v2/catalog-order.js
+
+      - name: Structural shell guard
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('v2/index.html').read_text()
+          for tag in ['div','section','main','header','footer','nav']:
+              opens=s.count(f'<{tag} ') + s.count(f'<{tag}>')
+              closes=s.count(f'</{tag}>')
+              assert opens == closes, (tag, opens, closes)
+          PY
