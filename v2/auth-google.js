@@ -1,10 +1,10 @@
-/* THE FRENCH STORE — R54 Google-only public OAuth login.
+/* THE FRENCH STORE — R55 Google-only public OAuth login.
    Google OAuth is the only public sign-in entry point. No Google client secret,
    provider token or service-role key is stored or logged in the browser. */
 (() => {
   'use strict';
 
-  const VERSION = 'google-oauth-v4-20260825-r54';
+  const VERSION = 'google-oauth-v5-20260825-r55';
   const AUTH_SETTINGS_URL = 'https://jivaaripugjdpxjvjnsu.supabase.co/auth/v1/settings';
   const REDIRECT_TO = 'https://frenchstorebo.com/v2/';
   const PROVIDER_CACHE_MS = 5000;
@@ -16,6 +16,7 @@
   let observer = null;
   let retryTimer = null;
   let retryAttempts = 0;
+  let googleMountInProgress = false;
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -43,6 +44,14 @@
     modal.querySelectorAll('button').forEach((button) => {
       if (button.textContent.trim() === 'Crear cuenta') button.classList.add('hidden');
     });
+  }
+
+  function dedupeGoogleButtons(){
+    const buttons = [...document.querySelectorAll('#authModal #authChoiceGoogle')];
+    if (buttons.length <= 1) return buttons[0] || null;
+    const keep = buttons[0];
+    buttons.slice(1).forEach((button) => button.remove());
+    return keep;
   }
 
   async function waitForAuthRuntime(timeoutMs = 10000) {
@@ -150,6 +159,8 @@
   async function decorateChoice() {
     if (specialAuthFlow()) return;
     sanitizePublicAuth();
+    dedupeGoogleButtons();
+
     let box = document.getElementById('authChoiceBox');
     const message = document.getElementById('loginMessage');
     if (!box && message?.parentNode) {
@@ -159,31 +170,47 @@
       box.innerHTML = '<div id="authGoogleHost"></div><p style="margin:12px 0 0;text-align:center;color:#8fa7b6;font-size:.86rem;line-height:1.45">FRENCH STORE no recibe tu contraseña de Google.</p>';
       message.parentNode.insertBefore(box, message);
     }
+
     const host = document.getElementById('authGoogleHost') || box;
-    if (!box || !host || document.getElementById('authChoiceGoogle')) return;
+    if (!box || !host || document.getElementById('authChoiceGoogle') || googleMountInProgress) return;
 
-    if (!await googleProviderEnabled()) {
-      scheduleProviderRetry();
-      return;
-    }
+    googleMountInProgress = true;
+    try {
+      if (!await googleProviderEnabled()) {
+        scheduleProviderRetry();
+        return;
+      }
 
-    const google = document.createElement('button');
-    google.id = 'authChoiceGoogle';
-    google.type = 'button';
-    google.className = 'secondary-btn full';
-    google.style.cssText = 'background:#fff;color:#202124;border-color:#dadce0;font-weight:700;';
-    google.textContent = 'G  Continuar con Google';
-    google.setAttribute('aria-label', 'Continuar con Google');
-    google.addEventListener('click', () => signInWithGoogle(google));
-    host.appendChild(google);
-    stopProviderRetry(true);
+      // Re-check after the async provider lookup. MutationObserver and AuthEase can
+      // both request decoration while the lookup is pending; only one may mount.
+      const currentBox = document.getElementById('authChoiceBox');
+      const currentHost = document.getElementById('authGoogleHost') || currentBox;
+      if (!currentBox || !currentHost || document.getElementById('authChoiceGoogle')) {
+        dedupeGoogleButtons();
+        return;
+      }
 
-    if (!document.getElementById('authGoogleLegal')) {
-      const legal = document.createElement('p');
-      legal.id = 'authGoogleLegal';
-      legal.style.cssText = 'margin:10px 0 0;text-align:center;color:#8fa7b6;font-size:.78rem;line-height:1.4';
-      legal.innerHTML = 'Al continuar aceptas los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.';
-      box.appendChild(legal);
+      const google = document.createElement('button');
+      google.id = 'authChoiceGoogle';
+      google.type = 'button';
+      google.className = 'secondary-btn full';
+      google.style.cssText = 'background:linear-gradient(180deg,#38d7ff 0%,#11b8ff 50%,#0787ff 100%);color:#03111d;border:1px solid #55dcff;font-weight:800;box-shadow:0 0 0 1px rgba(56,215,255,.18),0 10px 28px rgba(7,135,255,.28);';
+      google.textContent = 'G  Continuar con Google';
+      google.setAttribute('aria-label', 'Continuar con Google');
+      google.addEventListener('click', () => signInWithGoogle(google));
+      currentHost.replaceChildren(google);
+      dedupeGoogleButtons();
+      stopProviderRetry(true);
+
+      if (!document.getElementById('authGoogleLegal')) {
+        const legal = document.createElement('p');
+        legal.id = 'authGoogleLegal';
+        legal.style.cssText = 'margin:10px 0 0;text-align:center;color:#8fa7b6;font-size:.78rem;line-height:1.4';
+        legal.innerHTML = 'Al continuar aceptas los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.';
+        currentBox.appendChild(legal);
+      }
+    } finally {
+      googleMountInProgress = false;
     }
   }
 
@@ -192,6 +219,7 @@
     sanitizePublicAuth();
     observer = new MutationObserver(() => {
       sanitizePublicAuth();
+      dedupeGoogleButtons();
       decorateChoice().catch(() => {});
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
@@ -206,6 +234,7 @@
     refresh: async () => {
       stopProviderRetry(true);
       sanitizePublicAuth();
+      dedupeGoogleButtons();
       const enabled = await googleProviderEnabled(true);
       if (enabled) await decorateChoice();
       else scheduleProviderRetry();
