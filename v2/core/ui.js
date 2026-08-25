@@ -31,8 +31,17 @@ function wireUI(){
 // New customer registration is Google-only. Email/password login remains available
 // as a recovery/admin fallback, but the browser no longer creates email signup controls.
 function addSignupButton(){ return null }
+function enforceGoogleOnlySignupUI(){
+  const clean=()=>{
+    document.getElementById('authChoiceSignup')?.remove();
+    document.getElementById('authLegacySignupFallback')?.remove();
+  };
+  clean();
+  const modal=$('authModal');
+  if(modal)new MutationObserver(clean).observe(modal,{childList:true,subtree:true});
+}
 async function init(){
-  wireUI();renderCartCounters();
+  wireUI();enforceGoogleOnlySignupUI();renderCartCounters();
   await Promise.all([loadProducts(),refreshSession()]);
   sb.auth.onAuthStateChange(async(_event,newSession)=>{await refreshSession(newSession);if(newSession)closeModal('authModal')});
 }
