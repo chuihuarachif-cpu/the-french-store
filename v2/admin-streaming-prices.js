@@ -1,5 +1,5 @@
 /* THE FRENCH STORE — Admin-only manual final prices for Streaming.
-   Isolated from game topups, Gift Cards, provider costs and MLBB pricing rules.
+   Isolated from provider costs and every other pricing category/rule.
    Security is enforced again in Supabase by admin_update_streaming_price(). */
 (() => {
   'use strict';
@@ -16,7 +16,7 @@
     if (raw.includes('ADMIN_REQUIRED')) return 'Esta función está disponible únicamente para administradores.';
     if (raw.includes('STREAMING_ONLY')) return 'Solo se pueden editar productos de la categoría Streaming.';
     if (raw.includes('INVALID_STREAMING_PRICE')) return 'Usa un precio válido entre Bs 0,50 y Bs 5.000,00.';
-    if (raw.includes('PRODUCT_NOT_FOUND')) return 'El producto ya no existe.';
+    if (raw.includes('PRODUCT_NOT_FOUND')) return 'La lista estaba desactualizada. Ya la recargamos; vuelve a guardar el precio.';
     return 'No se pudo guardar el precio. Intenta nuevamente.';
   }
 
@@ -44,7 +44,7 @@
   function priceRow(product) {
     const id = String(product.id);
     const current = Number(product.precio || 0);
-    return `<div class="record streaming-price-record" data-streaming-product="${esc(id)}">
+    return `<div class="record streaming-price-record" data-streaming-product="${esc(id)}" data-streaming-game="${esc(product.juego || '')}" data-streaming-package="${esc(product.paquete || '')}">
       <div class="record-top">
         <div>
           <b>${esc(product.juego)} · ${money(current)}</b>
@@ -79,6 +79,39 @@
     box.classList.remove('hidden');
   }
 
+  async function reloadStreamingWithNotice(message) {
+    await loadStreamingPrices();
+    const content = adminContent();
+    if (!content) return;
+    content.insertAdjacentHTML('afterbegin', `<div class="notice error" role="status">${esc(message)}</div>`);
+  }
+
+  async function resolveCurrentProductId(id, button) {
+    const parsed = Number(id);
+    if (!Number.isSafeInteger(parsed) || parsed <= 0) return null;
+
+    const row = button.closest('[data-streaming-product]');
+    const game = String(row?.dataset.streamingGame || '').trim();
+    const pack = String(row?.dataset.streamingPackage || '').trim();
+    if (!game || !pack) return parsed;
+
+    // Resolve by the product identity immediately before saving. This protects the
+    // admin from a stale browser row if a record was recreated with a new numeric id.
+    const { data, error } = await sb
+      .from('productos')
+      .select('id')
+      .eq('categoria', 'Streaming')
+      .eq('activo', true)
+      .eq('juego', game)
+      .eq('paquete', pack)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    const freshId = Number(data?.id);
+    return Number.isSafeInteger(freshId) && freshId > 0 ? freshId : null;
+  }
+
   async function saveStreamingPrice(id, button) {
     if (!admin) return;
     const input = document.querySelector(`[data-streaming-price-input="${CSS.escape(String(id))}"]`);
@@ -92,14 +125,25 @@
     button.disabled = true;
     button.textContent = 'Guardando…';
     try {
+      const currentId = await resolveCurrentProductId(id, button);
+      if (!currentId) {
+        await reloadStreamingWithNotice('La lista de Streaming cambió. Ya la actualizamos; vuelve a guardar el precio.');
+        return;
+      }
+
       const { data, error } = await sb.rpc('admin_update_streaming_price', {
-        p_product_id: Number(id),
+        p_product_id: currentId,
         p_sale_price: Number(value.toFixed(2))
       });
       if (error) {
+        if (String(error?.message || error).includes('PRODUCT_NOT_FOUND')) {
+          await reloadStreamingWithNotice(errorMessage(error));
+          return;
+        }
         showRowMessage(id, errorMessage(error), 'error');
         return;
       }
+
       const newPrice = Number(data?.new_price ?? value);
       if (input) input.value = newPrice.toFixed(2);
       const row = button.closest('[data-streaming-product]');
@@ -113,6 +157,8 @@
       // new database price on their next catalog load; checkout always recalculates
       // the authoritative price in Supabase.
       if (typeof loadProducts === 'function') await loadProducts().catch(() => {});
+    } catch (error) {
+      showRowMessage(id, errorMessage(error), 'error');
     } finally {
       button.disabled = false;
       button.textContent = oldText;
