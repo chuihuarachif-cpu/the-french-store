@@ -67,6 +67,25 @@
     beginAdminGoogleLogin(button);
   }, true);
 
+  function clarifyPriceCards() {
+    document.querySelectorAll('#priceList .card').forEach((card) => {
+      const text = card.textContent || '';
+      if (!text.includes('Recargas por Cuenta')) return;
+      card.querySelectorAll('small').forEach((small) => {
+        if (small.textContent.trim() === 'Precio fijo administrable') {
+          small.textContent = 'Recarga por Cuenta · precio manual administrable';
+        }
+      });
+    });
+  }
+
+  function installPriceLabelObserver() {
+    const host = document.getElementById('priceList');
+    if (!host) return;
+    new MutationObserver(clarifyPriceCards).observe(host, { childList: true, subtree: true });
+    clarifyPriceCards();
+  }
+
   // UX-only precheck. Authorization is still performed server-side by
   // admin_app_is_allowed(), which also requires this exact email and admin role.
   authClient.auth.getSession().then(({ data }) => {
@@ -77,4 +96,7 @@
       if (paragraph) paragraph.textContent = `Solo ${ALLOWED_EMAIL} puede usar FRENCH STORE Admin.`;
     }
   }).catch(() => {});
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', installPriceLabelObserver, { once: true });
+  else installPriceLabelObserver();
 })();
