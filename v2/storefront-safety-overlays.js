@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'storefront-safety-overlays-v3-20260826';
+  const VERSION = 'storefront-safety-overlays-v4-20260826';
   let orderPolishPromise = null;
 
   function absolute(src) {
@@ -72,6 +72,9 @@
     await loadScript('./payment-action-guard.js', 'fs-payment-action-guard-js');
     await loadScript('./admin-auto-delivery-guard.js', 'fs-admin-auto-delivery-guard-js');
     await loadScript('./game-maintenance.js?v=20260826-r84', 'fs-game-maintenance-js');
+    // R87: intercept the legacy R6 "Volver al catálogo" before it can call
+    // history.back() and accidentally leave Tienda for Wallet/Pedidos.
+    await loadScript('./catalog-back-guard.js?v=20260826-r87', 'fs-catalog-back-guard-js');
     installOrderPolishTrigger();
     document.documentElement.dataset.fsSafetyOverlays = 'ready';
   }
