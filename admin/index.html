@@ -16,9 +16,10 @@
   <link rel="icon" href="../v2/assets/brand/icon-192.png">
   <link rel="apple-touch-icon" href="../v2/assets/brand/icon-192.png">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./app.css?v=20260826-r88">
+  <link rel="stylesheet" href="./app.css?v=20260826-r89">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="./app.js?v=20260826-r88"></script>
+  <script defer src="./r89-auth-fix.js?v=20260826-r89"></script>
+  <script defer src="./app.js?v=20260826-r89"></script>
 </head>
 <body>
   <header class="topbar">
@@ -36,7 +37,7 @@
     <section id="loginView" class="screen center-card hidden">
       <div class="shield">🔐</div>
       <h1>FRENCH STORE Admin</h1>
-      <p>Aplicación privada. Solo la cuenta autorizada puede entrar.</p>
+      <p>Aplicación privada. Solo <b>chuihuarachif@gmail.com</b> puede entrar.</p>
       <button id="googleLogin" class="primary full" type="button">G&nbsp;&nbsp;Continuar con Google</button>
       <div id="loginMessage" class="notice hidden" role="alert"></div>
       <small class="muted">La app no recibe ni almacena tu contraseña de Google.</small>
@@ -45,7 +46,7 @@
     <section id="deniedView" class="screen center-card hidden">
       <div class="shield danger">⛔</div>
       <h1>Acceso no autorizado</h1>
-      <p>Esta cuenta no está habilitada para FRENCH STORE Admin.</p>
+      <p>Solo chuihuarachif@gmail.com puede usar FRENCH STORE Admin.</p>
       <button id="deniedLogout" class="secondary full" type="button">Cerrar sesión</button>
     </section>
 
@@ -71,7 +72,7 @@
 
       <section id="pricesPanel" class="panel hidden">
         <div class="panel-head">
-          <div><span class="eyebrow">PRECIOS</span><h2>Editar precios fijos</h2><p>Solo se pueden editar productos que ya usan precio fijo. Los administrados por proveedores y el Pase Semanal de MLBB permanecen protegidos.</p></div>
+          <div><span class="eyebrow">PRECIOS</span><h2>Precios fijos y Recargas por Cuenta</h2><p>Se pueden editar los productos de precio fijo y los productos de Recargas por Cuenta. Los precios de proveedor/fórmula del resto del catálogo y el Pase Semanal de MLBB permanecen protegidos.</p></div>
           <button class="icon-btn" type="button" data-refresh="prices" aria-label="Actualizar">↻</button>
         </div>
         <label class="search"><span>Buscar</span><input id="priceSearch" type="search" placeholder="Juego o paquete" autocomplete="off"></label>
