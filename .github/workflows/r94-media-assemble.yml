@@ -36,18 +36,62 @@ jobs:
           print('R94 intro audio validation OK')
           PY
 
+      - name: Wire intro with only two isolated includes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('v2/index.html')
+          html = path.read_text(encoding='utf-8')
+
+          css = '  <link rel="stylesheet" href="./intro/french-intro.css?v=20260826-r94b">\n'
+          js = '  <script src="./intro/french-intro.js?v=20260826-r94b" defer></script>\n'
+
+          if './intro/french-intro.css' not in html:
+              anchor = '  <link rel="stylesheet" href="./cpx-rewards.css?v=20260825-r47">\n'
+              if anchor not in html:
+                  raise SystemExit('CSS anchor not found; refusing broad index edit')
+              html = html.replace(anchor, anchor + css, 1)
+
+          if './intro/french-intro.js' not in html:
+              anchor = '  <script src="./notifications.js?v=20260825-r47" defer></script>\n'
+              if anchor not in html:
+                  raise SystemExit('JS anchor not found; refusing broad index edit')
+              html = html.replace(anchor, js + anchor, 1)
+
+          path.write_text(html, encoding='utf-8')
+
+          final = path.read_text(encoding='utf-8')
+          assert final.count('./intro/french-intro.css') == 1
+          assert final.count('./intro/french-intro.js') == 1
+          print('R94 index wiring OK')
+          PY
+
+      - name: Validate isolated intro references
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check v2/intro/french-intro.js
+          test -s v2/intro/french-intro.css
+          grep -Fq "./assets/brand/icon-512.png" v2/intro/french-intro.js
+          grep -Fq "./intro/french-store-theme.mp3" v2/intro/french-intro.js
+          grep -Fq "./intro/french-intro.css" v2/index.html
+          grep -Fq "./intro/french-intro.js" v2/index.html
+
       - name: Remove transport chunks and self-clean workflow
         shell: bash
         run: |
           rm -rf .r94-media
           rm -f .github/workflows/r94-media-assemble.yml
 
-      - name: Commit assembled binary asset
+      - name: Commit finished isolated intro
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m 'R94: ensamblar música optimizada de intro'
+          git commit -m 'R94: finalizar intro cinematográfica aislada con música'
           git push origin HEAD:r94-cinematic-intro
