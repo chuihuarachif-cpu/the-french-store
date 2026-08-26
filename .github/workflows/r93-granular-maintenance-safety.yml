@@ -1,0 +1,79 @@
+name: R93 Granular Maintenance Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'admin/index.html'
+      - 'admin/maintenance.html'
+      - 'admin/maintenance.js'
+      - 'admin/r93-maintenance-admin.css'
+      - 'v2/storefront-safety-overlays.js'
+      - 'v2/maintenance-interaction-lock.js'
+      - 'v2/maintenance-interaction-lock.css'
+      - '.github/workflows/r93-granular-maintenance-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'admin/index.html'
+      - 'admin/maintenance.html'
+      - 'admin/maintenance.js'
+      - 'admin/r93-maintenance-admin.css'
+      - 'v2/storefront-safety-overlays.js'
+      - 'v2/maintenance-interaction-lock.js'
+      - 'v2/maintenance-interaction-lock.css'
+      - '.github/workflows/r93-granular-maintenance-safety.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check R93 files
+        run: |
+          test -s admin/maintenance.html
+          test -s admin/maintenance.js
+          test -s admin/r93-maintenance-admin.css
+          test -s v2/maintenance-interaction-lock.js
+          test -s v2/maintenance-interaction-lock.css
+
+      - name: Validate JavaScript
+        run: |
+          node --check admin/maintenance.js
+          node --check v2/maintenance-interaction-lock.js
+          node --check v2/storefront-safety-overlays.js
+
+      - name: Check hard maintenance lock
+        run: |
+          grep -q 'fs-game-maintenance' v2/maintenance-interaction-lock.css
+          grep -q 'fs-maintenance-item' v2/maintenance-interaction-lock.css
+          grep -q 'pointer-events:none' v2/maintenance-interaction-lock.css
+          grep -q 'stopImmediatePropagation' v2/maintenance-interaction-lock.js
+          grep -q "event.key !== 'Enter'" v2/maintenance-interaction-lock.js
+          grep -q 'maintenance-interaction-lock.css?v=20260826-r93' v2/storefront-safety-overlays.js
+          grep -q 'maintenance-interaction-lock.js?v=20260826-r93' v2/storefront-safety-overlays.js
+
+      - name: Check granular Admin security
+        run: |
+          grep -q 'noindex,nofollow' admin/maintenance.html
+          grep -q "frame-ancestors 'none'" admin/maintenance.html
+          grep -q 'admin_app_is_allowed' admin/maintenance.js
+          grep -q 'admin_app_list_products' admin/maintenance.js
+          grep -q 'admin_app_set_account_game_maintenance' admin/maintenance.js
+          grep -q 'p_product_ids:\[id\]' admin/maintenance.js
+          grep -q 'maintenance.html' admin/index.html
+          ! grep -E "from\(['\"]productos['\"]\).*(update|insert|delete)|\.from\(['\"]productos['\"]\).*\.update" admin/maintenance.js
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE|GAMERHUB_API|WEBHOOK_SECRET" admin/maintenance.html admin/maintenance.js
+
+      - name: Serve R93 pages
+        run: |
+          python3 -m http.server 8080 >/tmp/fs-r93-http.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8080/admin/maintenance.html >/dev/null
+          curl --fail http://127.0.0.1:8080/admin/maintenance.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/maintenance-interaction-lock.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/maintenance-interaction-lock.css >/dev/null
