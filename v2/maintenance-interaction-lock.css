@@ -1,0 +1,30 @@
+/* THE FRENCH STORE — R93 hard interaction lock for maintenance states.
+   Presentation/interaction only. Does not change product availability in Supabase. */
+.fs-game-maintenance,
+.fs-maintenance-item{
+  pointer-events:none !important;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+  cursor:not-allowed !important;
+}
+
+.fs-game-maintenance{
+  filter:saturate(.62) grayscale(.18);
+}
+
+.fs-maintenance-item{
+  filter:saturate(.68) grayscale(.12);
+}
+
+.fs-game-maintenance::after,
+.fs-maintenance-item::after{
+  pointer-events:none;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .fs-game-maintenance,
+  .fs-maintenance-item{
+    transition:none !important;
+  }
+}

@@ -17,6 +17,7 @@
   <link rel="apple-touch-icon" href="../v2/assets/brand/icon-192.png">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./app.css?v=20260826-r92">
+  <link rel="stylesheet" href="./r93-maintenance-admin.css?v=20260826-r93">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./r89-auth-fix.js?v=20260826-r91"></script>
   <script defer src="./app.js?v=20260826-r92"></script>
@@ -88,7 +89,8 @@
       </section>
 
       <section id="maintenancePanel" class="panel hidden" data-panel="maintenance">
-        <div class="panel-head"><div><span class="eyebrow">RECARGAS POR CUENTA</span><h2>Mantenimiento por juego</h2><p>Solo se bloquea el juego elegido. No se desactiva la categoría completa.</p></div><button class="icon-btn" type="button" data-refresh="maintenance" aria-label="Actualizar">↻</button></div>
+        <div class="panel-head"><div><span class="eyebrow">RECARGAS POR CUENTA</span><h2>Mantenimiento</h2><p>Puedes bloquear un juego completo aquí o abrir el control detallado para bloquear únicamente ofertas concretas.</p></div><button class="icon-btn" type="button" data-refresh="maintenance" aria-label="Actualizar">↻</button></div>
+        <div class="card-actions r93-maintenance-entry"><a class="primary admin-link full" href="./maintenance.html">Administrar por juego y por oferta</a></div>
         <div id="maintenanceList" class="list"></div>
       </section>
 
