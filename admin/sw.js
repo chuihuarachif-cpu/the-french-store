@@ -1,5 +1,5 @@
-const CACHE='fs-admin-r90-20260826';
-const SHELL=['/admin/','/admin/index.html','/admin/app.css?v=20260826-r89','/admin/r89-auth-fix.js?v=20260826-r90','/admin/app.js?v=20260826-r89','/admin/manifest.webmanifest','/v2/assets/brand/icon-192.png','/v2/assets/brand/icon-512.png'];
+const CACHE='fs-admin-r92-20260826';
+const SHELL=['/admin/','/admin/index.html','/admin/app.css?v=20260826-r92','/admin/r89-auth-fix.js?v=20260826-r91','/admin/app.js?v=20260826-r92','/admin/manifest.webmanifest','/v2/assets/brand/icon-192.png','/v2/assets/brand/icon-512.png'];
 self.addEventListener('install',(event)=>{event.waitUntil(caches.open(CACHE).then((cache)=>cache.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',(event)=>{event.waitUntil(caches.keys().then((keys)=>Promise.all(keys.filter((key)=>key.startsWith('fs-admin-')&&key!==CACHE).map((key)=>caches.delete(key)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',(event)=>{
