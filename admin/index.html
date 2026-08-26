@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06111d">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="referrer" content="no-referrer">
+  <meta name="application-name" content="FRENCH STORE Admin">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FS Admin">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data: https:; connect-src 'self' https://jivaaripugjdpxjvjnsu.supabase.co wss://jivaaripugjdpxjvjnsu.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+  <title>FRENCH STORE Admin</title>
+  <link rel="icon" href="../v2/assets/brand/icon-192.png">
+  <link rel="apple-touch-icon" href="../v2/assets/brand/icon-192.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./app.css?v=20260826-r88">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="./app.js?v=20260826-r88"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="gem">💎</span><div><b>FRENCH STORE</b><small>ADMIN PRIVADO</small></div></div>
+    <button id="logoutButton" class="ghost hidden" type="button">Salir</button>
+  </header>
+
+  <main>
+    <section id="loadingView" class="screen center-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <h1>Comprobando acceso</h1>
+      <p>Validando la sesión administrativa de forma segura.</p>
+    </section>
+
+    <section id="loginView" class="screen center-card hidden">
+      <div class="shield">🔐</div>
+      <h1>FRENCH STORE Admin</h1>
+      <p>Aplicación privada. Solo la cuenta autorizada puede entrar.</p>
+      <button id="googleLogin" class="primary full" type="button">G&nbsp;&nbsp;Continuar con Google</button>
+      <div id="loginMessage" class="notice hidden" role="alert"></div>
+      <small class="muted">La app no almacena tu contraseña de Google.</small>
+    </section>
+
+    <section id="deniedView" class="screen center-card hidden">
+      <div class="shield danger">⛔</div>
+      <h1>Acceso no autorizado</h1>
+      <p>La cuenta iniciada no está habilitada para FRENCH STORE Admin.</p>
+      <button id="deniedLogout" class="secondary full" type="button">Cerrar sesión</button>
+    </section>
+
+    <section id="appView" class="screen hidden">
+      <section class="status-card">
+        <div><span class="eyebrow">ESTADO</span><h1>Panel privado</h1></div>
+        <div class="status-pill ok">● Supabase conectado</div>
+      </section>
+
+      <nav class="tabs" aria-label="Herramientas administrativas">
+        <button class="active" type="button" data-tab="maintenance">🛠️ Mantenimiento</button>
+        <button type="button" data-tab="prices">💰 Precios</button>
+        <button type="button" data-tab="history">🧾 Historial</button>
+      </nav>
+
+      <section id="maintenancePanel" class="panel">
+        <div class="panel-head">
+          <div><span class="eyebrow">RECARGAS POR CUENTA</span><h2>Mantenimiento por juego</h2><p>Solo se bloquea el juego elegido. La categoría completa sigue visible.</p></div>
+          <button class="icon-btn" type="button" data-refresh="maintenance" aria-label="Actualizar">↻</button>
+        </div>
+        <div id="maintenanceList" class="list"></div>
+      </section>
+
+      <section id="pricesPanel" class="panel hidden">
+        <div class="panel-head">
+          <div><span class="eyebrow">PRECIOS FIJOS</span><h2>Editar precios</h2><p>Solo aparecen editables los productos que ya usan precio fijo. Los precios administrados por proveedores y el Pase Semanal de MLBB permanecen bloqueados para conservar sus reglas.</p></div>
+          <button class="icon-btn" type="button" data-refresh="prices" aria-label="Actualizar">↻</button>
+        </div>
+        <label class="search"><span>Buscar</span><input id="priceSearch" type="search" placeholder="Juego o paquete" autocomplete="off"></label>
+        <div class="filters" id="priceFilters">
+          <button class="active" data-filter="editable" type="button">Editables</button>
+          <button data-filter="all" type="button">Todos</button>
+        </div>
+        <div id="priceList" class="list"></div>
+      </section>
+
+      <section id="historyPanel" class="panel hidden">
+        <div class="panel-head">
+          <div><span class="eyebrow">AUDITORÍA</span><h2>Historial de precios</h2><p>Registra el precio anterior, el nuevo y la fecha del cambio.</p></div>
+          <button class="icon-btn" type="button" data-refresh="history" aria-label="Actualizar">↻</button>
+        </div>
+        <div id="historyList" class="list"></div>
+      </section>
+    </section>
+  </main>
+
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-card">
+      <span class="eyebrow">CONFIRMACIÓN</span>
+      <h2 id="confirmTitle">Confirmar cambio</h2>
+      <div id="confirmBody"></div>
+      <div class="modal-actions">
+        <button id="confirmCancel" class="secondary" type="button">Cancelar</button>
+        <button id="confirmAccept" class="primary" type="button">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+</body>
+</html>
