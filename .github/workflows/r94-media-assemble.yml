@@ -18,29 +18,22 @@ jobs:
         with:
           ref: r94-cinematic-intro
 
-      - name: Assemble and validate isolated intro assets
+      - name: Assemble and validate isolated intro audio
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p v2/intro
           cat .r94-media/audio/part-*.b64 > /tmp/french-store-theme.b64
-          cat .r94-media/logo/part-*.b64 > /tmp/french-store-logo.b64
           base64 --decode /tmp/french-store-theme.b64 > v2/intro/french-store-theme.mp3
-          base64 --decode /tmp/french-store-logo.b64 > v2/intro/french-store-intro-logo.webp
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
 
           audio = Path('v2/intro/french-store-theme.mp3')
-          logo = Path('v2/intro/french-store-intro-logo.webp')
-          assert audio.stat().st_size == 96591, audio.stat().st_size
-          assert logo.stat().st_size == 58780, logo.stat().st_size
-          assert hashlib.sha256(audio.read_bytes()).hexdigest() == '01906ad05cb4af82dea0317de3f22f0c8e8f0c5437ff6a85e2dd1510c8ab2499'
-          assert hashlib.sha256(logo.read_bytes()).hexdigest() == 'cb90cafdaf7c770863d61d96fa542fec8e6d3d04537376c97fc15f8f5768b21d'
+          assert audio.stat().st_size == 24606, audio.stat().st_size
+          assert hashlib.sha256(audio.read_bytes()).hexdigest() == '1c6be8c84c14900fb67ba3155a656167708941bcd8759d5aa59208cda0b4d06f'
           assert audio.read_bytes()[:3] == b'ID3'
-          raw = logo.read_bytes()
-          assert raw[:4] == b'RIFF' and raw[8:12] == b'WEBP'
-          print('R94 media validation OK')
+          print('R94 intro audio validation OK')
           PY
 
       - name: Remove transport chunks and self-clean workflow
@@ -49,12 +42,12 @@ jobs:
           rm -rf .r94-media
           rm -f .github/workflows/r94-media-assemble.yml
 
-      - name: Commit assembled binary assets
+      - name: Commit assembled binary asset
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m 'R94: ensamblar logo y música optimizada de intro'
+          git commit -m 'R94: ensamblar música optimizada de intro'
           git push origin HEAD:r94-cinematic-intro
