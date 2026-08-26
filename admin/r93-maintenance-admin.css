@@ -1,0 +1,20 @@
+/* THE FRENCH STORE — R93 private maintenance detail UI. */
+.admin-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.game-maintenance-card{padding:0;overflow:hidden}
+.game-maintenance-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px}
+.game-maintenance-actions{padding:0 14px 14px}
+.offer-list{display:grid;gap:8px;padding:12px 14px 14px;border-top:1px solid #183f53;background:rgba(2,14,22,.38)}
+.offer-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border:1px solid #193f53;border-radius:13px;background:#061a26}
+.offer-copy{min-width:0}
+.offer-copy b{display:block;overflow-wrap:anywhere}
+.offer-copy small{display:block;color:#8fa8b6;margin-top:4px;line-height:1.35}
+.offer-state{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.offer-state button{min-width:140px}
+.badge.bad{background:#5b1d29;color:#ffc2cc}
+.empty-filter{padding:18px;text-align:center;color:#8fa8b6}
+@media(max-width:650px){
+  .offer-row{grid-template-columns:1fr}
+  .offer-state{justify-content:stretch}
+  .offer-state button{width:100%;min-width:0}
+  .game-maintenance-head{flex-direction:column}
+}
