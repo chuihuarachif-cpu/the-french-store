@@ -1,0 +1,61 @@
+name: Test Admin PWA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'admin/**'
+      - 'robots.txt'
+      - '.github/workflows/test-admin-pwa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'admin/**'
+      - 'robots.txt'
+      - '.github/workflows/test-admin-pwa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check admin app files
+        run: |
+          test -s admin/index.html
+          test -s admin/app.css
+          test -s admin/app.js
+          test -s admin/manifest.webmanifest
+          test -s admin/sw.js
+      - name: Validate JavaScript and manifest
+        run: |
+          node --check admin/app.js
+          node --check admin/sw.js
+          python3 -m json.tool admin/manifest.webmanifest >/dev/null
+      - name: Check private-admin security contracts
+        run: |
+          grep -q 'noindex,nofollow' admin/index.html
+          grep -q "frame-ancestors 'none'" admin/index.html
+          grep -q "admin_app_is_allowed" admin/app.js
+          grep -q "admin_app_list_products" admin/app.js
+          grep -q "admin_app_set_fixed_price" admin/app.js
+          grep -q "admin_app_set_account_game_maintenance" admin/app.js
+          grep -q "admin_app_price_history" admin/app.js
+          grep -q "PRICE_RULE_MANAGED" admin/app.js
+          grep -q "PROVIDER_MANAGED_PRICE" admin/app.js
+          grep -q "Disallow: /admin/" robots.txt
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE|GAMERHUB_API|WEBHOOK_SECRET" admin --include='*.js' --include='*.html'
+      - name: Ensure app does not write directly to product table
+        run: |
+          ! grep -E "from\(['\"]productos['\"]\).*(update|insert|delete)|\.from\(['\"]productos['\"]\).*\.update" admin/app.js
+          grep -q "sb.rpc('admin_app_set_fixed_price'" admin/app.js
+      - name: Serve admin shell
+        run: |
+          python3 -m http.server 8080 >/tmp/fs-admin-http.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8080/admin/ >/dev/null
+          curl --fail http://127.0.0.1:8080/admin/app.js >/dev/null
+          curl --fail http://127.0.0.1:8080/admin/app.css >/dev/null
+          curl --fail http://127.0.0.1:8080/admin/manifest.webmanifest >/dev/null
