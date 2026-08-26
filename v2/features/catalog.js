@@ -34,8 +34,9 @@ function renderCatalog(){
   bindAddButtons($('catalogList'));
 }
 async function loadProducts(){
-  const{data,error}=await sb.from('productos').select('id,juego,paquete,categoria,precio,activo').eq('activo',true).order('juego').order('precio');
+  const{data,error}=await sb.from('productos').select('id,juego,paquete,categoria,precio,activo,mantenimiento,mantenimiento_mensaje,mantenimiento_actualizado_en').eq('activo',true).order('juego').order('precio');
   if(error){$('catalogList').innerHTML=`<div class="notice error">No se pudo cargar el catálogo: ${esc(error.message)}</div>`;return}
   inventory=data||[];
   renderCategoryTabs();renderCatalog();renderFeatured();renderCart();
+  document.dispatchEvent(new CustomEvent('fs:catalog-updated'));
 }
