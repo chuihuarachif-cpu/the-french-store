@@ -1,5 +1,6 @@
 /* THE FRENCH STORE — base authentication/session state.
-   Friendly confirmation/recovery UX remains in its dedicated auth modules. */
+   Friendly confirmation/recovery UX remains in its dedicated auth modules.
+   R92: the storefront no longer exposes an Admin entry point; administration lives only in /admin/. */
 async function signIn(){
   hideNotice($('loginMessage'));
   const email=$('loginEmail').value.trim(),password=$('loginPassword').value;
@@ -28,11 +29,11 @@ async function refreshSession(newSession=null){
     profile=p||{email:session.user.email,display_name:null};admin=a===true;
     $('authButton').textContent=profile.display_name||profile.email||'Mi cuenta';
     $('logoutButton').classList.remove('hidden');
-    $('openAdmin').classList.toggle('hidden',!admin);
+    $('openAdmin')?.classList.add('hidden');
   }else{
     $('authButton').textContent='Iniciar sesión';
     $('logoutButton').classList.add('hidden');
-    $('openAdmin').classList.add('hidden');
+    $('openAdmin')?.classList.add('hidden');
   }
   renderProfile();
 }

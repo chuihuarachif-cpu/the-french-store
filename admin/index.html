@@ -16,10 +16,10 @@
   <link rel="icon" href="../v2/assets/brand/icon-192.png">
   <link rel="apple-touch-icon" href="../v2/assets/brand/icon-192.png">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./app.css?v=20260826-r89">
+  <link rel="stylesheet" href="./app.css?v=20260826-r92">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="./r89-auth-fix.js?v=20260826-r90"></script>
-  <script defer src="./app.js?v=20260826-r89"></script>
+  <script defer src="./r89-auth-fix.js?v=20260826-r91"></script>
+  <script defer src="./app.js?v=20260826-r92"></script>
 </head>
 <body>
   <header class="topbar">
@@ -52,42 +52,60 @@
 
     <section id="appView" class="screen hidden">
       <section class="status-card">
-        <div><span class="eyebrow">ESTADO</span><h1>Panel privado</h1></div>
+        <div><span class="eyebrow">ESTADO</span><h1>Panel privado</h1><small id="adminSessionEmail" class="muted inline-muted"></small></div>
         <div class="status-pill ok">● Supabase conectado</div>
       </section>
 
       <nav class="tabs" aria-label="Herramientas administrativas">
-        <button class="active" type="button" data-tab="maintenance">🛠️ Mantenimiento</button>
+        <button class="active" type="button" data-tab="overview">📊 Resumen</button>
+        <button type="button" data-tab="wallet">💎 Wallet</button>
+        <button type="button" data-tab="ach">🏦 ACH</button>
+        <button type="button" data-tab="orders">🧾 Pedidos</button>
+        <button type="button" data-tab="maintenance">🛠️ Mantenimiento</button>
         <button type="button" data-tab="prices">💰 Precios</button>
-        <button type="button" data-tab="history">🧾 Historial</button>
+        <button type="button" data-tab="gamerhub">🎮 GamerHub</button>
+        <button type="button" data-tab="history">📚 Historial</button>
       </nav>
 
-      <section id="maintenancePanel" class="panel">
-        <div class="panel-head">
-          <div><span class="eyebrow">RECARGAS POR CUENTA</span><h2>Mantenimiento por juego</h2><p>Solo se bloquea el juego elegido. No se desactiva la categoría completa.</p></div>
-          <button class="icon-btn" type="button" data-refresh="maintenance" aria-label="Actualizar">↻</button>
-        </div>
+      <section id="overviewPanel" class="panel" data-panel="overview">
+        <div class="panel-head"><div><span class="eyebrow">RESUMEN</span><h2>Estado administrativo</h2><p>Pendientes que requieren atención y capital registrado en GamerHub.</p></div><button class="icon-btn" type="button" data-refresh="overview" aria-label="Actualizar">↻</button></div>
+        <div id="overviewList" class="summary-grid"></div>
+      </section>
+
+      <section id="walletPanel" class="panel hidden" data-panel="wallet">
+        <div class="panel-head"><div><span class="eyebrow">FRENCH WALLET</span><h2>Aprobaciones e historial</h2><p>Aprobar o rechazar solicitudes pendientes y revisar solicitudes anteriores.</p></div><button class="icon-btn" type="button" data-refresh="wallet" aria-label="Actualizar">↻</button></div>
+        <div id="walletAdminList" class="list"></div>
+      </section>
+
+      <section id="achPanel" class="panel hidden" data-panel="ach">
+        <div class="panel-head"><div><span class="eyebrow">PAGOS BANCARIOS</span><h2>ACH por revisar</h2><p>Los pagos ambiguos se pueden vincular a una solicitud Wallet pendiente. También se conserva el historial reciente.</p></div><button class="icon-btn" type="button" data-refresh="ach" aria-label="Actualizar">↻</button></div>
+        <div id="achList" class="list"></div>
+      </section>
+
+      <section id="ordersPanel" class="panel hidden" data-panel="orders">
+        <div class="panel-head"><div><span class="eyebrow">PEDIDOS</span><h2>Historial y gestión</h2><p>Ver pedidos, datos privados de recarga y actualizar estados manuales.</p></div><button class="icon-btn" type="button" data-refresh="orders" aria-label="Actualizar">↻</button></div>
+        <div id="ordersAdminList" class="list"></div>
+      </section>
+
+      <section id="maintenancePanel" class="panel hidden" data-panel="maintenance">
+        <div class="panel-head"><div><span class="eyebrow">RECARGAS POR CUENTA</span><h2>Mantenimiento por juego</h2><p>Solo se bloquea el juego elegido. No se desactiva la categoría completa.</p></div><button class="icon-btn" type="button" data-refresh="maintenance" aria-label="Actualizar">↻</button></div>
         <div id="maintenanceList" class="list"></div>
       </section>
 
-      <section id="pricesPanel" class="panel hidden">
-        <div class="panel-head">
-          <div><span class="eyebrow">PRECIOS</span><h2>Precios fijos y Recargas por Cuenta</h2><p>Se pueden editar los productos de precio fijo y los productos de Recargas por Cuenta. Los precios de proveedor/fórmula del resto del catálogo y el Pase Semanal de MLBB permanecen protegidos.</p></div>
-          <button class="icon-btn" type="button" data-refresh="prices" aria-label="Actualizar">↻</button>
-        </div>
+      <section id="pricesPanel" class="panel hidden" data-panel="prices">
+        <div class="panel-head"><div><span class="eyebrow">PRECIOS</span><h2>Precios fijos y Recargas por Cuenta</h2><p>Incluye Streaming de precio fijo y Recargas por Cuenta. Los precios gestionados por proveedor/fórmula y el Pase Semanal de MLBB permanecen protegidos.</p></div><button class="icon-btn" type="button" data-refresh="prices" aria-label="Actualizar">↻</button></div>
         <label class="search"><span>Buscar</span><input id="priceSearch" type="search" placeholder="Juego o paquete" autocomplete="off"></label>
-        <div class="filters" id="priceFilters">
-          <button class="active" data-filter="editable" type="button">Editables</button>
-          <button data-filter="all" type="button">Todos</button>
-        </div>
+        <div class="filters" id="priceFilters"><button class="active" data-filter="editable" type="button">Editables</button><button data-filter="all" type="button">Todos</button></div>
         <div id="priceList" class="list"></div>
       </section>
 
-      <section id="historyPanel" class="panel hidden">
-        <div class="panel-head">
-          <div><span class="eyebrow">AUDITORÍA</span><h2>Historial de precios</h2><p>Precio anterior, precio nuevo y fecha del cambio.</p></div>
-          <button class="icon-btn" type="button" data-refresh="history" aria-label="Actualizar">↻</button>
-        </div>
+      <section id="gamerhubPanel" class="panel hidden" data-panel="gamerhub">
+        <div class="panel-head"><div><span class="eyebrow">GAMERHUB</span><h2>Wallet e inventario USDT</h2><p>Capital registrado para GamerHub. Esto es control contable: no deposita ni mueve dinero en el proveedor.</p></div><button class="icon-btn" type="button" data-refresh="gamerhub" aria-label="Actualizar">↻</button></div>
+        <div id="gamerhubList" class="list"></div>
+      </section>
+
+      <section id="historyPanel" class="panel hidden" data-panel="history">
+        <div class="panel-head"><div><span class="eyebrow">AUDITORÍA</span><h2>Historial administrativo</h2><p>Aprobaciones Wallet, pagos ACH, pedidos, cambios de precio y movimientos GamerHub.</p></div><button class="icon-btn" type="button" data-refresh="history" aria-label="Actualizar">↻</button></div>
         <div id="historyList" class="list"></div>
       </section>
     </section>
@@ -98,10 +116,16 @@
       <span class="eyebrow">CONFIRMACIÓN</span>
       <h2 id="confirmTitle">Confirmar cambio</h2>
       <div id="confirmBody"></div>
-      <div class="modal-actions">
-        <button id="confirmCancel" class="secondary" type="button">Cancelar</button>
-        <button id="confirmAccept" class="primary" type="button">Confirmar</button>
-      </div>
+      <div class="modal-actions"><button id="confirmCancel" class="secondary" type="button">Cancelar</button><button id="confirmAccept" class="primary" type="button">Confirmar</button></div>
+    </div>
+  </div>
+
+  <div id="infoModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+    <div class="modal-card">
+      <span class="eyebrow">INFORMACIÓN PRIVADA</span>
+      <h2 id="infoTitle">Detalle</h2>
+      <div id="infoBody"></div>
+      <div class="modal-actions single"><button id="infoClose" class="secondary" type="button">Cerrar</button></div>
     </div>
   </div>
 

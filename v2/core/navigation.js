@@ -1,7 +1,8 @@
-/* THE FRENCH STORE — navigation only. */
+/* THE FRENCH STORE — navigation only.
+   R92: the old storefront Admin view is retired; /admin/ is the only administrative UI. */
 function navigate(view){
+  if(view==='admin')view='perfil';
   if(['wallet','pedidos','perfil'].includes(view)&&!session){openModal('authModal');return}
-  if(view==='admin'&&!admin)return;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const target=$(`view-${view}`);
   if(target)target.classList.add('active');
@@ -10,5 +11,4 @@ function navigate(view){
   if(view==='wallet')loadWallet();
   if(view==='pedidos')loadOrders();
   if(view==='perfil')renderProfile();
-  if(view==='admin')loadAdmin();
 }
