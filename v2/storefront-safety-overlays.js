@@ -1,10 +1,10 @@
-/* THE FRENCH STORE — R48 isolated storefront safety overlays.
+/* THE FRENCH STORE — isolated storefront safety overlays.
    Loads presentation/accidental-click guards without modifying checkout, Wallet,
    provider execution or catalog business logic. */
 (() => {
   'use strict';
 
-  const VERSION = 'storefront-safety-overlays-v5-20260826';
+  const VERSION = 'storefront-safety-overlays-v6-20260826-r93';
   let orderPolishPromise = null;
 
   function absolute(src) {
@@ -65,6 +65,7 @@
   async function boot() {
     await loadStyle('./delivery-mode-badges.css', 'fs-delivery-mode-badges-css');
     await loadStyle('./game-maintenance.css?v=20260826-r84', 'fs-game-maintenance-css');
+    await loadStyle('./maintenance-interaction-lock.css?v=20260826-r93', 'fs-maintenance-interaction-lock-css');
     // Reuse the same id expected by bootstrap's checkout feature so the sanitized
     // capability client is never loaded twice.
     await loadScript('./automation-capabilities.js', 'fs-automation-capabilities-js');
@@ -72,6 +73,9 @@
     await loadScript('./payment-action-guard.js', 'fs-payment-action-guard-js');
     await loadScript('./admin-auto-delivery-guard.js', 'fs-admin-auto-delivery-guard-js');
     await loadScript('./game-maintenance.js?v=20260826-r84', 'fs-game-maintenance-js');
+    // R93: nodes already marked as maintenance are fully inert for mouse, touch
+    // and keyboard. Mixed games remain openable; only blocked offers are inert.
+    await loadScript('./maintenance-interaction-lock.js?v=20260826-r93', 'fs-maintenance-interaction-lock-js');
     // R87: intercept the legacy R6 "Volver al catálogo" before it can call
     // history.back() and accidentally leave Tienda for Wallet/Pedidos.
     await loadScript('./catalog-back-guard.js?v=20260826-r87', 'fs-catalog-back-guard-js');
