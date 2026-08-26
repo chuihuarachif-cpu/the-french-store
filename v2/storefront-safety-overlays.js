@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'storefront-safety-overlays-v4-20260826';
+  const VERSION = 'storefront-safety-overlays-v5-20260826';
   let orderPolishPromise = null;
 
   function absolute(src) {
@@ -75,6 +75,9 @@
     // R87: intercept the legacy R6 "Volver al catálogo" before it can call
     // history.back() and accidentally leave Tienda for Wallet/Pedidos.
     await loadScript('./catalog-back-guard.js?v=20260826-r87', 'fs-catalog-back-guard-js');
+    // R89: Supabase currently returns Google OAuth to the authorized /v2/ URL.
+    // Only when the login started in /admin/ does this bridge return to /admin/.
+    await loadScript('./admin-oauth-return.js?v=20260826-r89', 'fs-admin-oauth-return-js');
     installOrderPolishTrigger();
     document.documentElement.dataset.fsSafetyOverlays = 'ready';
   }
