@@ -31,7 +31,7 @@
     if (existing?.dataset.fsLoaded === '1') return Promise.resolve();
     return new Promise((resolve, reject) => {
       const script = existing || document.createElement('script');
-      if (id) script.id = id;
+      if (id && !script.id) script.id = id;
       script.async = false;
       script.src = url;
       script.addEventListener('load', () => { script.dataset.fsLoaded = '1'; resolve(); }, { once: true });
