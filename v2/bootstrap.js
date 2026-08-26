@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r53-deep-audit-fixes-20260825';
+  const VERSION = 'r57-fixed-prices-usdt-admin-20260826';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -101,8 +101,8 @@
     admin: async () => {
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
       await loadScript('./admin-fulfillment-ui.js', 'fs-admin-fulfillment-js');
-      await loadScript('./admin-streaming-prices.js?v=20260825-r53', 'fs-admin-streaming-prices-js');
-      await loadScript('./admin-gamerhub-wallet.js?v=20260825-r51', 'fs-admin-gamerhub-wallet-js');
+      await loadScript('./admin-streaming-prices.js?v=20260826-r57', 'fs-admin-streaming-prices-js');
+      await loadScript('./admin-gamerhub-wallet.js?v=20260826-r57', 'fs-admin-gamerhub-wallet-js');
     },
     motion: async () => {
       await loadStyle('./r8.css', 'fs-r8-css');

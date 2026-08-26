@@ -41,20 +41,23 @@ jobs:
           grep -Fq "if (!admin) return" v2/admin-gamerhub-wallet.js
           ! grep -Eq "from\(['\"]fx_usdt_inventory|from\(['\"]fx_usdt_inventory_ledger" v2/admin-gamerhub-wallet.js
 
-      - name: Verify protection policy messaging
+      - name: Verify protection and auto-consume messaging
         run: |
           set -euo pipefail
-          grep -Fq "No añade los Bs 0,25" v2/admin-gamerhub-wallet.js
+          grep -Fq "No se añaden Bs 0,25" v2/admin-gamerhub-wallet.js
           grep -Fq "mayor valor entre Binance RAW y tu costo medio real" v2/admin-gamerhub-wallet.js
           grep -Fq "Costo medio real" v2/admin-gamerhub-wallet.js
-          grep -Fq "Tasa usada para GamerHub" v2/admin-gamerhub-wallet.js
+          grep -Fq "Tasa usada por GamerHub" v2/admin-gamerhub-wallet.js
+          grep -Fq "Auto consumo activo" v2/admin-gamerhub-wallet.js
+          grep -Fq "Cada compra GamerHub que termine SUCCEEDED descuenta automáticamente" v2/admin-gamerhub-wallet.js
+          grep -Fq "Ajuste manual excepcional" v2/admin-gamerhub-wallet.js
 
       - name: Verify lazy Admin integration and cache bust
         run: |
           set -euo pipefail
-          grep -Fq "admin-gamerhub-wallet.js?v=20260825-r51" v2/bootstrap.js
+          grep -Fq "admin-gamerhub-wallet.js?v=20260826-r57" v2/bootstrap.js
           grep -Eq "const VERSION = 'r[0-9]+-" v2/bootstrap.js
-          grep -Eq "bootstrap.js\?v=20260825-r[0-9]+" v2/index.html
+          grep -Fq "bootstrap.js?v=20260826-r57" v2/index.html
 
       - name: Guard secrets and provider execution
         run: |

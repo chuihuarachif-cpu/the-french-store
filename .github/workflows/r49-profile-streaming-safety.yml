@@ -36,8 +36,8 @@ jobs:
       - name: Verify current entry points
         run: |
           set -euo pipefail
-          grep -Eq "bootstrap.js\?v=20260825-r[0-9]+" v2/index.html
-          grep -Eq "admin-streaming-prices.js\?v=20260825-r[0-9]+" v2/bootstrap.js
+          grep -Fq "bootstrap.js?v=20260826-r57" v2/index.html
+          grep -Fq "admin-streaming-prices.js?v=20260826-r57" v2/bootstrap.js
           grep -q "loadScript('./loyalty.js'" v2/bootstrap.js
           grep -q "loadScript('./rewarded-ads-ui.js'" v2/bootstrap.js
           grep -q "profile-cleanup.css?v=20260825-r49" v2/bootstrap.js
@@ -51,20 +51,20 @@ jobs:
           grep -q "#view-perfil .fs-rewarded-ads-status" v2/profile-cleanup.css
           ! grep -Eq "#view-wallet|#view-admin|#cartModal|#qrModal" v2/profile-cleanup.css
 
-      - name: Verify Streaming stale-row recovery
+      - name: Verify Streaming stable-ID server save
         run: |
           set -euo pipefail
-          grep -q "admin_update_streaming_price_by_identity" v2/admin-streaming-prices.js
-          grep -q "data-streaming-game" v2/admin-streaming-prices.js
-          grep -q "data-streaming-package" v2/admin-streaming-prices.js
+          grep -q "admin_update_streaming_price_v2" v2/admin-streaming-prices.js
+          grep -q "admin_update_streaming_price'" v2/admin-streaming-prices.js
+          grep -q "data-streaming-product" v2/admin-streaming-prices.js
           grep -q "eq('categoria', 'Streaming')" v2/admin-streaming-prices.js
-          grep -q "p_game: game" v2/admin-streaming-prices.js
-          grep -q "p_package: pack" v2/admin-streaming-prices.js
+          grep -q "p_product_id" v2/admin-streaming-prices.js
           grep -q "p_sale_price" v2/admin-streaming-prices.js
+          grep -q "PGRST202" v2/admin-streaming-prices.js
           ! grep -q "from('productos').update\|from(\"productos\").update" v2/admin-streaming-prices.js
 
       - name: Secret and scope hygiene
         run: |
           set -euo pipefail
           ! grep -Eqi "service_role|SUPABASE_SERVICE|private[_-]?key|client_secret" v2/profile-cleanup.css v2/admin-streaming-prices.js v2/bootstrap.js
-          grep -q "Los pedidos nuevos usarán este valor" v2/admin-streaming-prices.js
+          grep -q "Los pedidos nuevos ya usarán este valor" v2/admin-streaming-prices.js

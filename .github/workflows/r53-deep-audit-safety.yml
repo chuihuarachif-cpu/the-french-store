@@ -51,11 +51,11 @@ jobs:
       - name: Streaming admin save is server authoritative and resilient
         run: |
           set -euo pipefail
-          grep -Fq "admin_update_streaming_price" v2/admin-streaming-prices.js
-          grep -Fq "admin_update_streaming_price_by_identity" v2/admin-streaming-prices.js
-          grep -Fq "resolveCurrentProductId" v2/admin-streaming-prices.js
+          grep -Fq "admin_update_streaming_price_v2" v2/admin-streaming-prices.js
+          grep -Fq "admin_update_streaming_price'" v2/admin-streaming-prices.js
+          grep -Fq "data-streaming-product" v2/admin-streaming-prices.js
           grep -Fq "PGRST202" v2/admin-streaming-prices.js
-          grep -Fq "checkout always recalculates" v2/admin-streaming-prices.js
+          grep -Fq "Los pedidos nuevos ya usarán este valor" v2/admin-streaming-prices.js
           ! grep -q "from('productos').update\|from(\"productos\").update" v2/admin-streaming-prices.js
 
       - name: Public auth remains Google-only
@@ -71,7 +71,7 @@ jobs:
       - name: Cache bust and secret hygiene
         run: |
           set -euo pipefail
-          grep -Fq "r53-deep-audit-fixes-20260825" v2/bootstrap.js
-          grep -Fq "admin-streaming-prices.js?v=20260825-r53" v2/bootstrap.js
-          grep -Fq "bootstrap.js?v=20260825-r53" v2/index.html
+          grep -Fq "r57-fixed-prices-usdt-admin-20260826" v2/bootstrap.js
+          grep -Fq "admin-streaming-prices.js?v=20260826-r57" v2/bootstrap.js
+          grep -Fq "bootstrap.js?v=20260826-r57" v2/index.html
           ! grep -Eqi "service_role|SUPABASE_SERVICE|client_secret|private[_-]?key|provider_token" v2/bootstrap.js v2/core/ui.js v2/admin-streaming-prices.js v2/index.html

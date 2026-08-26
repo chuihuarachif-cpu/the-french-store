@@ -1,11 +1,10 @@
-/* THE FRENCH STORE — R51 GamerHub wallet cost protection.
-   Admin-only UI. It records accounting inventory only; it never moves provider money,
+/* THE FRENCH STORE — R57 GamerHub USDT inventory cost protection.
+   Admin-only UI. Records accounting inventory; it never moves provider money,
    never purchases provider products, and never exposes provider credentials. */
 (() => {
   'use strict';
 
   const previousLoadAdmin = loadAdmin;
-
   const content = () => document.getElementById('adminContent');
   const num = (value) => Number(value || 0);
   const rate = (value) => Number.isFinite(Number(value)) ? `Bs ${Number(value).toFixed(2)}` : '—';
@@ -14,12 +13,12 @@
   function errorText(error) {
     const raw = String(error?.message || error || '');
     if (raw.includes('AUTH_REQUIRED')) return 'Tu sesión venció. Inicia sesión nuevamente.';
-    if (raw.includes('ADMIN_REQUIRED')) return 'Solo un administrador puede modificar el saldo protegido de GamerHub.';
+    if (raw.includes('ADMIN_REQUIRED')) return 'Solo un administrador puede modificar el inventario USDT de GamerHub.';
     if (raw.includes('INVALID_GAMERHUB_AMOUNT')) return 'Ingresa una cantidad válida mayor a 0.';
-    if (raw.includes('INVALID_GAMERHUB_RATE')) return 'Ingresa un costo válido en Bs por USDT/USD.';
-    if (raw.includes('GAMERHUB_CONSUME_EXCEEDS_BALANCE')) return 'El consumo no puede superar el saldo protegido registrado.';
-    if (raw.includes('GAMERHUB_BALANCE_NOT_FOUND')) return 'Todavía no existe saldo protegido de GamerHub.';
-    return 'No se pudo actualizar el saldo protegido de GamerHub.';
+    if (raw.includes('INVALID_GAMERHUB_RATE')) return 'Ingresa un costo válido en Bs por USDT.';
+    if (raw.includes('GAMERHUB_CONSUME_EXCEEDS_BALANCE')) return 'El ajuste no puede superar el saldo registrado.';
+    if (raw.includes('GAMERHUB_BALANCE_NOT_FOUND')) return 'Todavía no existe inventario registrado de GamerHub.';
+    return 'No se pudo actualizar el inventario USDT de GamerHub.';
   }
 
   function ensureTab() {
@@ -31,7 +30,7 @@
     button.type = 'button';
     button.dataset.adminTab = 'gamerhub';
     button.textContent = 'GamerHub';
-    button.setAttribute('aria-label', 'Administrar saldo y costo de GamerHub');
+    button.setAttribute('aria-label', 'Administrar inventario USDT de GamerHub');
     button.onclick = async () => {
       if (!admin) return;
       adminTab = 'gamerhub';
@@ -48,11 +47,11 @@
     return rows.map((item) => {
       const purchase = item.operation === 'PURCHASE';
       const sign = purchase ? '+' : '−';
-      const title = purchase ? 'Carga registrada' : 'Consumo registrado';
+      const title = purchase ? 'USDT registrados' : (String(item.note || '').startsWith('AUTO') ? 'Consumo automático' : 'Ajuste/consumo');
       const total = Number(item.total_bob || 0);
       return `<div class="record">
         <div class="record-top"><div><b>${title} · ${sign}${qty(item.amount_usdt)} USDT</b><small>${dateFmt(item.created_at)}</small></div><span class="status ${purchase ? 'ok' : 'warn'}">${purchase ? 'Entrada' : 'Salida'}</span></div>
-        <div class="record-meta"><span>Costo usado: ${rate(item.rate_bob)}/USDT</span>${total > 0 ? `<span>Total contable: ${money(total)}</span>` : ''}${item.note ? `<span>${esc(item.note)}</span>` : ''}</div>
+        <div class="record-meta"><span>Costo contable: ${rate(item.rate_bob)}/USDT</span>${total > 0 ? `<span>Total: ${money(total)}</span>` : ''}${item.note ? `<span>${esc(item.note)}</span>` : ''}</div>
       </div>`;
     }).join('');
   }
@@ -68,43 +67,42 @@
     const totalCost = num(state?.cost_total_bob);
 
     box.innerHTML = `<div class="record">
-      <div class="record-top"><div><b>GamerHub Wallet · protección de costo</b><small>Protege el saldo comprado si Binance baja. No añade los Bs 0,25 usados en otras reglas.</small></div><span class="status ${protectedNow ? 'warn' : 'ok'}">${protectedNow ? 'Protección activa' : 'Mercado'}</span></div>
+      <div class="record-top"><div><b>Inventario USDT · GamerHub</b><small>Las recargas automáticas de GamerHub usan el mayor valor entre Binance RAW y tu costo medio real. No se añaden Bs 0,25 aquí.</small></div><span class="status ok">Auto consumo activo</span></div>
       <div class="record-meta">
-        <span>Saldo protegido: <b>${qty(balance)} USDT</b></span>
-        <span>Costo acumulado: <b>${money(totalCost)}</b></span>
+        <span>Saldo registrado: <b>${qty(balance)} USDT</b></span>
+        <span>Costo acumulado restante: <b>${money(totalCost)}</b></span>
         <span>Costo medio real: <b>${rate(avg)}/USDT</b></span>
         <span>Binance RAW actual: <b>${rate(raw)}/USDT</b></span>
-        <span>Tasa usada para GamerHub: <b>${rate(effective)}/USDT</b></span>
+        <span>Tasa usada por GamerHub: <b>${rate(effective)}/USDT</b></span>
       </div>
-      <small>Regla: mientras quede saldo registrado, GamerHub usa el mayor valor entre Binance RAW y tu costo medio real. Si Binance sube, sigue Binance; si baja por debajo de tu costo, conserva tu costo como piso.</small>
+      <small>${protectedNow ? 'Tu costo medio está por encima de Binance; se mantiene como piso para no vender ese inventario por debajo de lo que te costó.' : 'Binance está igual o por encima de tu costo medio; se usa el mercado actual.'} Cada compra GamerHub que termine SUCCEEDED descuenta automáticamente del inventario el USD cobrado por el proveedor.</small>
     </div>
 
     <div class="record">
-      <b>Registrar carga a GamerHub</b>
-      <small>Escribe lo que realmente quedó acreditado y cuánto pagaste por cada USDT/USD. Esto solo registra el costo; no mueve dinero.</small>
-      <label style="display:block;margin-top:10px">USDT/USD acreditados
+      <b>Registrar compra de USDT</b>
+      <small>Registra solo USDT realmente comprados/acreditados y su costo real. El promedio se calcula automáticamente.</small>
+      <label style="display:block;margin-top:10px">USDT comprados
         <input type="number" min="0.01" max="100000" step="0.01" inputmode="decimal" placeholder="Ej. 50" data-gh-add-amount>
       </label>
-      <label style="display:block;margin-top:10px">Costo real por USDT en Bs
-        <input type="number" min="1" max="100" step="0.01" inputmode="decimal" placeholder="Ej. 11.20" data-gh-add-rate>
+      <label style="display:block;margin-top:10px">Precio real pagado por USDT (Bs)
+        <input type="number" min="1" max="100" step="0.01" inputmode="decimal" placeholder="Ej. 11.62" data-gh-add-rate>
       </label>
       <label style="display:block;margin-top:10px">Nota opcional
-        <input type="text" maxlength="120" placeholder="Ej. Carga GamerHub agosto" data-gh-add-note>
+        <input type="text" maxlength="120" placeholder="Ej. Binance P2P agosto" data-gh-add-note>
       </label>
       <div class="record-meta" style="margin-top:10px"><span data-gh-add-total>Costo total: —</span></div>
-      <div class="admin-actions"><button type="button" class="primary-btn" data-gh-add>Registrar carga</button></div>
+      <div class="admin-actions"><button type="button" class="primary-btn" data-gh-add>Registrar USDT</button></div>
       <div class="notice hidden" data-gh-message role="status" aria-live="polite"></div>
     </div>
 
     <div class="record">
-      <b>Registrar consumo del saldo</b>
-      <small>Úsalo cuando el saldo de GamerHub se haya gastado y aún no exista descuento automático del inventario contable.</small>
-      <div class="input-row" style="margin-top:10px"><input type="number" min="0.01" max="100000" step="0.01" inputmode="decimal" placeholder="USDT consumidos" data-gh-consume-amount><button type="button" data-gh-consume>Registrar consumo</button></div>
+      <b>Ajuste manual excepcional</b>
+      <small>El consumo normal ya es automático. Usa esto solo para reconciliar una compra hecha manualmente fuera del sistema o corregir el saldo contable contra el saldo real del panel.</small>
+      <div class="input-row" style="margin-top:10px"><input type="number" min="0.01" max="100000" step="0.01" inputmode="decimal" placeholder="USDT a descontar" data-gh-consume-amount><button type="button" data-gh-consume>Registrar ajuste</button></div>
     </div>
 
-    <div class="record"><b>Movimientos recientes</b><small>Historial contable del saldo protegido de GamerHub.</small></div>
+    <div class="record"><b>Movimientos recientes</b><small>Entradas manuales y consumos automáticos del inventario GamerHub.</small></div>
     ${historyHtml(state?.history)}`;
-
     bindActions();
   }
 
@@ -128,7 +126,7 @@
   async function loadState() {
     const box = content();
     if (!box || !admin) return;
-    box.innerHTML = '<div class="record"><small>Cargando protección de GamerHub…</small></div>';
+    box.innerHTML = '<div class="record"><small>Cargando inventario GamerHub…</small></div>';
     const { data, error } = await sb.rpc('admin_gamerhub_wallet_state');
     if (error) {
       box.innerHTML = `<div class="notice error">${esc(errorText(error))}</div>`;
@@ -143,11 +141,11 @@
     const acquisitionRate = num(box?.querySelector('[data-gh-add-rate]')?.value);
     const note = String(box?.querySelector('[data-gh-add-note]')?.value || '').trim() || null;
     if (!(amount > 0) || !(acquisitionRate >= 1)) {
-      showMessage('Completa una cantidad y un costo real válidos.', 'error');
+      showMessage('Completa la cantidad de USDT y el precio real que pagaste.', 'error');
       return;
     }
     const total = amount * acquisitionRate;
-    if (!confirm(`Registrar ${qty(amount)} USDT a ${rate(acquisitionRate)} por USDT (${money(total)} en total)?`)) return;
+    if (!confirm(`Registrar ${qty(amount)} USDT a ${rate(acquisitionRate)}/USDT (${money(total)} en total)?`)) return;
     const old = button.textContent;
     button.disabled = true;
     button.textContent = 'Registrando…';
@@ -159,7 +157,7 @@
       return;
     }
     await loadState();
-    showMessage('Carga registrada. El piso de costo de GamerHub ya fue recalculado.', 'success');
+    showMessage('USDT registrados. El costo medio y el piso GamerHub ya fueron recalculados.', 'success');
     if (typeof loadProducts === 'function') await loadProducts().catch(() => {});
   }
 
@@ -167,11 +165,11 @@
     const box = content();
     const amount = num(box?.querySelector('[data-gh-consume-amount]')?.value);
     if (!(amount > 0)) return;
-    if (!confirm(`Registrar consumo de ${qty(amount)} USDT del saldo protegido de GamerHub?`)) return;
+    if (!confirm(`¿Registrar un ajuste manual de ${qty(amount)} USDT? El consumo normal de compras automáticas ya no requiere este botón.`)) return;
     const old = button.textContent;
     button.disabled = true;
     button.textContent = 'Registrando…';
-    const { error } = await sb.rpc('admin_gamerhub_wallet_consume', { p_usdt: amount, p_note: 'Consumo registrado desde Admin' });
+    const { error } = await sb.rpc('admin_gamerhub_wallet_consume', { p_usdt: amount, p_note: 'Ajuste manual desde Admin' });
     button.disabled = false;
     button.textContent = old;
     if (error) {
@@ -179,7 +177,7 @@
       return;
     }
     await loadState();
-    showMessage('Consumo registrado y protección recalculada.', 'success');
+    showMessage('Ajuste registrado.', 'success');
     if (typeof loadProducts === 'function') await loadProducts().catch(() => {});
   }
 
