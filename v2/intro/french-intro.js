@@ -3,11 +3,11 @@
 (() => {
   'use strict';
 
-  const VERSION = 'french-intro-r94-20260826';
+  const VERSION = 'french-intro-r94-20260826b';
   const SESSION_KEY = 'fs_intro_seen_r94';
   const MUSIC_KEY = 'fs_music_enabled_v1';
-  const AUDIO_SRC = './intro/french-store-theme.mp3?v=20260826-r94';
-  const LOGO_SRC = './intro/french-store-intro-logo.webp?v=20260826-r94';
+  const AUDIO_SRC = './intro/french-store-theme.mp3?v=20260826-r94b';
+  const LOGO_SRC = './assets/brand/icon-512.png?v=20260826-r94b';
   const INTRO_MS = 3350;
   const EXIT_MS = 620;
 
