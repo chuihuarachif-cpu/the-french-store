@@ -3,11 +3,15 @@
 (() => {
   'use strict';
 
-  const VERSION = 'french-intro-r94-20260826b';
+  const VERSION = 'french-intro-r94-20260826c';
   const SESSION_KEY = 'fs_intro_seen_r94';
   const MUSIC_KEY = 'fs_music_enabled_v1';
-  const AUDIO_SRC = './intro/french-store-theme.mp3?v=20260826-r94b';
-  const LOGO_SRC = './assets/brand/icon-512.png?v=20260826-r94b';
+  const AUDIO_PARTS = [
+    './intro/audio/theme-00.b64?v=20260826-r94c',
+    './intro/audio/theme-01.b64?v=20260826-r94c',
+    './intro/audio/theme-02.b64?v=20260826-r94c'
+  ];
+  const LOGO_SRC = './assets/brand/icon-512.png?v=20260826-r94c';
   const INTRO_MS = 3350;
   const EXIT_MS = 620;
 
@@ -18,6 +22,8 @@
 
   let overlay = null;
   let audio = null;
+  let audioUrl = '';
+  let audioSourcePromise = null;
   let musicToggle = null;
   let releaseTimer = null;
   let started = false;
@@ -44,28 +50,54 @@
     try { sessionStorage.setItem(SESSION_KEY, '1'); } catch {}
   }
 
-  function ensureAudio() {
-    if (audio) return audio;
-    audio = document.createElement('audio');
-    audio.id = 'fsIntroAudio';
-    audio.src = AUDIO_SRC;
-    audio.loop = true;
-    audio.preload = 'none';
-    audio.volume = 0.24;
-    audio.setAttribute('playsinline', '');
-    document.body.appendChild(audio);
+  async function ensureAudioSource() {
+    if (audioUrl) return audioUrl;
+    if (audioSourcePromise) return audioSourcePromise;
+
+    audioSourcePromise = (async () => {
+      const responses = await Promise.all(AUDIO_PARTS.map((part) => fetch(part, { cache: 'force-cache' })));
+      if (responses.some((response) => !response.ok)) throw new Error('intro-audio-unavailable');
+
+      const encoded = (await Promise.all(responses.map((response) => response.text())))
+        .join('')
+        .replace(/\s+/g, '');
+      const raw = atob(encoded);
+      const bytes = new Uint8Array(raw.length);
+      for (let index = 0; index < raw.length; index += 1) bytes[index] = raw.charCodeAt(index);
+
+      audioUrl = URL.createObjectURL(new Blob([bytes], { type: 'audio/mpeg' }));
+      return audioUrl;
+    })().catch((error) => {
+      audioSourcePromise = null;
+      throw error;
+    });
+
+    return audioSourcePromise;
+  }
+
+  async function ensureAudio() {
+    if (!audio) {
+      audio = document.createElement('audio');
+      audio.id = 'fsIntroAudio';
+      audio.loop = true;
+      audio.preload = 'none';
+      audio.volume = 0.24;
+      audio.setAttribute('playsinline', '');
+      document.body.appendChild(audio);
+    }
+    if (!audio.src) audio.src = await ensureAudioSource();
     return audio;
   }
 
   async function setMusic(enabled, userGesture = false) {
     writeBool(MUSIC_KEY, enabled);
-    const player = ensureAudio();
     if (!enabled) {
-      player.pause();
+      if (audio) audio.pause();
       updateMusicToggle(false);
       return false;
     }
     try {
+      const player = await ensureAudio();
       if (userGesture) player.currentTime = player.currentTime || 0;
       await player.play();
       updateMusicToggle(true);
@@ -93,8 +125,7 @@
     musicToggle.className = 'fs-music-toggle';
     musicToggle.setAttribute('aria-label', 'Activar o desactivar música');
     musicToggle.addEventListener('click', async () => {
-      const player = ensureAudio();
-      if (!player.paused) await setMusic(false, true);
+      if (audio && !audio.paused) await setMusic(false, true);
       else await setMusic(true, true);
     });
     document.body.appendChild(musicToggle);
@@ -212,6 +243,10 @@
     }
     buildOverlay();
   }
+
+  window.addEventListener('pagehide', () => {
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+  }, { once: true });
 
   window.FSFrenchIntro = Object.freeze({
     version: VERSION,
