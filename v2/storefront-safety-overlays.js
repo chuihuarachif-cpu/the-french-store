@@ -4,7 +4,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'storefront-safety-overlays-v2-20260826';
+  const VERSION = 'storefront-safety-overlays-v3-20260826';
+  let orderPolishPromise = null;
 
   function absolute(src) {
     return new URL(src, document.baseURI).href;
@@ -40,6 +41,27 @@
     });
   }
 
+  function ensureOrderPolish() {
+    if (orderPolishPromise) return orderPolishPromise;
+    orderPolishPromise = (async () => {
+      await loadStyle('./order-history-polish.css?v=20260826-r86', 'fs-order-history-polish-css');
+      await loadScript('./order-history-polish.js?v=20260826-r86', 'fs-order-history-polish-js');
+      window.FSOrderHistoryPolish?.refresh?.();
+    })().catch((error) => {
+      orderPolishPromise = null;
+      console.error('FRENCH STORE order history polish failed:', String(error?.message || error).slice(0, 120));
+    });
+    return orderPolishPromise;
+  }
+
+  function installOrderPolishTrigger() {
+    document.addEventListener('click', (event) => {
+      const target = event.target.closest?.('[data-nav="pedidos"],#refreshOrders');
+      if (target) ensureOrderPolish();
+    }, true);
+    if (document.getElementById('view-pedidos')?.classList.contains('active')) ensureOrderPolish();
+  }
+
   async function boot() {
     await loadStyle('./delivery-mode-badges.css', 'fs-delivery-mode-badges-css');
     await loadStyle('./game-maintenance.css?v=20260826-r84', 'fs-game-maintenance-css');
@@ -50,10 +72,11 @@
     await loadScript('./payment-action-guard.js', 'fs-payment-action-guard-js');
     await loadScript('./admin-auto-delivery-guard.js', 'fs-admin-auto-delivery-guard-js');
     await loadScript('./game-maintenance.js?v=20260826-r84', 'fs-game-maintenance-js');
+    installOrderPolishTrigger();
     document.documentElement.dataset.fsSafetyOverlays = 'ready';
   }
 
-  window.FSStorefrontSafetyOverlays = Object.freeze({ version: VERSION });
+  window.FSStorefrontSafetyOverlays = Object.freeze({ version: VERSION, ensureOrderPolish });
   boot().catch((error) => {
     document.documentElement.dataset.fsSafetyOverlays = 'failed';
     console.error('FRENCH STORE safety overlays failed:', String(error?.message || error).slice(0, 120));

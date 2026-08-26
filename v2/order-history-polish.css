@@ -1,0 +1,25 @@
+/* THE FRENCH STORE — R86 order history presentation. */
+.automatic-order-state{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  width:100%;
+  min-height:3.25rem;
+  margin-top:.7rem;
+  padding:.75rem 1rem;
+  border:1px solid rgba(88,255,177,.44);
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(30,196,104,.94),rgba(21,151,83,.94));
+  color:#fff;
+  box-sizing:border-box;
+  text-align:center;
+  cursor:default;
+  pointer-events:none;
+  user-select:none;
+}
+.automatic-order-state-icon{font-size:1.12em;line-height:1}
+.automatic-order-state strong{font-size:1rem;line-height:1.25}
+.fs-automatic-order-record .paid-whatsapp-active{display:none!important}
+.fs-automatic-order-record .auto-fulfillment-note{line-height:1.35}
+#ordersList .record-top small{overflow-wrap:anywhere}
