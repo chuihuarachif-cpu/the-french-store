@@ -1,8 +1,8 @@
-/* THE FRENCH STORE — R89 private Admin Google OAuth fix.
-   Supabase currently allowlists the storefront /v2/ callback. This module starts
-   OAuth from Admin, marks the pending Admin return in same-origin localStorage,
-   and lets /v2/admin-oauth-return.js bring the authenticated session back here.
-   Server-side RPCs remain the authority for the exact allowed email. */
+/* THE FRENCH STORE — R90 private Admin Google OAuth bridge.
+   Important: do NOT create a second persistent Supabase client when /admin/ loads.
+   The Admin app itself owns the only persistent client used to validate/write.
+   A short-lived login client is created only after the user taps Google, and the
+   page immediately navigates away to OAuth. This avoids stale-token races on return. */
 (() => {
   'use strict';
 
@@ -10,9 +10,6 @@
   const STORAGE_KEY = 'fs_admin_oauth_pending_v1';
   const SUPABASE_URL = 'https://jivaaripugjdpxjvjnsu.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6ImppdmFhcmlwdWdqZHB4anZqbnN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NDY3MzIsImV4cCI6MjEwMTIyMjczMn0.N60Xb1PqqPo12HdKEzPc4qCp1aFvVzwZz4VG04q_Es4';
-  const authClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-  });
 
   function showError(message) {
     const el = document.getElementById('loginMessage');
@@ -25,10 +22,16 @@
     try { localStorage.removeItem(STORAGE_KEY); } catch {}
   }
 
+  function createLoginClient() {
+    return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    });
+  }
+
   async function beginAdminGoogleLogin(button) {
-    if (button?.dataset.r89Busy === '1') return;
+    if (button?.dataset.r90Busy === '1') return;
     if (button) {
-      button.dataset.r89Busy = '1';
+      button.dataset.r90Busy = '1';
       button.disabled = true;
       button.textContent = 'Conectando con Google…';
     }
@@ -40,7 +43,11 @@
         returnTo: '/admin/'
       }));
 
-      const { error } = await authClient.auth.signInWithOAuth({
+      // Created only for the outbound OAuth navigation. It is never created merely
+      // by opening /admin/, so the returning page has exactly one persistent client:
+      // the one inside admin/app.js.
+      const loginClient = createLoginClient();
+      const { error } = await loginClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${location.origin}/v2/`,
@@ -52,7 +59,7 @@
       clearPending();
       showError(`No se pudo iniciar el acceso con Google. Usa ${ALLOWED_EMAIL} e intenta nuevamente.`);
       if (button) {
-        delete button.dataset.r89Busy;
+        delete button.dataset.r90Busy;
         button.disabled = false;
         button.textContent = 'G  Continuar con Google';
       }
@@ -85,17 +92,6 @@
     new MutationObserver(clarifyPriceCards).observe(host, { childList: true, subtree: true });
     clarifyPriceCards();
   }
-
-  // UX-only precheck. Authorization is still performed server-side by
-  // admin_app_is_allowed(), which also requires this exact email and admin role.
-  authClient.auth.getSession().then(({ data }) => {
-    const email = String(data?.session?.user?.email || '').toLowerCase();
-    if (email && email !== ALLOWED_EMAIL) {
-      const denied = document.getElementById('deniedView');
-      const paragraph = denied?.querySelector('p');
-      if (paragraph) paragraph.textContent = `Solo ${ALLOWED_EMAIL} puede usar FRENCH STORE Admin.`;
-    }
-  }).catch(() => {});
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', installPriceLabelObserver, { once: true });
   else installPriceLabelObserver();

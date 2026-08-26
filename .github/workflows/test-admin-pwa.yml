@@ -62,6 +62,9 @@ jobs:
           grep -q "fs_admin_oauth_pending_v1" v2/admin-oauth-return.js
           grep -q "location.replace('/admin/')" v2/admin-oauth-return.js
           grep -q "admin-oauth-return.js?v=20260826-r89" v2/storefront-safety-overlays.js
+          grep -q "r89-auth-fix.js?v=20260826-r90" admin/index.html
+          grep -q "function createLoginClient()" admin/r89-auth-fix.js
+          ! grep -q "const authClient = window.supabase.createClient" admin/r89-auth-fix.js
           grep -q "Disallow: /admin/" robots.txt
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE|GAMERHUB_API|WEBHOOK_SECRET" admin --include='*.js' --include='*.html'
       - name: Ensure app does not write directly to product table
