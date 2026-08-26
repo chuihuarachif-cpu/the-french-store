@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'storefront-safety-overlays-v1-20260825';
+  const VERSION = 'storefront-safety-overlays-v2-20260826';
 
   function absolute(src) {
     return new URL(src, document.baseURI).href;
@@ -31,7 +31,7 @@
     if (existing?.dataset.fsLoaded === '1') return Promise.resolve();
     return new Promise((resolve, reject) => {
       const script = existing || document.createElement('script');
-      if (id && !script.id) script.id = id;
+      if (id) script.id = id;
       script.async = false;
       script.src = url;
       script.addEventListener('load', () => { script.dataset.fsLoaded = '1'; resolve(); }, { once: true });
@@ -42,12 +42,14 @@
 
   async function boot() {
     await loadStyle('./delivery-mode-badges.css', 'fs-delivery-mode-badges-css');
+    await loadStyle('./game-maintenance.css?v=20260826-r84', 'fs-game-maintenance-css');
     // Reuse the same id expected by bootstrap's checkout feature so the sanitized
     // capability client is never loaded twice.
     await loadScript('./automation-capabilities.js', 'fs-automation-capabilities-js');
     await loadScript('./delivery-mode-badges.js', 'fs-delivery-mode-badges-js');
     await loadScript('./payment-action-guard.js', 'fs-payment-action-guard-js');
     await loadScript('./admin-auto-delivery-guard.js', 'fs-admin-auto-delivery-guard-js');
+    await loadScript('./game-maintenance.js?v=20260826-r84', 'fs-game-maintenance-js');
     document.documentElement.dataset.fsSafetyOverlays = 'ready';
   }
 
