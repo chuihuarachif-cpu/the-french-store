@@ -64,7 +64,7 @@ jobs:
           grep -q 'admin_app_is_allowed' admin/maintenance.js
           grep -q 'admin_app_list_products' admin/maintenance.js
           grep -q 'admin_app_set_account_game_maintenance' admin/maintenance.js
-          grep -q 'p_product_ids:\[id\]' admin/maintenance.js
+          grep -Fq 'changeMaintenance([id],enabled,OFFER_MESSAGE' admin/maintenance.js
           grep -q 'maintenance.html' admin/index.html
           ! grep -E "from\(['\"]productos['\"]\).*(update|insert|delete)|\.from\(['\"]productos['\"]\).*\.update" admin/maintenance.js
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE|GAMERHUB_API|WEBHOOK_SECRET" admin/maintenance.html admin/maintenance.js
