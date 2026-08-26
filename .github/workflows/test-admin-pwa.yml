@@ -52,6 +52,17 @@ jobs:
           grep -q "admin_app_set_fixed_price" admin/app.js
           grep -q "admin_app_set_account_game_maintenance" admin/app.js
           grep -q "admin_app_price_history" admin/app.js
+          grep -q "admin_app_dashboard" admin/app.js
+          grep -q "admin_app_list_wallet_topups" admin/app.js
+          grep -q "admin_app_review_wallet_topup" admin/app.js
+          grep -q "admin_app_list_bank_payments" admin/app.js
+          grep -q "admin_app_match_bank_payment" admin/app.js
+          grep -q "admin_app_list_orders" admin/app.js
+          grep -q "admin_app_update_order_status" admin/app.js
+          grep -q "admin_app_get_order_fulfillment_inputs" admin/app.js
+          grep -q "admin_app_gamerhub_state" admin/app.js
+          grep -q "admin_app_gamerhub_add" admin/app.js
+          grep -q "admin_app_gamerhub_consume" admin/app.js
           grep -q "PRICE_RULE_MANAGED" admin/app.js
           grep -q "PROVIDER_MANAGED_PRICE" admin/app.js
           grep -q "chuihuarachif@gmail.com" admin/index.html
@@ -62,7 +73,7 @@ jobs:
           grep -q "fs_admin_oauth_pending_v1" v2/admin-oauth-return.js
           grep -q "location.replace('/admin/')" v2/admin-oauth-return.js
           grep -q "admin-oauth-return.js?v=20260826-r89" v2/storefront-safety-overlays.js
-          grep -q "r89-auth-fix.js?v=20260826-r90" admin/index.html
+          grep -q "r89-auth-fix.js?v=20260826-r91" admin/index.html
           grep -q "function createLoginClient()" admin/r89-auth-fix.js
           ! grep -q "const authClient = window.supabase.createClient" admin/r89-auth-fix.js
           grep -q "Disallow: /admin/" robots.txt
@@ -70,7 +81,8 @@ jobs:
       - name: Ensure app does not write directly to product table
         run: |
           ! grep -E "from\(['\"]productos['\"]\).*(update|insert|delete)|\.from\(['\"]productos['\"]\).*\.update" admin/app.js admin/r89-auth-fix.js
-          grep -q "sb.rpc('admin_app_set_fixed_price'" admin/app.js
+          grep -q "rpc('admin_app_set_fixed_price'" admin/app.js
+          grep -q "rpc('admin_app_set_account_game_maintenance'" admin/app.js
       - name: Serve admin shell
         run: |
           python3 -m http.server 8080 >/tmp/fs-admin-http.log 2>&1 &
