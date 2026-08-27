@@ -1,5 +1,5 @@
-/* THE FRENCH STORE — R94 isolated cinematic intro.
-   Vertical blue-fire reveal, optimized for mobile and reduced-motion aware. */
+/* THE FRENCH STORE — R95 isolated cinematic intro.
+   Slower vertical blue-fire reveal, optimized for mobile and reduced-motion aware. */
 :root{
   --fs-intro-cyan:#45f6ff;
   --fs-intro-blue:#087dff;
@@ -69,6 +69,9 @@ body.fs-intro-active{overflow:hidden;touch-action:none}
   font:inherit;font-weight:800;letter-spacing:.01em;color:#effcff;cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
+.fs-intro-entry-actions button:disabled{
+  cursor:wait;opacity:.72;filter:saturate(.65);box-shadow:none!important;
+}
 .fs-intro-primary{
   background:linear-gradient(180deg,#42e9ff,#159dd7);
   color:#00131f!important;box-shadow:0 0 28px rgba(26,211,255,.24),inset 0 1px rgba(255,255,255,.72);
@@ -114,16 +117,16 @@ body.fs-intro-active{overflow:hidden;touch-action:none}
   filter:blur(8px) drop-shadow(0 0 26px #2ce8ff) drop-shadow(0 0 60px #087dff);
   mix-blend-mode:screen;
 }
-.fs-intro-overlay.is-running .fs-intro-top-fire{animation:fsFireField 1.45s cubic-bezier(.18,.74,.19,1) both}
-.fs-intro-overlay.is-running .fs-flame{animation:fsFlameDrop 1.5s cubic-bezier(.13,.77,.18,1) var(--fs-flame-delay) both}
-.fs-intro-overlay.is-running .fs-intro-energy{animation:fsEnergyDrop 1.55s ease-out .05s both}
-.fs-intro-overlay.is-running .fs-intro-beam{animation:fsBeamDrop 1.58s cubic-bezier(.18,.7,.14,1) .16s both}
-.fs-intro-overlay.is-running .fs-intro-logo-scan{animation:fsLogoScan 1.58s cubic-bezier(.18,.7,.14,1) .16s both}
-.fs-intro-overlay.is-running .fs-intro-logo{animation:fsLogoIgnite 2.2s cubic-bezier(.18,.74,.15,1) .72s forwards}
-.fs-intro-overlay.is-running .fs-intro-logo-aura{animation:fsAuraIgnite 2.15s ease-out .8s forwards}
-.fs-intro-overlay.is-running .fs-intro-kicker{animation:fsTextIgnite .9s ease-out 1.72s forwards}
-.fs-intro-overlay.is-running .fs-intro-hint{opacity:0;transition:opacity .18s ease}
-.fs-intro-overlay.is-exiting{animation:fsOverlayOut .62s ease forwards;pointer-events:none}
+.fs-intro-overlay.is-running .fs-intro-top-fire{animation:fsFireField 2.45s cubic-bezier(.18,.74,.19,1) both}
+.fs-intro-overlay.is-running .fs-flame{animation:fsFlameDrop 2.55s cubic-bezier(.13,.77,.18,1) var(--fs-flame-delay) both}
+.fs-intro-overlay.is-running .fs-intro-energy{animation:fsEnergyDrop 2.65s ease-out .08s both}
+.fs-intro-overlay.is-running .fs-intro-beam{animation:fsBeamDrop 2.72s cubic-bezier(.18,.7,.14,1) .22s both}
+.fs-intro-overlay.is-running .fs-intro-logo-scan{animation:fsLogoScan 2.72s cubic-bezier(.18,.7,.14,1) .22s both}
+.fs-intro-overlay.is-running .fs-intro-logo{animation:fsLogoIgnite 2.7s cubic-bezier(.18,.74,.15,1) 1.18s forwards}
+.fs-intro-overlay.is-running .fs-intro-logo-aura{animation:fsAuraIgnite 2.65s ease-out 1.28s forwards}
+.fs-intro-overlay.is-running .fs-intro-kicker{animation:fsTextIgnite 1.05s ease-out 3.05s forwards}
+.fs-intro-overlay.is-running .fs-intro-hint{opacity:0;transition:opacity .24s ease}
+.fs-intro-overlay.is-exiting{animation:fsOverlayOut .72s ease forwards;pointer-events:none}
 @keyframes fsFireField{0%{opacity:0}12%{opacity:.95}75%{opacity:.88}100%{opacity:0}}
 @keyframes fsFlameDrop{0%{opacity:0;transform:translateY(-92%) scaleX(.45)}18%{opacity:1}68%{opacity:.9}100%{opacity:0;transform:translateY(122%) scaleX(1.08)}}
 @keyframes fsEnergyDrop{0%{opacity:0;transform:translateY(-48%)}20%{opacity:.85}100%{opacity:0;transform:translateY(86%)}}
@@ -152,9 +155,9 @@ body.fs-intro-active{overflow:hidden;touch-action:none}
 }
 @media(prefers-reduced-motion:reduce){
   .fs-intro-top-fire,.fs-intro-energy,.fs-intro-beam,.fs-intro-logo-scan{display:none!important}
-  .fs-intro-overlay.is-running .fs-intro-logo{animation:fsReducedLogo .75s ease forwards}
-  .fs-intro-overlay.is-running .fs-intro-logo-aura{animation:fsReducedAura .75s ease forwards}
-  .fs-intro-overlay.is-exiting{animation-duration:.12s}
+  .fs-intro-overlay.is-running .fs-intro-logo{animation:fsReducedLogo 1.05s ease forwards}
+  .fs-intro-overlay.is-running .fs-intro-logo-aura{animation:fsReducedAura 1.05s ease forwards}
+  .fs-intro-overlay.is-exiting{animation-duration:.16s}
   .fs-music-toggle.needs-gesture{animation:none}
 }
 @keyframes fsReducedLogo{to{filter:brightness(1) saturate(1.06) drop-shadow(0 0 18px rgba(43,218,255,.6));opacity:1;transform:scale(1)}}
