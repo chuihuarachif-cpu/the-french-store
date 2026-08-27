@@ -1,0 +1,46 @@
+name: R96 Assemble Direct Intro Media
+
+on:
+  push:
+    branches: [r96-direct-media-fix]
+    paths:
+      - '.r96-media/READY'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r96-direct-media-fix
+
+      - name: Assemble direct same-origin media
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat v2/intro/audio/theme-*.b64 | tr -d '\n\r\t ' | base64 --decode > v2/intro/french-store-theme.mp3
+          cat v2/intro/logo/logo-*.b64 | tr -d '\n\r\t ' | base64 --decode > v2/intro/french-store-logo.webp
+          python3 - <<'PY'
+          from pathlib import Path
+          a=Path('v2/intro/french-store-theme.mp3').read_bytes()
+          i=Path('v2/intro/french-store-logo.webp').read_bytes()
+          assert len(a) > 10000 and a[:3] == b'ID3', (len(a), a[:12])
+          assert len(i) > 10000 and i[:4] == b'RIFF' and i[8:12] == b'WEBP', (len(i), i[:12])
+          print('audio bytes', len(a))
+          print('logo bytes', len(i))
+          PY
+
+      - name: Commit binary media and self-clean
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .r96-media
+          rm -f .github/workflows/r96-assemble-direct-media.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'R96: ensamblar medios directos de intro'
+          git push origin HEAD:r96-direct-media-fix
