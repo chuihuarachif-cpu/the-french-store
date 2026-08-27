@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r101-customer-copy-privacy-20260827';
+  const VERSION = 'r108-optin-reward-notifications-20260827';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -114,7 +114,7 @@
       await loadStyle('./loyalty.css', 'fs-loyalty-css');
       await loadScript('./loyalty.js', 'fs-loyalty-js');
       await loadStyle('./rewarded-ads.css', 'fs-rewarded-ads-css');
-      await loadScript('./rewarded-ads-ui.js?v=20260827-r101', 'fs-rewarded-ads-js');
+      await loadScript('./rewarded-ads-ui.js?v=20260827-r108', 'fs-rewarded-ads-js');
       await loadStyle('./profile-cleanup.css?v=20260825-r49', 'fs-profile-cleanup-css');
     }
   };

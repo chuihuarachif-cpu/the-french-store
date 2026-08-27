@@ -1,14 +1,18 @@
-/* THE FRENCH STORE — R101 voluntary Rewards preference + invitation UI.
-   The third-party provider is never loaded just by visiting the store or enabling the
-   toggle. This module renders FRENCH STORE-owned invitations only. Provider identity
-   and infrastructure details stay internal; customer-facing copy remains neutral. */
+/* THE FRENCH STORE — R108 voluntary Rewards invitation UI.
+   First-party floating invitations may appear only after the customer explicitly opts in.
+   They are frequency-limited and restricted to safe browsing views. Merely seeing an
+   invitation never generates points. External survey content is still loaded only after
+   an authenticated user chooses to open an opportunity. Provider identity and secrets
+   stay outside customer-facing copy. */
 (() => {
   'use strict';
 
-  const VERSION = 'rewarded-opportunities-v3-20260827';
+  const VERSION = 'rewarded-opportunities-v4-20260827';
   const SAFE_BROWSE_VIEWS = new Set(['view-inicio', 'view-tienda', 'view-perfil']);
   const POST_PURCHASE_KEY = 'fs:reward-prompt:order:';
-  const AUTO_PROMPT_KEY = 'fs:reward-auto-prompt-shown';
+  const AUTO_PROMPT_KEY = 'fs:reward-auto-prompt-last-at';
+  const AUTO_PROMPT_COOLDOWN_MS = 4 * 60 * 60 * 1000;
+  const INITIAL_PROMPT_DELAY_MS = 5000;
   const state = {
     prefs: null,
     loading: null,
@@ -81,6 +85,15 @@
     return { productionReady, testReady, opportunities: p?.manual_opportunities_allowed === true };
   }
 
+  function settlementCopy(p) {
+    if (p?.reward_prefunded !== false) return '';
+    return `
+      <div class="fs-rewarded-ads-safety">
+        <b>Canje financiado por ingresos reales.</b>
+        <span>Ver un aviso genera 0 puntos. Si una oportunidad confirma una recompensa, esos puntos quedan pendientes hasta que FRENCH STORE reciba la liquidación correspondiente; después se habilitan en la siguiente ventana mensual de canje. Los Rewards de compras funcionan por separado.</span>
+      </div>`;
+  }
+
   function render() {
     const panel = ensureShell();
     if (!panel) return;
@@ -118,18 +131,18 @@
         <span class="fs-rewarded-ads-status ${statusClass}">${html(statusLabel)}</span>
       </div>
 
-      <p class="fs-rewarded-ads-intro">Las oportunidades son voluntarias. Activar avisos no abre contenido externo ni inicia una encuesta: primero verás una invitación de FRENCH STORE y tú decides si abrirla.</p>
+      <p class="fs-rewarded-ads-intro">Las oportunidades son voluntarias. Si activas avisos, FRENCH STORE puede mostrarte una invitación flotante mientras navegas por zonas seguras. La invitación no abre una encuesta ni genera puntos por sí sola.</p>
 
       <div class="fs-rewarded-ads-value">
         <span>Valor de referencia en la tienda</span>
         <strong>${html(pointsValue(p))}</strong>
-        <small>La cantidad obtenida depende del valor que la oportunidad confirme al sistema. Una oportunidad puede no tener recompensa si no genera un importe válido.</small>
+        <small>Ver un aviso = 0 puntos. Los puntos solo se generan cuando una oportunidad confirma un importe válido al sistema.</small>
       </div>
 
       <label class="fs-rewarded-ads-toggle-row">
         <span>
           <b>Avisarme cuando haya una oportunidad</b>
-          <small>OFF por defecto. Si lo activas, podremos mostrar invitaciones discretas solo en Inicio, Tienda o Perfil. Nunca dentro de carrito, checkout, QR, Wallet, Pedidos, login o Admin.</small>
+          <small>OFF por defecto. Si lo activas, puede aparecer un aviso flotante en Inicio, Tienda o Perfil, con un máximo aproximado de uno cada 4 horas. Nunca aparece dentro de carrito, checkout, QR, Wallet, Pedidos, login o Admin.</small>
         </span>
         <span class="fs-toggle-control">
           <input id="fsRewardedAdsOptIn" type="checkbox" ${autoEnabled ? 'checked' : ''} ${state.saving ? 'disabled' : ''}>
@@ -147,8 +160,10 @@
 
       <div class="fs-rewarded-ads-safety">
         <b>Privacidad por diseño.</b>
-        <span>El contenido externo solo se carga después de tocar una oportunidad. FRENCH STORE no envía automáticamente tu correo, contraseña, saldo Wallet ni datos de tus recargas para abrirla.</span>
+        <span>La invitación flotante pertenece a FRENCH STORE. El contenido externo solo se carga después de tocar una oportunidad. No enviamos automáticamente tu correo, contraseña, saldo Wallet ni datos de tus recargas para mostrar el aviso.</span>
       </div>
+
+      ${settlementCopy(p)}
 
       ${ps.productionReady ? '' : ps.testReady
         ? '<p class="fs-rewarded-ads-fine">Modo de prueba disponible únicamente para administración. Los eventos de prueba no acreditan puntos reales.</p>'
@@ -170,7 +185,7 @@
       if (!data || data.ok !== true) throw new Error('REWARDED_AD_PREFS_INVALID');
       state.prefs = data;
       render();
-      setTimeout(maybeShowAutoPrompt, 120);
+      setTimeout(maybeShowAutoPrompt, INITIAL_PROMPT_DELAY_MS);
       return data;
     })().catch((error) => {
       console.warn('FRENCH STORE rewarded opportunities unavailable:', text(error?.message || error).slice(0, 100));
@@ -183,6 +198,22 @@
     }).finally(() => { state.loading = null; });
 
     return state.loading;
+  }
+
+  function lastAutoPromptAt() {
+    try {
+      const raw = Number(localStorage.getItem(AUTO_PROMPT_KEY) || 0);
+      return Number.isFinite(raw) && raw > 0 ? raw : 0;
+    } catch { return 0; }
+  }
+
+  function autoPromptCooldownReady() {
+    const last = lastAutoPromptAt();
+    return !last || Date.now() - last >= AUTO_PROMPT_COOLDOWN_MS;
+  }
+
+  function markAutoPromptShown() {
+    try { localStorage.setItem(AUTO_PROMPT_KEY, String(Date.now())); } catch {}
   }
 
   async function saveOptIn(enabled) {
@@ -201,13 +232,13 @@
       if (!data || data.ok !== true) throw new Error('REWARDED_AD_PREF_SAVE_INVALID');
       state.prefs = { ...(state.prefs || {}), ...data, auto_offers_enabled: data.auto_offers_enabled === true };
       feedback = enabled
-        ? 'Avisos activados. Verás solo invitaciones opcionales en zonas seguras; ningún contenido externo se abre hasta que tú aceptes.'
+        ? 'Avisos activados. Podrás ver invitaciones flotantes opcionales en zonas seguras; verlas no genera puntos y ningún contenido externo se abre hasta que tú aceptes.'
         : 'Avisos desactivados. No recibirás invitaciones durante la navegación; después de una compra todavía podremos ofrecerte una recompensa opcional independiente.';
       feedbackKind = 'success';
       saved = true;
       window.dispatchEvent(new CustomEvent('fs:rewarded-ad-preference-changed', { detail: { enabled: data.auto_offers_enabled === true } }));
       if (!enabled) removeAutoPrompt();
-      else setTimeout(maybeShowAutoPrompt, 250);
+      else setTimeout(maybeShowAutoPrompt, 800);
     } catch (error) {
       console.warn('FRENCH STORE reward preference save failed:', text(error?.message || error).slice(0, 100));
       await load(true);
@@ -272,7 +303,7 @@
     const p = state.prefs || {};
     if (!authenticated() || p.auto_offers_enabled !== true || p.manual_opportunities_allowed !== true) return;
     if (!currentSafeBrowseView() || anotherModalIsOpen() || document.getElementById('fsRewardAutoPrompt')) return;
-    try { if (sessionStorage.getItem(AUTO_PROMPT_KEY) === '1') return; } catch {}
+    if (!autoPromptCooldownReady()) return;
 
     const prompt = document.createElement('aside');
     prompt.id = 'fsRewardAutoPrompt';
@@ -281,12 +312,12 @@
     prompt.innerHTML = `
       <button class="fs-reward-prompt-close" type="button" data-fs-auto-dismiss aria-label="Cerrar">×</button>
       <span class="eyebrow">FRENCH REWARDS</span>
-      <b>Hay una oportunidad opcional</b>
-      <p>Si quieres, puedes abrir una encuesta para ganar FRENCH Points. La recompensa depende del importe validado.</p>
+      <b>¿Quieres revisar oportunidades?</b>
+      <p>Puede haber encuestas para ganar FRENCH Points. Ver este aviso no genera puntos; solo una oportunidad confirmada puede hacerlo.</p>
       <button type="button" class="secondary-btn full" data-fs-auto-open>Ver oportunidades</button>`;
     document.body.appendChild(prompt);
     state.autoPromptOpen = true;
-    try { sessionStorage.setItem(AUTO_PROMPT_KEY, '1'); } catch {}
+    markAutoPromptShown();
 
     prompt.querySelector('[data-fs-auto-dismiss]')?.addEventListener('click', removeAutoPrompt);
     prompt.querySelector('[data-fs-auto-open]')?.addEventListener('click', async () => {
