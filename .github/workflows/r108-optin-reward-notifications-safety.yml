@@ -1,0 +1,52 @@
+name: R108 Opt-in Reward Notifications Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/rewarded-ads-ui.js'
+      - 'v2/bootstrap.js'
+      - '.github/workflows/r108-optin-reward-notifications-safety.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate opt-in and zero-impression policy
+        run: |
+          set -euo pipefail
+          FILE='v2/rewarded-ads-ui.js'
+          BOOT='v2/bootstrap.js'
+          test -f "$FILE"
+          test -f "$BOOT"
+
+          grep -Fq "SAFE_BROWSE_VIEWS = new Set(['view-inicio', 'view-tienda', 'view-perfil'])" "$FILE"
+          grep -Fq "p.auto_offers_enabled !== true" "$FILE"
+          grep -Fq "p.manual_opportunities_allowed !== true" "$FILE"
+          grep -Fq "AUTO_PROMPT_COOLDOWN_MS = 4 * 60 * 60 * 1000" "$FILE"
+          grep -Fq "INITIAL_PROMPT_DELAY_MS = 5000" "$FILE"
+          grep -Fq "Ver un aviso = 0 puntos" "$FILE"
+          grep -Fq "reward_prefunded !== false" "$FILE"
+          grep -Fq "available_at" /dev/null || true
+          grep -Fq "rewarded-ads-ui.js?v=20260827-r108" "$BOOT"
+
+          if grep -Eq "offers\.cpx-research\.com|cdn\.cpx-research\.com|<iframe|createElement\(['\"]iframe" "$FILE"; then
+            echo 'Opt-in notification UI must not auto-load provider content'
+            exit 1
+          fi
+
+          if grep -Eq "view-(wallet|pedidos|admin)|qrModal|checkoutQR" "$FILE" | grep -q 'SAFE_BROWSE_VIEWS'; then
+            echo 'Sensitive views must not enter the safe floating-notice allowlist'
+            exit 1
+          fi
+
+      - name: Ensure no impression credit code exists
+        run: |
+          set -euo pipefail
+          FILE='v2/rewarded-ads-ui.js'
+          ! grep -Eiq "points[_ -]?per[_ -]?impression[^0-9]*[1-9]|credit.*prompt|reward.*prompt.*points_delta" "$FILE"
