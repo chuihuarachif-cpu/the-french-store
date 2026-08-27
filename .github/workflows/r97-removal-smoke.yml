@@ -1,0 +1,36 @@
+name: R97 Removal Smoke
+
+on:
+  push:
+    branches: [r97-remove-intro]
+    paths:
+      - '.github/workflows/r97-removal-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate direct lightweight entry
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f v2/index.html
+          test ! -e v2/intro
+          ! grep -q 'french-intro' v2/index.html
+          ! grep -RInE 'fsIntro|french-intro|theme-0[0-9]\.b64|logo-0[0-9]\.b64' v2 --exclude-dir=.git
+          python3 -m http.server 4173 --directory . >/tmp/r97-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid || true' EXIT
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:4173/v2/ >/tmp/r97-index.html; then break; fi
+            sleep .25
+          done
+          grep -q '<title>💎 FRENCH STORE 💎</title>' /tmp/r97-index.html
+          grep -q './bootstrap.js' /tmp/r97-index.html
+          grep -q './auth-google.js' /tmp/r97-index.html
+          grep -q './buy-now.js' /tmp/r97-index.html
+          echo 'R97 removal smoke OK'
