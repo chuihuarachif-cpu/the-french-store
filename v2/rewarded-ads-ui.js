@@ -1,12 +1,11 @@
-/* THE FRENCH STORE — R47 voluntary Rewards preference + invitation UI.
-   CPX Research is never loaded just by visiting the store or enabling the toggle.
-   This module only renders FRENCH STORE-owned invitations. The third-party provider
-   loads after an authenticated user explicitly taps an opportunity. Reward credit
-   remains server-authoritative and fail-closed. */
+/* THE FRENCH STORE — R101 voluntary Rewards preference + invitation UI.
+   The third-party provider is never loaded just by visiting the store or enabling the
+   toggle. This module renders FRENCH STORE-owned invitations only. Provider identity
+   and infrastructure details stay internal; customer-facing copy remains neutral. */
 (() => {
   'use strict';
 
-  const VERSION = 'rewarded-opportunities-v2-20260825';
+  const VERSION = 'rewarded-opportunities-v3-20260827';
   const SAFE_BROWSE_VIEWS = new Set(['view-inicio', 'view-tienda', 'view-perfil']);
   const POST_PURCHASE_KEY = 'fs:reward-prompt:order:';
   const AUTO_PROMPT_KEY = 'fs:reward-auto-prompt-shown';
@@ -103,9 +102,9 @@
     const autoEnabled = p.auto_offers_enabled === true;
     const ps = providerState(p);
     const statusLabel = ps.productionReady ? 'Disponible'
-      : ps.testReady ? 'CPX en pruebas'
-        : p.provider_connected === true ? 'Proveedor conectado · preparando lanzamiento'
-          : 'Preparando proveedor';
+      : ps.testReady ? 'Modo de prueba'
+        : p.provider_connected === true ? 'Preparando Rewards'
+          : 'Preparando Rewards';
     const statusClass = ps.productionReady ? 'ready' : ps.testReady ? 'testing' : 'building';
     const surveysDisabled = ps.opportunities ? '' : 'disabled';
     const videoDisabled = p.manual_watch_allowed === true ? '' : 'disabled';
@@ -119,12 +118,12 @@
         <span class="fs-rewarded-ads-status ${statusClass}">${html(statusLabel)}</span>
       </div>
 
-      <p class="fs-rewarded-ads-intro">Las oportunidades son voluntarias. Activar avisos no carga una red externa ni inicia una encuesta: primero verás una invitación de FRENCH STORE y tú decides si abrirla.</p>
+      <p class="fs-rewarded-ads-intro">Las oportunidades son voluntarias. Activar avisos no abre contenido externo ni inicia una encuesta: primero verás una invitación de FRENCH STORE y tú decides si abrirla.</p>
 
       <div class="fs-rewarded-ads-value">
         <span>Valor de referencia en la tienda</span>
         <strong>${html(pointsValue(p))}</strong>
-        <small>La cantidad obtenida depende del valor que el proveedor confirme al servidor. Una oportunidad puede no tener recompensa si no genera un importe válido.</small>
+        <small>La cantidad obtenida depende del valor que la oportunidad confirme al sistema. Una oportunidad puede no tener recompensa si no genera un importe válido.</small>
       </div>
 
       <label class="fs-rewarded-ads-toggle-row">
@@ -142,18 +141,18 @@
         <button type="button" class="secondary-btn" data-fs-rewarded-action="video" ${videoDisabled}>🎬 Video recompensado</button>
         <button type="button" class="secondary-btn" data-fs-rewarded-action="offers" ${surveysDisabled}>📝 Encuestas y recompensas</button>
       </div>
-      ${p.manual_watch_allowed === true ? '' : '<small class="fs-rewarded-ads-action-note">Los videos recompensados permanecerán desactivados hasta que un proveedor de video sea aprobado. CPX se usa únicamente para encuestas/oportunidades.</small>'}
+      ${p.manual_watch_allowed === true ? '' : '<small class="fs-rewarded-ads-action-note">Los videos recompensados permanecerán desactivados hasta que exista una opción aprobada. Las encuestas y oportunidades funcionan de forma independiente.</small>'}
 
       <div id="fsRewardedAdsMessage" class="fs-rewarded-ads-message hidden" role="status" aria-live="polite"></div>
 
       <div class="fs-rewarded-ads-safety">
         <b>Privacidad por diseño.</b>
-        <span>CPX solo se carga después de tocar una oportunidad. FRENCH STORE usa un identificador opaco específico para CPX y no le envía automáticamente tu correo, contraseña, saldo Wallet, UUID interno ni datos de tus recargas.</span>
+        <span>El contenido externo solo se carga después de tocar una oportunidad. FRENCH STORE no envía automáticamente tu correo, contraseña, saldo Wallet ni datos de tus recargas para abrirla.</span>
       </div>
 
       ${ps.productionReady ? '' : ps.testReady
-        ? '<p class="fs-rewarded-ads-fine">Modo de certificación disponible únicamente para administración. Los eventos de prueba no acreditan puntos reales.</p>'
-        : '<p class="fs-rewarded-ads-fine">El proveedor ya puede estar técnicamente conectado, pero los Rewards públicos siguen bloqueados hasta completar la certificación y los controles de lanzamiento.</p>'}
+        ? '<p class="fs-rewarded-ads-fine">Modo de prueba disponible únicamente para administración. Los eventos de prueba no acreditan puntos reales.</p>'
+        : '<p class="fs-rewarded-ads-fine">Las oportunidades públicas permanecen bloqueadas hasta completar los controles de lanzamiento.</p>'}
     `;
   }
 
@@ -202,7 +201,7 @@
       if (!data || data.ok !== true) throw new Error('REWARDED_AD_PREF_SAVE_INVALID');
       state.prefs = { ...(state.prefs || {}), ...data, auto_offers_enabled: data.auto_offers_enabled === true };
       feedback = enabled
-        ? 'Avisos activados. Verás solo invitaciones opcionales en zonas seguras; ningún proveedor se carga hasta que tú aceptes.'
+        ? 'Avisos activados. Verás solo invitaciones opcionales en zonas seguras; ningún contenido externo se abre hasta que tú aceptes.'
         : 'Avisos desactivados. No recibirás invitaciones durante la navegación; después de una compra todavía podremos ofrecerte una recompensa opcional independiente.';
       feedbackKind = 'success';
       saved = true;
@@ -233,15 +232,15 @@
 
     if (kind === 'video') {
       if (p.manual_watch_allowed !== true) {
-        statusMessage('Los videos recompensados todavía no están habilitados. Puedes usar Encuestas y recompensas cuando CPX esté disponible.', 'info');
+        statusMessage('Los videos recompensados todavía no están habilitados. Puedes usar Encuestas y recompensas cuando estén disponibles.', 'info');
         return;
       }
-      statusMessage('El proveedor de video todavía no está conectado a esta versión.', 'info');
+      statusMessage('La opción de video todavía no está disponible en esta versión.', 'info');
       return;
     }
 
     if (p.manual_opportunities_allowed !== true) {
-      statusMessage('CPX todavía no está disponible públicamente. La integración permanece bloqueada hasta completar la certificación.', 'info');
+      statusMessage('Las encuestas y recompensas todavía no están disponibles públicamente.', 'info');
       return;
     }
 
@@ -251,7 +250,7 @@
       const code = text(error?.code || error?.message);
       statusMessage(code === 'REWARDS_NOT_AVAILABLE'
         ? 'No hay una oportunidad disponible en este momento.'
-        : 'No se pudo abrir CPX en este momento. Intenta más tarde.', code === 'REWARDS_NOT_AVAILABLE' ? 'info' : 'error');
+        : 'No se pudo abrir la oportunidad en este momento. Intenta más tarde.', code === 'REWARDS_NOT_AVAILABLE' ? 'info' : 'error');
     }
   }
 
@@ -283,7 +282,7 @@
       <button class="fs-reward-prompt-close" type="button" data-fs-auto-dismiss aria-label="Cerrar">×</button>
       <span class="eyebrow">FRENCH REWARDS</span>
       <b>Hay una oportunidad opcional</b>
-      <p>Si quieres, puedes abrir CPX y buscar una encuesta para ganar FRENCH Points. La recompensa depende del importe validado.</p>
+      <p>Si quieres, puedes abrir una encuesta para ganar FRENCH Points. La recompensa depende del importe validado.</p>
       <button type="button" class="secondary-btn full" data-fs-auto-open>Ver oportunidades</button>`;
     document.body.appendChild(prompt);
     state.autoPromptOpen = true;
@@ -314,12 +313,12 @@
     if (pass) {
       return {
         title: `¿Quieres aumentar tus Rewards con ${text(pass.name) || 'tu Rank Pass'}?`,
-        body: 'Abre una oportunidad opcional. Los puntos extra dependen exclusivamente del valor que CPX confirme al servidor; no se promete un multiplicador fijo.'
+        body: 'Abre una oportunidad opcional. Los puntos extra dependen exclusivamente del valor confirmado por la oportunidad; no se promete un multiplicador fijo.'
       };
     }
     return {
       title: '¿Quieres ganar FRENCH Points extra?',
-      body: 'Puedes abrir una oportunidad opcional después de esta compra. La cantidad depende del valor que CPX confirme al servidor.'
+      body: 'Puedes abrir una oportunidad opcional después de esta compra. La cantidad depende del valor confirmado por la oportunidad.'
     };
   }
 
