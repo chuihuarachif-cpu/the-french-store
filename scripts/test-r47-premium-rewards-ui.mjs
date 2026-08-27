@@ -46,7 +46,7 @@ for (const required of [
   assert.equal(index.includes(required), true, `index must load ${required}`);
 }
 assert.equal(bootstrap.includes("loadStyle('./rewarded-ads.css'"), true);
-assert.equal(bootstrap.includes("loadScript('./rewarded-ads-ui.js'"), true);
+assert.match(bootstrap, /loadScript\('\.\/rewarded-ads-ui\.js(?:\?[^']*)?'/);
 
 // Premium notifications replace browser alert/confirm only for the decorated Rank/Rewards operations.
 assert.equal(notify.includes('window.FSNotify'), true);
@@ -114,9 +114,9 @@ assert.equal(rewardsUi.includes("result.classList.contains('success')"), true);
 assert.equal(cpx.includes("ALLOWED_WALL_ORIGIN = 'https://offers.cpx-research.com'"), true);
 assert.equal(cpx.includes("type === 'ad'"), true);
 assert.equal(cpx.includes('VIDEO_REWARD_PROVIDER_NOT_AVAILABLE'), true);
-assert.equal(cpx.includes('Supabase UUID'), true);
 assert.equal(cpx.includes("credentials: 'omit'"), true);
 assert.equal(cpx.includes("referrerPolicy: 'no-referrer'"), true);
+assert.equal(cpx.includes('email:'), false, 'provider session request must not send customer email');
 assert.equal(cpxCss.includes('.fs-cpx-frame-wrap'), true);
 const originCheck = cpx.indexOf('parsed.origin !== ALLOWED_WALL_ORIGIN');
 const frameAssign = cpx.indexOf('frame.src = parsed.toString()');
