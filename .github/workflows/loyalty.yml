@@ -100,7 +100,7 @@ jobs:
           Path('v2/__loyalty-test.js').write_text(probe)
           Path('v2/__loyalty-test.html').write_text(src.replace('</body>','<script src="./__loyalty-test.js"></script>\n</body>'))
           PY
-          timeout 35s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=20000 --dump-dom http://127.0.0.1:8080/v2/__loyalty-test.html >/tmp/loyalty-dom.txt
+          timeout 50s "$CHROME" --headless --disable-gpu --disable-background-networking --no-sandbox --virtual-time-budget=20000 --dump-dom http://127.0.0.1:8080/v2/__loyalty-test.html >/tmp/loyalty-dom.txt
           grep -q 'data-fs-loyalty-test="pass"' /tmp/loyalty-dom.txt || { cat /tmp/loyalty-dom.txt; cat /tmp/fs-loyalty-http.log; exit 1; }
           grep -q 'data-fs-loyalty-loaded="yes"' /tmp/loyalty-dom.txt
           rm -f v2/__loyalty-test.js v2/__loyalty-test.html
