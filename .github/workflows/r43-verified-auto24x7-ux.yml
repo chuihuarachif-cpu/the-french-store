@@ -89,5 +89,5 @@ jobs:
           assert text.index('./bisa-checkout.js') < text.index('./fulfillment-inputs.js')
           assert text.index('./fulfillment-inputs.js') < text.index('./automatic-order-ui.js')
           PY
-          grep -Eq './bootstrap.js\?v=202608(25|26)-r[0-9]+' v2/index.html
+          grep -Eq './bootstrap.js\?v=202608[0-9]{2}-r[0-9]+' v2/index.html
           grep -Fq './player-verify.js?v=20260823-1&build=20260824-r43' v2/index.html

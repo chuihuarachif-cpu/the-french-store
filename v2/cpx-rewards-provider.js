@@ -1,13 +1,12 @@
-/* THE FRENCH STORE — R47 CPX Research voluntary rewards provider.
-   Privacy boundary: CPX is never loaded merely because the user visits the store.
-   A third-party iframe is created only after an authenticated user explicitly opens
-   a reward opportunity (or accepts a post-purchase invitation). The storefront sends
-   only an opaque CPX user identifier produced server-side; no Supabase UUID, Wallet
-   data, order UUID, password, Google identity, email or CPX master secret is exposed. */
+/* THE FRENCH STORE — R101 voluntary rewards provider UI copy.
+   Privacy boundary: the external survey provider is never loaded merely because the
+   user visits the store. A third-party iframe is created only after an authenticated
+   user explicitly opens a reward opportunity. Internal provider identifiers and
+   infrastructure details are not exposed in customer-facing copy. */
 (() => {
   'use strict';
 
-  const VERSION = 'cpx-rewards-provider-v2-20260825';
+  const VERSION = 'cpx-rewards-provider-v3-20260827';
   const API_BASE = 'https://api.frenchstorebo.com';
   const SESSION_PATH = '/api/rewards/cpx/session';
   const ALLOWED_WALL_ORIGIN = 'https://offers.cpx-research.com';
@@ -57,14 +56,14 @@
     modal.innerHTML = `
       <div class="modal-card fs-cpx-rewards-card" role="dialog" aria-modal="true" aria-labelledby="fsCpxRewardsTitle">
         <button type="button" class="modal-close" data-fs-cpx-close aria-label="Cerrar">×</button>
-        <span class="eyebrow">FRENCH REWARDS · CPX RESEARCH</span>
+        <span class="eyebrow">FRENCH REWARDS</span>
         <h2 id="fsCpxRewardsTitle">Encuestas y recompensas</h2>
-        <p class="fs-cpx-rewards-copy">Participar es opcional. CPX puede solicitar datos directamente para encontrar encuestas compatibles. FRENCH STORE no envía tu contraseña, saldo Wallet ni datos de tus recargas.</p>
+        <p class="fs-cpx-rewards-copy">Participar es opcional. El proveedor de encuestas puede solicitar datos directamente para encontrar oportunidades compatibles. FRENCH STORE no envía tu contraseña, saldo Wallet ni datos de tus recargas.</p>
         <div class="fs-cpx-frame-wrap">
           <div class="fs-cpx-loading">Buscando oportunidades…</div>
-          <iframe id="fsCpxRewardsFrame" title="CPX Research · oportunidades recompensadas" loading="eager" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox" allow="camera; microphone"></iframe>
+          <iframe id="fsCpxRewardsFrame" title="Oportunidades recompensadas" loading="eager" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox" allow="camera; microphone"></iframe>
         </div>
-        <p class="fs-cpx-rewards-note">Los FRENCH Points solo se registran cuando el servidor recibe una confirmación válida de CPX. Cerrar esta ventana no crea puntos por sí solo.</p>
+        <p class="fs-cpx-rewards-note">Los FRENCH Points solo se registran cuando el sistema recibe una confirmación válida. Cerrar esta ventana no crea puntos por sí solo.</p>
       </div>`;
     document.body.appendChild(modal);
 
