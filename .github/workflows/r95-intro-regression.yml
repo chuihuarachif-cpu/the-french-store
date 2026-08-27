@@ -1,4 +1,4 @@
-name: R95 Intro Timing and Audio Safety
+name: R96 Intro Timing and Audio Safety
 
 on:
   pull_request:
@@ -24,9 +24,14 @@ jobs:
           test -f v2/intro/french-intro.js
           test -f v2/intro/french-intro.css
           grep -q 'INTRO_MS = 5200' v2/intro/french-intro.js
-          grep -q 'playPreparedMusicFromGesture' v2/intro/french-intro.js
-          grep -q 'src="${FALLBACK_LOGO}"' v2/intro/french-intro.js
-          grep -q 'french-intro.js?v=20260826-r95' v2/index.html
-          grep -q 'french-intro.css?v=20260826-r95' v2/index.html
+          grep -q 'fs_intro_seen_r96' v2/intro/french-intro.js
+          grep -q 'window.AudioContext || window.webkitAudioContext' v2/intro/french-intro.js
+          grep -q 'data:image/webp;base64' v2/intro/french-intro.js
+          grep -q 'Reintentar audio' v2/intro/french-intro.js
+          grep -q "context.resume()" v2/intro/french-intro.js
+          grep -q 'french-intro.js?v=20260826-r96' v2/index.html
+          grep -q 'french-intro.css?v=20260826-r96' v2/index.html
+          ! grep -q 'URL.createObjectURL' v2/intro/french-intro.js
+          ! grep -q 'blob:' v2/intro/french-intro.js
           ! grep -q 'finishIntro(), { once: true }' v2/intro/french-intro.js
-          echo 'R95 intro regression checks OK'
+          echo 'R96 intro regression checks OK'
