@@ -1,23 +1,23 @@
-/* THE FRENCH STORE — R95 cinematic intro timing + reliable user-gesture audio.
+/* THE FRENCH STORE — R96 cinematic intro with CSP-safe media handling.
    Presentation only: does not read or write catalog, Wallet, orders, Auth, Admin or providers. */
 (() => {
   'use strict';
 
-  const VERSION = 'french-intro-r95-20260826';
-  const SESSION_KEY = 'fs_intro_seen_r95';
+  const VERSION = 'french-intro-r96-20260826';
+  const SESSION_KEY = 'fs_intro_seen_r96';
   const MUSIC_KEY = 'fs_music_enabled_v1';
   const AUDIO_PARTS = [
-    './intro/audio/theme-00.b64?v=20260826-r95',
-    './intro/audio/theme-01.b64?v=20260826-r95',
-    './intro/audio/theme-02.b64?v=20260826-r95'
+    './intro/audio/theme-00.b64?v=20260826-r96',
+    './intro/audio/theme-01.b64?v=20260826-r96',
+    './intro/audio/theme-02.b64?v=20260826-r96'
   ];
   const LOGO_PARTS = [
-    './intro/logo/logo-00.b64?v=20260826-r95',
-    './intro/logo/logo-01.b64?v=20260826-r95',
-    './intro/logo/logo-02.b64?v=20260826-r95',
-    './intro/logo/logo-03.b64?v=20260826-r95'
+    './intro/logo/logo-00.b64?v=20260826-r96',
+    './intro/logo/logo-01.b64?v=20260826-r96',
+    './intro/logo/logo-02.b64?v=20260826-r96',
+    './intro/logo/logo-03.b64?v=20260826-r96'
   ];
-  const FALLBACK_LOGO = './assets/brand/icon-512.png?v=20260826-r95';
+  const FALLBACK_LOGO = './assets/brand/icon-512.png?v=20260826-r96';
   const INTRO_MS = 5200;
   const REDUCED_INTRO_MS = 1850;
   const EXIT_MS = 720;
@@ -28,16 +28,21 @@
   const saveData = navigator.connection?.saveData === true;
 
   let overlay = null;
-  let audio = null;
-  let audioUrl = '';
-  let logoUrl = '';
-  let audioSourcePromise = null;
-  let logoSourcePromise = null;
   let musicToggle = null;
   let releaseTimer = null;
   let started = false;
+
+  let audioBytes = null;
+  let audioPromise = null;
   let audioReady = false;
   let audioFailed = false;
+  let audioContext = null;
+  let audioBuffer = null;
+  let audioSource = null;
+  let audioGain = null;
+  let audioPlaying = false;
+
+  let logoPromise = null;
 
   function readBool(key, fallback = false) {
     try {
@@ -61,121 +66,163 @@
     try { sessionStorage.setItem(SESSION_KEY, '1'); } catch {}
   }
 
-  async function decodePartsToObjectUrl(parts, mime, errorCode) {
-    const responses = await Promise.all(parts.map((part) => fetch(part, { cache: 'force-cache' })));
-    if (responses.some((response) => !response.ok)) throw new Error(errorCode);
-
+  async function fetchJoinedBase64(parts, cacheMode = 'force-cache') {
+    const responses = await Promise.all(parts.map((part) => fetch(part, { cache: cacheMode })));
+    if (responses.some((response) => !response.ok)) throw new Error('intro-media-fetch-failed');
     const encoded = (await Promise.all(responses.map((response) => response.text())))
       .join('')
       .replace(/\s+/g, '');
+    if (!encoded || encoded.length < 1000) throw new Error('intro-media-empty');
+    return encoded;
+  }
+
+  function base64ToArrayBuffer(encoded) {
     const raw = atob(encoded);
     const bytes = new Uint8Array(raw.length);
     for (let index = 0; index < raw.length; index += 1) bytes[index] = raw.charCodeAt(index);
-    return URL.createObjectURL(new Blob([bytes], { type: mime }));
-  }
-
-  async function ensureAudioSource() {
-    if (audioUrl) return audioUrl;
-    if (audioSourcePromise) return audioSourcePromise;
-
-    audioSourcePromise = decodePartsToObjectUrl(AUDIO_PARTS, 'audio/mpeg', 'intro-audio-unavailable')
-      .then((url) => {
-        audioUrl = url;
-        return audioUrl;
-      })
-      .catch((error) => {
-        audioSourcePromise = null;
-        audioFailed = true;
-        refreshSoundButton();
-        throw error;
-      });
-
-    return audioSourcePromise;
-  }
-
-  async function ensureLogoSource() {
-    if (logoUrl) return logoUrl;
-    if (logoSourcePromise) return logoSourcePromise;
-
-    logoSourcePromise = decodePartsToObjectUrl(LOGO_PARTS, 'image/webp', 'intro-logo-unavailable')
-      .then((url) => {
-        logoUrl = url;
-        return logoUrl;
-      })
-      .catch((error) => {
-        logoSourcePromise = null;
-        throw error;
-      });
-
-    return logoSourcePromise;
-  }
-
-  function ensureAudioElement() {
-    if (audio) return audio;
-    audio = document.createElement('audio');
-    audio.id = 'fsIntroAudio';
-    audio.loop = true;
-    audio.preload = 'auto';
-    audio.volume = 0.28;
-    audio.setAttribute('playsinline', '');
-    audio.addEventListener('canplay', () => {
-      audioReady = true;
-      audioFailed = false;
-      refreshSoundButton();
-    });
-    audio.addEventListener('loadedmetadata', () => {
-      audioReady = true;
-      refreshSoundButton();
-    });
-    audio.addEventListener('error', () => {
-      audioReady = false;
-      audioFailed = true;
-      refreshSoundButton();
-    });
-    document.body.appendChild(audio);
-    return audio;
-  }
-
-  function prepareAudio() {
-    const player = ensureAudioElement();
-    if (player.src) {
-      if (player.readyState >= 1) audioReady = true;
-      refreshSoundButton();
-      return Promise.resolve(player);
-    }
-
-    refreshSoundButton();
-    return ensureAudioSource()
-      .then((src) => {
-        if (!player.src) {
-          player.src = src;
-          player.load();
-        }
-        if (player.readyState >= 1) audioReady = true;
-        refreshSoundButton();
-        return player;
-      })
-      .catch(() => player);
+    return bytes.buffer;
   }
 
   function refreshSoundButton() {
     const button = overlay?.querySelector('[data-fs-intro-start="sound"]');
     if (!button) return;
 
+    if (audioReady) {
+      button.disabled = false;
+      button.dataset.state = 'ready';
+      button.textContent = '🔊 Entrar con música';
+      return;
+    }
+
     if (audioFailed) {
-      button.disabled = true;
-      button.textContent = '🔇 Audio no disponible';
+      button.disabled = false;
+      button.dataset.state = 'retry';
+      button.textContent = '🔄 Reintentar audio';
       return;
     }
 
-    if (!audioReady) {
-      button.disabled = true;
-      button.textContent = '⏳ Preparando música…';
-      return;
+    button.disabled = true;
+    button.dataset.state = 'loading';
+    button.textContent = '⏳ Preparando música…';
+  }
+
+  function prepareAudio(force = false) {
+    if (audioReady && audioBytes) return Promise.resolve(audioBytes);
+    if (audioPromise && !force) return audioPromise;
+
+    audioFailed = false;
+    audioReady = false;
+    refreshSoundButton();
+
+    audioPromise = fetchJoinedBase64(AUDIO_PARTS, force ? 'reload' : 'force-cache')
+      .then((encoded) => {
+        const buffer = base64ToArrayBuffer(encoded);
+        if (buffer.byteLength < 10000) throw new Error('intro-audio-too-small');
+        audioBytes = buffer;
+        audioReady = true;
+        audioFailed = false;
+        refreshSoundButton();
+        return audioBytes;
+      })
+      .catch((error) => {
+        audioPromise = null;
+        audioReady = false;
+        audioFailed = true;
+        refreshSoundButton();
+        throw error;
+      });
+
+    return audioPromise;
+  }
+
+  function prepareLogo() {
+    if (logoPromise) return logoPromise;
+    logoPromise = fetchJoinedBase64(LOGO_PARTS)
+      .then((encoded) => `data:image/webp;base64,${encoded}`)
+      .catch(() => FALLBACK_LOGO);
+    return logoPromise;
+  }
+
+  function getAudioContext() {
+    if (audioContext) return audioContext;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) throw new Error('web-audio-unavailable');
+    audioContext = new AudioContextClass();
+    return audioContext;
+  }
+
+  function decodeAudioBuffer() {
+    if (audioBuffer) return Promise.resolve(audioBuffer);
+    if (!audioBytes) return Promise.reject(new Error('audio-bytes-not-ready'));
+    const context = getAudioContext();
+    return context.decodeAudioData(audioBytes.slice(0)).then((buffer) => {
+      audioBuffer = buffer;
+      return audioBuffer;
+    });
+  }
+
+  function stopCurrentSource() {
+    if (audioSource) {
+      try { audioSource.stop(); } catch {}
+      try { audioSource.disconnect(); } catch {}
+      audioSource = null;
+    }
+    audioPlaying = false;
+  }
+
+  function stopMusic() {
+    writeBool(MUSIC_KEY, false);
+    stopCurrentSource();
+    updateMusicToggle(false);
+  }
+
+  function startMusicFromGesture() {
+    if (!audioReady || !audioBytes || audioFailed) {
+      updateMusicToggle(false, true);
+      return false;
     }
 
-    button.disabled = false;
-    button.textContent = '🔊 Entrar con música';
+    let context;
+    try {
+      context = getAudioContext();
+    } catch {
+      updateMusicToggle(false, true);
+      return false;
+    }
+
+    writeBool(MUSIC_KEY, true);
+
+    // Resume is intentionally called synchronously inside the user's tap.
+    const resumeResult = context.resume();
+    Promise.resolve(resumeResult)
+      .then(() => decodeAudioBuffer())
+      .then((buffer) => {
+        stopCurrentSource();
+        const source = context.createBufferSource();
+        const gain = context.createGain();
+        source.buffer = buffer;
+        source.loop = true;
+        gain.gain.value = 0.28;
+        source.connect(gain);
+        gain.connect(context.destination);
+        source.start(0);
+        audioSource = source;
+        audioGain = gain;
+        audioPlaying = true;
+        source.addEventListener?.('ended', () => {
+          if (audioSource === source && !source.loop) {
+            audioPlaying = false;
+            updateMusicToggle(false);
+          }
+        });
+        updateMusicToggle(true);
+      })
+      .catch(() => {
+        audioPlaying = false;
+        updateMusicToggle(false, true);
+      });
+
+    return true;
   }
 
   function updateMusicToggle(playing, needsGesture = false) {
@@ -189,36 +236,6 @@
       : '<span aria-hidden="true">🔇</span><span class="fs-music-label">Música</span>';
   }
 
-  function stopMusic() {
-    writeBool(MUSIC_KEY, false);
-    if (audio) audio.pause();
-    updateMusicToggle(false);
-  }
-
-  function playPreparedMusicFromGesture() {
-    const player = ensureAudioElement();
-    if (!player.src || !audioReady || audioFailed) {
-      updateMusicToggle(false, true);
-      return false;
-    }
-
-    writeBool(MUSIC_KEY, true);
-    try {
-      const playResult = player.play();
-      if (playResult && typeof playResult.then === 'function') {
-        playResult
-          .then(() => updateMusicToggle(true))
-          .catch(() => updateMusicToggle(false, true));
-      } else {
-        updateMusicToggle(true);
-      }
-      return true;
-    } catch {
-      updateMusicToggle(false, true);
-      return false;
-    }
-  }
-
   function ensureMusicToggle() {
     if (musicToggle || !document.body) return musicToggle;
     musicToggle = document.createElement('button');
@@ -227,23 +244,19 @@
     musicToggle.className = 'fs-music-toggle';
     musicToggle.setAttribute('aria-label', 'Activar o desactivar música');
     musicToggle.addEventListener('click', () => {
-      if (audio && !audio.paused) {
+      if (audioPlaying) {
         stopMusic();
         return;
       }
-
       if (audioReady) {
-        playPreparedMusicFromGesture();
+        startMusicFromGesture();
         return;
       }
-
-      prepareAudio().then(() => {
-        if (!audioReady) updateMusicToggle(false, true);
-      });
+      prepareAudio(true).catch(() => {});
       updateMusicToggle(false, true);
     });
     document.body.appendChild(musicToggle);
-    updateMusicToggle(audio ? !audio.paused : false, readBool(MUSIC_KEY, false));
+    updateMusicToggle(false, readBool(MUSIC_KEY, false));
     return musicToggle;
   }
 
@@ -282,23 +295,27 @@
       </div>
       <button class="fs-intro-skip" type="button" data-fs-intro-skip hidden>Saltar intro</button>
     `;
+
     document.body.classList.add('fs-intro-active');
     document.body.appendChild(overlay);
 
-    overlay.querySelector('[data-fs-intro-start="sound"]')?.addEventListener('click', () => startIntro(true));
+    const soundButton = overlay.querySelector('[data-fs-intro-start="sound"]');
+    soundButton?.addEventListener('click', () => {
+      if (soundButton.dataset.state === 'retry') {
+        prepareAudio(true).catch(() => {});
+        return;
+      }
+      startIntro(true);
+    });
     overlay.querySelector('[data-fs-intro-start="silent"]')?.addEventListener('click', () => startIntro(false));
     overlay.querySelector('[data-fs-intro-skip]')?.addEventListener('click', finishIntro);
 
     const image = overlay.querySelector('.fs-intro-logo');
-    ensureLogoSource()
-      .then((src) => {
-        if (image && image.isConnected) image.src = src;
-      })
-      .catch(() => {
-        // Keep the stable brand fallback. A logo decoding issue must never abort the intro.
-      });
+    prepareLogo().then((src) => {
+      if (image && image.isConnected) image.src = src;
+    });
 
-    prepareAudio();
+    prepareAudio().catch(() => {});
     return overlay;
   }
 
@@ -313,9 +330,7 @@
     if (actions) actions.hidden = true;
     if (skip) skip.hidden = false;
 
-    // IMPORTANT: play() is invoked synchronously inside the user's click handler.
-    // Awaiting network/decode work before play() loses transient activation on Android/iOS.
-    if (withMusic) playPreparedMusicFromGesture();
+    if (withMusic) startMusicFromGesture();
     else stopMusic();
 
     overlay?.classList.remove('is-armed');
@@ -345,7 +360,7 @@
   }
 
   function installPreferredMusicResume() {
-    prepareAudio();
+    prepareAudio().catch(() => {});
     if (!readBool(MUSIC_KEY, false)) return;
     updateMusicToggle(false, true);
 
@@ -353,7 +368,7 @@
       if (!audioReady) return;
       document.removeEventListener('pointerdown', resume, true);
       document.removeEventListener('keydown', resume, true);
-      playPreparedMusicFromGesture();
+      startMusicFromGesture();
     };
     document.addEventListener('pointerdown', resume, true);
     document.addEventListener('keydown', resume, true);
@@ -368,11 +383,6 @@
     buildOverlay();
   }
 
-  window.addEventListener('pagehide', () => {
-    if (audioUrl) URL.revokeObjectURL(audioUrl);
-    if (logoUrl) URL.revokeObjectURL(logoUrl);
-  }, { once: true });
-
   window.FSFrenchIntro = Object.freeze({
     version: VERSION,
     startWithMusic: () => startIntro(true),
@@ -383,8 +393,9 @@
         stopMusic();
         return false;
       }
-      return playPreparedMusicFromGesture();
-    }
+      return startMusicFromGesture();
+    },
+    retryAudio: () => prepareAudio(true)
   });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
