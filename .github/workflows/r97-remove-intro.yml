@@ -1,0 +1,46 @@
+name: R97 Remove Intro
+
+on:
+  push:
+    branches: [r97-remove-intro]
+    paths:
+      - '.github/workflows/r97-remove-intro.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r97-remove-intro
+      - name: Remove cinematic intro completely
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('v2/index.html')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('  <link rel="stylesheet" href="./intro/french-intro.css?v=20260826-r96">\n', '')
+          text = text.replace('  <script src="./intro/french-intro.js?v=20260826-r96" defer></script>\n', '')
+          p.write_text(text, encoding='utf-8')
+          PY
+          rm -rf v2/intro
+          rm -f .github/workflows/r95-intro-regression.yml
+          rm -f .github/workflows/r97-remove-intro.yml
+          if grep -RInE 'french-intro|fsIntro|theme-0[0-9]\.b64|logo-0[0-9]\.b64' v2 .github/workflows --exclude-dir=.git; then
+            echo 'Intro references remain' >&2
+            exit 1
+          fi
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'R97: retirar intro, música y assets asociados'
+          git push origin HEAD:r97-remove-intro
