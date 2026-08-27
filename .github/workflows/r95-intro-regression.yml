@@ -1,0 +1,32 @@
+name: R95 Intro Timing and Audio Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/index.html'
+      - 'v2/intro/french-intro.js'
+      - 'v2/intro/french-intro.css'
+      - '.github/workflows/r95-intro-regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate isolated intro wiring
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f v2/intro/french-intro.js
+          test -f v2/intro/french-intro.css
+          grep -q 'INTRO_MS = 5200' v2/intro/french-intro.js
+          grep -q 'playPreparedMusicFromGesture' v2/intro/french-intro.js
+          grep -q 'src="${FALLBACK_LOGO}"' v2/intro/french-intro.js
+          grep -q 'french-intro.js?v=20260826-r95' v2/index.html
+          grep -q 'french-intro.css?v=20260826-r95' v2/index.html
+          ! grep -q 'finishIntro(), { once: true }' v2/intro/french-intro.js
+          echo 'R95 intro regression checks OK'

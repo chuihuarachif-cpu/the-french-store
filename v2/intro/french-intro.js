@@ -1,24 +1,26 @@
-/* THE FRENCH STORE — R94 isolated cinematic intro + optional background music.
+/* THE FRENCH STORE — R95 cinematic intro timing + reliable user-gesture audio.
    Presentation only: does not read or write catalog, Wallet, orders, Auth, Admin or providers. */
 (() => {
   'use strict';
 
-  const VERSION = 'french-intro-r94-20260826d';
-  const SESSION_KEY = 'fs_intro_seen_r94';
+  const VERSION = 'french-intro-r95-20260826';
+  const SESSION_KEY = 'fs_intro_seen_r95';
   const MUSIC_KEY = 'fs_music_enabled_v1';
   const AUDIO_PARTS = [
-    './intro/audio/theme-00.b64?v=20260826-r94d',
-    './intro/audio/theme-01.b64?v=20260826-r94d',
-    './intro/audio/theme-02.b64?v=20260826-r94d'
+    './intro/audio/theme-00.b64?v=20260826-r95',
+    './intro/audio/theme-01.b64?v=20260826-r95',
+    './intro/audio/theme-02.b64?v=20260826-r95'
   ];
   const LOGO_PARTS = [
-    './intro/logo/logo-00.b64?v=20260826-r94d',
-    './intro/logo/logo-01.b64?v=20260826-r94d',
-    './intro/logo/logo-02.b64?v=20260826-r94d',
-    './intro/logo/logo-03.b64?v=20260826-r94d'
+    './intro/logo/logo-00.b64?v=20260826-r95',
+    './intro/logo/logo-01.b64?v=20260826-r95',
+    './intro/logo/logo-02.b64?v=20260826-r95',
+    './intro/logo/logo-03.b64?v=20260826-r95'
   ];
-  const INTRO_MS = 3350;
-  const EXIT_MS = 620;
+  const FALLBACK_LOGO = './assets/brand/icon-512.png?v=20260826-r95';
+  const INTRO_MS = 5200;
+  const REDUCED_INTRO_MS = 1850;
+  const EXIT_MS = 720;
 
   if (location.pathname.startsWith('/admin')) return;
 
@@ -34,6 +36,8 @@
   let musicToggle = null;
   let releaseTimer = null;
   let started = false;
+  let audioReady = false;
+  let audioFailed = false;
 
   function readBool(key, fallback = false) {
     try {
@@ -77,11 +81,12 @@
     audioSourcePromise = decodePartsToObjectUrl(AUDIO_PARTS, 'audio/mpeg', 'intro-audio-unavailable')
       .then((url) => {
         audioUrl = url;
-        if (audio && !audio.src) audio.src = audioUrl;
         return audioUrl;
       })
       .catch((error) => {
         audioSourcePromise = null;
+        audioFailed = true;
+        refreshSoundButton();
         throw error;
       });
 
@@ -111,36 +116,66 @@
     audio.id = 'fsIntroAudio';
     audio.loop = true;
     audio.preload = 'auto';
-    audio.volume = 0.24;
+    audio.volume = 0.28;
     audio.setAttribute('playsinline', '');
+    audio.addEventListener('canplay', () => {
+      audioReady = true;
+      audioFailed = false;
+      refreshSoundButton();
+    });
+    audio.addEventListener('loadedmetadata', () => {
+      audioReady = true;
+      refreshSoundButton();
+    });
+    audio.addEventListener('error', () => {
+      audioReady = false;
+      audioFailed = true;
+      refreshSoundButton();
+    });
     document.body.appendChild(audio);
-    if (audioUrl) audio.src = audioUrl;
     return audio;
   }
 
-  async function ensureAudio() {
+  function prepareAudio() {
     const player = ensureAudioElement();
-    if (!player.src) player.src = await ensureAudioSource();
-    return player;
+    if (player.src) {
+      if (player.readyState >= 1) audioReady = true;
+      refreshSoundButton();
+      return Promise.resolve(player);
+    }
+
+    refreshSoundButton();
+    return ensureAudioSource()
+      .then((src) => {
+        if (!player.src) {
+          player.src = src;
+          player.load();
+        }
+        if (player.readyState >= 1) audioReady = true;
+        refreshSoundButton();
+        return player;
+      })
+      .catch(() => player);
   }
 
-  async function setMusic(enabled, userGesture = false) {
-    writeBool(MUSIC_KEY, enabled);
-    if (!enabled) {
-      if (audio) audio.pause();
-      updateMusicToggle(false);
-      return false;
+  function refreshSoundButton() {
+    const button = overlay?.querySelector('[data-fs-intro-start="sound"]');
+    if (!button) return;
+
+    if (audioFailed) {
+      button.disabled = true;
+      button.textContent = '🔇 Audio no disponible';
+      return;
     }
-    try {
-      const player = await ensureAudio();
-      if (userGesture) player.currentTime = player.currentTime || 0;
-      await player.play();
-      updateMusicToggle(true);
-      return true;
-    } catch {
-      updateMusicToggle(false, true);
-      return false;
+
+    if (!audioReady) {
+      button.disabled = true;
+      button.textContent = '⏳ Preparando música…';
+      return;
     }
+
+    button.disabled = false;
+    button.textContent = '🔊 Entrar con música';
   }
 
   function updateMusicToggle(playing, needsGesture = false) {
@@ -154,6 +189,36 @@
       : '<span aria-hidden="true">🔇</span><span class="fs-music-label">Música</span>';
   }
 
+  function stopMusic() {
+    writeBool(MUSIC_KEY, false);
+    if (audio) audio.pause();
+    updateMusicToggle(false);
+  }
+
+  function playPreparedMusicFromGesture() {
+    const player = ensureAudioElement();
+    if (!player.src || !audioReady || audioFailed) {
+      updateMusicToggle(false, true);
+      return false;
+    }
+
+    writeBool(MUSIC_KEY, true);
+    try {
+      const playResult = player.play();
+      if (playResult && typeof playResult.then === 'function') {
+        playResult
+          .then(() => updateMusicToggle(true))
+          .catch(() => updateMusicToggle(false, true));
+      } else {
+        updateMusicToggle(true);
+      }
+      return true;
+    } catch {
+      updateMusicToggle(false, true);
+      return false;
+    }
+  }
+
   function ensureMusicToggle() {
     if (musicToggle || !document.body) return musicToggle;
     musicToggle = document.createElement('button');
@@ -161,9 +226,21 @@
     musicToggle.id = 'fsMusicToggle';
     musicToggle.className = 'fs-music-toggle';
     musicToggle.setAttribute('aria-label', 'Activar o desactivar música');
-    musicToggle.addEventListener('click', async () => {
-      if (audio && !audio.paused) await setMusic(false, true);
-      else await setMusic(true, true);
+    musicToggle.addEventListener('click', () => {
+      if (audio && !audio.paused) {
+        stopMusic();
+        return;
+      }
+
+      if (audioReady) {
+        playPreparedMusicFromGesture();
+        return;
+      }
+
+      prepareAudio().then(() => {
+        if (!audioReady) updateMusicToggle(false, true);
+      });
+      updateMusicToggle(false, true);
     });
     document.body.appendChild(musicToggle);
     updateMusicToggle(audio ? !audio.paused : false, readBool(MUSIC_KEY, false));
@@ -172,7 +249,7 @@
 
   function flameMarkup() {
     return Array.from({ length: 13 }, (_, index) => {
-      const delay = (index % 5) * 55;
+      const delay = (index % 5) * 65;
       return `<i class="fs-flame f${index + 1}" style="--fs-flame-delay:${delay}ms" aria-hidden="true"></i>`;
     }).join('');
   }
@@ -193,14 +270,14 @@
       <div class="fs-intro-center">
         <div class="fs-intro-logo-shell">
           <div class="fs-intro-logo-aura" aria-hidden="true"></div>
-          <img class="fs-intro-logo" alt="FRENCH STORE" decoding="async" fetchpriority="high">
+          <img class="fs-intro-logo" src="${FALLBACK_LOGO}" alt="FRENCH STORE" decoding="async" fetchpriority="high">
           <div class="fs-intro-logo-scan" aria-hidden="true"></div>
         </div>
         <p class="fs-intro-kicker">THE FRENCH STORE</p>
-        <p class="fs-intro-hint">Toca para encender la tienda</p>
+        <p class="fs-intro-hint">Elige cómo entrar</p>
       </div>
       <div class="fs-intro-entry-actions">
-        <button class="fs-intro-primary" type="button" data-fs-intro-start="sound">🔊 Entrar con música</button>
+        <button class="fs-intro-primary" type="button" data-fs-intro-start="sound" disabled>⏳ Preparando música…</button>
         <button class="fs-intro-secondary" type="button" data-fs-intro-start="silent">Entrar sin sonido</button>
       </div>
       <button class="fs-intro-skip" type="button" data-fs-intro-skip hidden>Saltar intro</button>
@@ -213,21 +290,19 @@
     overlay.querySelector('[data-fs-intro-skip]')?.addEventListener('click', finishIntro);
 
     const image = overlay.querySelector('.fs-intro-logo');
-    image?.addEventListener('error', () => finishIntro(), { once: true });
     ensureLogoSource()
       .then((src) => {
         if (image && image.isConnected) image.src = src;
       })
-      .catch(() => finishIntro());
+      .catch(() => {
+        // Keep the stable brand fallback. A logo decoding issue must never abort the intro.
+      });
 
-    // Warm the tiny soundtrack while the user chooses how to enter. Playback still
-    // starts only after an explicit tap, respecting browser autoplay policies.
-    ensureAudioElement();
-    ensureAudioSource().catch(() => updateMusicToggle(false, true));
+    prepareAudio();
     return overlay;
   }
 
-  async function startIntro(withMusic) {
+  function startIntro(withMusic) {
     if (started) return;
     started = true;
     if (!overlay) buildOverlay();
@@ -238,17 +313,16 @@
     if (actions) actions.hidden = true;
     if (skip) skip.hidden = false;
 
-    if (withMusic) await setMusic(true, true);
-    else await setMusic(false, true);
+    // IMPORTANT: play() is invoked synchronously inside the user's click handler.
+    // Awaiting network/decode work before play() loses transient activation on Android/iOS.
+    if (withMusic) playPreparedMusicFromGesture();
+    else stopMusic();
 
     overlay?.classList.remove('is-armed');
     overlay?.classList.add('is-running');
 
-    if (reducedMotion || saveData) {
-      releaseTimer = window.setTimeout(finishIntro, 1250);
-    } else {
-      releaseTimer = window.setTimeout(finishIntro, INTRO_MS);
-    }
+    const duration = reducedMotion || saveData ? REDUCED_INTRO_MS : INTRO_MS;
+    releaseTimer = window.setTimeout(finishIntro, duration);
   }
 
   function finishIntro() {
@@ -267,18 +341,19 @@
     window.setTimeout(() => {
       overlay?.remove();
       overlay = null;
-    }, reducedMotion ? 120 : EXIT_MS);
+    }, reducedMotion ? 160 : EXIT_MS);
   }
 
   function installPreferredMusicResume() {
+    prepareAudio();
     if (!readBool(MUSIC_KEY, false)) return;
-    ensureAudioElement();
-    ensureAudioSource().catch(() => {});
     updateMusicToggle(false, true);
-    const resume = async () => {
+
+    const resume = () => {
+      if (!audioReady) return;
       document.removeEventListener('pointerdown', resume, true);
       document.removeEventListener('keydown', resume, true);
-      await setMusic(true, true);
+      playPreparedMusicFromGesture();
     };
     document.addEventListener('pointerdown', resume, true);
     document.addEventListener('keydown', resume, true);
@@ -303,7 +378,13 @@
     startWithMusic: () => startIntro(true),
     startSilent: () => startIntro(false),
     skip: finishIntro,
-    setMusic: (enabled) => setMusic(Boolean(enabled), true)
+    setMusic: (enabled) => {
+      if (!enabled) {
+        stopMusic();
+        return false;
+      }
+      return playPreparedMusicFromGesture();
+    }
   });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
