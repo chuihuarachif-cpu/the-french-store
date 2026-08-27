@@ -51,7 +51,7 @@ jobs:
           grep -q 'SAFE_BROWSE_VIEWS' v2/rewarded-ads-ui.js
           grep -q 'FSRewardedAdsProvider' v2/rewarded-ads-ui.js
           grep -q "loadStyle('./rewarded-ads.css'" v2/bootstrap.js
-          grep -q "loadScript('./rewarded-ads-ui.js'" v2/bootstrap.js
+          grep -Eq "loadScript\('\./rewarded-ads-ui\.js(\?[^']*)?'" v2/bootstrap.js
 
       - name: Block direct ad-network loading, point minting and critical integrations
         run: |
