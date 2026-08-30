@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     paths:
+      - 'v2/index.html'
+      - 'v2/bootstrap.js'
       - 'v2/config/storefront.js'
       - 'v2/r8-icons.js'
       - 'v2/r8-icons.css'
@@ -23,8 +25,17 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: |
+          node --check v2/bootstrap.js
           node --check v2/config/storefront.js
           node --check v2/r8-icons.js
+
+      - name: Validate cache-busting contract
+        run: |
+          grep -Fq './bootstrap.js?v=20260829-r124' v2/index.html
+          grep -Fq './config/storefront.js?v=20260829-r124' v2/bootstrap.js
+          grep -Fq './r8-icons.css?v=20260829-r124' v2/bootstrap.js
+          grep -Fq './r8-icons.js?v=20260829-r124' v2/bootstrap.js
+          grep -Fq "r124-artwork-resilience-20260829" v2/bootstrap.js
 
       - name: Validate every configured local app asset
         run: |
@@ -100,6 +111,8 @@ jobs:
             echo "PRODUCTION_BUNDLE_STALE:$label" >&2
             return 1
           }
+          check_url "https://frenchstorebo.com/v2/" "./bootstrap.js?v=20260829-r124" "index cache-buster"
+          check_url "https://frenchstorebo.com/v2/bootstrap.js" "r124-artwork-resilience-20260829" "bootstrap"
           check_url "https://frenchstorebo.com/v2/config/storefront.js" "20260829-r124" "storefront config"
           check_url "https://frenchstorebo.com/v2/r8-icons.js" "fsArtworkResilience" "artwork resilience JS"
           check_url "https://frenchstorebo.com/v2/r8-icons.css" "fs-artwork-fallback--card" "artwork resilience CSS"
