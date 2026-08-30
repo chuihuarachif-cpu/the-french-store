@@ -1,0 +1,50 @@
+name: R127 Manual Player ID
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'v2/player-verify.js'
+      - '.github/workflows/r127-player-id-manual.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate player ID JavaScript
+        run: node --check v2/player-verify.js
+
+      - name: Verify manual ID contract
+        run: |
+          set -euo pipefail
+          grep -Fq "player-id-manual-v3-20260830-r127" v2/player-verify.js
+          grep -Fq "Verificar nombre (opcional)" v2/player-verify.js
+          grep -Fq "state.entered" v2/player-verify.js
+          grep -Fq "rememberEntered" v2/player-verify.js
+          grep -Fq "syncCartInputs" v2/player-verify.js
+          grep -Fq "lo revisaremos manualmente antes de recargar" v2/player-verify.js
+          ! grep -Eq "/orders|gamerhubCreateOrder|provider_purchase_jobs" v2/player-verify.js
+
+      - name: Verify R127 reached production static hosting
+        run: |
+          set -euo pipefail
+          url='https://frenchstorebo.com/v2/player-verify.js?v=20260830-r127'
+          ok=0
+          for attempt in $(seq 1 18); do
+            body="$(curl -fsS --max-time 20 "$url" || true)"
+            if printf '%s' "$body" | grep -Fq 'player-id-manual-v3-20260830-r127' \
+              && printf '%s' "$body" | grep -Fq 'Verificar nombre (opcional)'; then
+              ok=1
+              break
+            fi
+            echo "waiting for R127 storefront propagation ($attempt/18)"
+            sleep 10
+          done
+          test "$ok" = '1'
