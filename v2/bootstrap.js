@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r108-optin-reward-notifications-20260827';
+  const VERSION = 'r124-artwork-resilience-20260829';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -55,7 +55,7 @@
 
   async function loadCore() {
     const files = [
-      './config/storefront.js',
+      './config/storefront.js?v=20260829-r124',
       './core/runtime.js',
       './core/navigation.js',
       './features/catalog.js',
@@ -106,9 +106,9 @@
     },
     motion: async () => {
       await loadStyle('./r8.css', 'fs-r8-css');
-      await loadStyle('./r8-icons.css', 'fs-r8-icons-css');
+      await loadStyle('./r8-icons.css?v=20260829-r124', 'fs-r8-icons-css');
       await loadScript('./r8.js', 'fs-r8-js');
-      await loadScript('./r8-icons.js', 'fs-r8-icons-js');
+      await loadScript('./r8-icons.js?v=20260829-r124', 'fs-r8-icons-js');
     },
     loyalty: async () => {
       await loadStyle('./loyalty.css', 'fs-loyalty-css');
