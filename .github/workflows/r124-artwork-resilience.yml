@@ -1,0 +1,82 @@
+name: R124 Storefront Artwork Resilience
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'v2/config/storefront.js'
+      - 'v2/r8-icons.js'
+      - 'v2/r8-icons.css'
+      - 'v2/assets/apps/**'
+      - '.github/workflows/r124-artwork-resilience.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  artwork-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check v2/config/storefront.js
+          node --check v2/r8-icons.js
+
+      - name: Validate every configured local app asset
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const sandbox = { window: {} };
+          vm.runInNewContext(fs.readFileSync('v2/config/storefront.js', 'utf8'), sandbox, { filename: 'storefront.js' });
+          const cfg = sandbox.window.FSStorefrontConfig;
+          if (!cfg || !cfg.gameIcons) throw new Error('STOREFRONT_CONFIG_GAME_ICONS_MISSING');
+          const expectedCategories = ['Recargas por ID','Recargas por Cuenta','Streaming','Gift Cards'];
+          if (JSON.stringify([...cfg.categories]) !== JSON.stringify(expectedCategories)) throw new Error('CATEGORY_CONTRACT_CHANGED');
+          if (cfg.assetRevision !== '20260829-r124') throw new Error('ASSET_REVISION_MISMATCH');
+
+          for (const [key, src] of Object.entries(cfg.gameIcons)) {
+            const clean = String(src).split('?')[0].replace(/^\.\//, '');
+            if (!clean.startsWith('assets/apps/')) throw new Error(`NON_LOCAL_APP_ASSET:${key}:${src}`);
+            const path = `v2/${clean}`;
+            if (!fs.existsSync(path)) throw new Error(`MISSING_APP_ASSET:${key}:${path}`);
+            const buf = fs.readFileSync(path);
+            if (buf.length < 32) throw new Error(`APP_ASSET_TOO_SMALL:${key}:${path}`);
+            if (buf.subarray(0,4).toString('ascii') !== 'RIFF' || buf.subarray(8,12).toString('ascii') !== 'WEBP') {
+              throw new Error(`INVALID_WEBP_HEADER:${key}:${path}`);
+            }
+          }
+          console.log(`Validated ${Object.keys(cfg.gameIcons).length} configured WebP app assets.`);
+          NODE
+
+      - name: Verify fallback contract remains installed
+        run: |
+          grep -Fq "fsArtworkResilience" v2/r8-icons.js
+          grep -Fq "handleLocalArtworkError" v2/r8-icons.js
+          grep -Fq "fs-artwork-fallback--card" v2/r8-icons.css
+          grep -Fq "fs-artwork-fallback--hero" v2/r8-icons.css
+          grep -Fq "fs-artwork-fallback--feature" v2/r8-icons.css
+
+      - name: Verify reported assets are served by production
+        env:
+          BASE: https://frenchstorebo.com/v2/assets/apps
+        run: |
+          set -euo pipefail
+          for name in clash-of-clans clash-royale fortnite roblox tiktok; do
+            out="/tmp/${name}.webp"
+            curl --fail --location --silent --show-error --retry 3 --retry-delay 2 \
+              "${BASE}/${name}.webp?v=20260829-r124" -o "$out"
+            python3 - "$out" "$name" <<'PY'
+          import pathlib, sys
+          path = pathlib.Path(sys.argv[1])
+          name = sys.argv[2]
+          data = path.read_bytes()
+          if len(data) < 32 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+              raise SystemExit(f'PRODUCTION_INVALID_WEBP:{name}:{len(data)}')
+          print(f'production asset OK: {name} ({len(data)} bytes)')
+          PY
+          done
