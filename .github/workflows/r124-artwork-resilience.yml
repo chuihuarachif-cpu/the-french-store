@@ -17,7 +17,7 @@ permissions:
 jobs:
   artwork-safety:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -80,3 +80,26 @@ jobs:
           print(f'production asset OK: {name} ({len(data)} bytes)')
           PY
           done
+
+      - name: Verify R124 bundle reached production
+        run: |
+          set -euo pipefail
+          check_url() {
+            url="$1"
+            needle="$2"
+            label="$3"
+            for attempt in $(seq 1 18); do
+              body="$(curl --fail --location --silent --show-error --max-time 15 "${url}?deploycheck=${GITHUB_SHA}-${attempt}" || true)"
+              if printf '%s' "$body" | grep -Fq "$needle"; then
+                echo "production bundle OK: $label"
+                return 0
+              fi
+              echo "waiting for production bundle: $label (attempt $attempt/18)"
+              sleep 10
+            done
+            echo "PRODUCTION_BUNDLE_STALE:$label" >&2
+            return 1
+          }
+          check_url "https://frenchstorebo.com/v2/config/storefront.js" "20260829-r124" "storefront config"
+          check_url "https://frenchstorebo.com/v2/r8-icons.js" "fsArtworkResilience" "artwork resilience JS"
+          check_url "https://frenchstorebo.com/v2/r8-icons.css" "fs-artwork-fallback--card" "artwork resilience CSS"
