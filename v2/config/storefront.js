@@ -1,32 +1,37 @@
 /* THE FRENCH STORE — public storefront configuration.
-   Presentation/config only. Prices, provider routing and availability remain in Supabase/backend. */
+   Presentation/config only. Prices, provider routing and availability remain in Supabase/backend.
+   R124: local artwork URLs carry a revision token so mobile browsers do not keep stale 404/image responses. */
+const STOREFRONT_ASSET_REVISION = '20260829-r124';
+const storefrontAppAsset = (filename) => `assets/apps/${filename}.webp?v=${STOREFRONT_ASSET_REVISION}`;
+
 const STOREFRONT_CONFIG = Object.freeze({
   whatsapp: '59177057379',
   categories: Object.freeze(['Recargas por ID','Recargas por Cuenta','Streaming','Gift Cards']),
   featuredPriority: Object.freeze(['Mobile Legends','Free Fire','PUBG','Clash','Wuthering']),
+  assetRevision: STOREFRONT_ASSET_REVISION,
   gameIcons: Object.freeze({
-    arenabreakout:'assets/apps/arena-breakout.webp',
-    asphaltlegends:'assets/apps/asphalt-legends.webp',
-    bloodstrike:'assets/apps/blood-strike.webp',
-    deltaforce:'assets/apps/delta-force.webp',
-    freefire:'assets/apps/free-fire.webp',
-    genshinimpact:'assets/apps/genshin-impact.webp',
-    honkaistarrail:'assets/apps/honkai-star-rail.webp',
-    honorofkings:'assets/apps/honor-of-kings.webp',
-    magicchess:'assets/apps/magic-chess.webp',
-    mobilelegendsbangbang:'assets/apps/mobile-legends.webp',
-    pubgmobile:'assets/apps/pubg-mobile.webp',
-    wutheringwaves:'assets/apps/wuthering-waves.webp',
-    zenlesszonezero:'assets/apps/zenless-zone-zero.webp',
-    clashofclans:'assets/apps/clash-of-clans.webp',
-    clashroyale:'assets/apps/clash-royale.webp',
-    fortnite:'assets/apps/fortnite.webp',
-    roblox:'assets/apps/roblox.webp',
-    tiktok:'assets/apps/tiktok.webp',
-    steam:'assets/apps/steam.webp',
-    minecraft:'assets/apps/minecraft.webp',
-    standoff2:'assets/apps/standoff-2.webp',
-    teamfighttactics:'assets/apps/teamfight-tactics.webp'
+    arenabreakout:storefrontAppAsset('arena-breakout'),
+    asphaltlegends:storefrontAppAsset('asphalt-legends'),
+    bloodstrike:storefrontAppAsset('blood-strike'),
+    deltaforce:storefrontAppAsset('delta-force'),
+    freefire:storefrontAppAsset('free-fire'),
+    genshinimpact:storefrontAppAsset('genshin-impact'),
+    honkaistarrail:storefrontAppAsset('honkai-star-rail'),
+    honorofkings:storefrontAppAsset('honor-of-kings'),
+    magicchess:storefrontAppAsset('magic-chess'),
+    mobilelegendsbangbang:storefrontAppAsset('mobile-legends'),
+    pubgmobile:storefrontAppAsset('pubg-mobile'),
+    wutheringwaves:storefrontAppAsset('wuthering-waves'),
+    zenlesszonezero:storefrontAppAsset('zenless-zone-zero'),
+    clashofclans:storefrontAppAsset('clash-of-clans'),
+    clashroyale:storefrontAppAsset('clash-royale'),
+    fortnite:storefrontAppAsset('fortnite'),
+    roblox:storefrontAppAsset('roblox'),
+    tiktok:storefrontAppAsset('tiktok'),
+    steam:storefrontAppAsset('steam'),
+    minecraft:storefrontAppAsset('minecraft'),
+    standoff2:storefrontAppAsset('standoff-2'),
+    teamfighttactics:storefrontAppAsset('teamfight-tactics')
   })
 });
 window.FSStorefrontConfig = STOREFRONT_CONFIG;
