@@ -164,7 +164,7 @@
       const scope = text(control.dataset.fsScope);
       const key = text(control.dataset.fsKey);
       const value = text(valuesForScope(scope)?.[key]);
-      if (!value || text(control.value) === value) return;
+      if (text(control.value) === value) return;
       control.value = value;
       control.dispatchEvent(new Event('input', { bubbles: true }));
       control.dispatchEvent(new Event('change', { bubbles: true }));
