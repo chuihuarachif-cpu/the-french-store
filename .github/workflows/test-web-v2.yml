@@ -49,6 +49,7 @@ jobs:
           test -s v2/legal.js
           test -s v2/legal-account.js
           test -s v2/player-verify.js
+          test -s v2/detail-layout-v2.js
           test -s v2/buy-now.js
           test -s v2/bisa-checkout.css
           test -s v2/bisa-checkout.js
@@ -86,6 +87,7 @@ jobs:
           node --check v2/legal.js
           node --check v2/legal-account.js
           node --check v2/player-verify.js
+          node --check v2/detail-layout-v2.js
           node --check v2/buy-now.js
           node --check v2/auth-ease.js
           node --check v2/auth-confirm.js
@@ -142,6 +144,7 @@ jobs:
 
       - name: Check critical frontend contracts
         run: |
+          set -euo pipefail
           grep -q "create_wallet_order" v2/features/cart.js
           grep -q "create_qr_order" v2/features/cart.js
           grep -q "request_wallet_topup_v2" v2/features/wallet.js
@@ -156,10 +159,11 @@ jobs:
           grep -q "/bisa-sip/topup-status" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
           grep -q "No \"Pagado\"/WhatsApp button" v2/bisa-wallet.js
-          grep -q "B+G" v2/paid-whatsapp.js
-          grep -q "product_name,quantity" v2/paid-whatsapp.js
-          grep -q "🛒 Productos" v2/paid-whatsapp.js
-          grep -q "Observe ONLY child-list changes" v2/paid-whatsapp.js
+          grep -q "r129-one-time-paid-whatsapp-20260830" v2/paid-whatsapp.js
+          grep -q "get_my_paid_whatsapp_notice_status" v2/paid-whatsapp.js
+          grep -q "claim_my_paid_whatsapp_notice" v2/paid-whatsapp.js
+          grep -q "ALREADY_USED" v2/paid-whatsapp.js
+          grep -q "🔢 Cantidad:" v2/paid-whatsapp.js
           grep -q "childList: true, subtree: true" v2/paid-whatsapp.js
           ! grep -q "attributeFilter" v2/paid-whatsapp.js
           grep -q "50+50 => 100" v2/catalog-order.js
@@ -188,8 +192,9 @@ jobs:
           grep -q "id,juego,paquete,categoria,precio,activo" v2/features/catalog.js
           ! grep -Eqi "precio_proveedor|tipo_cambio|gamerhub|bonoxs|gameton" v2/config/storefront.js
 
-      - name: Check launch legal, player verify and direct-buy UX
+      - name: Check launch legal, ID-only and direct-buy UX
         run: |
+          set -euo pipefail
           grep -q "privacy.html" v2/index.html
           grep -q "terms.html" v2/index.html
           grep -q "refunds.html" v2/index.html
@@ -198,12 +203,16 @@ jobs:
           ! grep -q 'id="purchaseLegalAccept"' v2/index.html
           grep -q "fs_terms_accepted" v2/legal-account.js
           grep -q "fs_privacy_accepted" v2/legal-account.js
-          grep -q "/api/player-verify" v2/player-verify.js
-          grep -q "Verificar ID" v2/player-verify.js
-          grep -q "Cuenta encontrada" v2/player-verify.js
+          grep -q "player-id-only-v1-20260831-r131" v2/player-verify.js
+          grep -q "Ingresa tu ID de jugador" v2/player-verify.js
+          grep -q "enteredForGame" v2/player-verify.js
+          ! grep -q "/api/player-verify" v2/player-verify.js
+          ! grep -q "Verificar nombre" v2/player-verify.js
+          grep -q "detail-layout-v2-20260831-id-only" v2/detail-layout-v2.js
+          grep -q "Datos completos · paquetes habilitados" v2/detail-layout-v2.js
           grep -q "Comprar ahora" v2/buy-now.js
           grep -q "Añadir al carrito" v2/buy-now.js
-          grep -q "./legal-account.js?v=20260823-1" v2/index.html
+          grep -q "./legal-account.js?v=20260824-r44" v2/index.html
           grep -q "./player-verify.js?v=20260823-1" v2/index.html
           grep -q "./buy-now.js?v=20260823-2" v2/index.html
           grep -q "frenchstorebo.com" sitemap.xml
@@ -228,6 +237,7 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/order-cancel-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/legal-account.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/player-verify.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/detail-layout-v2.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/buy-now.js >/dev/null
 
       - name: Browser-test modular bootstrap
