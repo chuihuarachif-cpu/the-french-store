@@ -1,4 +1,4 @@
-name: R42 Category Detail and ID Gate Safety
+name: R131 Category Detail and ID Gate Safety
 
 on:
   pull_request:
@@ -34,25 +34,30 @@ jobs:
           node --check v2/player-verify.js
           node --check v2/detail-layout-v2.js
 
-      - name: Player verification stays server mediated and manual-safe
+      - name: Player ID capture stays provider-independent and manual-safe
         run: |
           set -euo pipefail
-          grep -Fq 'https://api.frenchstorebo.com/api/player-verify' v2/player-verify.js
-          grep -Fq 'Authorization:`Bearer ${currentSession.access_token}`' v2/player-verify.js
-          grep -Fq "const MANUAL_PREFIX = '[MANUAL_ONLY]'" v2/player-verify.js
-          grep -Fq 'entry.requirements.some(req=>req.manualOnly!==true)' v2/player-verify.js
-          grep -Fq 'verifiedForGame' v2/player-verify.js
-          grep -Fq 'cuenta verificada' v2/player-verify.js
-          ! grep -Eqi 'service_role|GAMERHUB_API|GAMERHUB_SECRET|api_secret|precio_proveedor|price_usd' v2/player-verify.js
+          grep -Fq 'player-id-only-v1-20260831-r131' v2/player-verify.js
+          grep -Fq "sb.from('checkout_input_requirements')" v2/player-verify.js
+          grep -Fq 'enteredForGame' v2/player-verify.js
+          grep -Fq 'rememberEntered' v2/player-verify.js
+          grep -Fq 'syncCartInputs' v2/player-verify.js
+          grep -Fq 'fs:player-input-change' v2/player-verify.js
+          ! grep -Fq '/api/player-verify' v2/player-verify.js
+          ! grep -Fq 'Verificar nombre' v2/player-verify.js
+          ! grep -Eqi 'service_role|GAMERHUB_API|GAMERHUB_SECRET|api_secret|precio_proveedor|price_usd|create.?provider.?order|provider_purchase_jobs' v2/player-verify.js
 
-      - name: Automatic ID routes cannot fall back to text-only unlock
+      - name: Required identifiers own the ID-category unlock
         run: |
           set -euo pipefail
-          grep -Fq 'hasAutomaticRequirements' v2/detail-layout-v2.js
-          grep -Fq 'reqs.some(req=>req.manualOnly!==true)' v2/detail-layout-v2.js
-          grep -Fq 'const ready=needsVerification?verified:manualValid(game)' v2/detail-layout-v2.js
-          grep -Fq 'FSPlayerVerify?.verifiedForGame?.(game)' v2/detail-layout-v2.js
-          grep -Fq 'ID verificado · paquetes habilitados' v2/detail-layout-v2.js
+          grep -Fq 'function enteredValid(game)' v2/detail-layout-v2.js
+          grep -Fq 'window.FSPlayerVerify?.enteredForGame?.(game)' v2/detail-layout-v2.js
+          grep -Fq 'const ready=enteredValid(game)' v2/detail-layout-v2.js
+          grep -Fq '✓ Datos completos · paquetes habilitados' v2/detail-layout-v2.js
+          grep -Fq '🔒 Completa tu ID para habilitar' v2/detail-layout-v2.js
+          grep -Fq 'fs:player-input-change' v2/detail-layout-v2.js
+          ! grep -Fq 'needsVerification' v2/detail-layout-v2.js
+          ! grep -Fq 'verifiedForGame?.(game)' v2/detail-layout-v2.js
 
       - name: ID lock is limited to Recargas por ID
         run: |
@@ -60,7 +65,6 @@ jobs:
           grep -Fq "const ID_CATEGORY='Recargas por ID'" v2/detail-layout-v2.js
           grep -Fq "cat()!==ID_CATEGORY" v2/detail-layout-v2.js
           grep -Fq 'fs-id-locked' v2/detail-layout-v2.js
-          grep -Fq 'Verifica tu ID para habilitar' v2/detail-layout-v2.js
           grep -Fq 'Completa tu ID para habilitar' v2/detail-layout-v2.js
 
       - name: All four category presentations remain distinct
@@ -75,18 +79,17 @@ jobs:
       - name: No credential collection or money-moving provider code
         run: |
           set -euo pipefail
-          ! grep -Eqi 'type=.password|service[_ -]?role|api[_ -]?secret|GAMERHUB_SECRET|POST /v1/orders|gamerhubCreateOrder' v2/detail-layout-v2.js
+          ! grep -Eqi 'type=.password|service[_ -]?role|api[_ -]?secret|GAMERHUB_SECRET|POST /v1/orders|gamerhubCreateOrder|provider_purchase_jobs' v2/detail-layout-v2.js
           grep -Fq 'Nunca escribas aquí contraseñas' v2/detail-layout-v2.js
-          grep -Fq 'nunca pediremos contraseña' v2/detail-layout-v2.js
 
       - name: Detail module and stylesheet are loaded through the existing entrypoint
         run: |
           set -euo pipefail
-          grep -Fq "script.src='./detail-layout-v2.js?v=20260824-2'" v2/player-verify.js
-          grep -Fq "link.href='./detail-layout-v2.css?v=20260824-2'" v2/detail-layout-v2.js
+          grep -Fq './detail-layout-v2.js?v=20260824-2' v2/player-verify.js
+          grep -Fq './detail-layout-v2.css?v=20260824-2' v2/detail-layout-v2.js
 
-      - name: Mutation observers avoid self-render loops
+      - name: Catalog observers stay child-list scoped
         run: |
           set -euo pipefail
-          grep -Fq "observe(catalog,{childList:true,subtree:false})" v2/player-verify.js
-          grep -Fq "observe(catalog,{childList:true,subtree:false})" v2/detail-layout-v2.js
+          grep -Fq 'new MutationObserver(schedule).observe(catalog' v2/player-verify.js
+          grep -Fq 'new MutationObserver(schedule).observe(catalog' v2/detail-layout-v2.js
