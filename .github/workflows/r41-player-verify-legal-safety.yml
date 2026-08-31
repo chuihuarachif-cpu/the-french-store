@@ -1,4 +1,4 @@
-name: R41 Player Verify and Legal Safety
+name: R131 Player ID and Legal Safety
 
 on:
   pull_request:
@@ -34,14 +34,20 @@ jobs:
           node --check v2/player-verify.js
           node --check v2/legal-account.js
           node --check v2/buy-now.js
-      - name: Player verification stays server mediated
+      - name: Player ID capture is provider-independent and manual-safe
         run: |
           set -euo pipefail
-          grep -Fq 'https://api.frenchstorebo.com/api/player-verify' v2/player-verify.js
-          grep -Fq 'Authorization:`Bearer ${currentSession.access_token}`' v2/player-verify.js
-          grep -Fq 'Verificar ID' v2/player-verify.js
-          grep -Fq 'Cuenta encontrada' v2/player-verify.js
-          ! grep -Eqi 'service_role|GAMERHUB_API|GAMERHUB_SECRET|api_secret|precio_proveedor|price_usd' v2/player-verify.js
+          grep -Fq 'player-id-only-v1-20260831-r131' v2/player-verify.js
+          grep -Fq "sb.from('checkout_input_requirements')" v2/player-verify.js
+          grep -Fq 'state.entered' v2/player-verify.js
+          grep -Fq 'rememberEntered' v2/player-verify.js
+          grep -Fq 'syncCartInputs' v2/player-verify.js
+          grep -Fq 'fs:player-input-change' v2/player-verify.js
+          grep -Fq 'Ingresa tu ID de jugador' v2/player-verify.js
+          grep -Fq 'No te pediremos contraseña' v2/player-verify.js
+          ! grep -Fq '/api/player-verify' v2/player-verify.js
+          ! grep -Fq 'Verificar nombre' v2/player-verify.js
+          ! grep -Eqi 'service_role|GAMERHUB_API|GAMERHUB_SECRET|api_secret|precio_proveedor|price_usd|create.?provider.?order|provider_purchase_jobs' v2/player-verify.js
       - name: Legal acceptance is account-level, not cart-level
         run: |
           set -euo pipefail
