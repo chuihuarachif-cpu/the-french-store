@@ -1,4 +1,4 @@
-name: R41 Direct Buy Player Verify
+name: R131 Direct Buy Player ID
 
 on:
   pull_request:
@@ -26,8 +26,12 @@ jobs:
           node --check v2/player-verify.js
           node --check v2/buy-now.js
           node --check v2/legal-account.js
-          grep -Fq 'Verificar ID' v2/player-verify.js
-          grep -Fq 'Cuenta encontrada' v2/player-verify.js
+          grep -Fq 'player-id-only-v1-20260831-r131' v2/player-verify.js
+          grep -Fq 'Ingresa tu ID de jugador' v2/player-verify.js
+          grep -Fq 'enteredForGame' v2/player-verify.js
+          grep -Fq 'syncCartInputs' v2/player-verify.js
+          ! grep -Fq '/api/player-verify' v2/player-verify.js
+          ! grep -Fq 'Verificar nombre' v2/player-verify.js
           grep -Fq 'Comprar ahora' v2/buy-now.js
           grep -Fq 'Añadir al carrito' v2/buy-now.js
           grep -Fq 'id="legalAccept"' v2/index.html

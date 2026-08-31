@@ -1,10 +1,11 @@
-name: R127 Manual Player ID
+name: R131 Player ID Only
 
 on:
   push:
     branches: [main]
     paths:
       - 'v2/player-verify.js'
+      - 'v2/detail-layout-v2.js'
       - '.github/workflows/r127-player-id-manual.yml'
   workflow_dispatch:
 
@@ -18,33 +19,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate player ID JavaScript
-        run: node --check v2/player-verify.js
+      - name: Validate ID-only JavaScript
+        run: |
+          node --check v2/player-verify.js
+          node --check v2/detail-layout-v2.js
 
-      - name: Verify manual ID contract
+      - name: Verify ID-only manual contract
         run: |
           set -euo pipefail
-          grep -Fq "player-id-manual-v3-20260830-r127" v2/player-verify.js
-          grep -Fq "Verificar nombre (opcional)" v2/player-verify.js
-          grep -Fq "state.entered" v2/player-verify.js
-          grep -Fq "rememberEntered" v2/player-verify.js
-          grep -Fq "syncCartInputs" v2/player-verify.js
-          grep -Fq "lo revisaremos manualmente antes de recargar" v2/player-verify.js
-          ! grep -Eq "/orders|gamerhubCreateOrder|provider_purchase_jobs" v2/player-verify.js
+          grep -Fq 'player-id-only-v1-20260831-r131' v2/player-verify.js
+          grep -Fq 'state.entered' v2/player-verify.js
+          grep -Fq 'rememberEntered' v2/player-verify.js
+          grep -Fq 'syncCartInputs' v2/player-verify.js
+          grep -Fq 'enteredForGame' v2/player-verify.js
+          grep -Fq 'Ingresa tu ID de jugador' v2/player-verify.js
+          grep -Fq 'function enteredValid(game)' v2/detail-layout-v2.js
+          grep -Fq 'const ready=enteredValid(game)' v2/detail-layout-v2.js
+          grep -Fq '✓ Datos completos · paquetes habilitados' v2/detail-layout-v2.js
+          ! grep -Fq '/api/player-verify' v2/player-verify.js
+          ! grep -Fq 'Verificar nombre' v2/player-verify.js
+          ! grep -Eq '/orders|gamerhubCreateOrder|provider_purchase_jobs' v2/player-verify.js
 
-      - name: Verify R127 reached production static hosting
+      - name: Verify R131 reached production static hosting
         run: |
           set -euo pipefail
-          url='https://frenchstorebo.com/v2/player-verify.js?v=20260830-r127'
+          player_url='https://frenchstorebo.com/v2/player-verify.js?v=20260831-r131'
+          detail_url='https://frenchstorebo.com/v2/detail-layout-v2.js?v=20260831-r131'
           ok=0
           for attempt in $(seq 1 18); do
-            body="$(curl -fsS --max-time 20 "$url" || true)"
-            if printf '%s' "$body" | grep -Fq 'player-id-manual-v3-20260830-r127' \
-              && printf '%s' "$body" | grep -Fq 'Verificar nombre (opcional)'; then
+            player="$(curl -fsS --max-time 20 "$player_url" || true)"
+            detail="$(curl -fsS --max-time 20 "$detail_url" || true)"
+            if printf '%s' "$player" | grep -Fq 'player-id-only-v1-20260831-r131' \
+              && ! printf '%s' "$player" | grep -Fq 'Verificar nombre' \
+              && printf '%s' "$detail" | grep -Fq 'detail-layout-v2-20260831-id-only' \
+              && printf '%s' "$detail" | grep -Fq 'Datos completos · paquetes habilitados'; then
               ok=1
               break
             fi
-            echo "waiting for R127 storefront propagation ($attempt/18)"
+            echo "waiting for R131 storefront propagation ($attempt/18)"
             sleep 10
           done
           test "$ok" = '1'

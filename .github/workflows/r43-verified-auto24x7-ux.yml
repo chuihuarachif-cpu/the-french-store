@@ -1,4 +1,4 @@
-name: R43 Verified ID and Auto24x7 UX Safety
+name: R131 ID Only and Manual UX Safety
 
 on:
   pull_request:
@@ -46,15 +46,19 @@ jobs:
           node --check v2/detail-layout-v2.js
           node --check v2/bootstrap.js
 
-      - name: Real verification owns automatic ID unlock
+      - name: Required customer identifiers own the ID unlock
         run: |
           set -euo pipefail
-          grep -Fq '/api/player-verify' v2/player-verify.js
-          grep -Fq 'data.verified!==true' v2/player-verify.js
-          grep -Fq 'display_name' v2/player-verify.js
-          grep -Fq 'cuenta verificada' v2/player-verify.js
-          grep -Fq 'const ready=needsVerification?verified:manualValid(game)' v2/detail-layout-v2.js
-          grep -Fq 'reqs.some(req=>req.manualOnly!==true)' v2/detail-layout-v2.js
+          grep -Fq 'player-id-only-v1-20260831-r131' v2/player-verify.js
+          grep -Fq 'enteredForGame' v2/player-verify.js
+          grep -Fq 'rememberEntered' v2/player-verify.js
+          grep -Fq 'syncCartInputs' v2/player-verify.js
+          grep -Fq 'function enteredValid(game)' v2/detail-layout-v2.js
+          grep -Fq 'const ready=enteredValid(game)' v2/detail-layout-v2.js
+          grep -Fq '✓ Datos completos · paquetes habilitados' v2/detail-layout-v2.js
+          ! grep -Fq '/api/player-verify' v2/player-verify.js
+          ! grep -Fq 'Verificar nombre' v2/player-verify.js
+          ! grep -Fq 'verifiedForGame?.(game)' v2/detail-layout-v2.js
 
       - name: Automatic promise uses live sanitized capability only
         run: |
