@@ -1,10 +1,10 @@
 /* FRENCH STORE — isolated brand visual loader.
    Keeps the existing diamond fallback unless the brand image loads successfully.
-   R132 also loads the optional chibi mascot motion layer; any mascot failure is visual-only. */
+   R133 loads the optional living chibi mascot motion layer; any mascot failure is visual-only. */
 (() => {
   'use strict';
 
-  const CHIBI_VERSION = '20260901-r132';
+  const CHIBI_VERSION = '20260901-r133';
 
   function initBrandVisuals() {
     const host = document.querySelector('.hero-gem');

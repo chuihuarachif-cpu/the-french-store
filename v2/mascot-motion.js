@@ -1,9 +1,10 @@
-/* THE FRENCH STORE — Chibi mascot motion layer (visual only).
-   It never changes Auth, prices, cart data, QR/payment truth or backend calls. */
+/* THE FRENCH STORE — Chibi mascot motion layer v2 (visual only).
+   Safer “living mascot” version with micro-interactions, particles and layered effects.
+   It must never change Auth, prices, cart truth, Wallet balances, QR/payment truth or backend calls. */
 (() => {
   'use strict';
 
-  const VERSION = 'chibi-mascot-motion-v1-20260901';
+  const VERSION = 'chibi-mascot-motion-v2-20260901';
   const ASSETS = Object.freeze({
     neutral: './assets/mascot/mascot-neutral.webp',
     login: './assets/mascot/mascot-login.webp',
@@ -11,9 +12,11 @@
     shopping: './assets/mascot/mascot-shopping.webp',
     success: './assets/mascot/mascot-success.webp'
   });
+
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true;
   const slots = new Map();
   const timers = new WeakMap();
+  const observers = [];
 
   function markError(slot) {
     slot?.classList.add('is-error');
@@ -21,7 +24,7 @@
 
   function ensureAsset(slot) {
     if (!slot) return;
-    const img = slot.querySelector('img');
+    const img = slot.querySelector('.fs-chibi-img');
     if (!img || img.dataset.loaded === '1' || img.dataset.loading === '1') return;
     img.dataset.loading = '1';
     slot.classList.add('is-busy');
@@ -35,9 +38,20 @@
     img.src = img.dataset.src;
   }
 
-  function clearReaction(slot) {
+  function clearReactionClasses(slot) {
     if (!slot) return;
-    slot.classList.remove('is-reacting', 'is-wave', 'is-scan', 'is-shop', 'is-celebrate');
+    slot.classList.remove(
+      'is-reacting',
+      'is-wave',
+      'is-scan',
+      'is-shop',
+      'is-celebrate',
+      'is-blink'
+    );
+  }
+
+  function forceReplay(slot) {
+    void slot.offsetWidth;
   }
 
   function react(slotOrKey, reaction = 'reacting') {
@@ -45,51 +59,113 @@
     if (!slot) return;
     ensureAsset(slot);
     if (reduceMotion) return;
+
     const oldTimer = timers.get(slot);
     if (oldTimer) clearTimeout(oldTimer);
-    clearReaction(slot);
-    void slot.offsetWidth;
+
+    clearReactionClasses(slot);
+    forceReplay(slot);
     const className = `is-${reaction}`;
     slot.classList.add(className);
-    const duration = reaction === 'celebrate' ? 980 : reaction === 'scan' ? 940 : reaction === 'wave' ? 860 : 720;
-    const timer = setTimeout(() => clearReaction(slot), duration);
+
+    const durationMap = {
+      reacting: 760,
+      wave: 980,
+      scan: 1200,
+      shop: 900,
+      celebrate: 1300,
+      blink: 240
+    };
+    const timer = setTimeout(() => clearReactionClasses(slot), durationMap[reaction] || 800);
     timers.set(slot, timer);
+  }
+
+  function blink(slotOrKey) {
+    const slot = typeof slotOrKey === 'string' ? slots.get(slotOrKey) : slotOrKey;
+    if (!slot || reduceMotion) return;
+    slot.classList.add('is-blink');
+    setTimeout(() => slot.classList.remove('is-blink'), 220);
+  }
+
+  function scheduleAutoBlink(slot) {
+    if (!slot || reduceMotion) return;
+    const loop = () => {
+      if (!slot.isConnected) return;
+      const wait = 2400 + Math.floor(Math.random() * 2600);
+      setTimeout(() => {
+        if (!slot.isConnected) return;
+        if (slot.classList.contains('is-ready')) blink(slot);
+        loop();
+      }, wait);
+    };
+    loop();
   }
 
   function addPointerReaction(slot, reaction) {
     if (!slot) return;
+
     slot.addEventListener('pointerdown', () => react(slot, reaction), { passive: true });
+
     if (reduceMotion || !window.matchMedia?.('(pointer:fine)')?.matches) return;
+
     slot.addEventListener('pointermove', (event) => {
       const rect = slot.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
-      const x = (event.clientX - rect.left) / rect.width - .5;
-      const y = (event.clientY - rect.top) / rect.height - .5;
-      slot.style.setProperty('--fs-chibi-tilt-y', `${(x * 8).toFixed(2)}deg`);
-      slot.style.setProperty('--fs-chibi-tilt-x', `${(-y * 6).toFixed(2)}deg`);
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      slot.style.setProperty('--fs-chibi-tilt-y', `${(x * 7).toFixed(2)}deg`);
+      slot.style.setProperty('--fs-chibi-tilt-x', `${(-y * 5).toFixed(2)}deg`);
     }, { passive: true });
+
     slot.addEventListener('pointerleave', () => {
       slot.style.setProperty('--fs-chibi-tilt-x', '0deg');
       slot.style.setProperty('--fs-chibi-tilt-y', '0deg');
     }, { passive: true });
   }
 
+  function createDecor(className) {
+    const node = document.createElement('span');
+    node.className = className;
+    node.setAttribute('aria-hidden', 'true');
+    return node;
+  }
+
   function createSlot(key, asset, variant, reaction, label) {
     const slot = document.createElement('div');
     slot.className = `fs-chibi-slot fs-chibi-slot--${variant}`;
     slot.dataset.fsChibi = key;
+    slot.dataset.fsReaction = reaction;
     slot.setAttribute('role', 'img');
     slot.setAttribute('aria-label', label);
 
+    const stage = document.createElement('div');
+    stage.className = 'fs-chibi-stage';
+
+    const aura = createDecor('fs-chibi-aura');
+    const shadow = createDecor('fs-chibi-shadow');
+    const actor = document.createElement('div');
+    actor.className = 'fs-chibi-actor';
+
     const img = document.createElement('img');
+    img.className = 'fs-chibi-img';
     img.alt = '';
     img.loading = key === 'profile' ? 'lazy' : 'eager';
     img.decoding = 'async';
     img.draggable = false;
     img.dataset.src = asset;
-    slot.appendChild(img);
+
+    const eyes = createDecor('fs-chibi-eyes');
+    const scanline = createDecor('fs-chibi-scanline');
+    const sparkles = createDecor('fs-chibi-sparkles');
+    const chips = createDecor('fs-chibi-chips');
+
+    actor.append(img, eyes, scanline, sparkles, chips);
+    stage.append(aura, shadow, actor);
+    slot.appendChild(stage);
+
     slots.set(key, slot);
     addPointerReaction(slot, reaction);
+    scheduleAutoBlink(slot);
     return slot;
   }
 
@@ -97,6 +173,20 @@
     if (!reference?.parentNode || !node) return false;
     reference.parentNode.insertBefore(node, reference.nextSibling);
     return true;
+  }
+
+  function observeAttributes(node, callback, attributeFilter) {
+    if (!node) return;
+    const observer = new MutationObserver(callback);
+    observer.observe(node, { attributes: true, attributeFilter });
+    observers.push(observer);
+  }
+
+  function observeChildren(node, callback) {
+    if (!node) return;
+    const observer = new MutationObserver(callback);
+    observer.observe(node, { childList: true, subtree: true, characterData: true });
+    observers.push(observer);
   }
 
   function mount() {
@@ -162,7 +252,7 @@
         react(slot, reaction);
       }
     };
-    new MutationObserver(update).observe(modal, { attributes: true, attributeFilter: ['class', 'aria-hidden'] });
+    observeAttributes(modal, update, ['class', 'aria-hidden']);
     update();
   }
 
@@ -176,7 +266,7 @@
         react(slot, reaction);
       }
     };
-    new MutationObserver(update).observe(view, { attributes: true, attributeFilter: ['class'] });
+    observeAttributes(view, update, ['class']);
     update();
   }
 
@@ -192,27 +282,27 @@
     const watchQrImage = (modalId, slotKey) => {
       const img = document.querySelector(`#${modalId} .qr-box img`);
       if (!img) return;
-      new MutationObserver(() => {
+      observeAttributes(img, () => {
         if (img.getAttribute('src')) react(slotKey, 'scan');
-      }).observe(img, { attributes: true, attributeFilter: ['src'] });
+      }, ['src']);
     };
     watchQrImage('qrModal', 'qr');
     watchQrImage('topupQrModal', 'qrTopup');
 
     const ordersList = document.getElementById('ordersList');
     if (ordersList) {
-      new MutationObserver(() => {
+      observeChildren(ordersList, () => {
         if (!document.getElementById('view-pedidos')?.classList.contains('active')) return;
         const text = ordersList.textContent || '';
         react('orders', /ENTREGADO|COMPLETADO|PAGADO|APROBADO/i.test(text) ? 'celebrate' : 'reacting');
-      }).observe(ordersList, { childList: true, subtree: true, characterData: true });
+      });
     }
 
     const cartItems = document.getElementById('cartItems');
     if (cartItems) {
-      new MutationObserver(() => {
+      observeChildren(cartItems, () => {
         if (document.getElementById('cartModal')?.classList.contains('open')) react('cart', 'shop');
-      }).observe(cartItems, { childList: true, subtree: true, characterData: true });
+      });
     }
   }
 
@@ -227,6 +317,7 @@
       if (target.id === 'cancelTopupRequest') react('qrTopup', 'scan');
       if (target.id === 'refreshOrders' || target.dataset.nav === 'pedidos') react('orders', 'celebrate');
       if (target.dataset.nav === 'perfil') react('profile', 'reacting');
+      if (target.dataset.nav === 'wallet') react('wallet', 'shop');
     }, true);
   }
 
@@ -241,8 +332,9 @@
   }
 
   function boot() {
-    try { mount(); }
-    catch (error) {
+    try {
+      mount();
+    } catch (error) {
       console.warn(`[${VERSION}] mascot layer disabled`, error);
     }
   }
@@ -250,5 +342,5 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
   else boot();
 
-  window.FSChibiMascot = Object.freeze({ version: VERSION, react });
+  window.FSChibiMascot = Object.freeze({ version: VERSION, react, blink });
 })();

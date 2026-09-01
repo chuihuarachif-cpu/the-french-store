@@ -1,16 +1,20 @@
-/* THE FRENCH STORE — Chibi mascot motion layer (visual only).
-   This file must never affect Auth, checkout, pricing, Wallet or payment truth. */
+/* THE FRENCH STORE — Chibi mascot motion layer v2 (visual only).
+   Designed to be isolated, lightweight and safe for the storefront. */
 
 .fs-chibi-slot {
   --fs-chibi-size: 108px;
+  --fs-chibi-eyes-y: 40%;
+  --fs-chibi-eyes-size: 12px;
+  --fs-chibi-eyes-gap: 18px;
+  --fs-chibi-sweep-y: 42%;
   --fs-chibi-tilt-x: 0deg;
   --fs-chibi-tilt-y: 0deg;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: min(100%, calc(var(--fs-chibi-size) + 18px));
-  min-height: calc(var(--fs-chibi-size) * .86);
-  margin: 6px auto;
+  width: min(100%, calc(var(--fs-chibi-size) + 28px));
+  min-height: calc(var(--fs-chibi-size) + 10px);
+  margin: 8px auto;
   position: relative;
   isolation: isolate;
   contain: layout paint;
@@ -21,148 +25,371 @@
   user-select: none;
 }
 
-.fs-chibi-slot::before {
-  content: '';
-  position: absolute;
-  width: 78%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(55, 220, 255, .22), rgba(20, 112, 255, .08) 48%, transparent 72%);
-  filter: blur(9px);
-  opacity: .72;
-  z-index: -1;
-  pointer-events: none;
-  animation: fsChibiAura 3.8s ease-in-out infinite;
-}
-
-.fs-chibi-slot img {
-  display: block;
+.fs-chibi-stage {
+  position: relative;
   width: var(--fs-chibi-size);
   height: var(--fs-chibi-size);
+}
+
+.fs-chibi-aura,
+.fs-chibi-shadow,
+.fs-chibi-scanline,
+.fs-chibi-sparkles,
+.fs-chibi-chips,
+.fs-chibi-eyes {
+  position: absolute;
+  pointer-events: none;
+}
+
+.fs-chibi-aura {
+  inset: 8% 10% 12% 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(76,224,255,.26) 0%, rgba(32,117,255,.14) 38%, rgba(15,42,92,.02) 68%, transparent 76%);
+  filter: blur(10px);
+  opacity: .72;
+}
+
+.fs-chibi-shadow {
+  left: 50%;
+  bottom: 3px;
+  width: 66%;
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(6, 18, 36, .64) 0%, rgba(6, 18, 36, .38) 46%, transparent 78%);
+  filter: blur(6px);
+  opacity: .9;
+}
+
+.fs-chibi-actor {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 84%;
+}
+
+.fs-chibi-img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   opacity: 0;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.42)) drop-shadow(0 0 12px rgba(48,216,255,.28));
   transform-origin: 50% 62%;
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,.42)) drop-shadow(0 0 13px rgba(48,216,255,.28));
   transition: opacity 180ms ease, filter 180ms ease;
   pointer-events: none;
   -webkit-user-drag: none;
 }
 
-.fs-chibi-slot.is-ready img {
-  opacity: 1;
-  animation: fsChibiFloat 4.7s ease-in-out infinite;
-}
-
-.fs-chibi-slot.is-busy img { opacity: .72; }
+.fs-chibi-slot.is-ready .fs-chibi-img { opacity: 1; }
+.fs-chibi-slot.is-busy .fs-chibi-img { opacity: .72; }
 .fs-chibi-slot.is-error { display: none !important; }
 
-.fs-chibi-slot--login { --fs-chibi-size: 132px; margin: 2px auto 8px; }
-.fs-chibi-slot--cart { --fs-chibi-size: 104px; margin: -6px 0 2px auto; }
-.fs-chibi-slot--wallet { --fs-chibi-size: 104px; margin: -8px 4px 2px auto; }
-.fs-chibi-slot--qr { --fs-chibi-size: 92px; margin: 2px 2px 4px auto; }
-.fs-chibi-slot--orders { --fs-chibi-size: 98px; margin: -8px 2px 2px auto; }
-.fs-chibi-slot--profile { --fs-chibi-size: 106px; margin: -8px 4px 2px auto; }
-
-/* Keep QR art completely outside the scannable image itself. */
-#qrModal .fs-chibi-slot--qr,
-#topupQrModal .fs-chibi-slot--qr {
-  justify-content: flex-end;
+.fs-chibi-eyes {
+  left: 50%;
+  top: var(--fs-chibi-eyes-y);
+  width: calc((var(--fs-chibi-eyes-gap) * 2) + var(--fs-chibi-eyes-size));
+  height: calc(var(--fs-chibi-eyes-size) + 2px);
+  transform: translateX(-50%);
+  opacity: .88;
 }
 
-.fs-chibi-slot.is-reacting img { animation: fsChibiPop .56s cubic-bezier(.2,.8,.2,1), fsChibiFloat 4.7s ease-in-out .56s infinite; }
-.fs-chibi-slot.is-wave img { animation: fsChibiWave .82s cubic-bezier(.2,.8,.2,1), fsChibiFloat 4.7s ease-in-out .82s infinite; }
-.fs-chibi-slot.is-scan img { animation: fsChibiScan .9s cubic-bezier(.2,.8,.2,1), fsChibiFloat 4.7s ease-in-out .9s infinite; }
-.fs-chibi-slot.is-shop img { animation: fsChibiShop .68s cubic-bezier(.2,.8,.2,1), fsChibiFloat 4.7s ease-in-out .68s infinite; }
-.fs-chibi-slot.is-celebrate img { animation: fsChibiCelebrate .92s cubic-bezier(.15,.9,.2,1), fsChibiFloat 4.7s ease-in-out .92s infinite; }
-
-.fs-chibi-slot.is-scan::after,
-.fs-chibi-slot.is-celebrate::after {
+.fs-chibi-eyes::before,
+.fs-chibi-eyes::after {
   content: '';
   position: absolute;
-  width: 72%;
-  aspect-ratio: 1;
-  border: 2px solid rgba(71,225,255,.58);
+  top: 0;
+  width: var(--fs-chibi-eyes-size);
+  height: var(--fs-chibi-eyes-size);
   border-radius: 50%;
+  background: radial-gradient(circle, rgba(175,245,255,.95) 0%, rgba(90,227,255,.95) 36%, rgba(48,141,255,.74) 70%, rgba(48,141,255,0) 100%);
+  box-shadow: 0 0 10px rgba(90,227,255,.62), 0 0 18px rgba(48,141,255,.38);
+}
+
+.fs-chibi-eyes::before { left: 0; }
+.fs-chibi-eyes::after { right: 0; }
+
+.fs-chibi-scanline {
+  left: 16%;
+  right: 16%;
+  top: var(--fs-chibi-sweep-y);
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(94,235,255,.98), rgba(150,247,255,.9), transparent);
+  box-shadow: 0 0 10px rgba(94,235,255,.72);
   opacity: 0;
-  pointer-events: none;
-  animation: fsChibiRing .85s ease-out 1;
+  transform: translateY(18px) scaleX(.76);
 }
 
-@keyframes fsChibiFloat {
-  0%,100% { transform: translate3d(0,2px,0) rotate(0deg) scale(1); }
-  50% { transform: translate3d(0,-6px,0) rotate(.5deg) scale(1.015); }
+.fs-chibi-sparkles,
+.fs-chibi-chips {
+  inset: 0;
+  opacity: 0;
 }
 
-@keyframes fsChibiAura {
-  0%,100% { opacity: .5; transform: scale(.94); }
-  50% { opacity: .9; transform: scale(1.06); }
+.fs-chibi-sparkles::before,
+.fs-chibi-sparkles::after,
+.fs-chibi-chips::before,
+.fs-chibi-chips::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(180deg, rgba(196,250,255,.96), rgba(85,215,255,.92) 56%, rgba(36,126,255,.84));
+  transform: rotate(45deg);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(84,223,255,.48);
 }
 
-@keyframes fsChibiPop {
+.fs-chibi-sparkles::before { left: 14%; top: 20%; }
+.fs-chibi-sparkles::after { right: 12%; top: 28%; }
+.fs-chibi-chips::before { left: 18%; bottom: 18%; }
+.fs-chibi-chips::after { right: 18%; bottom: 12%; }
+
+.fs-chibi-slot.is-ready .fs-chibi-aura {
+  animation: fsChibiAuraPulse 4.2s ease-in-out infinite;
+}
+
+.fs-chibi-slot.is-ready .fs-chibi-shadow {
+  animation: fsChibiShadowFloat 4.2s ease-in-out infinite;
+}
+
+.fs-chibi-slot.is-ready .fs-chibi-actor {
+  animation: fsChibiActorFloat 4.2s ease-in-out infinite;
+}
+
+.fs-chibi-slot.is-ready .fs-chibi-img {
+  animation: fsChibiBreath 3.1s ease-in-out infinite;
+}
+
+.fs-chibi-slot.is-ready .fs-chibi-eyes::before,
+.fs-chibi-slot.is-ready .fs-chibi-eyes::after {
+  animation: fsChibiEyesGlow 2.6s ease-in-out infinite;
+}
+
+.fs-chibi-slot.is-blink .fs-chibi-eyes {
+  animation: fsChibiBlink 220ms linear 1;
+}
+
+.fs-chibi-slot.is-reacting .fs-chibi-actor {
+  animation: fsChibiPopActor 760ms cubic-bezier(.2,.82,.2,1) 1;
+}
+
+.fs-chibi-slot.is-reacting .fs-chibi-sparkles {
+  opacity: 1;
+  animation: fsChibiSparkleBurst 760ms ease-out 1;
+}
+
+.fs-chibi-slot.is-wave .fs-chibi-actor {
+  animation: fsChibiWaveActor 980ms cubic-bezier(.2,.82,.2,1) 1;
+}
+
+.fs-chibi-slot.is-wave .fs-chibi-aura {
+  animation: fsChibiAuraWave 980ms ease-out 1;
+}
+
+.fs-chibi-slot.is-scan .fs-chibi-actor {
+  animation: fsChibiScanActor 1200ms cubic-bezier(.18,.78,.22,1) 1;
+}
+
+.fs-chibi-slot.is-scan .fs-chibi-scanline {
+  opacity: 1;
+  animation: fsChibiScanLine 1200ms ease-in-out 1;
+}
+
+.fs-chibi-slot.is-scan .fs-chibi-aura {
+  animation: fsChibiAuraScan 1200ms ease-out 1;
+}
+
+.fs-chibi-slot.is-shop .fs-chibi-actor {
+  animation: fsChibiShopActor 900ms cubic-bezier(.22,.82,.22,1) 1;
+}
+
+.fs-chibi-slot.is-shop .fs-chibi-chips {
+  opacity: 1;
+  animation: fsChibiChipsHop 900ms ease-out 1;
+}
+
+.fs-chibi-slot.is-celebrate .fs-chibi-actor {
+  animation: fsChibiCelebrateActor 1300ms cubic-bezier(.18,.88,.18,1) 1;
+}
+
+.fs-chibi-slot.is-celebrate .fs-chibi-sparkles,
+.fs-chibi-slot.is-celebrate .fs-chibi-chips {
+  opacity: 1;
+}
+
+.fs-chibi-slot.is-celebrate .fs-chibi-sparkles {
+  animation: fsChibiSparkleOrbit 1300ms ease-out 1;
+}
+
+.fs-chibi-slot.is-celebrate .fs-chibi-chips {
+  animation: fsChibiChipsPop 1300ms ease-out 1;
+}
+
+.fs-chibi-slot--login { --fs-chibi-size: 136px; margin: 4px auto 10px; }
+.fs-chibi-slot--cart { --fs-chibi-size: 106px; margin: -4px 0 2px auto; }
+.fs-chibi-slot--wallet { --fs-chibi-size: 104px; margin: -8px 4px 4px auto; }
+.fs-chibi-slot--qr { --fs-chibi-size: 94px; margin: 6px auto 2px auto; }
+.fs-chibi-slot--orders { --fs-chibi-size: 102px; margin: -8px 2px 2px auto; }
+.fs-chibi-slot--profile { --fs-chibi-size: 108px; margin: -8px 4px 2px auto; }
+
+#qrModal .fs-chibi-slot--qr,
+#topupQrModal .fs-chibi-slot--qr {
+  width: 100%;
+  max-width: 140px;
+  justify-content: center;
+}
+
+@keyframes fsChibiActorFloat {
+  0%,100% { transform: translate3d(0,2px,0) rotate(0deg); }
+  50% { transform: translate3d(0,-6px,0) rotate(.5deg); }
+}
+
+@keyframes fsChibiBreath {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.018); }
+}
+
+@keyframes fsChibiShadowFloat {
+  0%,100% { transform: translateX(-50%) scaleX(1); opacity: .85; }
+  50% { transform: translateX(-50%) scaleX(.9); opacity: .58; }
+}
+
+@keyframes fsChibiAuraPulse {
+  0%,100% { transform: scale(.95); opacity: .5; }
+  50% { transform: scale(1.06); opacity: .92; }
+}
+
+@keyframes fsChibiEyesGlow {
+  0%,100% { transform: scale(1); opacity: .86; }
+  50% { transform: scale(1.18); opacity: 1; }
+}
+
+@keyframes fsChibiBlink {
+  0%,100% { transform: translateX(-50%) scaleY(1); }
+  50% { transform: translateX(-50%) scaleY(.12); }
+}
+
+@keyframes fsChibiPopActor {
   0% { transform: translateY(0) scale(1); }
-  28% { transform: translateY(-12px) scale(1.07); }
-  52% { transform: translateY(2px) scale(.98); }
-  75% { transform: translateY(-4px) scale(1.025); }
+  28% { transform: translateY(-12px) scale(1.06); }
+  52% { transform: translateY(2px) scale(.985); }
+  74% { transform: translateY(-4px) scale(1.02); }
   100% { transform: translateY(0) scale(1); }
 }
 
-@keyframes fsChibiWave {
+@keyframes fsChibiWaveActor {
   0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
-  18% { transform: translateY(-5px) rotate(-5deg) scale(1.03); }
-  38% { transform: translateY(-7px) rotate(5deg) scale(1.045); }
-  58% { transform: translateY(-5px) rotate(-4deg) scale(1.03); }
-  78% { transform: translateY(-2px) rotate(2deg) scale(1.015); }
+  18% { transform: translateY(-4px) rotate(-5deg) scale(1.02); }
+  36% { transform: translateY(-7px) rotate(5deg) scale(1.04); }
+  56% { transform: translateY(-4px) rotate(-4deg) scale(1.025); }
+  76% { transform: translateY(-1px) rotate(2deg) scale(1.01); }
 }
 
-@keyframes fsChibiScan {
-  0%,100% { transform: translateX(0) translateY(0) scale(1); filter: drop-shadow(0 10px 18px rgba(0,0,0,.42)) drop-shadow(0 0 13px rgba(48,216,255,.28)); }
-  30% { transform: translateX(-5px) translateY(-4px) scale(1.045); filter: drop-shadow(0 10px 18px rgba(0,0,0,.42)) drop-shadow(0 0 26px rgba(48,216,255,.62)); }
-  58% { transform: translateX(4px) translateY(-7px) scale(1.06); }
-  80% { transform: translateX(-2px) translateY(-2px) scale(1.025); }
+@keyframes fsChibiAuraWave {
+  0% { transform: scale(.95); opacity: .5; }
+  40% { transform: scale(1.16); opacity: 1; }
+  100% { transform: scale(1); opacity: .72; }
 }
 
-@keyframes fsChibiShop {
+@keyframes fsChibiScanActor {
+  0%,100% { transform: translateY(0) scale(1); }
+  22% { transform: translateY(-3px) translateX(-4px) scale(1.03); }
+  46% { transform: translateY(-7px) translateX(4px) scale(1.06); }
+  72% { transform: translateY(-2px) translateX(-2px) scale(1.025); }
+}
+
+@keyframes fsChibiScanLine {
+  0% { opacity: 0; transform: translateY(18px) scaleX(.76); }
+  10% { opacity: 1; }
+  50% { opacity: .96; transform: translateY(-14px) scaleX(1); }
+  100% { opacity: 0; transform: translateY(24px) scaleX(.82); }
+}
+
+@keyframes fsChibiAuraScan {
+  0% { transform: scale(.95); opacity: .55; }
+  35% { transform: scale(1.08); opacity: .96; }
+  100% { transform: scale(1); opacity: .7; }
+}
+
+@keyframes fsChibiShopActor {
   0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
   25% { transform: translateY(-7px) rotate(-3deg) scale(1.04); }
   50% { transform: translateY(-3px) rotate(3deg) scale(1.055); }
   76% { transform: translateY(-5px) rotate(-1deg) scale(1.025); }
 }
 
-@keyframes fsChibiCelebrate {
+@keyframes fsChibiChipsHop {
+  0% { opacity: 0; transform: scale(.5) rotate(0deg); }
+  20% { opacity: 1; transform: scale(1) rotate(10deg); }
+  55% { opacity: 1; transform: translateY(-10px) scale(1.08) rotate(28deg); }
+  100% { opacity: 0; transform: translateY(-16px) scale(.8) rotate(48deg); }
+}
+
+@keyframes fsChibiCelebrateActor {
   0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
-  22% { transform: translateY(-14px) rotate(-4deg) scale(1.08); }
-  46% { transform: translateY(-8px) rotate(4deg) scale(1.1); }
-  68% { transform: translateY(-13px) rotate(-2deg) scale(1.07); }
+  18% { transform: translateY(-14px) rotate(-4deg) scale(1.08); }
+  40% { transform: translateY(-8px) rotate(4deg) scale(1.1); }
+  65% { transform: translateY(-13px) rotate(-2deg) scale(1.07); }
   84% { transform: translateY(-3px) rotate(1deg) scale(1.025); }
 }
 
-@keyframes fsChibiRing {
-  0% { opacity: .75; transform: scale(.45); }
-  100% { opacity: 0; transform: scale(1.35); }
+@keyframes fsChibiSparkleBurst {
+  0% { opacity: 0; transform: scale(.4) rotate(0deg); }
+  30% { opacity: 1; transform: scale(1) rotate(14deg); }
+  100% { opacity: 0; transform: scale(1.3) rotate(28deg); }
+}
+
+@keyframes fsChibiSparkleOrbit {
+  0% { opacity: 0; transform: scale(.4) rotate(0deg); }
+  20% { opacity: 1; transform: scale(1) rotate(16deg); }
+  55% { opacity: 1; transform: scale(1.1) rotate(34deg) translateY(-4px); }
+  100% { opacity: 0; transform: scale(1.3) rotate(54deg) translateY(-10px); }
+}
+
+@keyframes fsChibiChipsPop {
+  0% { opacity: 0; transform: scale(.4) rotate(0deg); }
+  16% { opacity: 1; transform: scale(1) rotate(10deg); }
+  44% { opacity: 1; transform: translateY(-10px) scale(1.05) rotate(26deg); }
+  100% { opacity: 0; transform: translateY(-20px) scale(.82) rotate(46deg); }
 }
 
 @media (max-width: 520px) {
-  .fs-chibi-slot--login { --fs-chibi-size: 112px; }
+  .fs-chibi-slot--login { --fs-chibi-size: 116px; }
   .fs-chibi-slot--cart,
   .fs-chibi-slot--wallet,
-  .fs-chibi-slot--profile { --fs-chibi-size: 88px; }
-  .fs-chibi-slot--qr { --fs-chibi-size: 78px; }
-  .fs-chibi-slot--orders { --fs-chibi-size: 84px; }
+  .fs-chibi-slot--profile { --fs-chibi-size: 90px; }
+  .fs-chibi-slot--qr { --fs-chibi-size: 80px; }
+  .fs-chibi-slot--orders { --fs-chibi-size: 86px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .fs-chibi-slot,
-  .fs-chibi-slot::before,
-  .fs-chibi-slot::after,
-  .fs-chibi-slot img,
-  .fs-chibi-slot.is-ready img,
-  .fs-chibi-slot.is-reacting img,
-  .fs-chibi-slot.is-wave img,
-  .fs-chibi-slot.is-scan img,
-  .fs-chibi-slot.is-shop img,
-  .fs-chibi-slot.is-celebrate img {
+  .fs-chibi-stage,
+  .fs-chibi-aura,
+  .fs-chibi-shadow,
+  .fs-chibi-actor,
+  .fs-chibi-img,
+  .fs-chibi-eyes,
+  .fs-chibi-scanline,
+  .fs-chibi-sparkles,
+  .fs-chibi-chips,
+  .fs-chibi-slot.is-ready .fs-chibi-aura,
+  .fs-chibi-slot.is-ready .fs-chibi-shadow,
+  .fs-chibi-slot.is-ready .fs-chibi-actor,
+  .fs-chibi-slot.is-ready .fs-chibi-img,
+  .fs-chibi-slot.is-ready .fs-chibi-eyes::before,
+  .fs-chibi-slot.is-ready .fs-chibi-eyes::after,
+  .fs-chibi-slot.is-reacting .fs-chibi-actor,
+  .fs-chibi-slot.is-wave .fs-chibi-actor,
+  .fs-chibi-slot.is-scan .fs-chibi-actor,
+  .fs-chibi-slot.is-shop .fs-chibi-actor,
+  .fs-chibi-slot.is-celebrate .fs-chibi-actor {
     animation: none !important;
     transition: none !important;
     transform: none !important;
   }
+  .fs-chibi-scanline,
+  .fs-chibi-sparkles,
+  .fs-chibi-chips { opacity: 0 !important; }
 }

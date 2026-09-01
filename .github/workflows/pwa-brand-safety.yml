@@ -15,7 +15,10 @@ on:
       - 'v2/navigation-history.js'
       - 'v2/brand-ui.js'
       - 'v2/brand-motion.css'
+      - 'v2/mascot-motion.js'
+      - 'v2/mascot-motion.css'
       - 'v2/assets/brand/**'
+      - 'v2/assets/mascot/**'
       - '.github/workflows/pwa-brand-safety.yml'
   push:
     branches: [main]
@@ -31,7 +34,10 @@ on:
       - 'v2/navigation-history.js'
       - 'v2/brand-ui.js'
       - 'v2/brand-motion.css'
+      - 'v2/mascot-motion.js'
+      - 'v2/mascot-motion.css'
       - 'v2/assets/brand/**'
+      - 'v2/assets/mascot/**'
       - '.github/workflows/pwa-brand-safety.yml'
   workflow_dispatch:
 
@@ -44,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check isolated PWA and brand files
+      - name: Check isolated PWA, brand and mascot files
         run: |
           set -euo pipefail
           test -s favicon.ico
@@ -56,13 +62,25 @@ jobs:
           test -s v2/navigation-history.js
           test -s v2/brand-ui.js
           test -s v2/brand-motion.css
+          test -s v2/mascot-motion.js
+          test -s v2/mascot-motion.css
           test -s v2/assets/brand/icon-192.png
           test -s v2/assets/brand/icon-512.png
           test -s v2/assets/brand/french-store-mascot.webp
+          test -s v2/assets/mascot/mascot-neutral.webp
+          test -s v2/assets/mascot/mascot-login.webp
+          test -s v2/assets/mascot/mascot-qr.webp
+          test -s v2/assets/mascot/mascot-shopping.webp
+          test -s v2/assets/mascot/mascot-success.webp
           file favicon.ico | grep -qi 'icon\|MS Windows'
           file v2/assets/brand/icon-192.png | grep -qi 'PNG image data, 192 x 192'
           file v2/assets/brand/icon-512.png | grep -qi 'PNG image data, 512 x 512'
           file v2/assets/brand/french-store-mascot.webp | grep -qi 'Web/P image'
+          file v2/assets/mascot/mascot-neutral.webp | grep -qi 'Web/P image'
+          file v2/assets/mascot/mascot-login.webp | grep -qi 'Web/P image'
+          file v2/assets/mascot/mascot-qr.webp | grep -qi 'Web/P image'
+          file v2/assets/mascot/mascot-shopping.webp | grep -qi 'Web/P image'
+          file v2/assets/mascot/mascot-success.webp | grep -qi 'Web/P image'
 
       - name: Validate JavaScript syntax
         run: |
@@ -71,6 +89,7 @@ jobs:
           node --check v2/pwa-install-ui.js
           node --check v2/navigation-history.js
           node --check v2/brand-ui.js
+          node --check v2/mascot-motion.js
 
       - name: Validate manifest contract
         run: |
@@ -105,8 +124,14 @@ jobs:
           grep -q 'history.pushState' v2/navigation-history.js
           grep -q "addEventListener('popstate'" v2/navigation-history.js
           grep -q './assets/brand/french-store-mascot.webp' v2/brand-ui.js
+          grep -q "const CHIBI_VERSION = '20260901-r133'" v2/brand-ui.js
+          grep -q './mascot-motion.css?v=' v2/brand-ui.js
+          grep -q './mascot-motion.js?v=' v2/brand-ui.js
+          grep -q 'chibi-mascot-motion-v2-20260901' v2/mascot-motion.js
+          grep -q 'prefers-reduced-motion: reduce' v2/mascot-motion.css
+          grep -q "insertAfter(qrBox, slot)" v2/mascot-motion.js
           ! grep -Eq "addEventListener\(['\"]fetch|caches\.|CacheStorage" v2/sw.js
-          ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/pwa-install-ui.js v2/navigation-history.js v2/brand-ui.js v2/brand-motion.css v2/pwa-install.css v2/manifest.webmanifest
+          ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/pwa-install-ui.js v2/navigation-history.js v2/brand-ui.js v2/brand-motion.css v2/mascot-motion.js v2/mascot-motion.css v2/pwa-install.css v2/manifest.webmanifest
 
       - name: Serve and fetch PWA resources locally
         run: |
@@ -121,6 +146,13 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/navigation-history.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/brand-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/brand-motion.css >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/mascot-motion.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/mascot-motion.css >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.png >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/french-store-mascot.webp >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/mascot/mascot-neutral.webp >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/mascot/mascot-login.webp >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/mascot/mascot-qr.webp >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/mascot/mascot-shopping.webp >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/mascot/mascot-success.webp >/dev/null
