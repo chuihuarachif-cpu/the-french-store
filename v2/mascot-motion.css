@@ -1,0 +1,168 @@
+/* THE FRENCH STORE — Chibi mascot motion layer (visual only).
+   This file must never affect Auth, checkout, pricing, Wallet or payment truth. */
+
+.fs-chibi-slot {
+  --fs-chibi-size: 108px;
+  --fs-chibi-tilt-x: 0deg;
+  --fs-chibi-tilt-y: 0deg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, calc(var(--fs-chibi-size) + 18px));
+  min-height: calc(var(--fs-chibi-size) * .86);
+  margin: 6px auto;
+  position: relative;
+  isolation: isolate;
+  contain: layout paint;
+  transform: perspective(720px) rotateX(var(--fs-chibi-tilt-x)) rotateY(var(--fs-chibi-tilt-y));
+  transition: transform 180ms ease;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.fs-chibi-slot::before {
+  content: '';
+  position: absolute;
+  width: 78%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(55, 220, 255, .22), rgba(20, 112, 255, .08) 48%, transparent 72%);
+  filter: blur(9px);
+  opacity: .72;
+  z-index: -1;
+  pointer-events: none;
+  animation: fsChibiAura 3.8s ease-in-out infinite;
+}
+
+.fs-chibi-slot img {
+  display: block;
+  width: var(--fs-chibi-size);
+  height: var(--fs-chibi-size);
+  object-fit: contain;
+  opacity: 0;
+  transform-origin: 50% 62%;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.42)) drop-shadow(0 0 13px rgba(48,216,255,.28));
+  transition: opacity 180ms ease, filter 180ms ease;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.fs-chibi-slot.is-ready img {
+  opacity: 1;
+  animation: fsChibiFloat 4.7s ease-in-out infinite;
+}
+
+.fs-chibi-slot.is-busy img { opacity: .72; }
+.fs-chibi-slot.is-error { display: none !important; }
+
+.fs-chibi-slot--login { --fs-chibi-size: 132px; margin: 2px auto 8px; }
+.fs-chibi-slot--cart { --fs-chibi-size: 104px; margin: -6px 0 2px auto; }
+.fs-chibi-slot--wallet { --fs-chibi-size: 104px; margin: -8px 4px 2px auto; }
+.fs-chibi-slot--qr { --fs-chibi-size: 92px; margin: 2px 2px 4px auto; }
+.fs-chibi-slot--orders { --fs-chibi-size: 98px; margin: -8px 2px 2px auto; }
+.fs-chibi-slot--profile { --fs-chibi-size: 106px; margin: -8px 4px 2px auto; }
+
+/* Keep QR art completely outside the scannable image itself. */
+#qrModal .fs-chibi-slot--qr,
+#topupQrModal .fs-chibi-slot--qr {
+  justify-content: flex-end;
+}
+
+.fs-chibi-slot.is-reacting img { animation: fsChibiPop .56s cubic-bezier(.2,.8,.2,1), fsChibiFloat 4.7s ease-in-out .56s infinite; }
+.fs-chibi-slot.is-wave img { animation: fsChibiWave .82s cubic-bezier(.2,.8,.2,1), fsChibiFloat 4.7s ease-in-out .82s infinite; }
+.fs-chibi-slot.is-scan img { animation: fsChibiScan .9s cubic-bezier(.2,.8,.2,1), fsChibiFloat 4.7s ease-in-out .9s infinite; }
+.fs-chibi-slot.is-shop img { animation: fsChibiShop .68s cubic-bezier(.2,.8,.2,1), fsChibiFloat 4.7s ease-in-out .68s infinite; }
+.fs-chibi-slot.is-celebrate img { animation: fsChibiCelebrate .92s cubic-bezier(.15,.9,.2,1), fsChibiFloat 4.7s ease-in-out .92s infinite; }
+
+.fs-chibi-slot.is-scan::after,
+.fs-chibi-slot.is-celebrate::after {
+  content: '';
+  position: absolute;
+  width: 72%;
+  aspect-ratio: 1;
+  border: 2px solid rgba(71,225,255,.58);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: fsChibiRing .85s ease-out 1;
+}
+
+@keyframes fsChibiFloat {
+  0%,100% { transform: translate3d(0,2px,0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(0,-6px,0) rotate(.5deg) scale(1.015); }
+}
+
+@keyframes fsChibiAura {
+  0%,100% { opacity: .5; transform: scale(.94); }
+  50% { opacity: .9; transform: scale(1.06); }
+}
+
+@keyframes fsChibiPop {
+  0% { transform: translateY(0) scale(1); }
+  28% { transform: translateY(-12px) scale(1.07); }
+  52% { transform: translateY(2px) scale(.98); }
+  75% { transform: translateY(-4px) scale(1.025); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes fsChibiWave {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  18% { transform: translateY(-5px) rotate(-5deg) scale(1.03); }
+  38% { transform: translateY(-7px) rotate(5deg) scale(1.045); }
+  58% { transform: translateY(-5px) rotate(-4deg) scale(1.03); }
+  78% { transform: translateY(-2px) rotate(2deg) scale(1.015); }
+}
+
+@keyframes fsChibiScan {
+  0%,100% { transform: translateX(0) translateY(0) scale(1); filter: drop-shadow(0 10px 18px rgba(0,0,0,.42)) drop-shadow(0 0 13px rgba(48,216,255,.28)); }
+  30% { transform: translateX(-5px) translateY(-4px) scale(1.045); filter: drop-shadow(0 10px 18px rgba(0,0,0,.42)) drop-shadow(0 0 26px rgba(48,216,255,.62)); }
+  58% { transform: translateX(4px) translateY(-7px) scale(1.06); }
+  80% { transform: translateX(-2px) translateY(-2px) scale(1.025); }
+}
+
+@keyframes fsChibiShop {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  25% { transform: translateY(-7px) rotate(-3deg) scale(1.04); }
+  50% { transform: translateY(-3px) rotate(3deg) scale(1.055); }
+  76% { transform: translateY(-5px) rotate(-1deg) scale(1.025); }
+}
+
+@keyframes fsChibiCelebrate {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  22% { transform: translateY(-14px) rotate(-4deg) scale(1.08); }
+  46% { transform: translateY(-8px) rotate(4deg) scale(1.1); }
+  68% { transform: translateY(-13px) rotate(-2deg) scale(1.07); }
+  84% { transform: translateY(-3px) rotate(1deg) scale(1.025); }
+}
+
+@keyframes fsChibiRing {
+  0% { opacity: .75; transform: scale(.45); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+
+@media (max-width: 520px) {
+  .fs-chibi-slot--login { --fs-chibi-size: 112px; }
+  .fs-chibi-slot--cart,
+  .fs-chibi-slot--wallet,
+  .fs-chibi-slot--profile { --fs-chibi-size: 88px; }
+  .fs-chibi-slot--qr { --fs-chibi-size: 78px; }
+  .fs-chibi-slot--orders { --fs-chibi-size: 84px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-chibi-slot,
+  .fs-chibi-slot::before,
+  .fs-chibi-slot::after,
+  .fs-chibi-slot img,
+  .fs-chibi-slot.is-ready img,
+  .fs-chibi-slot.is-reacting img,
+  .fs-chibi-slot.is-wave img,
+  .fs-chibi-slot.is-scan img,
+  .fs-chibi-slot.is-shop img,
+  .fs-chibi-slot.is-celebrate img {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
