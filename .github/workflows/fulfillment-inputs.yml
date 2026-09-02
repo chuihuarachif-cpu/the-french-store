@@ -62,9 +62,12 @@ jobs:
           ! grep -q "sessionStorage.setItem" v2/fulfillment-inputs.js
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE" v2/fulfillment-inputs.js v2/bootstrap.js v2/core v2/features
           ! grep -Eqi "gamerhub|bonoxs|gameton" v2/fulfillment-inputs.js
-          grep -q "Datos de juego para recargas" v2/privacy.html
-          grep -q "ID de usuario/jugador" v2/terms.html
-          grep -q "ID de usuario/jugador" v2/refunds.html
+          grep -q "Datos de juego para Recargas por ID" v2/privacy.html
+          grep -q "ID de jugador" v2/terms.html
+          grep -q "ID de jugador" v2/refunds.html
+          ! grep -q "Zone ID" v2/privacy.html
+          ! grep -q "Zone ID" v2/terms.html
+          ! grep -q "Zone ID" v2/refunds.html
 
       - name: Verify public requirements and private values
         run: |
