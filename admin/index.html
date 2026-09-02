@@ -21,7 +21,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./r89-auth-fix.js?v=20260826-r91"></script>
   <script defer src="./app.js?v=20260826-r92"></script>
-  <script defer src="./r136-granular-maintenance.js?v=20260902-r136"></script>
+  <script defer src="./r136-granular-maintenance.js?v=20260902-r137"></script>
 </head>
 <body>
   <header class="topbar">
@@ -96,7 +96,7 @@
       </section>
 
       <section id="pricesPanel" class="panel hidden" data-panel="prices">
-        <div class="panel-head"><div><span class="eyebrow">PRECIOS</span><h2>Precios fijos y Recargas por Cuenta</h2><p>Incluye Streaming de precio fijo y Recargas por Cuenta. Los precios gestionados por proveedor/fórmula y el Pase Semanal de MLBB permanecen protegidos.</p></div><button class="icon-btn" type="button" data-refresh="prices" aria-label="Actualizar">↻</button></div>
+        <div class="panel-head"><div><span class="eyebrow">PRECIOS</span><h2>Precios fijos y Recargas por Cuenta</h2><p>Streaming conserva precio fijo. En Recargas por Cuenta puedes fijar un precio manual temporal y volver luego al precio automático sin cambiar el costo del proveedor ni la fórmula.</p></div><button class="icon-btn" type="button" data-refresh="prices" aria-label="Actualizar">↻</button></div>
         <label class="search"><span>Buscar</span><input id="priceSearch" type="search" placeholder="Juego o paquete" autocomplete="off"></label>
         <div class="filters" id="priceFilters"><button class="active" data-filter="editable" type="button">Editables</button><button data-filter="all" type="button">Todos</button></div>
         <div id="priceList" class="list"></div>

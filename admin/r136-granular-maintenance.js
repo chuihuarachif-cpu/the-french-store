@@ -163,3 +163,15 @@
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
+
+/* R137 loader: kept outside the R136 feature so maintenance remains fail-safe. */
+(() => {
+  'use strict';
+  if(document.querySelector('script[data-r137-price-overrides]'))return;
+  const script=document.createElement('script');
+  script.src='./r137-price-overrides.js?v=20260902-r137';
+  script.defer=true;
+  script.dataset.r137PriceOverrides='1';
+  script.addEventListener('error',()=>console.warn('FRENCH STORE R137 price controls did not load; core Admin remains available.'),{once:true});
+  document.head.appendChild(script);
+})();
