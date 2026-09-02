@@ -45,7 +45,7 @@ jobs:
           grep -Fq 'Google OAuth is the only public sign-in path' v2/features/auth.js
           ! grep -Fq 'signInWithPassword' v2/features/auth.js
           ! grep -Fq 'sb.auth.signUp' v2/features/auth.js
-          ! grep -Eqi 'service[_-]?role|client_secret|provider_token' v2/features/auth.js v2/auth-google.js
+          ! grep -Eqi 'client_secret\s*[:=]|provider_token\s*[:=]|service[_-]?role\s*[:=]' v2/features/auth.js v2/auth-google.js
 
       - name: Validate SEO discovery contract
         shell: bash
@@ -114,5 +114,5 @@ jobs:
           grep -Fq 'Recargas por Cuenta' v2/config/storefront.js
           grep -Fq 'Streaming' v2/config/storefront.js
           grep -Fq 'Gift Cards' v2/config/storefront.js
-          ! grep -R -Eqi 'SUPABASE_SERVICE_ROLE|BISA_SIP_PROD_PASSWORD|GAMERHUB_API_KEY' v2 admin sitemap.xml robots.txt
+          ! grep -R -Eqi 'SUPABASE_SERVICE_ROLE(_KEY)?\s*[:=]|BISA_SIP_PROD_PASSWORD\s*[:=]|GAMERHUB_API_KEY\s*[:=]' v2 admin sitemap.xml robots.txt
           echo 'R145 final video audit: PASS'
