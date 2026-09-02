@@ -41,7 +41,8 @@ jobs:
       - name: Confirm visual-only safety
         run: |
           set -euo pipefail
-          ! grep -Eqi 'createClient|SUPABASE_|service_role|from\(['\"'\"]productos['\"'\"]\)|\.rpc\(' admin/r142-maintenance-main-grid.js
+          ! grep -Eqi 'createClient|SUPABASE_|service_role|\.rpc\(' admin/r142-maintenance-main-grid.js
+          ! grep -qi 'productos' admin/r142-maintenance-main-grid.js
           grep -q 'admin_app_set_account_game_maintenance' admin/app.js
           grep -q 'admin_app_set_account_game_maintenance' admin/maintenance.js
       - name: Serve Admin files
