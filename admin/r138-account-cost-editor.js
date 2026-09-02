@@ -1,7 +1,7 @@
-/* THE FRENCH STORE — R138 purchase-cost editor for Recargas por Cuenta.
-   Admin-only UI. The browser uses only the public Supabase anon key and protected RPCs.
-   For Recargas por Cuenta the operator edits provider purchase cost, never the final sale price.
-   USD products keep their automatic BINANCE_P2P exchange-rate policy; Bs products use direct Bs cost. */
+/* THE FRENCH STORE — R140 grouped purchase-cost editor.
+   Admin-only UI. Recargas por Cuenta edits provider purchase cost, never final sale price.
+   Products are grouped by game first so the operator opens a game before editing its items.
+   USD keeps automatic BINANCE_P2P conversion; Bs keeps direct purchase cost. */
 (() => {
   'use strict';
 
@@ -15,6 +15,7 @@
   let renderGuard=false;
   let refreshTimer=null;
   let observer=null;
+  let selectedGame=null;
 
   const esc=(value)=>String(value??'').replace(/[&<>"']/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
   const money=(value)=>`Bs ${Number(value||0).toLocaleString('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
@@ -58,13 +59,13 @@
     const editable=product.cost_editable===true;
     const fx=Number(product.tipo_cambio||0);
     const fxInfo=currency==='USD'
-      ? `<small><b>Conversión:</b> ${money(product.costo_bob)} · <b>TC:</b> ${money(fx)}/USDT · ${esc(product.fuente_tipo_cambio||'')}</small><small>El tipo de cambio se actualiza con la política automática de la tienda; aquí solo cambias el costo USD que cobra la página/proveedor.</small>`
+      ? `<small><b>Conversión:</b> ${money(product.costo_bob)} · <b>TC:</b> ${money(fx)}/USDT · ${esc(product.fuente_tipo_cambio||'')}</small><small>El tipo de cambio se actualiza automáticamente; aquí solo cambias el costo USD que cobra la página/proveedor.</small>`
       : `<small><b>Compra directa en Bs:</b> no usa conversión de dólar.</small>`;
     return `<article class="card" data-r138-account-card="${esc(product.id)}">
       <div class="card-top">
         <div>
-          <b>${esc(product.juego)}</b>
-          <small>${esc(product.paquete)} · Recargas por Cuenta</small>
+          <b>${esc(product.paquete)}</b>
+          <small>${esc(product.juego)} · Recargas por Cuenta</small>
           <small><b>Costo de compra actual:</b> ${esc(costText(product))}</small>
           ${fxInfo}
           <small><b>Precio al cliente:</b> ${money(product.precio)} · <b>Margen:</b> ${money(product.margen)}</small>
@@ -81,31 +82,81 @@
   function streamingCard(product){
     const editable=product.price_editable===true;
     return `<article class="card" data-r138-stream-card="${esc(product.id)}">
-      <div class="card-top"><div><b>${esc(product.juego)}</b><small>${esc(product.paquete)} · Streaming</small><small>Precio final fijo en bolivianos.</small></div><span class="badge ${editable?'ok':'lock'}">${editable?'PRECIO FIJO Bs':'PROTEGIDO'}</span></div>
+      <div class="card-top"><div><b>${esc(product.paquete)}</b><small>${esc(product.juego)} · Streaming</small><small>Precio final fijo en bolivianos.</small></div><span class="badge ${editable?'ok':'lock'}">${editable?'PRECIO FIJO Bs':'PROTEGIDO'}</span></div>
       <div class="form-grid"><label class="wide"><span>Precio final al cliente (Bs)</span><input type="number" min="0.50" max="5000" step="0.01" inputmode="decimal" value="${Number(product.precio||0).toFixed(2)}" data-r138-stream-input="${esc(product.id)}" ${editable?'':'disabled'}></label></div>
       <div class="card-actions"><button class="${editable?'primary':'secondary'} full" type="button" data-r138-stream-id="${esc(product.id)}" ${editable?'':'disabled'}>${editable?'Guardar precio fijo':'Bloqueado'}</button></div>
     </article>`;
   }
 
   function protectedCard(product){
-    return `<article class="card"><div class="card-top"><div><b>${esc(product.juego)}</b><small>${esc(product.paquete)} · ${esc(product.categoria)}</small><small>Regla especial protegida. No se modifica desde este panel.</small></div><span class="badge lock">PROTEGIDO</span></div><div class="card-actions"><button class="secondary full" type="button" disabled>Bloqueado</button></div></article>`;
+    return `<article class="card"><div class="card-top"><div><b>${esc(product.paquete)}</b><small>${esc(product.juego)} · ${esc(product.categoria)}</small><small>Regla especial protegida. No se modifica desde este panel.</small></div><span class="badge lock">PROTEGIDO</span></div><div class="card-actions"><button class="secondary full" type="button" disabled>Bloqueado</button></div></article>`;
+  }
+
+  function visibleEntries(){
+    const active=filter();
+    const accounts=accountProducts.filter((p)=>p.activo===true).filter((p)=>active==='all'||p.cost_editable===true).filter(matches).map((product)=>({product,type:'account'}));
+    const streaming=baseProducts.filter((p)=>p.activo===true&&p.categoria==='Streaming').filter((p)=>active==='all'||p.price_editable===true).filter(matches).map((product)=>({product,type:'stream'}));
+    const protectedItems=active==='all'?baseProducts.filter((p)=>p.activo===true&&Number(p.id)===54).filter(matches).map((product)=>({product,type:'protected'})):[];
+    return [...accounts,...streaming,...protectedItems];
+  }
+
+  function groupEntries(entries){
+    const map=new Map();
+    entries.forEach((entry)=>{
+      const game=String(entry.product?.juego||'Sin nombre').trim()||'Sin nombre';
+      if(!map.has(game))map.set(game,[]);
+      map.get(game).push(entry);
+    });
+    return [...map.entries()].sort((a,b)=>a[0].localeCompare(b[0],'es',{sensitivity:'base'}));
+  }
+
+  function entryLabel(entry){
+    if(entry.type==='account')return `COSTO ${currencyLabel(entry.product)}`;
+    if(entry.type==='stream')return 'FIJO Bs';
+    return 'PROTEGIDO';
+  }
+
+  function entryCard(entry){
+    if(entry.type==='account')return accountCard(entry.product);
+    if(entry.type==='stream')return streamingCard(entry.product);
+    return protectedCard(entry.product);
+  }
+
+  function gameTile(game,entries){
+    const labels=[...new Set(entries.map(entryLabel))].join(' · ');
+    const encoded=encodeURIComponent(game);
+    return `<article class="summary-card" data-r140-game-card="${esc(encoded)}">
+      <span>JUEGO / SERVICIO</span>
+      <strong style="font-size:1rem;line-height:1.18;word-break:break-word">${esc(game)}</strong>
+      <small>${entries.length} producto${entries.length===1?'':'s'}</small>
+      <small>${esc(labels)}</small>
+      <div class="card-actions"><button class="primary full" type="button" data-r140-open-game="${esc(encoded)}">Entrar a modificar</button></div>
+    </article>`;
   }
 
   function render(){
     const target=host();
     if(!target)return;
-    const active=filter();
-    const accounts=accountProducts.filter((p)=>p.activo===true).filter((p)=>active==='all'||p.cost_editable===true).filter(matches);
-    const streaming=baseProducts.filter((p)=>p.activo===true&&p.categoria==='Streaming').filter((p)=>active==='all'||p.price_editable===true).filter(matches);
-    const protectedItems=active==='all'?baseProducts.filter((p)=>p.activo===true&&Number(p.id)===54).filter(matches):[];
-    const cards=[...accounts.map(accountCard),...streaming.map(streamingCard),...protectedItems.map(protectedCard)];
+    const entries=visibleEntries();
+    const groups=groupEntries(entries);
+    const selected=selectedGame?groups.find(([game])=>game===selectedGame):null;
+    if(selectedGame&&!selected)selectedGame=null;
+
+    let html='';
+    if(selected){
+      const [game,items]=selected;
+      html=`<div data-r138-pricing-root data-r140-view="detail">
+        <article class="card"><div class="card-top"><div><span class="eyebrow">PRECIOS · DETALLE</span><b>${esc(game)}</b><small>${items.length} producto${items.length===1?'':'s'} · modifica únicamente lo que necesites.</small></div></div><div class="card-actions"><button class="secondary full" type="button" data-r140-back>← Volver a juegos</button></div></article>
+        <div class="list">${items.map(entryCard).join('')}</div>
+      </div>`;
+    }else if(groups.length){
+      html=`<div data-r138-pricing-root data-r140-view="groups"><div class="summary-grid">${groups.map(([game,items])=>gameTile(game,items)).join('')}</div></div>`;
+    }else{
+      html='<div data-r138-pricing-root><article class="card"><small>No hay productos que coincidan con este filtro.</small></article></div>';
+    }
 
     renderGuard=true;
-    try{
-      target.innerHTML=`<div data-r138-pricing-root>${cards.length?cards.join(''):'<article class="card"><small>No hay productos que coincidan con este filtro.</small></article>'}</div>`;
-    }finally{
-      renderGuard=false;
-    }
+    try{target.innerHTML=html;}finally{renderGuard=false;}
   }
 
   async function load(force=false){
@@ -116,19 +167,14 @@
     try{
       const allowed=await rpc('admin_app_is_allowed');
       if(allowed!==true)throw new Error('ADMIN_APP_FORBIDDEN');
-      const [base,accounts]=await Promise.all([
-        rpc('admin_app_list_products'),
-        rpc('admin_app_list_account_pricing')
-      ]);
+      const [base,accounts]=await Promise.all([rpc('admin_app_list_products'),rpc('admin_app_list_account_pricing')]);
       baseProducts=Array.isArray(base)?base:[];
       accountProducts=Array.isArray(accounts)?accounts:[];
       render();
     }catch(error){
       if(target&&!target.querySelector('[data-r138-pricing-root]'))target.innerHTML=`<article class="card"><small>${esc(error?.message||'No se pudieron cargar los costos de compra.')}</small></article>`;
       if(error?.message==='ADMIN_APP_FORBIDDEN')notify('Acceso administrativo rechazado.');
-    }finally{
-      loading=false;
-    }
+    }finally{loading=false;}
   }
 
   async function saveCost(button){
@@ -181,7 +227,8 @@
     }
   }
 
-  function scheduleLoad(){
+  function scheduleLoad(resetSelection=false){
+    if(resetSelection)selectedGame=null;
     window.clearTimeout(refreshTimer);
     refreshTimer=window.setTimeout(()=>load(true),90);
   }
@@ -191,6 +238,10 @@
     if(!target)return;
 
     target.addEventListener('click',(event)=>{
+      const open=event.target.closest?.('[data-r140-open-game]');
+      if(open){event.preventDefault();selectedGame=decodeURIComponent(open.dataset.r140OpenGame||'');render();return;}
+      const back=event.target.closest?.('[data-r140-back]');
+      if(back){event.preventDefault();selectedGame=null;render();return;}
       const costButton=event.target.closest?.('[data-r138-cost-id]');
       if(costButton){event.preventDefault();event.stopPropagation();saveCost(costButton);return;}
       const streamButton=event.target.closest?.('[data-r138-stream-id]');
@@ -198,13 +249,14 @@
     },true);
 
     document.addEventListener('click',(event)=>{
-      if(event.target.closest?.('[data-tab="prices"]')||event.target.closest?.('[data-refresh="prices"]')||event.target.closest?.('#priceFilters [data-filter]'))scheduleLoad();
+      if(event.target.closest?.('[data-tab="prices"]')||event.target.closest?.('[data-refresh="prices"]'))scheduleLoad(false);
+      if(event.target.closest?.('#priceFilters [data-filter]'))scheduleLoad(true);
     },true);
-    document.getElementById('priceSearch')?.addEventListener('input',scheduleLoad,true);
+    document.getElementById('priceSearch')?.addEventListener('input',()=>scheduleLoad(true),true);
 
     observer=new MutationObserver(()=>{
       if(renderGuard||loading||panel()?.classList.contains('hidden'))return;
-      if(!target.querySelector('[data-r138-pricing-root]'))scheduleLoad();
+      if(!target.querySelector('[data-r138-pricing-root]'))scheduleLoad(false);
     });
     observer.observe(target,{childList:true,subtree:false});
 
