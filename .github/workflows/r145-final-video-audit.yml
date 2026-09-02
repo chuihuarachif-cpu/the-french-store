@@ -104,7 +104,7 @@ jobs:
           grep -Fq "ensureFeature('wallet')" v2/bootstrap.js
           grep -Fq "ensureFeature('loyalty')" v2/bootstrap.js
           grep -Fq 'Promise.all' v2/features/wallet.js
-          ! grep -Eqi 'react-doctor|react-dom|from .react.|require\(.react.' v2 .github/workflows/r145-final-video-audit.yml
+          ! grep -R -Eqi 'react-doctor|react-dom|from .react.|require\(.react.' v2
 
       - name: Guard category and secret boundaries
         shell: bash
