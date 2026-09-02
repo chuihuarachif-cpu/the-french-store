@@ -1,0 +1,86 @@
+name: R144 Current Legal State Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/terms.html'
+      - 'v2/privacy.html'
+      - 'v2/refunds.html'
+      - 'v2/player-verify.js'
+      - '.github/workflows/r144-current-legal-state.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/terms.html'
+      - 'v2/privacy.html'
+      - 'v2/refunds.html'
+      - 'v2/player-verify.js'
+      - '.github/workflows/r144-current-legal-state.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  legal-current-state:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preserve current customer-data contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          TERMS='v2/terms.html'
+          PRIVACY='v2/privacy.html'
+          REFUNDS='v2/refunds.html'
+          PLAYER='v2/player-verify.js'
+
+          test -s "$TERMS"
+          test -s "$PRIVACY"
+          test -s "$REFUNDS"
+          test -s "$PLAYER"
+
+          grep -Fq 'solicita únicamente el <strong>ID de jugador</strong>' "$TERMS"
+          grep -Fq 'solicita solo el ID de jugador' "$PRIVACY"
+          grep -Fq 'solicita únicamente el <strong>ID de jugador</strong>' "$REFUNDS"
+          grep -Fq 'método de inicio de sesión habilitado actualmente para clientes es <strong>Google</strong>' "$TERMS"
+          grep -Fq 'método de inicio de sesión habilitado actualmente es <strong>Google</strong>' "$PRIVACY"
+
+          ! grep -Fq 'Zone ID' "$TERMS"
+          ! grep -Fq 'Zone ID' "$PRIVACY"
+          ! grep -Fq 'Zone ID' "$REFUNDS"
+          ! grep -Fqi 'correo y contraseña' "$TERMS"
+          ! grep -Fqi 'correo/contraseña' "$PRIVACY"
+          ! grep -Fq 'mostrar el nombre o nickname' "$TERMS"
+          ! grep -Fq 'nombre o nickname devuelto' "$REFUNDS"
+
+          grep -Fq "player-id-only-v1-20260831-r131" "$PLAYER"
+          ! grep -Fq '/api/player-verify' "$PLAYER"
+          ! grep -Fq 'Verificar nombre' "$PLAYER"
+
+      - name: Preserve store legal invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          TERMS='v2/terms.html'
+          PRIVACY='v2/privacy.html'
+          REFUNDS='v2/refunds.html'
+
+          for category in 'Recargas por ID' 'Recargas por Cuenta' 'Streaming' 'Gift Cards'; do
+            grep -Fq "$category" "$TERMS"
+          done
+          grep -Fq 'entrega permanece manual' "$TERMS"
+          grep -Fq 'Los códigos Gift Card se entregan manualmente' "$REFUNDS"
+          grep -Fq './privacy.html' "$TERMS"
+          grep -Fq './refunds.html' "$TERMS"
+          grep -Fq './terms.html' "$PRIVACY"
+          grep -Fq './cookies.html' "$PRIVACY"
+          grep -Fq './terms.html' "$REFUNDS"
+          grep -Fq './privacy.html' "$REFUNDS"
+          grep -Fq 'Ley N.º 453' "$TERMS"
+          grep -Fq 'Ley N.º 453' "$PRIVACY"
+          grep -Fq 'Ley N.º 453' "$REFUNDS"
+
+          ! grep -Eqi 'service[_ -]?role|SUPABASE_SERVICE_ROLE|password\s*[:=]|secret\s*[:=]' "$TERMS" "$PRIVACY" "$REFUNDS"
+
+          echo 'R144 current legal state safety: PASS'

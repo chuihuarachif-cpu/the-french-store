@@ -65,17 +65,19 @@ jobs:
           grep -Fq "provider === 'google'" v2/legal-account.js
           grep -Fq './legal-account.js?v=20260824-r44' v2/index.html
 
-      - name: Verified ID and automatic delivery are disclosed
+      - name: Current ID-only and automatic-delivery contract is disclosed
         run: |
           set -euo pipefail
           grep -Fq 'automático 24/7' v2/terms.html
-          grep -Fq 'verificación previa del ID' v2/terms.html
-          grep -Fq 'Zone ID' v2/terms.html
-          grep -Fq 'mismo destino verificado' v2/terms.html
-          grep -Fq 'Inicio de sesión con Google' v2/privacy.html
+          grep -Fq 'solicita únicamente el <strong>ID de jugador</strong>' v2/terms.html
+          grep -Fq 'no utiliza una verificación externa del nombre o nickname' v2/terms.html
+          ! grep -Fq 'Zone ID' v2/terms.html
+          grep -Fq 'mismo ID indicado' v2/terms.html
+          grep -Fq 'método de inicio de sesión habilitado actualmente es <strong>Google</strong>' v2/privacy.html
           grep -Fq 'no recibe ni almacena la contraseña' v2/privacy.html
           grep -Fq 'Recargas automáticas 24/7' v2/refunds.html
-          grep -Fq 'mismo destino verificado' v2/refunds.html
+          grep -Fq 'mismo ID indicado' v2/refunds.html
+          ! grep -Fq 'Zone ID' v2/refunds.html
 
       - name: Gift Cards remain manual and categories remain separate
         run: |
