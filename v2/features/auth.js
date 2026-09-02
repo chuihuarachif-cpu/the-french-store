@@ -1,23 +1,23 @@
 /* THE FRENCH STORE — base authentication/session state.
-   Friendly confirmation/recovery UX remains in its dedicated auth modules.
-   R92: the storefront no longer exposes an Admin entry point; administration lives only in /admin/. */
-async function signIn(){
-  hideNotice($('loginMessage'));
-  const email=$('loginEmail').value.trim(),password=$('loginPassword').value;
-  if(!email||!password){showNotice($('loginMessage'),'Completa correo y contraseña.','error');return}
-  const{error}=await sb.auth.signInWithPassword({email,password});
-  if(error){showNotice($('loginMessage'),'No se pudo iniciar sesión. Revisa tus datos.','error');return}
-  closeModal('authModal');
+   R145: Google OAuth is the only public sign-in path. Legacy email/password sign-in
+   and sign-up are intentionally not implemented in storefront code. Session state,
+   sign-out and profile rendering remain here; Google OAuth lives in auth-google.js.
+   R92: the storefront no longer exposes an Admin entry point; administration lives
+   only in /admin/. */
+
+function publicGoogleAuthOnlyNotice(){
+  const message=$('loginMessage');
+  if(message)showNotice(message,'Para ingresar a FRENCH STORE usa “Continuar con Google”.','error');
+  try{window.FSGoogleAuth?.refresh?.()}catch{}
 }
-async function signUp(){
-  hideNotice($('loginMessage'));
-  const email=$('loginEmail').value.trim(),password=$('loginPassword').value;
-  if(!email||password.length<8){showNotice($('loginMessage'),'Usa un correo válido y una contraseña de al menos 8 caracteres.','error');return}
-  const{data,error}=await sb.auth.signUp({email,password});
-  if(error){showNotice($('loginMessage'),error.message,'error');return}
-  if(data.session)closeModal('authModal');else showNotice($('loginMessage'),'Cuenta creada. Revisa tu correo si se solicita confirmación.','success');
-}
+
+// Compatibility guards for any stale cached markup/listeners. They fail closed instead
+// of ever invoking password authentication or account creation from the public store.
+async function signIn(){publicGoogleAuthOnlyNotice()}
+async function signUp(){publicGoogleAuthOnlyNotice()}
+
 async function signOut(){await sb.auth.signOut();navigate('inicio')}
+
 async function refreshSession(newSession=null){
   session=newSession??(await sb.auth.getSession()).data.session;
   profile=null;admin=false;
@@ -37,6 +37,7 @@ async function refreshSession(newSession=null){
   }
   renderProfile();
 }
+
 function renderProfile(){
   if(!session){$('profileName').textContent='Cliente';$('profileEmail').textContent='Sin sesión';return}
   $('profileName').textContent=profile?.display_name||'Cliente FRENCH STORE';
