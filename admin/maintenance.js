@@ -15,7 +15,7 @@
   let toastTimer=null;
 
   const $=(id)=>document.getElementById(id);
-  const esc=(value)=>String(value??'').replace(/[&<>"']/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const esc=(value)=>String(value??'').replace(/[&<>"']/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char]));
   const money=(value)=>`Bs ${Number(value||0).toLocaleString('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 
   function showOnly(id){['loadingView','deniedView','appView'].forEach((view)=>$(view)?.classList.toggle('hidden',view!==id))}
@@ -58,7 +58,7 @@
   function render(){const host=$('maintenanceDetailList');if(!host)return;const query=String($('searchInput')?.value||'').trim().toLowerCase();const source=sourceProducts();selectedGame?renderGameDetail(source,query):renderGameGrid(source,query)}
 
   async function changeMaintenance(ids,enabled,message,label,kind){const action=enabled?'poner en mantenimiento':'reactivar';if(!confirm(`¿${action.charAt(0).toUpperCase()+action.slice(1)} ${kind} “${label}”?`))return false;try{const data=await rpc('admin_app_set_account_game_maintenance',{p_product_ids:ids,p_enabled:enabled,p_message:enabled?message:null});if(!data?.ok)throw new Error('MAINTENANCE_UPDATE_FAILED');await loadProducts();toast(enabled?`${label}: mantenimiento activado.`:`${label}: reactivado.`);return true}catch(error){toast(error?.message==='ADMIN_APP_FORBIDDEN'?'Acceso administrativo rechazado.':'No se pudo cambiar el mantenimiento.');return false}}
-  async function toggleOffer(button){const id=Number(button.dataset.offerId);if(!Number.isSafeInteger(id)||id<=0)return;button.disabled=true;const ok=await changeMaintenance([id],button.dataset.enable==='1',OFFER_MESSAGE,button.dataset.label||'esta oferta','la oferta');if(!ok)button.disabled=false}
+  async function toggleOffer(button){const id=Number(button.dataset.offerId);if(!Number.isSafeInteger(id)||id<=0)return;const enabled=button.dataset.enable==='1';button.disabled=true;const ok=await changeMaintenance([id],enabled,OFFER_MESSAGE,button.dataset.label||'esta oferta','la oferta');if(!ok)button.disabled=false}
   async function toggleGame(button){const ids=String(button.dataset.gameIds||'').split(',').map(Number).filter((id)=>Number.isSafeInteger(id)&&id>0);if(!ids.length)return;button.disabled=true;const ok=await changeMaintenance(ids,button.dataset.enable==='1',GAME_MESSAGE,button.dataset.label||'este juego','el juego');if(!ok)button.disabled=false}
 
   async function loadProducts(){const host=$('maintenanceDetailList');if(host)host.innerHTML='<article class="card"><small>Cargando mantenimiento…</small></article>';try{const data=await rpc('admin_app_list_products');products=Array.isArray(data)?data:[];render()}catch(error){if(host)host.innerHTML=`<article class="card"><small>${esc(error?.message||'No se pudo cargar el catálogo.')}</small></article>`}}
