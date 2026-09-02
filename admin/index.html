@@ -18,11 +18,13 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./app.css?v=20260826-r92">
   <link rel="stylesheet" href="./r93-maintenance-admin.css?v=20260826-r93">
+  <link rel="stylesheet" href="./r139-quotations.css?v=20260902-r139">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./r89-auth-fix.js?v=20260826-r91"></script>
   <script defer src="./app.js?v=20260826-r92"></script>
   <script defer src="./r136-granular-maintenance.js?v=20260902-r137"></script>
   <script defer src="./r138-account-cost-editor.js?v=20260902-r138"></script>
+  <script defer src="./r139-quotations.js?v=20260902-r139"></script>
 </head>
 <body>
   <header class="topbar">
@@ -66,6 +68,7 @@
         <button type="button" data-tab="orders">🧾 Pedidos</button>
         <button type="button" data-tab="maintenance">🛠️ Mantenimiento</button>
         <button type="button" data-tab="prices">💰 Precios</button>
+        <button type="button" data-tab="quotations">🧮 Cotizaciones</button>
         <button type="button" data-tab="gamerhub">🎮 GamerHub</button>
         <button type="button" data-tab="history">📚 Historial</button>
       </nav>
@@ -101,6 +104,12 @@
         <label class="search"><span>Buscar</span><input id="priceSearch" type="search" placeholder="Juego o paquete" autocomplete="off"></label>
         <div class="filters" id="priceFilters"><button class="active" data-filter="editable" type="button">Editables</button><button data-filter="all" type="button">Todos</button></div>
         <div id="priceList" class="list"></div>
+      </section>
+
+      <section id="quotationsPanel" class="panel hidden" data-panel="quotations">
+        <div class="panel-head"><div><span class="eyebrow">COTIZACIONES</span><h2>Cotizador rápido</h2><p>Calcula precios para productos que todavía no están en el catálogo. Bolivianos y dólares están separados y ambos reutilizan la misma escala de margen que la tienda.</p></div></div>
+        <div class="r139-note"><b>Solo calcula.</b> Esta herramienta no guarda precios en el catálogo ni modifica la página pública. Las filas se conservan únicamente como borrador en este dispositivo.</div>
+        <div id="quotationsList"></div>
       </section>
 
       <section id="gamerhubPanel" class="panel hidden" data-panel="gamerhub">
