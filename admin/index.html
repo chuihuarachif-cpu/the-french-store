@@ -21,6 +21,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./r89-auth-fix.js?v=20260826-r91"></script>
   <script defer src="./app.js?v=20260826-r92"></script>
+  <script defer src="./r136-granular-maintenance.js?v=20260902-r136"></script>
 </head>
 <body>
   <header class="topbar">
@@ -89,8 +90,7 @@
       </section>
 
       <section id="maintenancePanel" class="panel hidden" data-panel="maintenance">
-        <div class="panel-head"><div><span class="eyebrow">RECARGAS POR CUENTA</span><h2>Mantenimiento</h2><p>Puedes bloquear un juego completo aquí o abrir el control detallado para bloquear únicamente ofertas concretas.</p></div><button class="icon-btn" type="button" data-refresh="maintenance" aria-label="Actualizar">↻</button></div>
-        <div class="card-actions r93-maintenance-entry"><a class="primary admin-link full" href="./maintenance.html">Administrar por juego y por oferta</a></div>
+        <div class="panel-head"><div><span class="eyebrow">RECARGAS POR CUENTA</span><h2>Mantenimiento</h2><p>Cada juego muestra ahora sus recargas por separado. Puedes bloquear solo una recarga o el juego completo sin afectar las demás categorías.</p></div><button class="icon-btn" type="button" data-refresh="maintenance" aria-label="Actualizar">↻</button></div>
         <div id="maintenanceList" class="list"></div>
       </section>
 
