@@ -1,4 +1,4 @@
-name: R124 Storefront Artwork Resilience
+name: R135 Storefront Artwork Resilience
 
 on:
   push:
@@ -7,8 +7,15 @@ on:
       - 'v2/index.html'
       - 'v2/bootstrap.js'
       - 'v2/config/storefront.js'
+      - 'v2/features/catalog.js'
       - 'v2/r8-icons.js'
       - 'v2/r8-icons.css'
+      - 'v2/assets/apps/**'
+      - '.github/workflows/r124-artwork-resilience.yml'
+  pull_request:
+    paths:
+      - 'v2/config/storefront.js'
+      - 'v2/features/catalog.js'
       - 'v2/assets/apps/**'
       - '.github/workflows/r124-artwork-resilience.yml'
   workflow_dispatch:
@@ -27,17 +34,18 @@ jobs:
         run: |
           node --check v2/bootstrap.js
           node --check v2/config/storefront.js
+          node --check v2/features/catalog.js
           node --check v2/r8-icons.js
 
       - name: Validate cache-busting contract
         run: |
-          grep -Fq './bootstrap.js?v=20260829-r124' v2/index.html
+          grep -Fq './bootstrap.js?v=20260830-r129' v2/index.html
           grep -Fq './config/storefront.js?v=20260829-r124' v2/bootstrap.js
           grep -Fq './r8-icons.css?v=20260829-r124' v2/bootstrap.js
           grep -Fq './r8-icons.js?v=20260829-r124' v2/bootstrap.js
-          grep -Fq "r124-artwork-resilience-20260829" v2/bootstrap.js
+          grep -Fq "20260902-r135" v2/config/storefront.js
 
-      - name: Validate every configured local app asset
+      - name: Validate configured storefront artwork
         run: |
           node <<'NODE'
           const fs = require('fs');
@@ -48,10 +56,20 @@ jobs:
           if (!cfg || !cfg.gameIcons) throw new Error('STOREFRONT_CONFIG_GAME_ICONS_MISSING');
           const expectedCategories = ['Recargas por ID','Recargas por Cuenta','Streaming','Gift Cards'];
           if (JSON.stringify([...cfg.categories]) !== JSON.stringify(expectedCategories)) throw new Error('CATEGORY_CONTRACT_CHANGED');
-          if (cfg.assetRevision !== '20260829-r124') throw new Error('ASSET_REVISION_MISMATCH');
+          if (cfg.assetRevision !== '20260902-r135') throw new Error('ASSET_REVISION_MISMATCH');
+          if (!String(cfg.gameSubtitles?.steamwallet || '').startsWith('💵')) throw new Error('STEAM_SUBTITLE_MISSING');
+          if (!String(cfg.gameSubtitles?.geminipro || '').startsWith('🤖')) throw new Error('GEMINI_SUBTITLE_MISSING');
 
           for (const [key, src] of Object.entries(cfg.gameIcons)) {
-            const clean = String(src).split('?')[0].replace(/^\.\//, '');
+            const value = String(src || '');
+            if (value.startsWith('data:image/webp;base64,')) {
+              const buf = Buffer.from(value.slice('data:image/webp;base64,'.length), 'base64');
+              if (buf.length < 32 || buf.subarray(0,4).toString('ascii') !== 'RIFF' || buf.subarray(8,12).toString('ascii') !== 'WEBP') {
+                throw new Error(`INVALID_INLINE_WEBP:${key}`);
+              }
+              continue;
+            }
+            const clean = value.split('?')[0].replace(/^\.\//, '');
             if (!clean.startsWith('assets/apps/')) throw new Error(`NON_LOCAL_APP_ASSET:${key}:${src}`);
             const path = `v2/${clean}`;
             if (!fs.existsSync(path)) throw new Error(`MISSING_APP_ASSET:${key}:${path}`);
@@ -61,7 +79,7 @@ jobs:
               throw new Error(`INVALID_WEBP_HEADER:${key}:${path}`);
             }
           }
-          console.log(`Validated ${Object.keys(cfg.gameIcons).length} configured WebP app assets.`);
+          console.log(`Validated ${Object.keys(cfg.gameIcons).length} configured storefront artwork entries.`);
           NODE
 
       - name: Verify fallback contract remains installed
@@ -72,15 +90,16 @@ jobs:
           grep -Fq "fs-artwork-fallback--hero" v2/r8-icons.css
           grep -Fq "fs-artwork-fallback--feature" v2/r8-icons.css
 
-      - name: Verify reported assets are served by production
+      - name: Verify public local assets are served by production
+        if: github.event_name == 'push'
         env:
           BASE: https://frenchstorebo.com/v2/assets/apps
         run: |
           set -euo pipefail
-          for name in clash-of-clans clash-royale fortnite roblox tiktok; do
+          for name in clash-of-clans clash-royale fortnite roblox tiktok steam; do
             out="/tmp/${name}.webp"
             curl --fail --location --silent --show-error --retry 3 --retry-delay 2 \
-              "${BASE}/${name}.webp?v=20260829-r124" -o "$out"
+              "${BASE}/${name}.webp?v=20260902-r135" -o "$out"
             python3 - "$out" "$name" <<'PY'
           import pathlib, sys
           path = pathlib.Path(sys.argv[1])
@@ -92,7 +111,8 @@ jobs:
           PY
           done
 
-      - name: Verify R124 bundle reached production
+      - name: Verify R135 storefront config reached production
+        if: github.event_name == 'push'
         run: |
           set -euo pipefail
           check_url() {
@@ -111,8 +131,9 @@ jobs:
             echo "PRODUCTION_BUNDLE_STALE:$label" >&2
             return 1
           }
-          check_url "https://frenchstorebo.com/v2/" "./bootstrap.js?v=20260829-r124" "index cache-buster"
-          check_url "https://frenchstorebo.com/v2/bootstrap.js" "r124-artwork-resilience-20260829" "bootstrap"
-          check_url "https://frenchstorebo.com/v2/config/storefront.js" "20260829-r124" "storefront config"
+          check_url "https://frenchstorebo.com/v2/" "./bootstrap.js?v=20260830-r129" "index bootstrap"
+          check_url "https://frenchstorebo.com/v2/bootstrap.js" "./config/storefront.js?v=20260829-r124" "bootstrap storefront loader"
+          check_url "https://frenchstorebo.com/v2/config/storefront.js" "20260902-r135" "R135 storefront config"
+          check_url "https://frenchstorebo.com/v2/config/storefront.js" "GEMINI_OFFICIAL_ICON" "Gemini official icon"
           check_url "https://frenchstorebo.com/v2/r8-icons.js" "fsArtworkResilience" "artwork resilience JS"
           check_url "https://frenchstorebo.com/v2/r8-icons.css" "fs-artwork-fallback--card" "artwork resilience CSS"
