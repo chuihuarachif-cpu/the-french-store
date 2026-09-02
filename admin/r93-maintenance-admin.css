@@ -1,4 +1,4 @@
-/* THE FRENCH STORE — R93 private maintenance detail UI. */
+/* THE FRENCH STORE — R141 private maintenance detail UI. */
 .admin-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .game-maintenance-card{padding:0;overflow:hidden}
 .game-maintenance-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px}
@@ -12,9 +12,20 @@
 .offer-state button{min-width:140px}
 .badge.bad{background:#5b1d29;color:#ffc2cc}
 .empty-filter{padding:18px;text-align:center;color:#8fa8b6}
+.maintenance-game-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.maintenance-game-tile{display:flex;flex-direction:column;align-items:flex-start;gap:9px;min-width:0;min-height:150px;padding:14px;border:1px solid #1c4c63;border-radius:16px;background:linear-gradient(180deg,#082433,#061a26);color:#eef8ff;text-align:left;box-shadow:0 10px 28px rgba(0,0,0,.16)}
+.maintenance-game-tile:active{transform:scale(.985)}
+.maintenance-game-title{font-weight:800;font-size:1rem;line-height:1.2;overflow-wrap:anywhere}
+.maintenance-game-tile small{color:#8fa8b6;line-height:1.35}
+.maintenance-game-enter{margin-top:auto;color:#64dff4;font-weight:800;font-size:.88rem}
+.maintenance-detail-toolbar{display:flex;margin-bottom:12px}
+.maintenance-detail-toolbar button{width:auto}
 @media(max-width:650px){
   .offer-row{grid-template-columns:1fr}
   .offer-state{justify-content:stretch}
   .offer-state button{width:100%;min-width:0}
   .game-maintenance-head{flex-direction:column}
+  .maintenance-game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .maintenance-game-tile{min-height:142px;padding:12px}
 }
+@media(max-width:330px){.maintenance-game-grid{grid-template-columns:1fr}}
