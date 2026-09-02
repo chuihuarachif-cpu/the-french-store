@@ -1,0 +1,118 @@
+name: R145 Final Video Audit Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'v2/features/auth.js'
+      - 'v2/auth-google.js'
+      - 'v2/features/wallet.js'
+      - 'v2/bootstrap.js'
+      - 'admin/index.html'
+      - 'admin/maintenance.html'
+      - '.github/workflows/r145-final-video-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'v2/features/auth.js'
+      - 'v2/auth-google.js'
+      - 'v2/features/wallet.js'
+      - 'v2/bootstrap.js'
+      - 'admin/index.html'
+      - 'admin/maintenance.html'
+      - '.github/workflows/r145-final-video-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  final-video-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate public authentication contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check v2/features/auth.js
+          node --check v2/auth-google.js
+          grep -Fq "provider: 'google'" v2/auth-google.js
+          grep -Fq 'Google OAuth is the only public sign-in path' v2/features/auth.js
+          ! grep -Fq 'signInWithPassword' v2/features/auth.js
+          ! grep -Fq 'sb.auth.signUp' v2/features/auth.js
+          ! grep -Eqi 'service[_-]?role|client_secret|provider_token' v2/features/auth.js v2/auth-google.js
+
+      - name: Validate SEO discovery contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import datetime as dt
+          import xml.etree.ElementTree as ET
+
+          root = ET.fromstring(Path('sitemap.xml').read_text())
+          ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          urls = []
+          for node in root.findall('s:url', ns):
+              loc = node.findtext('s:loc', default='', namespaces=ns).strip()
+              if not loc:
+                  raise SystemExit('SITEMAP_EMPTY_LOC')
+              urls.append(loc)
+              lastmod = node.findtext('s:lastmod', default='', namespaces=ns).strip()
+              if lastmod:
+                  parsed = dt.date.fromisoformat(lastmod)
+                  if parsed > dt.date(2026, 9, 2):
+                      raise SystemExit(f'SITEMAP_FUTURE_LASTMOD:{loc}:{lastmod}')
+
+          expected = {
+              'https://frenchstorebo.com/v2/',
+              'https://frenchstorebo.com/v2/about.html',
+              'https://frenchstorebo.com/v2/terms.html',
+              'https://frenchstorebo.com/v2/privacy.html',
+              'https://frenchstorebo.com/v2/refunds.html',
+              'https://frenchstorebo.com/v2/cookies.html',
+          }
+          if set(urls) != expected:
+              raise SystemExit('SITEMAP_URL_SET_CHANGED')
+          if len(urls) != len(set(urls)):
+              raise SystemExit('SITEMAP_DUPLICATE_URL')
+          if any('/admin' in url for url in urls):
+              raise SystemExit('ADMIN_MUST_NOT_BE_INDEXED')
+          print('Sitemap XML contract: PASS')
+          PY
+
+          grep -Fq 'User-agent: *' robots.txt
+          grep -Fq 'Allow: /' robots.txt
+          grep -Fq 'Disallow: /admin/' robots.txt
+          grep -Fq 'Sitemap: https://frenchstorebo.com/sitemap.xml' robots.txt
+          grep -Fq 'noindex,nofollow,noarchive,nosnippet' admin/index.html
+          grep -Fq 'noindex,nofollow,noarchive,nosnippet' admin/maintenance.html
+
+      - name: Preserve existing performance architecture
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check v2/bootstrap.js
+          grep -Fq 'optional features only when needed' v2/bootstrap.js
+          grep -Fq "ensureFeature('orders')" v2/bootstrap.js
+          grep -Fq "ensureFeature('wallet')" v2/bootstrap.js
+          grep -Fq "ensureFeature('loyalty')" v2/bootstrap.js
+          grep -Fq 'Promise.all' v2/features/wallet.js
+          ! grep -Eqi 'react-doctor|react-dom|from .react.|require\(.react.' v2 .github/workflows/r145-final-video-audit.yml
+
+      - name: Guard category and secret boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'Recargas por ID' v2/config/storefront.js
+          grep -Fq 'Recargas por Cuenta' v2/config/storefront.js
+          grep -Fq 'Streaming' v2/config/storefront.js
+          grep -Fq 'Gift Cards' v2/config/storefront.js
+          ! grep -R -Eqi 'SUPABASE_SERVICE_ROLE|BISA_SIP_PROD_PASSWORD|GAMERHUB_API_KEY' v2 admin sitemap.xml robots.txt
+          echo 'R145 final video audit: PASS'
