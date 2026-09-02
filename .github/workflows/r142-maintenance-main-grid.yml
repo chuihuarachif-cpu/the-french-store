@@ -1,0 +1,56 @@
+name: R142 Maintenance Main Grid Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'admin/index.html'
+      - 'admin/r142-maintenance-main-grid.js'
+      - 'admin/r142-maintenance-main-grid.css'
+      - '.github/workflows/r142-maintenance-main-grid.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'admin/index.html'
+      - 'admin/r142-maintenance-main-grid.js'
+      - 'admin/r142-maintenance-main-grid.css'
+      - '.github/workflows/r142-maintenance-main-grid.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate R142 JavaScript
+        run: |
+          set -euo pipefail
+          node --check admin/r142-maintenance-main-grid.js
+      - name: Check UI contract
+        run: |
+          set -euo pipefail
+          grep -q 'data-maintenance-ids' admin/r142-maintenance-main-grid.js
+          grep -q 'maintenance.html?game=' admin/r142-maintenance-main-grid.js
+          grep -q 'Poner toda la sección en mantenimiento' admin/r142-maintenance-main-grid.js
+          grep -q 'Entrar a modificar' admin/r142-maintenance-main-grid.js
+          grep -q 'grid-template-columns:repeat(2' admin/r142-maintenance-main-grid.css
+          grep -q 'r142-maintenance-main-grid.css?v=20260902-r142' admin/index.html
+          grep -q 'r142-maintenance-main-grid.js?v=20260902-r142' admin/index.html
+      - name: Confirm visual-only safety
+        run: |
+          set -euo pipefail
+          ! grep -Eqi 'createClient|SUPABASE_|service_role|\.rpc\(' admin/r142-maintenance-main-grid.js
+          ! grep -qi 'productos' admin/r142-maintenance-main-grid.js
+          grep -q 'admin_app_set_account_game_maintenance' admin/app.js
+          grep -q 'admin_app_set_account_game_maintenance' admin/maintenance.js
+      - name: Serve Admin files
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8080 >/tmp/fs-r142-http.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8080/admin/ >/dev/null
+          curl --fail http://127.0.0.1:8080/admin/r142-maintenance-main-grid.js >/dev/null
+          curl --fail http://127.0.0.1:8080/admin/r142-maintenance-main-grid.css >/dev/null
+          curl --fail http://127.0.0.1:8080/admin/maintenance.html >/dev/null

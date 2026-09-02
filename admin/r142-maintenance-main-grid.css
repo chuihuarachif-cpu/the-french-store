@@ -1,0 +1,72 @@
+/* THE FRENCH STORE — R142 maintenance tiles in the main Admin panel. */
+.r93-maintenance-entry{display:none!important}
+#maintenanceList[data-r142-grid="1"]{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  align-items:stretch;
+}
+#maintenanceList[data-r142-grid="1"] .r142-maintenance-tile{
+  min-width:0;
+  min-height:250px;
+  display:flex;
+  flex-direction:column;
+  padding:16px;
+}
+#maintenanceList[data-r142-grid="1"] .r142-maintenance-tile .card-top{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+  flex:1 1 auto;
+}
+#maintenanceList[data-r142-grid="1"] .r142-maintenance-tile .card-top>div{
+  min-width:0;
+  width:100%;
+}
+#maintenanceList[data-r142-grid="1"] .r142-maintenance-tile .card-top b{
+  display:block;
+  font-size:1rem;
+  line-height:1.18;
+  overflow-wrap:anywhere;
+}
+#maintenanceList[data-r142-grid="1"] .r142-maintenance-tile .card-top small{
+  display:block;
+  margin-top:7px;
+  line-height:1.35;
+}
+.r142-maintenance-kicker{
+  display:block;
+  margin-bottom:8px;
+  color:#8fa8b6;
+  font-size:.72rem;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+#maintenanceList[data-r142-grid="1"] .r142-maintenance-actions{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:9px;
+  width:100%;
+  margin-top:14px;
+}
+#maintenanceList[data-r142-grid="1"] .r142-maintenance-actions>*{
+  width:100%;
+  min-width:0;
+  min-height:52px;
+  white-space:normal;
+  text-align:center;
+  line-height:1.16;
+}
+.r142-open-maintenance{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+}
+#maintenanceList[data-r142-grid="1"] .r142-whole-section{
+  font-size:.82rem;
+}
+@media(max-width:330px){
+  #maintenanceList[data-r142-grid="1"]{grid-template-columns:1fr}
+}
