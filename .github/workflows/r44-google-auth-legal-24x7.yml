@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'v2/auth-google.js'
+      - 'v2/features/auth.js'
       - 'v2/legal-account.js'
       - 'v2/index.html'
       - 'v2/terms.html'
@@ -16,6 +17,7 @@ on:
     branches: [main]
     paths:
       - 'v2/auth-google.js'
+      - 'v2/features/auth.js'
       - 'v2/legal-account.js'
       - 'v2/index.html'
       - 'v2/terms.html'
@@ -40,10 +42,11 @@ jobs:
         run: |
           set -euo pipefail
           node --check v2/auth-google.js
+          node --check v2/features/auth.js
           node --check v2/legal-account.js
           node --check v2/features/cart.js
 
-      - name: Google OAuth is fail-safe and secret-free
+      - name: Google OAuth is fail-safe, exclusive and secret-free
         run: |
           set -euo pipefail
           grep -Fq "signInWithOAuth" v2/auth-google.js
@@ -53,6 +56,10 @@ jobs:
           grep -Fq "data?.external?.google === true" v2/auth-google.js
           grep -Fq "credentials: 'omit'" v2/auth-google.js
           ! grep -Eqi 'client_secret|googleusercontent\.com|provider_token|service_role' v2/auth-google.js
+          ! grep -Fq 'signInWithPassword' v2/features/auth.js
+          ! grep -Fq 'sb.auth.signUp' v2/features/auth.js
+          grep -Fq 'publicGoogleAuthOnlyNotice' v2/features/auth.js
+          grep -Fq 'Google OAuth is the only public sign-in path' v2/features/auth.js
           grep -Eq './auth-google\.js\?v=20260825-r(54|55)' v2/index.html
 
       - name: OAuth legal acceptance is account-level
