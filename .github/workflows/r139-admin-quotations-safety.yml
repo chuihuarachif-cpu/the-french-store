@@ -1,0 +1,52 @@
+name: R139 Admin Quotations Safety
+
+on:
+  pull_request:
+    paths:
+      - 'admin/index.html'
+      - 'admin/r139-quotations.js'
+      - 'admin/r139-quotations.css'
+      - '.github/workflows/r139-admin-quotations-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'admin/index.html'
+      - 'admin/r139-quotations.js'
+      - 'admin/r139-quotations.css'
+      - '.github/workflows/r139-admin-quotations-safety.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  quotations-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax
+        run: node --check admin/r139-quotations.js
+      - name: Verify private Admin integration
+        run: |
+          grep -q 'data-tab="quotations"' admin/index.html
+          grep -q 'data-panel="quotations"' admin/index.html
+          grep -q 'r139-quotations.css?v=20260902-r139' admin/index.html
+          grep -q 'r139-quotations.js?v=20260902-r139' admin/index.html
+          grep -q 'admin_app_quote_sale_price' admin/r139-quotations.js
+          grep -q 'Agregar producto' admin/r139-quotations.js
+          grep -q 'Copiar todos' admin/r139-quotations.js
+          grep -q 'Producto / cantidad' admin/r139-quotations.js
+          grep -q 'USD operativo' admin/r139-quotations.js
+      - name: Ensure calculator is read-only for store data
+        run: |
+          ! grep -q 'admin_app_set_fixed_price' admin/r139-quotations.js
+          ! grep -q 'admin_app_update_account_purchase_cost' admin/r139-quotations.js
+          ! grep -q 'admin_app_set_account_game_maintenance' admin/r139-quotations.js
+          ! grep -q 'checkout' admin/r139-quotations.js
+          ! grep -qi 'service.role' admin/r139-quotations.js
+      - name: Preserve protected Admin structure
+        run: |
+          grep -q 'r138-account-cost-editor.js?v=20260902-r138' admin/index.html
+          grep -q 'data-tab="prices"' admin/index.html
+          grep -q 'data-tab="maintenance"' admin/index.html
+          grep -q 'data-tab="orders"' admin/index.html
+          grep -q 'data-tab="wallet"' admin/index.html
