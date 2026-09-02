@@ -27,7 +27,8 @@ jobs:
           grep -q 'admin_app_list_account_pricing' admin/r138-account-cost-editor.js
           grep -q 'admin_app_update_account_purchase_cost' admin/r138-account-cost-editor.js
           grep -q 'Costo de compra' admin/r138-account-cost-editor.js
-          grep -q 'COSTO.*USD' admin/r138-account-cost-editor.js
+          grep -q "currencyLabel(product)==='USD'" admin/r138-account-cost-editor.js
+          grep -q 'COSTO.*currency' admin/r138-account-cost-editor.js
       - name: Ensure no privileged secrets or direct table writes
         run: |
           ! grep -Eqi 'service[_-]?role|SUPABASE_SERVICE|provider[_-]?secret|private[_-]?key' admin/r138-account-cost-editor.js
