@@ -1,0 +1,39 @@
+name: R138 Account Cost Editor Safety
+
+on:
+  pull_request:
+    paths:
+      - 'admin/r138-account-cost-editor.js'
+      - 'admin/index.html'
+      - '.github/workflows/r138-account-cost-editor-safety.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'admin/r138-account-cost-editor.js'
+      - 'admin/index.html'
+      - '.github/workflows/r138-account-cost-editor-safety.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate R138 JavaScript
+        run: node --check admin/r138-account-cost-editor.js
+      - name: Check R138 is loaded by Admin
+        run: grep -q 'r138-account-cost-editor.js?v=20260902-r138' admin/index.html
+      - name: Check purchase-cost RPC contract
+        run: |
+          grep -q 'admin_app_list_account_pricing' admin/r138-account-cost-editor.js
+          grep -q 'admin_app_update_account_purchase_cost' admin/r138-account-cost-editor.js
+          grep -q 'Costo de compra' admin/r138-account-cost-editor.js
+          grep -q "currencyLabel(product)==='USD'" admin/r138-account-cost-editor.js
+          grep -q 'COSTO.*currency' admin/r138-account-cost-editor.js
+      - name: Ensure no privileged secrets or direct table writes
+        run: |
+          ! grep -Eqi 'service[_-]?role|SUPABASE_SERVICE|provider[_-]?secret|private[_-]?key' admin/r138-account-cost-editor.js
+          ! grep -Eqi "from\(['\"]productos['\"]\).*(insert|update|delete)|\.from\(['\"]productos['\"]\)" admin/r138-account-cost-editor.js
+      - name: Preserve MLBB and automatic FX separation
+        run: |
+          ! grep -q 'p_product_id.*54' admin/r138-account-cost-editor.js
+          grep -q 'tipo de cambio se actualiza' admin/r138-account-cost-editor.js
