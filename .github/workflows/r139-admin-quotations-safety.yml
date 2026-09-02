@@ -45,7 +45,7 @@ jobs:
           ! grep -qi 'service.role' admin/r139-quotations.js
       - name: Preserve protected Admin structure
         run: |
-          grep -q 'r138-account-cost-editor.js?v=20260902-r138' admin/index.html
+          grep -q 'r138-account-cost-editor.js?v=20260902-r140' admin/index.html
           grep -q 'data-tab="prices"' admin/index.html
           grep -q 'data-tab="maintenance"' admin/index.html
           grep -q 'data-tab="orders"' admin/index.html

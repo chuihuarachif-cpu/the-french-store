@@ -20,8 +20,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate R138 JavaScript
         run: node --check admin/r138-account-cost-editor.js
-      - name: Check R138 is loaded by Admin
-        run: grep -q 'r138-account-cost-editor.js?v=20260902-r138' admin/index.html
+      - name: Check grouped editor is loaded by Admin
+        run: grep -q 'r138-account-cost-editor.js?v=20260902-r140' admin/index.html
       - name: Check purchase-cost RPC contract
         run: |
           grep -q 'admin_app_list_account_pricing' admin/r138-account-cost-editor.js
