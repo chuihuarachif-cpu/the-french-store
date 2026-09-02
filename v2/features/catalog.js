@@ -12,8 +12,10 @@ function productGroups(items){
 }
 function gameCard(game,products,compact=false){
   const logo=logoUrl(game);
+  const customSubtitle=STOREFRONT_CONFIG.gameSubtitles?.[normalize(game)];
+  const subtitle=customSubtitle||`${products.length} paquete${products.length===1?'':'s'} disponible${products.length===1?'':'s'}`;
   const rows=compact?'':`<div class="package-list">${products.sort((a,b)=>Number(a.precio)-Number(b.precio)).map(p=>`<div class="package-row"><div class="package-name">${esc(p.paquete)}</div><span class="package-price">${money(p.precio)}</span><button class="add-btn" data-add="${p.id}">+ Carrito</button></div>`).join('')}</div>`;
-  return `<article class="game-card"><div class="game-card-head">${logo?`<img class="game-logo" src="${esc(logo)}" alt="${esc(game)}" loading="lazy" decoding="async">`:`<div class="game-logo" aria-hidden="true"></div>`}<div class="game-info"><b>${esc(game)}</b><small>${products.length} paquete${products.length===1?'':'s'} disponible${products.length===1?'':'s'}</small></div>${compact?`<div class="game-actions"><button class="plus-btn" data-open-category="${esc(category)}">+</button></div>`:''}</div>${rows}</article>`;
+  return `<article class="game-card"><div class="game-card-head">${logo?`<img class="game-logo" src="${esc(logo)}" alt="${esc(game)}" loading="lazy" decoding="async">`:`<div class="game-logo" aria-hidden="true"></div>`}<div class="game-info"><b>${esc(game)}</b><small>${esc(subtitle)}</small></div>${compact?`<div class="game-actions"><button class="plus-btn" data-open-category="${esc(category)}">+</button></div>`:''}</div>${rows}</article>`;
 }
 function bindAddButtons(root=document){
   root.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addToCart(b.dataset.add));
