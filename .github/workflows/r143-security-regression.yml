@@ -1,0 +1,84 @@
+name: R143 Security Regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v2/**'
+      - 'admin/**'
+      - '.checks/R143_SECURITY_BASELINE.md'
+      - '.github/workflows/r143-security-regression.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/**'
+      - 'admin/**'
+      - '.checks/R143_SECURITY_BASELINE.md'
+      - '.github/workflows/r143-security-regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  security-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Block private secrets in public runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RIEin \
+            --include='*.js' --include='*.html' --include='*.css' \
+            '(SUPABASE_SERVICE_ROLE|SERVICE_ROLE_KEY|service_role[[:space:]]*[:=]|client_secret[[:space:]]*[:=]|private_key[[:space:]]*[:=]|BISA_[A-Z0-9_]*(PASSWORD|SECRET|PRIVATE)|GAMERHUB_[A-Z0-9_]*(TOKEN|SECRET|KEY)|BONOXS_[A-Z0-9_]*(TOKEN|SECRET|KEY)|GAMETON_[A-Z0-9_]*(TOKEN|SECRET|KEY))' \
+            v2 admin; then
+            echo 'Private credential pattern found in public runtime.' >&2
+            exit 1
+          fi
+
+      - name: Block dynamic code execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RIEin \
+            --include='*.js' \
+            '(^|[^[:alnum:]_])(eval[[:space:]]*\(|new[[:space:]]+Function[[:space:]]*\()' \
+            v2 admin; then
+            echo 'eval/new Function is not allowed in storefront or Admin runtime.' >&2
+            exit 1
+          fi
+
+      - name: Check browser security baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq "Content-Security-Policy" v2/index.html
+          grep -Fq "object-src 'none'" v2/index.html
+          grep -Fq "base-uri 'self'" v2/index.html
+          grep -Fq "Content-Security-Policy" admin/index.html
+          grep -Fq 'noindex,nofollow,noarchive,nosnippet' admin/index.html
+          grep -Fq 'chuihuarachif@gmail.com' admin/index.html
+          grep -Fq 'Never put `service_role`' v2/ARCHITECTURE.md
+
+      - name: Check security baseline documentation
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'Every table in `public` has RLS enabled.' .checks/R143_SECURITY_BASELINE.md
+          grep -Fq 'must not grant EXECUTE to `anon`' .checks/R143_SECURITY_BASELINE.md
+          grep -Fq 'short `lock_timeout`' .checks/R143_SECURITY_BASELINE.md
+          grep -Fq 'Avoid N+1 query patterns' .checks/R143_SECURITY_BASELINE.md
+
+      - name: Syntax-check security-sensitive JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check v2/auth-google.js
+          node --check v2/bisa-checkout.js
+          node --check v2/bisa-wallet.js
+          node --check v2/paid-whatsapp.js
+          node --check admin/app.js
+          node --check admin/r138-account-cost-editor.js
+          node --check admin/r139-quotations.js
+          node --check admin/r142-maintenance-main-grid.js
