@@ -1,0 +1,132 @@
+name: R146 Search Visibility Safety
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'v2/index.html'
+      - 'v2/about.html'
+      - 'v2/recargas.html'
+      - 'v2/streaming.html'
+      - 'v2/gift-cards.html'
+      - '.github/workflows/r146-search-visibility.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'v2/index.html'
+      - 'v2/about.html'
+      - 'v2/recargas.html'
+      - 'v2/streaming.html'
+      - 'v2/gift-cards.html'
+      - '.github/workflows/r146-search-visibility.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  seo-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate crawlable category pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in v2/recargas.html v2/streaming.html v2/gift-cards.html; do
+            test -s "$file"
+            grep -Fq 'name="robots" content="index,follow,max-image-preview:large"' "$file"
+            grep -Fq 'rel="canonical"' "$file"
+            grep -Fq 'application/ld+json' "$file"
+            grep -Fq 'FRENCH STORE' "$file"
+            grep -Fq 'Bolivia' "$file"
+            ! grep -Fqi '<meta name="keywords"' "$file"
+            ! grep -Eqi 'service[_ -]?role|SUPABASE_SERVICE_ROLE|client_secret|password\s*[:=]|secret\s*[:=]' "$file"
+          done
+
+          grep -Fq '<title>Recargas de Juegos en Bolivia | FRENCH STORE</title>' v2/recargas.html
+          grep -Fq '<title>Streaming en Bolivia | FRENCH STORE</title>' v2/streaming.html
+          grep -Fq '<title>Gift Cards en Bolivia | FRENCH STORE</title>' v2/gift-cards.html
+          grep -Fq 'Gift Cards se entregan manualmente' v2/gift-cards.html
+          grep -Fq 'ID de jugador' v2/recargas.html
+
+      - name: Validate homepage search signals and internal links
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '<title>Recargas de Juegos, Streaming y Gift Cards en Bolivia | FRENCH STORE</title>' v2/index.html
+          grep -Fq '<h1>Recargas, streaming y Gift Cards en Bolivia.</h1>' v2/index.html
+          grep -Fq './recargas.html' v2/index.html
+          grep -Fq './streaming.html' v2/index.html
+          grep -Fq './gift-cards.html' v2/index.html
+          grep -Fq 'og:site_name' v2/index.html
+          grep -Fq 'https://frenchstorebo.com/v2/' v2/index.html
+          grep -Fq 'https://frenchstorebo.com/v2/' index.html
+
+      - name: Validate sitemap and robots
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse('sitemap.xml').getroot()
+          ns = {'sm':'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          urls = [n.text.strip() for n in root.findall('sm:url/sm:loc', ns)]
+          expected = {
+              'https://frenchstorebo.com/v2/',
+              'https://frenchstorebo.com/v2/recargas.html',
+              'https://frenchstorebo.com/v2/streaming.html',
+              'https://frenchstorebo.com/v2/gift-cards.html',
+              'https://frenchstorebo.com/v2/about.html',
+              'https://frenchstorebo.com/v2/terms.html',
+              'https://frenchstorebo.com/v2/privacy.html',
+              'https://frenchstorebo.com/v2/refunds.html',
+              'https://frenchstorebo.com/v2/cookies.html',
+          }
+          assert set(urls) == expected, (set(urls) ^ expected)
+          assert len(urls) == len(set(urls))
+          assert not any('/admin/' in url for url in urls)
+          PY
+          grep -Fq 'Disallow: /admin/' robots.txt
+          grep -Fq 'Sitemap: https://frenchstorebo.com/sitemap.xml' robots.txt
+
+      - name: Validate JSON-LD syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          for name in ['recargas','streaming','gift-cards']:
+              text = Path(f'v2/{name}.html').read_text(encoding='utf-8')
+              matches = re.findall(r'<script type="application/ld\+json">\s*(.*?)\s*</script>', text, re.S)
+              assert len(matches) == 1, (name, len(matches))
+              data = json.loads(matches[0])
+              assert data.get('@context') == 'https://schema.org'
+              graph = data.get('@graph') or []
+              types = {entry.get('@type') for entry in graph if isinstance(entry, dict)}
+              assert 'CollectionPage' in types
+              assert 'BreadcrumbList' in types
+          PY
+
+      - name: Local static smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --directory . >/tmp/r146-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid || true' EXIT
+          sleep 1
+          for path in v2/ v2/recargas.html v2/streaming.html v2/gift-cards.html sitemap.xml robots.txt; do
+            curl --fail --silent --show-error "http://127.0.0.1:4173/$path" >/dev/null
+          done
+          echo 'R146 search visibility safety: PASS'
