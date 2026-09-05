@@ -6,6 +6,9 @@ on:
     paths:
       - 'sitemap.xml'
       - 'robots.txt'
+      - 'v2/recargas.html'
+      - 'v2/streaming.html'
+      - 'v2/gift-cards.html'
       - 'v2/features/auth.js'
       - 'v2/auth-google.js'
       - 'v2/features/wallet.js'
@@ -18,6 +21,9 @@ on:
     paths:
       - 'sitemap.xml'
       - 'robots.txt'
+      - 'v2/recargas.html'
+      - 'v2/streaming.html'
+      - 'v2/gift-cards.html'
       - 'v2/features/auth.js'
       - 'v2/auth-google.js'
       - 'v2/features/wallet.js'
@@ -59,6 +65,7 @@ jobs:
           root = ET.fromstring(Path('sitemap.xml').read_text())
           ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
           urls = []
+          today = dt.date.today()
           for node in root.findall('s:url', ns):
               loc = node.findtext('s:loc', default='', namespaces=ns).strip()
               if not loc:
@@ -67,11 +74,14 @@ jobs:
               lastmod = node.findtext('s:lastmod', default='', namespaces=ns).strip()
               if lastmod:
                   parsed = dt.date.fromisoformat(lastmod)
-                  if parsed > dt.date(2026, 9, 2):
+                  if parsed > today:
                       raise SystemExit(f'SITEMAP_FUTURE_LASTMOD:{loc}:{lastmod}')
 
           expected = {
               'https://frenchstorebo.com/v2/',
+              'https://frenchstorebo.com/v2/recargas.html',
+              'https://frenchstorebo.com/v2/streaming.html',
+              'https://frenchstorebo.com/v2/gift-cards.html',
               'https://frenchstorebo.com/v2/about.html',
               'https://frenchstorebo.com/v2/terms.html',
               'https://frenchstorebo.com/v2/privacy.html',
