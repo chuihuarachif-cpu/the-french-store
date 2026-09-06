@@ -21,5 +21,12 @@ assert data['bootstrap']=='ready','Bootstrap failed'
 assert not data['errors'], 'Uncaught browser errors'
 assert data['membership']==data['rank'], 'Rank fixture did not render the actual theme'
 assert data['width']==int(sys.argv[3]), 'Chrome did not use the requested layout viewport'
-# The baseline records overflow and request counts before applying corrections.
-# Per-change invariants are asserted by their dedicated regression tests.
+assert not data['overflow'], 'Horizontal overflow'
+assert data['calls'].get('get_my_loyalty_summary',0)<=12, 'Rank read loop returned'
+assert data['calls'].get('get_my_loyalty_launch_progress',0)<=12, 'Rank launch read loop returned'
+if data['scenario'] in ('lite','reduced'):
+    assert data['motion'] in ('lite','off'), 'Progressive motion was ignored'
+    assert data['heroAnimation']=='none' and data['ribbonAnimation']=='none', 'Decorative sweep runs in lightweight mode'
+elif data['rank']=='diamond':
+    assert data['heroAnimation']=='fsDiamondHeroSweep', 'Diamond hero sweep was removed'
+    assert data['ribbonAnimation']=='fsRankRibbonGlint', 'Diamond ribbon glint was removed'

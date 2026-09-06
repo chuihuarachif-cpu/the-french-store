@@ -19,6 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Rank lifecycle and motion regression
+        run: node scripts/test-r150-rank-rendering.mjs
       - name: Build isolated fixture
         run: node scripts/build-visual-fixture.mjs . /tmp/french-visual-fixture
       - name: Capture real browser layouts with synthetic data
@@ -35,6 +37,13 @@ jobs:
               timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=$width" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
               python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width"
             done
+          done
+          for motion in lite reduced; do
+            flags=()
+            if [ "$motion" = reduced ]; then flags+=(--force-prefers-reduced-motion); fi
+            name="${QA_RANK}-inicio-360-${motion}"
+            timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 "${flags[@]}" --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=inicio&state=$motion&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
           done
       - name: Upload screenshots and browser evidence
         if: always()

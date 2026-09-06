@@ -15,8 +15,8 @@
     return new URL(src, document.baseURI).href;
   }
 
-  function loadScript(src, id) {
-    const url = absoluteUrl(src);
+  function loadScript(src, id, revision) {
+    const url = absoluteUrl(revision ? `${src}${src.includes('?') ? '&' : '?'}v=${revision}` : src);
     if (scriptPromises.has(url)) return scriptPromises.get(url);
     const existing = id ? document.getElementById(id) : [...document.scripts].find((s) => s.src === url);
     if (existing?.dataset.fsLoaded === '1') return Promise.resolve();
@@ -113,7 +113,7 @@
     },
     loyalty: async () => {
       await loadStyle('./loyalty.css', 'fs-loyalty-css');
-      await loadScript('./loyalty.js', 'fs-loyalty-js');
+      await loadScript('./loyalty.js', 'fs-loyalty-js', '20260906-r150');
       await loadStyle('./rewarded-ads.css', 'fs-rewarded-ads-css');
       await loadScript('./rewarded-ads-ui.js?v=20260827-r108', 'fs-rewarded-ads-js');
       await loadStyle('./profile-cleanup.css?v=20260825-r49', 'fs-profile-cleanup-css');
