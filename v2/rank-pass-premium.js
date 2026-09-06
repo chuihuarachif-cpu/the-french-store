@@ -9,7 +9,7 @@
   const GOLD_CODE = 'ECLAT_OR';
   const DIAMOND_CODE = 'DIAMANT_BLEU';
   const root = document.documentElement;
-  const state = { summary: null, launch: null, syncing: null, busy: false };
+  const state = { summary: null, launch: null, syncing: null, userId: null, revision: 0, busy: false };
 
   const text = (value) => String(value ?? '').trim();
   const bob = (value) => `Bs ${Number(value || 0).toLocaleString('es-BO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -19,6 +19,20 @@
 
   function authenticated() {
     try { return typeof session !== 'undefined' && !!session; } catch { return false; }
+  }
+
+  function currentUserId() {
+    try { return session?.user?.id || null; } catch { return null; }
+  }
+
+  function clearState() {
+    state.revision += 1;
+    state.syncing = null;
+    state.userId = null;
+    state.summary = null;
+    state.launch = null;
+    delete root.dataset.fsMembership;
+    removePremiumUi();
   }
 
   function toneFor(theme) {
@@ -65,14 +79,17 @@
   }
 
   function mountPremiumUi() {
-    const pass = state.summary?.active_pass || null;
+    const pass = state.userId === currentUserId() ? state.summary?.active_pass || null : null;
     const theme = text(pass?.theme);
-    if (!pass || !['gold','diamond'].includes(theme)) {
+    if (!pass || Date.parse(pass.ends_at) <= Date.now() || !['gold','diamond'].includes(theme)) {
+      delete root.dataset.fsMembership;
       removePremiumUi();
       return;
     }
 
-    root.dataset.fsMembership = theme;
+    // Writing an unchanged attribute still notifies the readiness observer.
+    // Avoid turning a presentation refresh into another network refresh.
+    if (root.dataset.fsMembership !== theme) root.dataset.fsMembership = theme;
     if (document.body) document.body.dataset.fsRankVisual = theme;
 
     const multiplier = multiplierFor(pass);
@@ -129,25 +146,27 @@
     }
   }
 
-  async function sync(force = false) {
-    if (state.syncing && !force) return state.syncing;
-    state.syncing = (async () => {
-      if (!authenticated()) {
-        state.summary = null;
-        state.launch = null;
-        removePremiumUi();
-        return null;
-      }
+  async function sync() {
+    const userId = currentUserId();
+    if (!userId) { clearState(); return null; }
+    if (state.syncing && state.userId === userId) return state.syncing;
+    if (state.userId !== userId) clearState();
+    state.userId = userId;
+    const revision = ++state.revision;
+    const pending = (async () => {
       const current = await readState();
+      if (revision !== state.revision || userId !== currentUserId()) return null;
       state.summary = current.summary;
       state.launch = current.launch;
       mountPremiumUi();
       return current;
     })().catch((error) => {
-      console.warn('FRENCH STORE premium Rank UI unavailable:', text(error?.message || error).slice(0, 120));
+      if (revision !== state.revision || userId !== currentUserId()) return null;
+      console.warn('FRENCH STORE premium Rank UI unavailable.');
       return null;
-    }).finally(() => { state.syncing = null; });
-    return state.syncing;
+    }).finally(() => { if (state.syncing === pending) state.syncing = null; });
+    state.syncing = pending;
+    return pending;
   }
 
   async function refreshAll() {
@@ -327,16 +346,25 @@
     if (event.target.closest?.('[data-nav="perfil"]')) window.setTimeout(() => sync(true), 180);
   });
 
+  // A completed loyalty read supplies fresh presentation data directly. A DOM
+  // attribute is an output, never a reason to request the same backend data.
+  document.addEventListener('fs:loyalty-updated', (event) => {
+    const current = event.detail;
+    if (!current || current.userId !== currentUserId()) return;
+    state.revision += 1;
+    state.userId = current.userId;
+    state.summary = current.summary;
+    state.launch = current.launch;
+    mountPremiumUi();
+  });
+
   try {
     sb.auth.onAuthStateChange((_event, newSession) => {
-      if (!newSession) {
-        state.summary = null;
-        state.launch = null;
-        removePremiumUi();
-      } else window.setTimeout(() => sync(true), 120);
+      if (newSession?.user?.id !== state.userId) clearState();
+      if (newSession) window.setTimeout(() => sync(true), 120);
     });
   } catch {}
 
-  window.FSRankPremium = Object.freeze({ version: VERSION, refresh: () => sync(true) });
+  window.FSRankPremium = Object.freeze({ version: VERSION, refresh: () => sync(true), render: mountPremiumUi });
   window.setTimeout(() => sync(true), 180);
 })();

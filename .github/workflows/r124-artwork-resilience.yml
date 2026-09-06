@@ -39,7 +39,7 @@ jobs:
 
       - name: Validate cache-busting contract
         run: |
-          grep -Fq './bootstrap.js?v=20260830-r129' v2/index.html
+          node scripts/test-bootstrap-release.mjs
           grep -Fq './config/storefront.js?v=20260829-r124' v2/bootstrap.js
           grep -Fq './r8-icons.css?v=20260829-r124' v2/bootstrap.js
           grep -Fq './r8-icons.js?v=20260829-r124' v2/bootstrap.js

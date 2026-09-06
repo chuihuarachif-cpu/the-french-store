@@ -6,7 +6,7 @@
   'use strict';
 
   const VERSION = 'french-rank-pass-v3-20260823';
-  const state = { summary: null, launch: null, loading: null, mounted: false };
+  const state = { summary: null, launch: null, loading: null, userId: null, revision: 0, mounted: false };
   const root = document.documentElement;
 
   const text = (value) => String(value ?? '').trim();
@@ -20,6 +20,16 @@
 
   function authenticated() {
     try { return !!session; } catch { return false; }
+  }
+
+  function currentUserId() {
+    try { return session?.user?.id || null; } catch { return null; }
+  }
+
+  function publishState() {
+    document.dispatchEvent(new CustomEvent('fs:loyalty-updated', { detail: {
+      userId: state.userId, summary: state.summary, launch: state.launch
+    } }));
   }
 
   function launched() {
@@ -80,19 +90,28 @@
   }
 
   async function fetchSummary(force = false) {
-    if (!authenticated()) {
+    const userId = currentUserId();
+    if (!userId) {
+      state.revision += 1;
+      state.loading = null;
+      state.userId = null;
       state.summary = null;
       state.launch = null;
       clearTheme();
       render();
+      publishState();
       return null;
     }
-    if (state.loading && !force) return state.loading;
-    state.loading = (async () => {
+    // Share only an in-flight read for this account; never cache a resolved rank.
+    if (state.loading && state.userId === userId) return state.loading;
+    state.userId = userId;
+    const revision = ++state.revision;
+    const pending = (async () => {
       const [summaryResult, launchResult] = await Promise.all([
         sb.rpc('get_my_loyalty_summary'),
         sb.rpc('get_my_loyalty_launch_progress')
       ]);
+      if (revision !== state.revision || userId !== currentUserId()) return null;
       if (summaryResult.error) throw summaryResult.error;
       if (launchResult.error) throw launchResult.error;
       state.summary = summaryResult.data && summaryResult.data.ok ? summaryResult.data : null;
@@ -100,20 +119,28 @@
       if (!state.launch) throw new Error('LOYALTY_LAUNCH_STATE_MISSING');
       applyTheme();
       render();
+      publishState();
       return state.summary;
     })().catch((error) => {
-      console.warn('FRENCH STORE loyalty unavailable:', text(error?.message || error).slice(0, 100));
+      if (revision !== state.revision || userId !== currentUserId()) return null;
+      console.warn('FRENCH STORE loyalty unavailable.');
+      state.summary = null;
+      state.launch = null;
       clearTheme();
+      publishState();
       renderError('French Rank Pass no está disponible temporalmente. Tus compras y Wallet siguen funcionando normalmente.');
       return null;
-    }).finally(() => { state.loading = null; });
-    return state.loading;
+    }).finally(() => { if (state.loading === pending) state.loading = null; });
+    state.loading = pending;
+    return pending;
   }
 
   function applyTheme() {
     const pass = state.summary?.active_pass || null;
     const theme = text(pass?.theme);
-    if (theme === 'gold' || theme === 'diamond') root.dataset.fsMembership = theme;
+    if (theme === 'gold' || theme === 'diamond') {
+      if (root.dataset.fsMembership !== theme) root.dataset.fsMembership = theme;
+    }
     else delete root.dataset.fsMembership;
 
     const chip = document.getElementById('fsLoyaltyChip');
@@ -345,8 +372,14 @@
     }
     await fetchSummary(true);
     sb.auth.onAuthStateChange((_event, newSession) => {
-      if (!newSession) { state.summary = null; state.launch = null; clearTheme(); render(); }
-      else setTimeout(() => fetchSummary(true), 0);
+      if (newSession?.user?.id !== state.userId) {
+        state.revision += 1;
+        state.loading = null;
+        state.userId = newSession?.user?.id || null;
+        state.summary = null; state.launch = null;
+        clearTheme(); render(); publishState();
+      }
+      if (newSession) setTimeout(() => fetchSummary(true), 0);
     });
   }
 

@@ -27,14 +27,14 @@
     poll();
     observer = new MutationObserver((mutations) => {
       if (mutations.some((m) => m.attributeName === 'data-fs-membership' || m.attributeName === 'data-fs-loyalty-ready')) {
-        window.setTimeout(refresh, 40);
+        // Membership attributes are rendered output. Repaint from the accepted
+        // state without turning a visual mutation into another backend read.
+        window.FSRankPremium?.render?.();
       }
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-fs-membership','data-fs-loyalty-ready'] });
 
-    document.addEventListener('click', (event) => {
-      if (event.target.closest?.('[data-nav="perfil"]')) window.setTimeout(refresh, 220);
-    });
+    // The premium controller owns profile/auth refreshes. Do not duplicate them.
   }
 
   window.FSRankPremiumReady = Object.freeze({ version: VERSION, refresh });

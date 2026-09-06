@@ -1,0 +1,65 @@
+name: R150 Isolated Visual Regression
+on:
+  pull_request:
+    branches: [main]
+    paths: ['v2/**', 'admin/**', 'scripts/**', '.github/workflows/r150-visual-regression.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        rank: [base, gold, diamond]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rank lifecycle and motion regression
+        run: node scripts/test-r150-rank-rendering.mjs
+      - name: Build isolated fixture
+        run: node scripts/build-visual-fixture.mjs . /tmp/french-visual-fixture
+      - name: Capture real browser layouts with synthetic data
+        env:
+          QA_RANK: ${{ matrix.rank }}
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8080 --directory /tmp/french-visual-fixture > /tmp/french-visual-server.log 2>&1 &
+          mkdir -p screenshots
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
+          for width in 360 390 412 768 1366; do
+            for view in inicio perfil; do
+              name="${QA_RANK}-${view}-${width}"
+              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=$width" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width"
+            done
+          done
+          for motion in lite reduced; do
+            flags=()
+            if [ "$motion" = reduced ]; then flags+=(--force-prefers-reduced-motion); fi
+            name="${QA_RANK}-inicio-360-${motion}"
+            timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 "${flags[@]}" --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=inicio&state=$motion&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
+          done
+      - name: Upload screenshots and browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-${{ matrix.rank }}
+          path: screenshots/
+          retention-days: 14
+      - name: Export review thumbnails through authenticated job logs
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          for p in sorted(Path('screenshots').glob('*.png')):
+              print('FS_VISUAL_BEGIN '+p.stem)
+              print(base64.b64encode(p.read_bytes()).decode())
+              print('FS_VISUAL_END')
+          PY
