@@ -20,7 +20,8 @@ jobs:
         with:
           node-version: '22'
       - name: Rank lifecycle and motion regression
-        run: node scripts/test-r150-rank-rendering.mjs
+        run: |
+          for test in scripts/test-r15*.mjs; do node "$test"; done
       - name: Build isolated fixture
         run: node scripts/build-visual-fixture.mjs . /tmp/french-visual-fixture
       - name: Capture real browser layouts with synthetic data

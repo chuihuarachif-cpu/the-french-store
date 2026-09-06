@@ -1,0 +1,62 @@
+name: R151 Wallet Orders and Checkout Visual Comparison
+on:
+  pull_request:
+    branches: [main]
+    paths: ['v2/**', 'scripts/**', '.github/workflows/r151-surface-comparison.yml']
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        rank: [base, gold, diamond]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build current and pinned R150 fixtures
+        run: |
+          mkdir /tmp/french-before-source
+          git archive 65c8dc83929c50b97110a705b1a3e5d2ff430a3f | tar -x -C /tmp/french-before-source
+          node scripts/build-visual-fixture.mjs /tmp/french-before-source /tmp/french-before
+          node scripts/build-visual-fixture.mjs . /tmp/french-after
+      - name: Compare Wallet Orders cart and QR at 360 px
+        env:
+          QA_RANK: ${{ matrix.rank }}
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8081 --directory /tmp/french-before > /tmp/french-before.log 2>&1 &
+          python3 -m http.server 8082 --directory /tmp/french-after > /tmp/french-after.log 2>&1 &
+          mkdir -p screenshots
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
+          for side in before after; do
+            port=8081; if [ "$side" = after ]; then port=8082; fi
+            for view in wallet pedidos cart qr; do
+              name="${side}-${QA_RANK}-${view}-360"
+              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:$port/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              python3 /tmp/french-before-source/scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
+            done
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: surface-comparison-${{ matrix.rank }}
+          path: screenshots/
+          retention-days: 14
+      - name: Export synthetic review images
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          for p in sorted(Path('screenshots').glob('*.png')):
+              print('FS_VISUAL_BEGIN '+p.stem)
+              print(base64.b64encode(p.read_bytes()).decode())
+              print('FS_VISUAL_END')
+          PY
