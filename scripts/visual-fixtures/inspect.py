@@ -24,6 +24,11 @@ assert data['width']==int(sys.argv[3]), 'Chrome did not use the requested layout
 assert not data['overflow'], 'Horizontal overflow'
 assert data['calls'].get('get_my_loyalty_summary',0)<=12, 'Rank read loop returned'
 assert data['calls'].get('get_my_loyalty_launch_progress',0)<=12, 'Rank launch read loop returned'
+feature={'wallet':'wallet','pedidos':'orders','cart':'checkout','qr':'checkout'}.get(data['view'])
+if feature:
+    assert data['features'].get(feature)=='1', 'The actual lazy feature was not loaded'
+if data['view']=='qr':
+    assert data['qrDecorator'], 'QR must use the active BISA UI'
 if data['scenario'] in ('lite','reduced'):
     assert data['motion'] in ('lite','off'), 'Progressive motion was ignored'
     assert data['heroAnimation']=='none' and data['ribbonAnimation']=='none', 'Decorative sweep runs in lightweight mode'

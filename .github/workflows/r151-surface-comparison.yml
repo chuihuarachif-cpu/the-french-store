@@ -40,7 +40,7 @@ jobs:
             for view in wallet pedidos cart qr; do
               name="${side}-${QA_RANK}-${view}-360"
               timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:$port/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
-              python3 /tmp/french-before-source/scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
+              python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
             done
           done
       - uses: actions/upload-artifact@v4
