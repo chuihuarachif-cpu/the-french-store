@@ -26,3 +26,5 @@ Diamond keeps its short sweep/glint on capable devices. The ribbon travels 636.3
 The visual workflow asserts five actual layout widths, no horizontal overflow, no runtime errors, bounded Rank requests and preserved Diamond animations; it also checks lite/reduced motion. Before merge, all relevant CI and the screenshots must be reviewed. PR #91 remains draft until then.
 
 Rollback: revert this PR's merge commit. No data migration, financial write, Auth method, backend authorization, category, price, margin or provider execution change is included. Risk is confined to frontend Rank presentation/refresh timing and its decorative CSS.
+
+Seven existing cache guards failed after the release date moved from August to September: six required the literal month `202608`, and R124 required the old R129 URL. Their other assertions remain unchanged. A shared guard now requires exactly one bootstrap URL whose cache key matches the actual declared release/version, which rejects stale keys without imposing a historical month.

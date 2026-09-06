@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r129-one-time-paid-whatsapp-20260830';
+  const VERSION = 'r150-rank-rendering-20260906';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
