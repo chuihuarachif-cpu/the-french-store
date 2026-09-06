@@ -32,8 +32,8 @@ jobs:
           for width in 360 390 412 768 1366; do
             for view in inicio perfil; do
               name="${QA_RANK}-${view}-${width}"
-              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size="$width,960" --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/v2/index.html?rank=$QA_RANK&view=$view&state=normal" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
-              python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json"
+              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=$width" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width"
             done
           done
       - name: Upload screenshots and browser evidence

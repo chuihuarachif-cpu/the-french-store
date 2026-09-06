@@ -26,4 +26,8 @@ for (const dir of ['v2', 'admin']) {
 }
 const bootstrap = path.join(output, 'v2', 'bootstrap.js');
 await writeFile(bootstrap, (await readFile(bootstrap, 'utf8')).replaceAll(prefix, './'));
+// Chrome's desktop window has a minimum width. A same-origin frame provides the
+// exact requested layout viewport, which is verified by the child, not inferred
+// from the screenshot filename or --window-size.
+await writeFile(path.join(output, '__qa-frame.html'), `<!doctype html><html><meta charset="utf-8"><title>Isolated responsive fixture</title><style>html,body{margin:0;background:#dde3ea}iframe{display:block;border:0;height:960px}</style><iframe id="fixture" title="Synthetic store fixture"></iframe><pre id="fsQaEvidence" hidden></pre><script>const p=new URLSearchParams(location.search),f=document.querySelector('iframe');f.width=p.get('width')||'360';f.src='./v2/index.html?'+p;window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.qa)document.querySelector('pre').textContent=JSON.stringify(e.data)});</script></html>`);
 console.log('Read-only visual fixture ready. No live authentication or financial writes.');

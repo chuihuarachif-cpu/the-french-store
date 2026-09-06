@@ -20,5 +20,6 @@ print(json.dumps(data))
 assert data['bootstrap']=='ready','Bootstrap failed'
 assert not data['errors'], 'Uncaught browser errors'
 assert data['membership']==data['rank'], 'Rank fixture did not render the actual theme'
+assert data['width']==int(sys.argv[3]), 'Chrome did not use the requested layout viewport'
 # The baseline records overflow and request counts before applying corrections.
 # Per-change invariants are asserted by their dedicated regression tests.
