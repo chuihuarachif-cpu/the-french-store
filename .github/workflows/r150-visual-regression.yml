@@ -33,10 +33,10 @@ jobs:
           mkdir -p screenshots
           CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
           for width in 360 390 412 768 1366; do
-            for view in inicio perfil; do
+            for view in inicio perfil wallet pedidos cart qr; do
               name="${QA_RANK}-${view}-${width}"
-              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=$width" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
-              python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width"
+              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width" r151
             done
           done
           for motion in lite reduced; do

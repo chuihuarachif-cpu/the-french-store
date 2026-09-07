@@ -26,10 +26,14 @@ function wireUI(){
   $('openAdmin').onclick=()=>navigate('admin');
   $('refreshAdmin').onclick=loadAdmin;
   document.querySelectorAll('[data-admin-tab]').forEach(b=>b.onclick=()=>{adminTab=b.dataset.adminTab;document.querySelectorAll('[data-admin-tab]').forEach(x=>x.classList.toggle('active',x===b));loadAdmin()});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal.open').forEach(m=>closeModal(m.id))});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&!e.defaultPrevented){
+      const modal=modalFocus.current();
+      if(modal){e.preventDefault();closeModal(modal.id);}
+    }
+  });
 }
-// New customer registration is Google-only. Email/password login remains available
-// as a recovery/admin fallback, but the browser no longer creates email signup controls.
+// Public customer authentication is Google-only; historical signup controls stay absent.
 function addSignupButton(){ return null }
 function enforceGoogleOnlySignupUI(){
   const clean=()=>{

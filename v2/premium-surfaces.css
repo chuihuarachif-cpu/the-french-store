@@ -141,3 +141,10 @@ html[data-r8-motion] .r6-feature-card img { will-change:auto; transition:transfo
 @media (prefers-reduced-motion:reduce) {
   html :is(.primary-btn,.secondary-btn,.ghost-btn,.icon-btn,.cart-btn,.category-card,.r6-feature-card,.r6-game-card) { transition:none; }
 }
+
+/* R151 read states and dialog controls: no financial state is inferred. */
+.modal-close{min-width:44px;min-height:44px}
+.modal-card:focus{outline:none}
+.modal-card :focus-visible{outline:2px solid var(--fs-accent);outline-offset:3px}
+#walletBalance[data-state="loading"],#walletBalance[data-state="error"]{color:var(--muted,#bfd0db)}
+.record-list[data-state="error"] .record{border-color:rgba(239,148,148,.45)}

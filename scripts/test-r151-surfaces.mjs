@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const css=readFileSync('v2/premium-surfaces.css','utf8');
 const index=readFileSync('v2/index.html','utf8');
-assert.match(index,/premium-surfaces\.css\?v=20260906-r151/);
+assert.match(index,/premium-surfaces\.css\?v=20260907-r151/);
 assert.ok(css.length<14000,'Surface refinement must stay lightweight');
 assert.equal(/url\(/.test(css),false,'Decorative assets must not add download weight');
 assert.equal(/(?:animation|filter|box-shadow)\s*:[^;}]*infinite/.test(css),false);

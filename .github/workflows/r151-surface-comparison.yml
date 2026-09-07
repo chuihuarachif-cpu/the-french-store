@@ -43,6 +43,26 @@ jobs:
               python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
             done
           done
+      - name: Wallet states and dialog keyboard regression
+        env:
+          QA_RANK: ${{ matrix.rank }}
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
+          for pair in wallet:loading wallet:zero wallet:empty wallet:error wallet:transaction_error cart:empty pedidos:empty pedidos:error auth:normal topup:normal; do
+            view="${pair%:*}"; state="${pair#*:}"
+            name="after-${QA_RANK}-${view}-360-${state}"
+            timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=360&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360 r151
+          done
+      - name: Chrome failure diagnostics
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for p in Path('/tmp').glob('*.stderr'):
+              print(p.name, p.read_text()[-4000:])
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:

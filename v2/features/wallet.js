@@ -1,18 +1,53 @@
 /* THE FRENCH STORE — base French Wallet UI/data.
    BISA/SIP QR automation remains in bisa-wallet.js and is loaded on demand. */
+let walletReadRevision=0;
 async function loadWallet(){
-  if(!session)return;
-  const[bal,acc,topups,tx]=await Promise.all([
+  const revision=++walletReadRevision;
+  const userId=session?.user?.id;
+  const balance=$('walletBalance'),status=$('walletStatus');
+  const historyState=(id,state,message)=>{
+    const el=$(id);
+    el.dataset.state=state;
+    el.setAttribute('aria-busy',String(state==='loading'));
+    el.innerHTML=`<div class="record"><small role="status">${esc(message)}</small></div>`;
+  };
+  balance.textContent='—';
+  balance.dataset.state=userId?'loading':'unavailable';
+  balance.setAttribute('aria-busy',String(!!userId));
+  status.textContent=userId?'Actualizando saldo…':'Inicia sesión para usar French Wallet.';
+  historyState('topupHistory',userId?'loading':'empty',userId?'Cargando solicitudes…':'Inicia sesión para ver tus solicitudes.');
+  historyState('walletHistory',userId?'loading':'empty',userId?'Cargando movimientos…':'Inicia sesión para ver tus movimientos.');
+  if(!userId)return;
+  const reads=await Promise.allSettled([
     sb.rpc('get_my_wallet_balance'),
-    sb.from('wallet_accounts').select('status,currency').eq('user_id',session.user.id).maybeSingle(),
-    sb.from('wallet_topup_requests').select('id,amount,status,payment_reference,created_at,expires_at').eq('user_id',session.user.id).order('created_at',{ascending:false}).limit(20),
-    sb.from('wallet_transactions').select('id,transaction_type,amount,description,created_at').eq('user_id',session.user.id).order('created_at',{ascending:false}).limit(30)
+    sb.from('wallet_accounts').select('status,currency').eq('user_id',userId).maybeSingle(),
+    sb.from('wallet_topup_requests').select('id,amount,status,payment_reference,created_at,expires_at').eq('user_id',userId).order('created_at',{ascending:false}).limit(20),
+    sb.from('wallet_transactions').select('id,transaction_type,amount,description,created_at').eq('user_id',userId).order('created_at',{ascending:false}).limit(30)
   ]);
-  $('walletBalance').textContent=money(bal.data||0);
-  $('walletStatus').textContent=acc.data?`Wallet ${acc.data.status} · ${acc.data.currency}`:'Wallet no encontrada';
-  $('topupHistory').innerHTML=(topups.data||[]).map(recordTopup).join('')||'<div class="record"><small>Aún no tienes solicitudes.</small></div>';
-  bindTopupActions();
-  $('walletHistory').innerHTML=(tx.data||[]).map(t=>`<div class="record"><div class="record-top"><div><b>${esc(t.description||t.transaction_type)}</b><small>${dateFmt(t.created_at)}</small></div><b>${Number(t.amount)>=0?'+':''}${money(t.amount)}</b></div></div>`).join('')||'<div class="record"><small>Aún no tienes movimientos.</small></div>';
+  // Newer refreshes and authentication changes must not display an older account's data.
+  if(revision!==walletReadRevision||session?.user?.id!==userId)return;
+  const [bal,acc,topups,tx]=reads.map(read=>read.status==='fulfilled'?read.value:{error:true});
+  const numericBalance=(typeof bal?.data==='number'||(typeof bal?.data==='string'&&bal.data.trim()!==''))&&Number.isFinite(Number(bal.data));
+  const balanceReady=!bal?.error&&numericBalance;
+  balance.textContent=balanceReady?money(bal.data):'—';
+  balance.dataset.state=balanceReady?'ready':'error';
+  balance.setAttribute('aria-busy','false');
+  status.textContent=!balanceReady?'No pudimos cargar el saldo. Pulsa Actualizar para reintentar.':acc?.error?'Saldo actualizado. No pudimos cargar el estado de la cuenta.':acc?.data?`Wallet ${acc.data.status} · ${acc.data.currency}`:'Saldo actualizado. Cuenta Wallet no disponible.';
+  if(topups?.error||!Array.isArray(topups?.data))historyState('topupHistory','error','No pudimos cargar las solicitudes. Pulsa Actualizar para reintentar.');
+  else if(!topups.data.length)historyState('topupHistory','empty','Aún no tienes solicitudes.');
+  else{
+    $('topupHistory').dataset.state='ready';
+    $('topupHistory').setAttribute('aria-busy','false');
+    $('topupHistory').innerHTML=topups.data.map(recordTopup).join('');
+    bindTopupActions();
+  }
+  if(tx?.error||!Array.isArray(tx?.data))historyState('walletHistory','error','No pudimos cargar los movimientos. Pulsa Actualizar para reintentar.');
+  else if(!tx.data.length)historyState('walletHistory','empty','Aún no tienes movimientos.');
+  else{
+    $('walletHistory').dataset.state='ready';
+    $('walletHistory').setAttribute('aria-busy','false');
+    $('walletHistory').innerHTML=tx.data.map(t=>`<div class="record"><div class="record-top"><div><b>${esc(t.description||t.transaction_type)}</b><small>${dateFmt(t.created_at)}</small></div><b>${Number(t.amount)>=0?'+':''}${money(t.amount)}</b></div></div>`).join('');
+  }
 }
 function recordTopup(t){
   const pending=t.status==='PENDING';
