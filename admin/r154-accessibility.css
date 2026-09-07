@@ -1,0 +1,13 @@
+/* Private Admin controls: visible focus, readable links and touch feedback. */
+:is(button,input,select,textarea,a):focus-visible{outline:2px solid #86e7f4;outline-offset:3px}
+:is(button,.admin-link){min-height:44px;touch-action:manipulation}
+a:not(.primary),a:not(.primary):visited{color:#86e7f4;text-underline-offset:3px}
+a.primary:visited{color:#03131d}
+.admin-link{text-decoration:underline}
+button:disabled{opacity:.65;cursor:not-allowed}
+button:active:not(:disabled){transform:translateY(1px)}
+.modal-card:focus{outline:none}
+.modal{padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom))}
+.modal-card{max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overscroll-behavior:contain}
+@media (hover:hover) and (pointer:fine){a:not(.primary):hover{color:#c9f7ff}button:hover:not(:disabled){opacity:.94}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none}button:active:not(:disabled){transform:none}}
