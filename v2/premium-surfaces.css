@@ -1,0 +1,150 @@
+/* R151 — shared storefront surfaces. No assets, timers or financial behavior. */
+:root {
+  --fs-accent: #86e7f4;
+  --fs-edge: rgba(112,190,218,.24);
+  --fs-highlight: rgba(192,239,255,.07);
+  --fs-surface: #0b1d2a;
+  --fs-rank-tint: rgba(68,160,195,.06);
+}
+html[data-fs-membership="gold"] {
+  --fs-accent: #ecd2a0;
+  --fs-edge: rgba(212,180,117,.34);
+  --fs-highlight: rgba(255,232,187,.10);
+  --fs-surface: #1b211f;
+  --fs-rank-tint: rgba(194,153,83,.09);
+}
+html[data-fs-membership="diamond"] {
+  --fs-accent: #c4f7ff;
+  --fs-edge: rgba(132,223,239,.44);
+  --fs-highlight: rgba(213,252,255,.14);
+  --fs-surface: #0c2735;
+  --fs-rank-tint: rgba(99,215,239,.11);
+}
+html .hero {
+  border-color: var(--fs-edge);
+  box-shadow: inset 0 1px 0 var(--fs-highlight), 0 16px 36px rgba(0,0,0,.18);
+}
+html .hero h1 { line-height:1.12; letter-spacing:-.025em; text-wrap:balance; text-shadow:none; }
+html .hero p { color:#bfd0db; max-width:56ch; }
+html .panel:not(.admin-panel) {
+  border-color:var(--fs-edge);
+  background:linear-gradient(155deg,var(--fs-rank-tint),transparent 46%),linear-gradient(180deg,#0a1b28,#07141f);
+  box-shadow:inset 0 1px 0 var(--fs-highlight),0 12px 28px rgba(0,0,0,.12);
+}
+html .category-card {
+  border-color:var(--fs-edge);
+  box-shadow:inset 0 1px 0 var(--fs-highlight),0 5px 14px rgba(0,0,0,.12);
+  gap:5px 10px;
+}
+html .category-card small { color:#c0cfd8; line-height:1.4; }
+html .r6-feature-card, html .r6-game-card {
+  border-color:var(--fs-edge);
+  box-shadow:inset 0 1px 0 var(--fs-highlight),0 8px 18px rgba(0,0,0,.14);
+}
+html .record, html .topup-box {
+  border-color:var(--fs-edge);
+  background:linear-gradient(135deg,var(--fs-rank-tint),transparent 60%),#081923;
+}
+html .record small { display:block; margin-top:4px; color:#adc2ce; line-height:1.4; }
+html .balance-card {
+  position:relative; overflow:hidden; border-color:var(--fs-edge);
+  background:radial-gradient(ellipse at 100% 0,var(--fs-highlight),transparent 65%),linear-gradient(135deg,var(--fs-surface),#0b2434);
+  box-shadow:inset 0 1px 0 var(--fs-highlight),0 12px 26px rgba(0,0,0,.16);
+}
+html .balance-card strong { color:var(--fs-accent); font-variant-numeric:tabular-nums; }
+html .balance-card small { line-height:1.5; color:#c3d4dd; }
+html .modal-card {
+  border-color:var(--fs-edge);
+  background:linear-gradient(145deg,var(--fs-rank-tint),transparent 45%),#081925;
+  box-shadow:inset 0 1px 0 var(--fs-highlight),0 24px 64px rgba(0,0,0,.4);
+  overscroll-behavior:contain;
+  max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+html .bottom-nav { border-color:var(--fs-edge); }
+html .bottom-nav button { color:#aec3d0; }
+html .bottom-nav button.active { box-shadow:inset 0 1px 0 var(--fs-highlight); }
+html .floating-whatsapp { bottom:calc(var(--nav-h) + 18px + env(safe-area-inset-bottom)); }
+html :is(.primary-btn,.secondary-btn,.ghost-btn,.icon-btn,.danger-btn,.cart-btn,.cart-inline,.category-tabs button,.admin-actions button) {
+  min-height:44px;
+  touch-action:manipulation;
+}
+html :is(.icon-btn,.admin-actions button) { min-width:44px; }
+html :is(button,a,input,select,textarea):focus-visible {
+  outline:2px solid var(--fs-accent);
+  outline-offset:3px;
+}
+html :is(.primary-btn,.secondary-btn,.ghost-btn,.icon-btn,.cart-btn,.category-card,.r6-feature-card,.r6-game-card) {
+  transition:transform .16s ease,opacity .16s ease;
+}
+html :is(.primary-btn,.secondary-btn,.ghost-btn,.icon-btn,.cart-btn,.category-card,.r6-feature-card,.r6-game-card):active:not(:disabled) {
+  transform:translateY(1px); opacity:.9;
+}
+html button:disabled { cursor:not-allowed; }
+
+/* Gold warmth is always visible, including touch-only devices. Brand stays cyan. */
+html[data-fs-membership="gold"] .category-card {
+  background:linear-gradient(140deg,rgba(167,129,65,.16),transparent 60%),#10202a;
+}
+html[data-fs-membership="gold"] :is(.secondary-btn,.fs-active-pass,.fs-rank-countdown) {
+  border-color:var(--fs-edge); box-shadow:inset 0 1px 0 var(--fs-highlight);
+}
+html[data-fs-membership="gold"] .secondary-btn { color:#f4e3c4; background:#25302e; }
+html[data-fs-membership="gold"] .bottom-nav button.active {
+  color:#f0d7a7!important; background:linear-gradient(150deg,#393728,#17303c);
+}
+html[data-fs-membership="gold"] .fs-rank-profile-badge {
+  border-color:var(--fs-edge); background:linear-gradient(135deg,#2b3028,#11212a);
+}
+html[data-fs-membership="gold"] .balance-card { background:linear-gradient(125deg,#343629,#102330 78%); }
+
+/* Diamond: static crystal planes and brighter edges; no moving blur/particles. */
+html[data-fs-membership="diamond"] .category-card {
+  background:linear-gradient(125deg,rgba(196,250,255,.09),transparent 37%,rgba(70,172,209,.06) 38%,transparent 72%),#0b2230;
+}
+html[data-fs-membership="diamond"] .balance-card {
+  background:linear-gradient(115deg,rgba(175,241,255,.12),transparent 43%,rgba(185,250,255,.06) 44%,transparent 70%),linear-gradient(135deg,#153b4a,#0b2031);
+  box-shadow:inset 0 1px 0 rgba(219,253,255,.25),0 12px 28px rgba(0,0,0,.2);
+}
+html[data-fs-membership="diamond"] .fs-rank-profile-badge {
+  background:linear-gradient(125deg,rgba(196,250,255,.12),transparent 48%),#102c3b;
+  border-color:rgba(180,242,253,.5); box-shadow:inset 0 1px 0 rgba(225,254,255,.14);
+}
+html[data-fs-membership="diamond"] .bottom-nav button.active {
+  color:#c4f8ff!important; background:linear-gradient(140deg,#235364,#123446);
+  filter:none; text-shadow:none;
+}
+html[data-fs-membership="diamond"] .primary-btn {
+  background:linear-gradient(180deg,#c2f8ff,#6ed9ec); border-color:#d6fcff;
+}
+@media (hover:hover) and (pointer:fine) {
+  html :is(.category-card,.r6-feature-card,.r6-game-card,.primary-btn,.secondary-btn):hover:not(:disabled) {
+    transform:translateY(-2px);
+  }
+}
+@media (max-width:430px) {
+  html .hero { padding:26px 18px; border-radius:20px; }
+  html .hero h1 { font-size:clamp(26px,7.6vw,32px); }
+  html .hero p { font-size:14px; line-height:1.6; }
+  html .category-card { padding:14px 11px; }
+  html .category-card b { line-height:1.35; }
+  html .panel-head { gap:10px; }
+  html .record-top { gap:12px; }
+  html .balance-card strong { font-size:clamp(26px,8.6vw,38px); overflow-wrap:anywhere; }
+  html .profile-card > div { min-width:0; }
+  html #profileEmail { overflow-wrap:anywhere; }
+}
+/* The established capability/preference mode owns low-end degradation. */
+html:not([data-r8-motion="full"]) :is(.topbar,.bottom-nav,.fs-rank-premium-ribbon) { backdrop-filter:none; }
+html[data-r8-motion] :is(.r6-game-card,.r6-feature-card) { transform:none; backface-visibility:visible; }
+html[data-r8-motion] .r6-game-card .r6-game-art img,
+html[data-r8-motion] .r6-feature-card img { will-change:auto; transition:transform .2s ease; }
+@media (prefers-reduced-motion:reduce) {
+  html :is(.primary-btn,.secondary-btn,.ghost-btn,.icon-btn,.cart-btn,.category-card,.r6-feature-card,.r6-game-card) { transition:none; }
+}
+
+/* R151 read states and dialog controls: no financial state is inferred. */
+.modal-close{min-width:44px;min-height:44px}
+.modal-card:focus{outline:none}
+.modal-card :focus-visible{outline:2px solid var(--fs-accent);outline-offset:3px}
+#walletBalance[data-state="loading"],#walletBalance[data-state="error"]{color:var(--muted,#bfd0db)}
+.record-list[data-state="error"] .record{border-color:rgba(239,148,148,.45)}

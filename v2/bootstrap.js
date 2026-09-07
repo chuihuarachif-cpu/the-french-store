@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r150-rank-rendering-20260906';
+  const VERSION = 'r151-customer-states-20260907';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -65,7 +65,8 @@
       './features/orders-admin.js',
       './core/ui.js'
     ];
-    for (const file of files) await loadScript(file);
+    const revisions = {'./core/runtime.js':'20260907-r151','./features/wallet.js':'20260907-r151','./core/ui.js':'20260907-r151'};
+    for (const file of files) await loadScript(file, undefined, revisions[file]);
 
     await loadScript('https://cdn.jsdelivr.net/gh/chuihuarachif-cpu/the-french-store@e886e90ef48bf24cdbed8e4388b4d4849b24aac1/v2/r6.js', 'fs-r6-js');
     await loadScript('https://cdn.jsdelivr.net/gh/chuihuarachif-cpu/the-french-store@e886e90ef48bf24cdbed8e4388b4d4849b24aac1/v2/r7fix.js', 'fs-r7fix-js');
