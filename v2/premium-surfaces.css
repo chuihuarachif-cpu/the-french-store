@@ -148,3 +148,6 @@ html[data-r8-motion] .r6-feature-card img { will-change:auto; transition:transfo
 .modal-card :focus-visible{outline:2px solid var(--fs-accent);outline-offset:3px}
 #walletBalance[data-state="loading"],#walletBalance[data-state="error"]{color:var(--muted,#bfd0db)}
 .record-list[data-state="error"] .record{border-color:rgba(239,148,148,.45)}
+
+/* Keep legal links readable in every rank, including visited links. */
+html .security-note a,html .security-note a:visited{color:var(--fs-accent);text-decoration:underline;text-underline-offset:3px}

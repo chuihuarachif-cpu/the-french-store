@@ -50,3 +50,14 @@ if data['scenario'] in ('lite','reduced'):
 elif data['rank']=='diamond':
     assert data['heroAnimation']=='fsDiamondHeroSweep', 'Diamond hero sweep was removed'
     assert data['ribbonAnimation']=='fsRankRibbonGlint', 'Diamond ribbon glint was removed'
+
+if len(sys.argv)>5 and sys.argv[5]=='r153' and data['view']=='pedidos':
+    expected={'error':'error','empty':'empty','loading':'loading'}.get(data['scenario'],'ready')
+    assert data['orders']['state']==expected, 'Orders loading/error/empty states confused'
+
+if len(sys.argv)>4 and sys.argv[4]=='r151' and data['view']=='cart':
+    if data['scenario']=='normal':
+        assert len(data['cartChecks'])==9, 'Cart quantity/limit/removal/checkout focus regression'
+    if data['scenario']=='checkout_loading':
+        assert data['checkout']['busy']=='true', 'Checkout loading is not communicated'
+        assert 'Revisando' in data['checkout']['progress'], 'Checkout validation progress is missing'

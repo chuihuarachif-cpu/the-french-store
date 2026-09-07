@@ -266,6 +266,7 @@
     }
   }
 
+  let checkoutBusy = false;
   function patchCheckoutButton(id) {
     const button = document.getElementById(id);
     if (!button || button.dataset.fsFulfillmentPatched === '1') return;
@@ -273,17 +274,29 @@
     if (typeof original !== 'function') return;
     button.dataset.fsFulfillmentPatched = '1';
     button.onclick = async function fsFulfillmentCheckout(event) {
-      if (button.dataset.fsFulfillmentBusy === '1') return;
+      if (checkoutBusy || button.dataset.fsFulfillmentBusy === '1') return;
+      checkoutBusy = true;
       button.dataset.fsFulfillmentBusy = '1';
+      const controls = ['checkoutWallet', 'checkoutQR'].map(key => document.getElementById(key)).filter(Boolean);
+      const disabled = controls.map(control => control.disabled);
+      const progress = document.getElementById('checkoutProgress');
+      controls.forEach(control => { control.disabled = true; control.setAttribute('aria-busy', 'true'); });
+      if (progress) { progress.textContent = 'Revisando los datos de tu compra…'; progress.classList.remove('hidden'); }
       try {
         const result = await validateBeforeCheckout();
         if (!result.ok) {
           notice(result.message);
           return;
         }
+        if (progress) progress.textContent = 'Preparando tu pedido. Espera un momento…';
         return await original.call(button, event);
+      } catch {
+        notice('No pudimos confirmar el resultado. Revisa Mis Pedidos antes de volver a intentar.');
       } finally {
+        checkoutBusy = false;
         delete button.dataset.fsFulfillmentBusy;
+        controls.forEach((control, index) => { control.disabled = disabled[index]; control.removeAttribute('aria-busy'); });
+        if (progress) progress.classList.add('hidden');
         if (!cartItems().length) {
           state.values.clear();
           render();
