@@ -81,3 +81,4 @@ const bootstrap=readFileSync('v2/bootstrap.js','utf8');
 assert.ok(bootstrap.indexOf('const customerOrders = loadOrders')<bootstrap.indexOf("'fs-r6-js'"));
 assert.ok(bootstrap.indexOf('loadOrders = customerOrders')>bootstrap.indexOf("'fs-r7fix-js'"));
 assert.match(bootstrap,/view-pedidos.*classList.contains\('active'\).*loadOrders\(\)/);
+assert.match(readFileSync('v2/premium-surfaces.css','utf8'),/\.checkout-grid button\[aria-busy="true"\]\{[^}]*transition:none/,'Busy state must appear immediately, independently of the interaction transition');

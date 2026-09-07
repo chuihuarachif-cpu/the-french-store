@@ -151,4 +151,5 @@ html[data-r8-motion] .r6-feature-card img { will-change:auto; transition:transfo
 
 /* Keep legal links readable in every rank, including visited links. */
 html .security-note a,html .security-note a:visited{color:var(--fs-accent);text-decoration:underline;text-underline-offset:3px}
-html .checkout-grid button[aria-busy="true"]{opacity:.65;cursor:progress}
+/* Busy feedback is immediate; it must not inherit the generic press transition. */
+html .checkout-grid button[aria-busy="true"]{opacity:.65;cursor:progress;transition:none}
