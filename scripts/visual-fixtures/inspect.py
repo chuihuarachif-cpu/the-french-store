@@ -59,5 +59,6 @@ if len(sys.argv)>4 and sys.argv[4]=='r151' and data['view']=='cart':
     if data['scenario']=='normal':
         assert len(data['cartChecks'])==9, 'Cart quantity/limit/removal/checkout focus regression'
     if data['scenario']=='checkout_loading':
+        assert data['checkout']['disabled'] and float(data['checkout']['opacity'])<=.7, 'Both payment choices must visibly show their busy state'
         assert data['checkout']['busy']=='true', 'Checkout loading is not communicated'
         assert 'Revisando' in data['checkout']['progress'], 'Checkout validation progress is missing'
