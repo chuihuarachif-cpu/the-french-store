@@ -22,3 +22,5 @@ The four existing storefront modals now focus their labelled dialog card on open
 Regression evidence includes actual-source VM tests for zero/positive/error/loading/history states, escaped transaction text, concurrent refreshes and account changes; dialog focus, nested close, existing inert state and bounded listeners; real Chrome focus boundary checks and synthetic Wallet states. Test fixtures deny all writes and require an exact read RPC allowlist. All 155 existing executable local frontend checks and all storefront/Admin JS syntax checks pass.
 
 Rollback remains a revert of this PR; there are no schema, financial, provider or authentication-contract changes. Newly versioned core URLs must be reverted with their bootstrap/index references.
+
+The new error-state gate initially exposed an overbroad fixture: it failed the catalog as well as Wallet, so the existing card-triggered motion loader correctly stayed idle. Error injection is now scoped to Wallet/Orders reads; the full-motion Diamond assertions are unchanged. This is a fixture correction, not a change to production motion loading.
