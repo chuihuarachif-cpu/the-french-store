@@ -1,5 +1,5 @@
 BISA storefront live smoke test: PASS
-Source commit: 9f5c7e56bcddc2c4731eae9d0a10e324c5cbb008
-Checked at UTC: 2026-09-07T01:30:19Z
+Source commit: ba875be54be57ba19eb1de927023de49f1ebcedb
+Checked at UTC: 2026-09-07T16:13:39Z
 BISA checkout is lazy-loaded through bootstrap.js.
 No order or QR was created by this test.
