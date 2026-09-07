@@ -15,12 +15,15 @@
   let usdRawRate=null;
   let usdBuffer=null;
   let installed=false;
+  let usdRateLoading=null;
+  let usdRateError=false;
+  const validNumber=value=>value!==null&&value!==undefined&&String(value).trim()!==''&&Number.isFinite(Number(value));
 
   const $=(id)=>document.getElementById(id);
   const esc=(value)=>String(value??'').replace(/[&<>"']/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
   const compact=(value)=>{
     const n=Number(value);
-    if(!Number.isFinite(n))return '—';
+    if(!validNumber(value))return '—';
     return n.toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
   };
   const money=(value)=>`Bs ${Number(value||0).toLocaleString('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
@@ -88,14 +91,15 @@
 
   function rateMarkup(currency){
     if(currency==='BS')return '<span class="r139-rate-dot ok"></span><b>Bolivianos:</b> costo directo, sin conversión de dólar.';
-    if(!Number.isFinite(Number(usdRate)))return '<span class="r139-rate-dot"></span>Consultando cotización USD vigente…';
-    const raw=Number.isFinite(Number(usdRawRate))?` · Binance raw ${money(usdRawRate)}`:'';
-    const buffer=Number.isFinite(Number(usdBuffer))?` + colchón ${money(usdBuffer)}`:'';
+    if(usdRateError)return '<span class="r139-rate-dot"></span>No se pudo consultar el tipo de cambio USD. Vuelve a abrir Cotizaciones para reintentar.';
+    if(!validNumber(usdRate)||Number(usdRate)<=0)return '<span class="r139-rate-dot"></span>Consultando cotización USD vigente…';
+    const raw=validNumber(usdRawRate)?` · Binance raw ${money(usdRawRate)}`:'';
+    const buffer=validNumber(usdBuffer)?` + colchón ${money(usdBuffer)}`:'';
     return `<span class="r139-rate-dot ok"></span><b>USD operativo:</b> ${money(usdRate)}/USDT${raw}${buffer}`;
   }
 
   function resultMarkup(item,currency){
-    if(item.error)return `<div class="r139-result bad">${esc(item.error)}</div>`;
+    if(item.error)return `<div class="r139-result bad" role="alert">${esc(item.error)}</div>`;
     if(!item.cost)return '<div class="r139-result muted-result">Escribe el costo para calcular.</div>';
     if(!item.result)return '<div class="r139-result loading-result">Calculando…</div>';
     const r=item.result;
@@ -112,7 +116,7 @@
         <label><span>Producto / cantidad</span><input type="text" maxlength="120" placeholder="Ej. 🟢 30 Gemas" value="${esc(item.name)}" data-r139-name></label>
         <label><span>${label}</span><input type="number" min="0.01" max="10000" step="0.01" inputmode="decimal" placeholder="${placeholder}" value="${esc(item.cost)}" data-r139-cost></label>
       </div>
-      <div data-r139-result>${resultMarkup(item,currency)}</div>
+      <div data-r139-result aria-live="polite">${resultMarkup(item,currency)}</div>
       <div class="r139-row-actions">
         <button class="primary" type="button" data-r139-copy ${item.result?.ok?'':'disabled'}>📋 Copiar</button>
         <button class="secondary" type="button" data-r139-remove>Quitar</button>
@@ -126,7 +130,7 @@
     const subtitle=isUsd?'Escribe el costo que te cobra la página/proveedor en USD. Se convierte con la tasa operativa vigente y después se añade el margen de la tienda.':'Escribe el costo de compra en bolivianos. Se añade directamente el margen vigente de la tienda.';
     return `<section class="r139-currency-card" data-r139-currency-card="${currency}">
       <div class="r139-currency-head"><div><span class="eyebrow">${currency}</span><h3>${title}</h3><p>${subtitle}</p></div><span class="badge ok">${isUsd?'USD → Bs':'Bs'}</span></div>
-      <div class="r139-rate" data-r139-rate="${currency}">${rateMarkup(currency)}</div>
+      <div class="r139-rate" role="status" data-r139-rate="${currency}">${rateMarkup(currency)}</div>
       <div class="r139-rows" data-r139-rows="${currency}">${state[currency].map((item,index)=>rowMarkup(currency,item,index)).join('')}</div>
       <div class="r139-section-actions">
         <button class="primary" type="button" data-r139-add="${currency}">＋ Agregar producto</button>
@@ -153,6 +157,7 @@
   }
 
   async function calculate(currency,item){
+    const requestId=++requestCounter;item.requestId=requestId;
     const cost=Number(item.cost);
     if(!Number.isFinite(cost)||cost<=0||cost>10000){
       item.result=null;
@@ -161,14 +166,14 @@
       return;
     }
     item.error='';item.result=null;
-    const requestId=++requestCounter;item.requestId=requestId;
     refreshRow(currency,item);
     try{
       const data=await rpc('admin_app_quote_sale_price',{p_cost:cost,p_currency:currency});
       if(item.requestId!==requestId)return;
-      if(!data?.ok)throw new Error('QUOTE_FAILED');
+      if(!data?.ok||!validNumber(data.sale_price)||Number(data.sale_price)<=0||!validNumber(data.cost_bob)||!validNumber(data.margin)||(currency==='USD'&&(!validNumber(data.fx)||Number(data.fx)<=0)))throw new Error('QUOTE_FAILED');
       item.result=data;
       if(currency==='USD'){
+        usdRateError=false;
         usdRate=Number(data.fx);
         usdRawRate=data.fx_raw==null?null:Number(data.fx_raw);
         usdBuffer=data.fx_buffer==null?null:Number(data.fx_buffer);
@@ -183,26 +188,28 @@
   }
 
   function scheduleCalculate(currency,item,delay=260){
+    item.requestId=++requestCounter;item.result=null;item.error='';refreshRow(currency,item);
     const key=`${currency}:${item.id}`;
     window.clearTimeout(quoteTimers.get(key));
     quoteTimers.set(key,window.setTimeout(()=>calculate(currency,item),delay));
   }
 
   async function loadUsdRate(){
-    if(Number.isFinite(Number(usdRate)))return;
-    try{
-      const data=await rpc('admin_app_quote_sale_price',{p_cost:1,p_currency:'USD'});
-      if(data?.ok){
+    if(usdRateLoading)return usdRateLoading;
+    usdRate=null;usdRawRate=null;usdBuffer=null;usdRateError=false;
+    const refreshRate=()=>{const rate=document.querySelector('[data-r139-rate="USD"]');if(rate)rate.innerHTML=rateMarkup('USD');};
+    refreshRate();
+    usdRateLoading=(async()=>{
+      try{
+        const data=await rpc('admin_app_quote_sale_price',{p_cost:1,p_currency:'USD'});
+        if(!data?.ok||!validNumber(data.fx)||Number(data.fx)<=0)throw new Error('USD_RATE_UNAVAILABLE');
         usdRate=Number(data.fx);
-        usdRawRate=data.fx_raw==null?null:Number(data.fx_raw);
-        usdBuffer=data.fx_buffer==null?null:Number(data.fx_buffer);
-        const rate=document.querySelector('[data-r139-rate="USD"]');
-        if(rate)rate.innerHTML=rateMarkup('USD');
-      }
-    }catch(error){
-      const rate=document.querySelector('[data-r139-rate="USD"]');
-      if(rate)rate.textContent=error?.message==='ADMIN_APP_FORBIDDEN'?'Acceso administrativo rechazado.':'No se pudo consultar el tipo de cambio USD.';
-    }
+        usdRawRate=validNumber(data.fx_raw)?Number(data.fx_raw):null;
+        usdBuffer=validNumber(data.fx_buffer)?Number(data.fx_buffer):null;
+      }catch{usdRateError=true;}
+      refreshRate();
+    })();
+    try{await usdRateLoading;}finally{usdRateLoading=null;}
   }
 
   function addRow(currency){
@@ -214,6 +221,7 @@
   }
 
   function removeRow(currency,item){
+    item.requestId=++requestCounter;window.clearTimeout(quoteTimers.get(`${currency}:${item.id}`));
     if(state[currency].length===1){
       item.name='';item.cost='';item.result=null;item.error='';persist();render();if(currency==='USD')loadUsdRate();return;
     }

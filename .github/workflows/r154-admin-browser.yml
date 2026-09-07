@@ -1,0 +1,73 @@
+name: R154 Admin Read States and Cache Safety
+on:
+  pull_request:
+    branches: [main]
+    paths: ['admin/**', 'scripts/**', '.github/workflows/r154-admin-browser.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        side: [before, after]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Regression and syntax
+        run: |
+          set -euo pipefail
+          for test in scripts/test-r15*.mjs; do node "$test"; done
+          for source in admin/*.js; do node --check "$source"; done
+      - name: Build isolated Admin comparison
+        env:
+          QA_SIDE: ${{ matrix.side }}
+        run: |
+          set -euo pipefail
+          source=.
+          if [ "$QA_SIDE" = before ]; then
+            mkdir /tmp/french-admin-before
+            git archive ba875be54be57ba19eb1de927023de49f1ebcedb | tar -x -C /tmp/french-admin-before
+            source=/tmp/french-admin-before
+          fi
+          node scripts/build-visual-fixture.mjs "$source" /tmp/french-admin
+      - name: Admin browser and keyboard evidence
+        env:
+          QA_SIDE: ${{ matrix.side }}
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8083 --directory /tmp/french-admin > /tmp/french-admin.log 2>&1 &
+          mkdir screenshots
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
+          for width in 360 390 412 768 1366; do
+            for pair in overview:normal orders:normal wallet:normal maintenance:normal prices:normal quotations:normal confirm:normal info:normal quotations:loading quotations:error quotations:guest quotations:denied; do
+              view="${pair%:*}"; state="${pair#*:}"
+              name="${QA_SIDE}-admin-${view}-${state}-${width}"
+              checks=''; if [ "$QA_SIDE" = after ]; then checks=r154; fi
+              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8083/__qa-frame.html?app=admin&view=$view&state=$state&width=$width&checks=$checks" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              python3 scripts/visual-fixtures/inspect-admin.py "/tmp/$name.html" "screenshots/$name.json" "$width" "$checks"
+            done
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: admin-${{ matrix.side }}
+          path: screenshots/
+          retention-days: 14
+      - name: Export read-only review evidence
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          for p in sorted(Path('screenshots').glob('*.png')):
+              print('FS_VISUAL_BEGIN '+p.stem)
+              print(base64.b64encode(p.read_bytes()).decode())
+              print('FS_VISUAL_END')
+          PY

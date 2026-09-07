@@ -30,7 +30,7 @@ jobs:
           grep -q 'data-tab="quotations"' admin/index.html
           grep -q 'data-panel="quotations"' admin/index.html
           grep -q 'r139-quotations.css?v=20260902-r139' admin/index.html
-          grep -q 'r139-quotations.js?v=20260902-r139' admin/index.html
+          grep -q 'r139-quotations.js?v=20260907-r154' admin/index.html
           grep -q 'admin_app_quote_sale_price' admin/r139-quotations.js
           grep -q 'Agregar producto' admin/r139-quotations.js
           grep -q 'Copiar todos' admin/r139-quotations.js

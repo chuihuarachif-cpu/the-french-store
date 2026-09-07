@@ -22,12 +22,12 @@ for (const dir of ['v2', 'admin']) {
   html = html.replace(/<script[^>]*src="https:\/\/cdn.jsdelivr.net\/npm\/@supabase\/supabase-js@2"[^>]*><\/script>/, '<script src="./__qa-client.js"></script>');
   if (!html.includes('__qa-client.js')) throw new Error(`SDK substitution failed: ${dir}`);
   await writeFile(file, html.replaceAll(prefix, './'));
-  await writeFile(path.join(output, dir, '__qa-client.js'), client);
+  await writeFile(path.join(output, dir, '__qa-client.js'), dir==='admin'?await readFile(new URL('./visual-fixtures/admin-client.js',import.meta.url),'utf8'):client);
 }
 const bootstrap = path.join(output, 'v2', 'bootstrap.js');
 await writeFile(bootstrap, (await readFile(bootstrap, 'utf8')).replaceAll(prefix, './'));
 // Chrome's desktop window has a minimum width. A same-origin frame provides the
 // exact requested layout viewport, which is verified by the child, not inferred
 // from the screenshot filename or --window-size.
-await writeFile(path.join(output, '__qa-frame.html'), `<!doctype html><html><meta charset="utf-8"><title>Isolated responsive fixture</title><style>html,body{margin:0;background:#dde3ea}iframe{display:block;border:0;height:960px}</style><iframe id="fixture" title="Synthetic store fixture"></iframe><pre id="fsQaEvidence" hidden></pre><script>const p=new URLSearchParams(location.search),f=document.querySelector('iframe');f.width=p.get('width')||'360';f.src='./v2/index.html?'+p;window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.qa)document.querySelector('pre').textContent=JSON.stringify(e.data)});</script></html>`);
+await writeFile(path.join(output, '__qa-frame.html'), `<!doctype html><html><meta charset="utf-8"><title>Isolated responsive fixture</title><style>html,body{margin:0;background:#dde3ea}iframe{display:block;border:0;height:960px}</style><iframe id="fixture" title="Synthetic store fixture"></iframe><pre id="fsQaEvidence" hidden></pre><script>const p=new URLSearchParams(location.search),f=document.querySelector('iframe');f.width=p.get('width')||'360';f.src=(p.get('app')==='admin'?'./admin/index.html?':'./v2/index.html?')+p;window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.qa)document.querySelector('pre').textContent=JSON.stringify(e.data)});</script></html>`);
 console.log('Read-only visual fixture ready. No live authentication or financial writes.');

@@ -121,7 +121,7 @@ jobs:
             label="$3"
             for attempt in $(seq 1 18); do
               body="$(curl --fail --location --silent --show-error --max-time 15 "${url}?deploycheck=${GITHUB_SHA}-${attempt}" || true)"
-              if printf '%s' "$body" | grep -Fq "$needle"; then
+              if grep -Fq "$needle" <<< "$body"; then
                 echo "production bundle OK: $label"
                 return 0
               fi
@@ -131,7 +131,10 @@ jobs:
             echo "PRODUCTION_BUNDLE_STALE:$label" >&2
             return 1
           }
-          check_url "https://frenchstorebo.com/v2/" "./bootstrap.js?v=20260830-r129" "index bootstrap"
+          # The active HTML release is already validated by test-bootstrap-release.
+          # R153 superseded R129; production must match this checkout, not a historic date.
+          bootstrap_src="$(node -e 'const s=require("fs").readFileSync("v2/index.html","utf8"); process.stdout.write(s.match(/src="(\.\/bootstrap\.js\?v=[^"]+)"/)[1]);')"
+          check_url "https://frenchstorebo.com/v2/" "$bootstrap_src" "index bootstrap"
           check_url "https://frenchstorebo.com/v2/bootstrap.js" "./config/storefront.js?v=20260829-r124" "bootstrap storefront loader"
           check_url "https://frenchstorebo.com/v2/config/storefront.js" "20260902-r135" "R135 storefront config"
           check_url "https://frenchstorebo.com/v2/config/storefront.js" "GEMINI_OFFICIAL_ICON" "Gemini official icon"

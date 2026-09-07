@@ -325,7 +325,7 @@
 
   async function boot(){
     bindUi();
-    if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=20260826-r92').catch(()=>{});
+    if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=20260907-r154',{updateViaCache:'none'}).catch(()=>{});
     try{
       await verifyPrivateAccess();
       sb.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>{if(!session)showOnly('loginView');else verifyPrivateAccess().catch(()=>showOnly('deniedView'))},0)});
