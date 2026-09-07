@@ -8,27 +8,38 @@ function addToCart(id){
   if(!product)return;
   if(product.mantenimiento===true){alert(productMaintenanceMessage(product));return}
   const x=cart.find(i=>String(i.product_id)===String(id));
-  if(x)x.quantity=Math.min(99,x.quantity+1);else cart.push({product_id:Number(id),quantity:1});
+  if(x)x.quantity=Math.min(99,Number(x.quantity)+1);else cart.push({product_id:Number(id),quantity:1});
   saveCart();renderCart();
 }
 function setQty(id,delta){
+  if(delta!==1&&delta!==-1)return;
   const x=cart.find(i=>String(i.product_id)===String(id));if(!x)return;
   const product=currentProduct(id);
   if(delta>0&&product?.mantenimiento===true){alert(productMaintenanceMessage(product));return}
-  x.quantity+=delta;
+  x.quantity=Number(x.quantity)+delta;
   if(x.quantity<=0)cart=cart.filter(i=>String(i.product_id)!==String(id));else x.quantity=Math.min(99,x.quantity);
   saveCart();renderCart();
 }
 function renderCart(){
   const box=$('cartItems');
+  const active=document.activeElement;
+  const action=box.contains(active)?['minus','plus','remove'].find(key=>active.dataset?.[key]):null;
+  const activeId=action?active.dataset[action]:null;
+  const restoreFocus=()=>{
+    if(!action)return;
+    const next=[...box.querySelectorAll(`[data-${action}]`)].find(b=>b.dataset[action]===activeId);
+    const minus=[...box.querySelectorAll('[data-minus]')].find(b=>b.dataset.minus===activeId);
+    (next&&!next.disabled?next:minus||$('cartModal').querySelector('[data-close]'))?.focus({preventScroll:true});
+  };
   cart=cart.filter(i=>currentProduct(i.product_id));
   saveCart();
-  if(!cart.length){box.innerHTML='<div class="auth-required"><b>Tu carrito está vacío</b>Agrega productos desde la tienda.</div>';$('cartTotal').textContent=money(0);return}
-  box.innerHTML=cart.map(i=>{const p=currentProduct(i.product_id),maintenance=p?.mantenimiento===true;return `<div class="record${maintenance?' fs-cart-maintenance':''}"><div class="record-top"><div><b>${esc(canonicalGame(p.juego))}</b><small>${esc(p.paquete)}</small>${maintenance?'<span class="fs-maintenance-badge">🛠️ En mantenimiento</span>':''}</div><b>${money(Number(p.precio)*i.quantity)}</b></div>${maintenance?`<div class="notice warn fs-maintenance-cart-note">${esc(productMaintenanceMessage(p))}</div>`:''}<div class="admin-actions"><button data-minus="${p.id}">−</button><span class="status">x${i.quantity}</span><button data-plus="${p.id}"${maintenance?' disabled':''}>+</button><button data-remove="${p.id}">Quitar</button></div></div>`}).join('');
+  if(!cart.length){box.innerHTML='<div class="auth-required" role="status"><b>Tu carrito está vacío</b>Agrega productos desde la tienda.</div>';$('cartTotal').textContent=money(0);restoreFocus();return}
+  box.innerHTML=cart.map(i=>{const p=currentProduct(i.product_id),maintenance=p?.mantenimiento===true;return `<div class="record${maintenance?' fs-cart-maintenance':''}"><div class="record-top"><div><b>${esc(canonicalGame(p.juego))}</b><small>${esc(p.paquete)}</small>${maintenance?'<span class="fs-maintenance-badge">🛠️ En mantenimiento</span>':''}</div><b>${money(Number(p.precio)*i.quantity)}</b></div>${maintenance?`<div class="notice warn fs-maintenance-cart-note">${esc(productMaintenanceMessage(p))}</div>`:''}<div class="admin-actions"><button type="button" aria-label="Reducir cantidad: ${esc(p.paquete)}" data-minus="${esc(p.id)}">−</button><span class="status" aria-live="polite">x${i.quantity}</span><button type="button" aria-label="Aumentar cantidad: ${esc(p.paquete)}" data-plus="${esc(p.id)}"${maintenance||i.quantity>=99?' disabled':''}>+</button><button type="button" aria-label="Quitar ${esc(p.paquete)} del carrito" data-remove="${esc(p.id)}">Quitar</button></div></div>`}).join('');
   $('cartTotal').textContent=money(cartVisualTotal());
   box.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>setQty(b.dataset.minus,-1));
   box.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>setQty(b.dataset.plus,1));
   box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{cart=cart.filter(i=>String(i.product_id)!==String(b.dataset.remove));saveCart();renderCart()});
+  restoreFocus();
 }
 function rpcItems(){return cart.map(i=>({product_id:Number(i.product_id),quantity:Number(i.quantity)}))}
 async function checkout(method){

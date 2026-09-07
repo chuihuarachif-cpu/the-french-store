@@ -98,7 +98,9 @@ jobs:
       - name: Multi-unit purchase remains supported
         run: |
           set -euo pipefail
-          grep -Fq 'Math.min(99,x.quantity+1)' v2/features/cart.js
+          # R153 normalizes stored numeric strings; retain the 99-unit boundary.
+          grep -Fq 'Math.min(99,Number(x.quantity)+1)' v2/features/cart.js
+          node scripts/test-r153-cart-orders.mjs
           grep -Fq 'quantity:Number(i.quantity)' v2/features/cart.js
           grep -Fq 'data-plus' v2/features/cart.js
           grep -Fq 'data-minus' v2/features/cart.js

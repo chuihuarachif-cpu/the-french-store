@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r151-customer-states-20260907';
+  const VERSION = 'r153-cart-orders-20260907';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -65,11 +65,16 @@
       './features/orders-admin.js',
       './core/ui.js'
     ];
-    const revisions = {'./core/runtime.js':'20260907-r151','./features/wallet.js':'20260907-r151','./core/ui.js':'20260907-r151'};
+    const revisions = {'./core/runtime.js':'20260907-r153','./features/cart.js':'20260907-r153','./features/orders-admin.js':'20260907-r153','./features/wallet.js':'20260907-r151','./core/ui.js':'20260907-r153'};
     for (const file of files) await loadScript(file, undefined, revisions[file]);
 
+    const customerOrders = loadOrders;
     await loadScript('https://cdn.jsdelivr.net/gh/chuihuarachif-cpu/the-french-store@e886e90ef48bf24cdbed8e4388b4d4849b24aac1/v2/r6.js', 'fs-r6-js');
     await loadScript('https://cdn.jsdelivr.net/gh/chuihuarachif-cpu/the-french-store@e886e90ef48bf24cdbed8e4388b4d4849b24aac1/v2/r7fix.js', 'fs-r7fix-js');
+    // Keep current read states on the first Orders tap while optional actions load.
+    // The pinned catalog bundle also contains an obsolete Orders renderer.
+    loadOrders = customerOrders;
+    document.getElementById('refreshOrders').onclick = loadOrders;
 
     await loadScript('./auth-ease.js', 'fs-auth-ease-js');
     await loadScript('./legal.js', 'fs-legal-js');
@@ -81,8 +86,8 @@
     checkout: async () => {
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
       await loadScript('./automation-capabilities.js', 'fs-automation-capabilities-js');
-      await loadScript('./bisa-checkout.js', 'fs-bisa-checkout-js');
-      await loadScript('./fulfillment-inputs.js', 'fs-fulfillment-inputs-js');
+      await loadScript('./bisa-checkout.js', 'fs-bisa-checkout-js', '20260907-r153');
+      await loadScript('./fulfillment-inputs.js', 'fs-fulfillment-inputs-js', '20260907-r153');
       await loadScript('./automatic-order-ui.js', 'fs-automatic-order-ui-js');
       await loadScript('./paid-whatsapp.js?v=20260830-r129', 'fs-paid-whatsapp-js');
     },
@@ -95,6 +100,7 @@
       await loadStyle('./order-cancel-ui.css', 'fs-order-cancel-css');
       await loadScript('./order-cancel-ui.js', 'fs-order-cancel-js');
       await loadScript('./paid-whatsapp.js?v=20260830-r129', 'fs-paid-whatsapp-js');
+      if (document.getElementById('view-pedidos')?.classList.contains('active') && session) loadOrders();
     },
     catalog: async () => {
       await loadStyle('./weekly-pass-feature.css?v=20260825-r50', 'fs-weekly-pass-feature-css');

@@ -326,18 +326,24 @@
   }
 
   loadOrders = async function loadOrdersWithPayments() {
-    if (!session) return;
-    const { data, error } = await sb
-      .from('orders')
-      .select('id,order_code,status,payment_method,total_amount,currency,created_at,updated_at,paid_at,customer_note')
-      .eq('user_id', session.user.id)
-      .order('created_at', { ascending: false })
-      .limit(50);
-
-    if (error) {
-      $('ordersList').innerHTML = `<div class="notice error">${esc(error.message)}</div>`;
+    const revision=++ordersReadRevision,userId=session?.user?.id,list=$('ordersList');
+    if(!userId){list.dataset.state='signed-out';list.setAttribute('aria-busy','false');list.innerHTML='<div class="record" role="status"><small>Inicia sesión con Google para ver tus pedidos.</small></div>';return;}
+    list.dataset.state='loading';list.setAttribute('aria-busy','true');
+    list.innerHTML='<div class="record" role="status"><small>Cargando tus pedidos…</small></div>';
+    let result;
+    try{
+      result=await sb.from('orders')
+        .select('id,order_code,status,payment_method,total_amount,currency,created_at,updated_at,paid_at,customer_note')
+        .eq('user_id',userId).order('created_at',{ascending:false}).limit(50);
+    }catch{result={error:true};}
+    if(revision!==ordersReadRevision||session?.user?.id!==userId)return;
+    list.setAttribute('aria-busy','false');
+    if(result?.error||!Array.isArray(result?.data)){
+      list.dataset.state='error';
+      list.innerHTML='<div class="notice error" role="alert">No pudimos cargar tus pedidos. Pulsa Actualizar para reintentar.</div>';
       return;
     }
+    const data=result.data;list.dataset.state=data.length?'ready':'empty';
 
     $('ordersList').innerHTML = (data || []).map((o) => {
       const status = String(o.status || '').toUpperCase();
@@ -354,7 +360,7 @@
             ? `<div class="admin-actions"><button type="button" class="secondary-btn qr-order-btn" data-order-qr="${esc(o.id)}">Pagar / Ver QR</button></div>`
             : '';
       return `<div class="record"><div class="record-top"><div><b>${esc(o.order_code)}</b><small>${dateFmt(o.created_at)} · ${esc(o.payment_method)}</small></div><div class="order-status-stack">${paidBadge}${workflowBadge}</div></div><div class="record-meta"><b>${money(o.total_amount)}</b>${o.customer_note ? `<span>${esc(o.customer_note)}</span>` : ''}</div>${actions}</div>`;
-    }).join('') || '<div class="record"><small>Aún no tienes pedidos.</small></div>';
+    }).join('') || '<div class="record" role="status"><small>Aún no tienes pedidos. Explora la tienda para encontrar tu próximo juego.</small></div>';
 
     $('ordersList').querySelectorAll('[data-order-qr]').forEach((button) => {
       button.onclick = () => {

@@ -20,10 +20,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Build current and pinned R150 fixtures
+      - name: Build current and pinned R151 fixtures
         run: |
           mkdir /tmp/french-before-source
-          git archive 65c8dc83929c50b97110a705b1a3e5d2ff430a3f | tar -x -C /tmp/french-before-source
+          git archive 9f5c7e56bcddc2c4731eae9d0a10e324c5cbb008 | tar -x -C /tmp/french-before-source
           node scripts/build-visual-fixture.mjs /tmp/french-before-source /tmp/french-before
           node scripts/build-visual-fixture.mjs . /tmp/french-after
       - name: Compare Wallet Orders cart and QR at 360 px
@@ -49,11 +49,16 @@ jobs:
         run: |
           set -euo pipefail
           CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
-          for pair in wallet:loading wallet:zero wallet:empty wallet:error wallet:transaction_error cart:empty pedidos:empty pedidos:error auth:normal topup:normal; do
+          for width in 360 390 412 768 1366; do
+          for pair in wallet:loading wallet:zero wallet:empty wallet:error wallet:transaction_error cart:empty cart:checkout_loading pedidos:loading pedidos:empty pedidos:error auth:normal topup:normal; do
             view="${pair%:*}"; state="${pair#*:}"
-            name="after-${QA_RANK}-${view}-360-${state}"
-            timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=360&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
-            python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360 r151
+            if [ "$width" != 360 ]; then
+              case "$pair" in cart:empty|cart:checkout_loading|pedidos:loading|pedidos:empty|pedidos:error) ;; *) continue ;; esac
+            fi
+            name="after-${QA_RANK}-${view}-${width}-${state}"
+            timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width" r151 r153
+          done
           done
       - name: Chrome failure diagnostics
         if: failure()

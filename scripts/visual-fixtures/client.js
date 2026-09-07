@@ -4,7 +4,7 @@
  const params=new URLSearchParams(location.search),rank=params.get('rank')||'guest',view=params.get('view')||'inicio',scenario=params.get('state')||'normal';
  const user={id:'00000000-0000-4000-8000-000000000001',email:'qa@example.invalid',user_metadata:{full_name:'Cliente de prueba'}};
  let currentSession=rank==='guest'?null:{user,access_token:'qa-fixture-no-network'};
- const counters={},errors=[],blockedWrites=[],focusChecks=[],started=Date.now();
+ const counters={},errors=[],blockedWrites=[],focusChecks=[],cartChecks=[],started=Date.now();
  const plans=[{code:'ECLAT_OR',name:'Gold Rank',theme:'gold',subtitle:'Éclat Or',price_bob:7,duration_days:30},{code:'DIAMANT_BLEU',name:'Diamond Rank',theme:'diamond',subtitle:'Diamant Bleu',price_bob:15,duration_days:30}];
  const pass=plans.find(p=>p.theme===rank);
  const summary={ok:true,active_pass:pass?{...pass,ends_at:'2026-10-06T12:00:00Z'}:null,plans,points_available:1250,points_pending:180,points_per_bob:100,min_redeem_points:100,max_redeem_points:10000,history:[],recent:[]};
@@ -16,7 +16,7 @@
  class Query {
   constructor(table){this.table=table;this.filters=[];this.one=false;this.max=1000;}
   select(){return this;} eq(k,v){this.filters.push(x=>x[k]===v);return this;} in(k,v){this.filters.push(x=>v.includes(x[k]));return this;} order(){return this;} limit(n){this.max=n;return this;} maybeSingle(){this.one=true;return this;} single(){this.one=true;return this;}
-  then(a,b){counters['table:'+this.table]=(counters['table:'+this.table]||0)+1;let rows=(tableData[this.table]||[]).filter(x=>this.filters.every(f=>f(x))).slice(0,this.max);if(scenario==='empty'&&['orders','wallet_transactions','wallet_topup_requests'].includes(this.table))rows=[];if(scenario==='loading'&&this.table.startsWith('wallet_'))return new Promise(()=>{}).then(a,b);const failed=(scenario==='error'&&(this.table.startsWith('wallet_')||this.table==='orders'))||(scenario==='transaction_error'&&this.table==='wallet_transactions');return result(this.one?rows[0]||null:rows,failed?{message:'QA_READ_ERROR'}:null).then(a,b);}
+  then(a,b){counters['table:'+this.table]=(counters['table:'+this.table]||0)+1;let rows=(tableData[this.table]||[]).filter(x=>this.filters.every(f=>f(x))).slice(0,this.max);if(scenario==='empty'&&['orders','wallet_transactions','wallet_topup_requests'].includes(this.table))rows=[];if((scenario==='checkout_loading'&&this.table==='checkout_input_requirements')||(scenario==='loading'&&(this.table.startsWith('wallet_')||this.table==='orders')))return new Promise(()=>{}).then(a,b);const failed=(scenario==='error'&&(this.table.startsWith('wallet_')||this.table==='orders'))||(scenario==='transaction_error'&&this.table==='wallet_transactions');return result(this.one?rows[0]||null:rows,failed?{message:'QA_READ_ERROR'}:null).then(a,b);}
  }
  const client={from:table=>new Query(table),rpc(name){counters[name]=(counters[name]||0)+1;
   const data={is_admin:false,admin_app_is_allowed:false,get_my_wallet_balance:scenario==='zero'?0:70.30,get_my_loyalty_summary:summary,get_my_loyalty_launch_progress:{program_launched:true,admin_view:false,rewarded_ads_enabled:false},get_my_loyalty_upgrade_quote:{eligible:rank==='gold',charged_bob:8,ends_at:'2026-10-06T12:00:00Z',remaining_days:30},get_my_paid_whatsapp_notice_status:{available:false},get_my_rewards_ad_preferences:{enabled:false},get_my_ad_reward_status:{enabled:false}};
@@ -41,7 +41,7 @@
  if(scenario==='lite'){Object.defineProperty(navigator,'deviceMemory',{value:2,configurable:true});Object.defineProperty(navigator,'hardwareConcurrency',{value:2,configurable:true});}
  window.addEventListener('error',e=>errors.push(String(e.message||'resource error')));
  window.addEventListener('unhandledrejection',e=>errors.push(String(e.reason?.message||e.reason)));
- function report(){const root=document.documentElement;const evidence={qa:true,rank,view,scenario,width:innerWidth,bootstrap:root.dataset.fsBootstrap,membership:root.dataset.fsMembership||'base',motion:root.dataset.r8Motion,features:{wallet:root.dataset.fsWalletReady,orders:root.dataset.fsOrdersReady,checkout:root.dataset.fsCheckoutReady},qrDecorator:document.getElementById('qrWhatsapp')?.dataset.bisaReady==='1',heroAnimation:getComputedStyle(document.querySelector('.hero'),'::after').animationName,ribbonAnimation:document.getElementById('fsRankPremiumRibbon')?getComputedStyle(document.getElementById('fsRankPremiumRibbon'),'::after').animationName:'none',wallet:{state:document.getElementById('walletBalance')?.dataset.state,balance:document.getElementById('walletBalance')?.textContent,history:document.getElementById('walletHistory')?.dataset.state,topups:document.getElementById('topupHistory')?.dataset.state},focusChecks,blockedWrites,overflow:root.scrollWidth>innerWidth,overflowElements:Array.from(document.querySelectorAll('body *')).filter(e=>e.getClientRects().length&&getComputedStyle(e).position!=='fixed'&&e.getBoundingClientRect().right>innerWidth+1).slice(0,6).map(e=>e.id||e.className),errors:errors.slice(0,8),calls:counters,elapsed:Date.now()-started};let out=document.getElementById('fsQaEvidence');if(!out){out=document.createElement('pre');out.id='fsQaEvidence';out.hidden=true;document.body.append(out);}out.textContent=JSON.stringify(evidence);if(parent!==window)parent.postMessage(evidence,location.origin);}
+ function report(){const root=document.documentElement;const evidence={qa:true,rank,view,scenario,width:innerWidth,bootstrap:root.dataset.fsBootstrap,membership:root.dataset.fsMembership||'base',motion:root.dataset.r8Motion,features:{wallet:root.dataset.fsWalletReady,orders:root.dataset.fsOrdersReady,checkout:root.dataset.fsCheckoutReady},qrDecorator:document.getElementById('qrWhatsapp')?.dataset.bisaReady==='1',heroAnimation:getComputedStyle(document.querySelector('.hero'),'::after').animationName,ribbonAnimation:document.getElementById('fsRankPremiumRibbon')?getComputedStyle(document.getElementById('fsRankPremiumRibbon'),'::after').animationName:'none',orders:{state:document.getElementById('ordersList')?.dataset.state},wallet:{state:document.getElementById('walletBalance')?.dataset.state,balance:document.getElementById('walletBalance')?.textContent,history:document.getElementById('walletHistory')?.dataset.state,topups:document.getElementById('topupHistory')?.dataset.state},focusChecks,cartChecks,checkout:{disabled:['checkoutQR','checkoutWallet'].every(id=>document.getElementById(id)?.disabled),opacity:document.getElementById('checkoutQR')?getComputedStyle(document.getElementById('checkoutQR')).opacity:null,busy:document.getElementById('checkoutQR')?.getAttribute('aria-busy'),progress:document.getElementById('checkoutProgress')?.textContent},blockedWrites,overflow:root.scrollWidth>innerWidth,overflowElements:Array.from(document.querySelectorAll('body *')).filter(e=>e.getClientRects().length&&getComputedStyle(e).position!=='fixed'&&e.getBoundingClientRect().right>innerWidth+1).slice(0,6).map(e=>e.id||e.className),errors:errors.slice(0,8),calls:counters,elapsed:Date.now()-started};let out=document.getElementById('fsQaEvidence');if(!out){out=document.createElement('pre');out.id='fsQaEvidence';out.hidden=true;document.body.append(out);}out.textContent=JSON.stringify(evidence);if(parent!==window)parent.postMessage(evidence,location.origin);}
  function checkDialog(id){
   const modal=document.getElementById(id),opener=document.getElementById('cartButton');
   const check=(pass,label)=>{if(!pass)throw new Error('QA_DIALOG_'+id+'_'+label);focusChecks.push(id+':'+label);};
@@ -56,6 +56,29 @@
   check(document.activeElement===opener,'restore');
   openModal(id);
  }
+ async function checkCart(){
+  const box=document.getElementById('cartItems'),modal=document.getElementById('cartModal');
+  const check=(pass,label)=>{if(!pass)throw new Error('QA_CART_'+label);cartChecks.push(label);};
+  const plus=box.querySelector('[data-plus]');plus.focus();plus.click();
+  check(cart[0].quantity===3&&document.getElementById('cartTotal').textContent===money(210.90),'increment-total');
+  check(document.activeElement===box.querySelector('[data-plus]'),'increment-focus');
+  const minus=box.querySelector('[data-minus]');minus.focus();minus.click();
+  check(cart[0].quantity===2&&document.activeElement===box.querySelector('[data-minus]'),'decrement-focus');
+  cart[0].quantity=98;renderCart();box.querySelector('[data-plus]').focus();box.querySelector('[data-plus]').click();
+  check(cart[0].quantity===99&&box.querySelector('[data-plus]').disabled,'limit');
+  check(document.activeElement===box.querySelector('[data-minus]'),'limit-focus');
+  cart[0].quantity=1;renderCart();box.querySelector('[data-minus]').focus();box.querySelector('[data-minus]').click();
+  check(!cart.length&&document.activeElement===modal.querySelector('[data-close]'),'remove-last-focus');
+  addToCart(904);box.querySelector('[data-remove]').focus();box.querySelector('[data-remove]').click();
+  check(!cart.length&&document.activeElement===modal.querySelector('[data-close]'),'remove-button-focus');
+  addToCart(904);setQty(904,1);
+  // Exercise the active checkout-to-login transition with no authenticated session.
+  const savedSession=session;session=null;document.getElementById('checkoutQR').focus();
+  await document.getElementById('checkoutQR').onclick(new Event('click'));
+  check(document.getElementById('authModal').contains(document.activeElement),'checkout-auth-focus');
+  closeModal('authModal');check(document.activeElement===document.getElementById('cartButton'),'checkout-auth-restore');
+  session=savedSession;openModal('cartModal');
+ }
  window.addEventListener('load',async()=>{
   for(let i=0;i<100&&document.documentElement.dataset.fsBootstrap!=='ready';i++)await new Promise(r=>setTimeout(r,60));
   if(currentSession&&window.FSFeatureLoader)await window.FSFeatureLoader.ensure('loyalty');
@@ -67,6 +90,7 @@
   else if(view==='topup')openModal('topupQrModal');
   else if(view!=='admin')navigate(view);
   if(params.get('checks')==='r151'&&['cart','qr','auth','topup'].includes(view))checkDialog({cart:'cartModal',qr:'qrModal',auth:'authModal',topup:'topupQrModal'}[view]);
+  if(params.get('checks')==='r151'&&view==='cart'){if(scenario==='normal')await checkCart();if(scenario==='checkout_loading')document.getElementById('checkoutQR').click();}
   setTimeout(report,500);setTimeout(report,1500);setTimeout(report,3000);
  });
  document.addEventListener('click',()=>setTimeout(report,800));
