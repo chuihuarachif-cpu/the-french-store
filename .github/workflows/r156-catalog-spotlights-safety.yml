@@ -1,0 +1,33 @@
+name: R156 catalog spotlights safety
+
+on:
+  pull_request:
+    paths:
+      - 'v2/catalog-order.js'
+      - 'v2/catalog-product-spotlights.js'
+      - 'v2/catalog-product-spotlights.css'
+      - 'scripts/test-r156-catalog-spotlights.mjs'
+      - '.github/workflows/r156-catalog-spotlights-safety.yml'
+  push:
+    branches: [main, 'r156-brawl-stars-account-products']
+    paths:
+      - 'v2/catalog-order.js'
+      - 'v2/catalog-product-spotlights.js'
+      - 'v2/catalog-product-spotlights.css'
+      - 'scripts/test-r156-catalog-spotlights.mjs'
+      - '.github/workflows/r156-catalog-spotlights-safety.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax
+        run: |
+          node --check v2/catalog-order.js
+          node --check v2/catalog-product-spotlights.js
+      - name: R156 presentation contract
+        run: node scripts/test-r156-catalog-spotlights.mjs

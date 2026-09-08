@@ -1,0 +1,65 @@
+/* THE FRENCH STORE — R156 catalog product spotlights.
+   Visual-only accents for passes and Brawl Stars. Business logic remains server-side. */
+
+.r6-package-card.fs-pass-product{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border-color:rgba(247,197,74,.58);
+  background:
+    radial-gradient(circle at 8% 0,rgba(255,217,92,.13),transparent 34%),
+    linear-gradient(145deg,rgba(55,37,7,.82),rgba(7,23,34,.98) 58%,rgba(25,18,6,.88));
+  box-shadow:0 12px 30px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,239,177,.08);
+}
+.r6-package-card.fs-pass-product::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(108deg,transparent 15%,rgba(255,234,158,.11) 39%,transparent 58%);
+  transform:translateX(-42%);
+  opacity:.72;
+}
+.r6-package-card.fs-pass-product .r6-package-copy strong{color:#fff1b2;text-shadow:0 0 12px rgba(255,204,70,.16)}
+.r6-package-card.fs-pass-product .r6-package-actions>b{color:#ffe07b;font-size:1.02rem;text-shadow:0 0 12px rgba(246,188,42,.16)}
+.r6-package-card.fs-pass-product .add-btn{border-color:rgba(246,199,76,.54);background:linear-gradient(135deg,#e6aa25,#ffd75a);color:#201400;font-weight:800;box-shadow:0 7px 18px rgba(198,137,16,.18)}
+.fs-product-spotlight-badge{display:inline-flex;align-items:center;width:max-content;max-width:100%;margin:0 0 7px;padding:4px 7px;border:1px solid rgba(255,215,91,.42);border-radius:999px;background:rgba(255,202,54,.1);color:#ffe38c;font:700 8px Orbitron,sans-serif;letter-spacing:.08em;line-height:1.2}
+
+.r6-package-card.fs-pass-product.fs-pass-plus{
+  border-color:rgba(122,232,255,.7);
+  background:
+    radial-gradient(circle at 9% 0,rgba(123,239,255,.18),transparent 35%),
+    radial-gradient(circle at 96% 100%,rgba(222,93,255,.13),transparent 40%),
+    linear-gradient(145deg,rgba(8,50,69,.94),rgba(8,19,35,.98) 55%,rgba(47,14,59,.88));
+  box-shadow:0 14px 34px rgba(14,156,202,.15),0 0 0 1px rgba(168,244,255,.035),inset 0 1px 0 rgba(220,253,255,.1);
+}
+.r6-package-card.fs-pass-plus .fs-product-spotlight-badge{border-color:rgba(133,238,255,.58);background:linear-gradient(90deg,rgba(80,220,255,.13),rgba(219,89,255,.12));color:#d5fbff}
+.r6-package-card.fs-pass-plus .r6-package-copy strong{color:#d9fbff;text-shadow:0 0 14px rgba(105,229,255,.22)}
+.r6-package-card.fs-pass-plus .r6-package-actions>b{color:#aef5ff;text-shadow:0 0 13px rgba(84,219,255,.25)}
+.r6-package-card.fs-pass-plus .add-btn{border-color:rgba(117,234,255,.62);background:linear-gradient(135deg,#52dff3,#a4f4ff 55%,#d593ff);color:#06202b;box-shadow:0 8px 21px rgba(40,187,224,.2)}
+
+.r6-game-card.fs-brawl-card,.r6-feature-card.fs-brawl-card{border-color:rgba(118,238,83,.42)!important;background-image:radial-gradient(circle at 18% 8%,rgba(116,246,80,.14),transparent 40%),linear-gradient(160deg,#0b241d,#071522)!important}
+.r6-game-card.fs-brawl-card .r6-game-genre,.r6-game-card.fs-brawl-card .r6-game-card-foot i{color:#9aff6d}
+.r6-game-detail.fs-brawl-detail .r6-hero{border-color:rgba(119,243,82,.58);background:radial-gradient(circle at 88% 16%,rgba(255,210,68,.09),transparent 34%),linear-gradient(130deg,rgba(6,31,30,.98),rgba(7,18,31,.94))}
+.r6-game-detail.fs-brawl-detail .r6-hero-glow{background:#74ef58;opacity:.16}
+.r6-game-detail.fs-brawl-detail .r6-game-genre{color:#a4ff79}
+.r6-game-detail.fs-brawl-detail .r6-hero-logo{border-color:rgba(142,247,100,.58);box-shadow:0 20px 50px rgba(0,0,0,.38),0 0 24px rgba(93,219,66,.12)}
+.r6-package-card.fs-brawl-gem-product{border-color:rgba(103,222,79,.3);background:radial-gradient(circle at 8% 0,rgba(109,239,82,.08),transparent 34%),#071722}
+.r6-package-card.fs-brawl-gem-product .r6-package-actions>b{color:#baf58e}
+
+@media(hover:hover) and (pointer:fine){
+  .r6-package-card.fs-pass-product{transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+  .r6-package-card.fs-pass-product:hover{transform:translateY(-2px);border-color:rgba(255,219,111,.8);box-shadow:0 16px 38px rgba(0,0,0,.3),0 0 24px rgba(213,156,31,.08)}
+  .r6-package-card.fs-pass-plus:hover{border-color:rgba(154,244,255,.9);box-shadow:0 18px 42px rgba(9,165,211,.2),0 0 26px rgba(180,88,239,.08)}
+}
+
+@media(max-width:620px){
+  .r6-package-card.fs-pass-product{padding:12px}
+  .fs-product-spotlight-badge{margin-bottom:5px;font-size:7px;padding:3px 6px}
+  .r6-package-card.fs-pass-product .r6-package-actions>b{font-size:.82rem}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .r6-package-card.fs-pass-product,.r6-package-card.fs-pass-product::before{transition:none!important;animation:none!important;transform:none!important}
+}
