@@ -11,6 +11,9 @@
 
   function ensureShowcaseStyle() {
     if (document.getElementById('fs-rank-pass-showcase-css')) return;
+    // Controller unit fixtures intentionally provide no DOM head/createElement.
+    // The style loader is optional presentation wiring and must fail closed there.
+    if (!document.head || typeof document.createElement !== 'function') return;
     const link = document.createElement('link');
     link.id = 'fs-rank-pass-showcase-css';
     link.rel = 'stylesheet';
