@@ -15,8 +15,26 @@
   const RESOURCE_RE = /(diamant|diamond|\buc\b|\bcp\b|coin|moneda|cristal|crystal|gem|jade|bond|robux|v[- ]?bucks?|point|punto|credit|token|gold|oro|cash|coupon|cupon)/i;
   const PASS_RE = /(pase|pass|weekly|semanal|mensual|crep[uú]sculo|twilight|subscription|suscripci[oó]n|membres[ií]a|membership|battle\s*(?:pass|bounty)|elite\s*pass|\blv\.?\s*\d|level\s*\d)/i;
   const EVENT_RE = /(evento|event|x\s*2|2\s*x|doble|double)/i;
+  const SPOTLIGHT_REVISION = '20260907-r156';
 
   let scheduled = false;
+
+  function ensureProductSpotlights() {
+    if (!document.getElementById('fs-catalog-product-spotlights-css')) {
+      const link = document.createElement('link');
+      link.id = 'fs-catalog-product-spotlights-css';
+      link.rel = 'stylesheet';
+      link.href = `./catalog-product-spotlights.css?v=${SPOTLIGHT_REVISION}`;
+      document.head.appendChild(link);
+    }
+    if (!document.getElementById('fs-catalog-product-spotlights-js')) {
+      const script = document.createElement('script');
+      script.id = 'fs-catalog-product-spotlights-js';
+      script.async = false;
+      script.src = `./catalog-product-spotlights.js?v=${SPOTLIGHT_REVISION}`;
+      document.head.appendChild(script);
+    }
+  }
 
   function norm(value) {
     return String(value || '')
@@ -186,6 +204,7 @@
     const catalog = document.getElementById('catalogList');
     if (!catalog) return;
 
+    ensureProductSpotlights();
     scheduleSort();
     const observer = new MutationObserver(() => scheduleSort());
     observer.observe(catalog, { childList: true, subtree: true });
