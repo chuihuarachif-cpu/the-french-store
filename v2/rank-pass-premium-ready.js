@@ -3,10 +3,20 @@
    authenticated loyalty feature without changing Auth, Wallet, BISA or Rewards data. */
 (() => {
   'use strict';
-  const VERSION = 'rank-premium-ready-v1-20260825';
+  const VERSION = 'rank-premium-ready-v2-r157-20260907';
+  const SHOWCASE_REVISION = '20260907-r157';
   let attempts = 0;
   let timer = null;
   let observer = null;
+
+  function ensureShowcaseStyle() {
+    if (document.getElementById('fs-rank-pass-showcase-css')) return;
+    const link = document.createElement('link');
+    link.id = 'fs-rank-pass-showcase-css';
+    link.rel = 'stylesheet';
+    link.href = `./rank-pass-showcase.css?v=${SHOWCASE_REVISION}`;
+    document.head.appendChild(link);
+  }
 
   function refresh() {
     try { window.FSRankPremium?.refresh?.(); } catch {}
@@ -24,6 +34,7 @@
   }
 
   function install() {
+    ensureShowcaseStyle();
     poll();
     observer = new MutationObserver((mutations) => {
       if (mutations.some((m) => m.attributeName === 'data-fs-membership' || m.attributeName === 'data-fs-loyalty-ready')) {
