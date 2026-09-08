@@ -167,7 +167,7 @@
 
 @media(max-width:420px){
   .fs-pass-card.fs-pass-gold,.fs-pass-card.fs-pass-diamond{padding:15px}
-  .fs-pass-card.fs-pass-gold::after,.fs-pass-card.fs-pass-diamond::after{position:static;justify-self:start;grid-row:1;margin-bottom:-3px}
+  .fs-pass-card.fs-pass-gold::after,.fs-pass-card.fs-pass-diamond::after{top:9px;right:9px;max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 
 @media(prefers-reduced-motion:reduce){
