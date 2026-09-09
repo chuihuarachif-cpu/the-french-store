@@ -29,6 +29,7 @@
   <script defer src="./r142-maintenance-main-grid.js?v=20260902-r142"></script>
   <script defer src="./r138-account-cost-editor.js?v=20260902-r140"></script>
   <script defer src="./r139-quotations.js?v=20260907-r154"></script>
+  <script defer src="./remove-gamerhub-ui.js?v=20260909-r158"></script>
 </head>
 <body>
   <header class="topbar">
@@ -73,12 +74,11 @@
         <button type="button" data-tab="maintenance">🛠️ Mantenimiento</button>
         <button type="button" data-tab="prices">💰 Precios</button>
         <button type="button" data-tab="quotations">🧮 Cotizaciones</button>
-        <button type="button" data-tab="gamerhub">🎮 GamerHub</button>
         <button type="button" data-tab="history">📚 Historial</button>
       </nav>
 
       <section id="overviewPanel" class="panel" data-panel="overview">
-        <div class="panel-head"><div><span class="eyebrow">RESUMEN</span><h2>Estado administrativo</h2><p>Pendientes que requieren atención y capital registrado en GamerHub.</p></div><button class="icon-btn" type="button" data-refresh="overview" aria-label="Actualizar">↻</button></div>
+        <div class="panel-head"><div><span class="eyebrow">RESUMEN</span><h2>Estado administrativo</h2><p>Pendientes que requieren atención y estado operativo actual.</p></div><button class="icon-btn" type="button" data-refresh="overview" aria-label="Actualizar">↻</button></div>
         <div id="overviewList" class="summary-grid"></div>
       </section>
 
@@ -116,13 +116,8 @@
         <div id="quotationsList"></div>
       </section>
 
-      <section id="gamerhubPanel" class="panel hidden" data-panel="gamerhub">
-        <div class="panel-head"><div><span class="eyebrow">GAMERHUB</span><h2>Wallet e inventario USDT</h2><p>Capital registrado para GamerHub. Esto es control contable: no deposita ni mueve dinero en el proveedor.</p></div><button class="icon-btn" type="button" data-refresh="gamerhub" aria-label="Actualizar">↻</button></div>
-        <div id="gamerhubList" class="list"></div>
-      </section>
-
       <section id="historyPanel" class="panel hidden" data-panel="history">
-        <div class="panel-head"><div><span class="eyebrow">AUDITORÍA</span><h2>Historial administrativo</h2><p>Aprobaciones Wallet, pagos ACH, pedidos, cambios de precio y movimientos GamerHub.</p></div><button class="icon-btn" type="button" data-refresh="history" aria-label="Actualizar">↻</button></div>
+        <div class="panel-head"><div><span class="eyebrow">AUDITORÍA</span><h2>Historial administrativo</h2><p>Aprobaciones Wallet, pagos ACH, pedidos y cambios de precio.</p></div><button class="icon-btn" type="button" data-refresh="history" aria-label="Actualizar">↻</button></div>
         <div id="historyList" class="list"></div>
       </section>
     </section>

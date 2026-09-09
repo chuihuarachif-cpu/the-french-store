@@ -110,7 +110,6 @@
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
       await loadScript('./admin-fulfillment-ui.js', 'fs-admin-fulfillment-js');
       await loadScript('./admin-streaming-prices.js?v=20260826-r57', 'fs-admin-streaming-prices-js');
-      await loadScript('./admin-gamerhub-wallet.js?v=20260826-r57', 'fs-admin-gamerhub-wallet-js');
     },
     motion: async () => {
       await loadStyle('./r8.css', 'fs-r8-css');

@@ -7,7 +7,6 @@ on:
       - 'v2/index.html'
       - 'v2/bootstrap.js'
       - 'v2/admin-streaming-prices.js'
-      - 'v2/admin-gamerhub-wallet.js'
       - '.github/workflows/r57-fixed-prices-usdt-admin.yml'
   push:
     branches: [main]
@@ -15,7 +14,6 @@ on:
       - 'v2/index.html'
       - 'v2/bootstrap.js'
       - 'v2/admin-streaming-prices.js'
-      - 'v2/admin-gamerhub-wallet.js'
       - '.github/workflows/r57-fixed-prices-usdt-admin.yml'
   workflow_dispatch:
 
@@ -32,14 +30,13 @@ jobs:
         run: |
           node --check v2/bootstrap.js
           node --check v2/admin-streaming-prices.js
-          node --check v2/admin-gamerhub-wallet.js
 
       - name: Validate fresh Admin module versions
         run: |
           set -euo pipefail
           node scripts/test-bootstrap-release.mjs
           grep -Fq './admin-streaming-prices.js?v=20260826-r57' v2/bootstrap.js
-          grep -Fq './admin-gamerhub-wallet.js?v=20260826-r57' v2/bootstrap.js
+          ! grep -Fq 'admin-gamerhub-wallet.js' v2/bootstrap.js
 
       - name: Validate Streaming fixed-price save contract
         run: |
@@ -51,16 +48,7 @@ jobs:
           grep -Fq "categoria', 'Streaming'" v2/admin-streaming-prices.js
           ! grep -Fq 'CSS.escape' v2/admin-streaming-prices.js
 
-      - name: Validate GamerHub inventory UX
-        run: |
-          set -euo pipefail
-          grep -Fq 'Auto consumo activo' v2/admin-gamerhub-wallet.js
-          grep -Fq 'Cada compra GamerHub que termine SUCCEEDED descuenta automáticamente' v2/admin-gamerhub-wallet.js
-          grep -Fq "admin_gamerhub_wallet_add" v2/admin-gamerhub-wallet.js
-          grep -Fq "admin_gamerhub_wallet_consume" v2/admin-gamerhub-wallet.js
-          grep -Fq 'Ajuste manual excepcional' v2/admin-gamerhub-wallet.js
-
       - name: Validate no private credentials were added
         run: |
           set -euo pipefail
-          ! grep -Eqi 'service[_-]?role[^A-Za-z]*(key|secret)|BISA_SIP_PROD_PASSWORD|GAMERHUB_CF_ACCESS_CLIENT_SECRET|client_secret' v2/admin-streaming-prices.js v2/admin-gamerhub-wallet.js v2/bootstrap.js
+          ! grep -Eqi 'service[_-]?role[^A-Za-z]*(key|secret)|BISA_SIP_PROD_PASSWORD|GAMERHUB_CF_ACCESS_CLIENT_SECRET|client_secret' v2/admin-streaming-prices.js v2/bootstrap.js
