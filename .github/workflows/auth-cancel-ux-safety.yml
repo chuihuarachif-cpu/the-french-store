@@ -54,15 +54,31 @@ jobs:
           ! grep -q "Entrar con correo" v2/auth-google.js v2/auth-ease.js
           ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE|client_secret|provider_token" v2/auth-ease.js v2/auth-google.js v2/legal.js v2/auth-confirm.js
 
-      - name: Historical recovery compatibility remains isolated
+      - name: No password capability anywhere in the public storefront
         run: |
           set -euo pipefail
-          grep -q "sb.auth.resetPasswordForEmail" v2/legal.js
-          grep -q "sb.auth.updateUser({ password" v2/legal.js
-          grep -q "sb.auth.verifyOtp" v2/auth-confirm.js
+          # R160: este paso se llamaba "Historical recovery compatibility
+          # remains isolated" y EXIGÍA que el código de recuperación existiera,
+          # tolerándolo como compatibilidad de transición. La transición
+          # terminó: el ingreso público es solo Google, así que ahora se exige
+          # su AUSENCIA. Es una garantía estrictamente más fuerte que la que
+          # sustituye, no una relajación.
+          # Se excluye v2/app.js: es el monolito histórico que index.html NO
+          # carga (0 referencias) y que AGENTS.md manda conservar como
+          # referencia de rollback hasta una revisión de limpieza aprobada.
+          # Conserva llamadas de contraseña muertas; se sirve pero no se
+          # ejecuta. Queda anotado como deuda, no como vía activa.
+          ! grep -rq --exclude=app.js "sb.auth.resetPasswordForEmail" v2/
+          ! grep -rq --exclude=app.js "sb.auth.updateUser({ password" v2/
+          ! grep -rq --exclude=app.js "sb.auth.verifyOtp" v2/
+          ! grep -rq --exclude=app.js "sb.auth.signUp(" v2/
+          ! grep -rq --exclude=app.js "sb.auth.signInWithPassword" v2/
+          ! grep -rEq --exclude=app.js '<input[^>]*type="password"' v2/
+          # app.js debe seguir sin cargarse desde el shell público.
+          ! grep -q 'app\.js' v2/index.html
           grep -q "specialAuthFlow" v2/auth-ease.js
           grep -q "specialAuthFlow" v2/auth-google.js
-          echo 'Recovery code remains only for transition/special links; it is not a public login entry point.'
+          echo 'Sin creación de cuenta, sin restablecimiento y sin definición de contraseña en la tienda pública.'
 
       - name: Check auth module ownership and load order
         run: |
