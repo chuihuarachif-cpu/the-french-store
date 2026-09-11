@@ -174,9 +174,14 @@ aparecía. Ahora se deriva de `order_items.provider`.
 
 ## Cuentas en Venta (R163)
 
-Vitrina de cuentas de juego, **debajo** de las 4 categorías y a lo ancho.
+**R164:** el bloque de entrada vive **dentro de `#categoryGrid`**, ocupando
+las dos columnas (`grid-column: 1 / -1`) debajo de Streaming y Gift Cards, y
+**lleva a una vista propia** (`#view-cuentas`), igual que Gift Cards lleva al
+catálogo. El bloque es HTML estático, así que siempre se ve y no parpadea; la
+vista carga las cuentas solo al entrar.
+
 **No es una quinta categoría**: las públicas siguen siendo exactamente 4 y
-el CI lo verifica en `v2/config/storefront.js`. Es una sección aparte.
+el CI lo verifica en `v2/config/storefront.js`.
 
 Diferencia clave con el resto de la tienda: **inventario de una sola
 unidad**. Una recarga se vende infinitas veces; una cuenta se vende una vez.
@@ -186,7 +191,7 @@ compra se cierra **por WhatsApp**, no por el carrito: no se tocó checkout.
 | Qué | Dónde |
 | --- | --- |
 | Vitrina pública | `v2/cuentas-venta.js` + `v2/cuentas-venta.css` |
-| Contenedor y modal | `v2/index.html` (`#cuentasVenta`, `#cuentaModal`) |
+| Bloque, vista y modal | `v2/index.html` (`#cuentasEntry`, `#view-cuentas`, `#cuentaModal`) |
 | Carga diferida | `v2/bootstrap.js`, al final de `loadCore()` |
 | Panel privado | `admin/r163-cuentas.js` + pestaña `data-tab="cuentas"` |
 | Tabla | `public.cuentas_en_venta` |
@@ -203,8 +208,8 @@ Fotos: se reescalan a 1600 px y se convierten a **WebP** en el navegador
 ~250 KB. En la tienda van con `loading="lazy"` y la galería completa solo
 se pide al abrir la ficha, así que no retrasan la portada.
 
-Fail-closed: si la consulta falla o no hay cuentas, la sección se oculta y
-el resto de la tienda sigue igual.
+Fail-closed: si la consulta falla o no hay cuentas, la vista muestra su
+mensaje vacío y el resto de la tienda sigue igual.
 
 ## Autenticación (R160)
 
@@ -271,15 +276,128 @@ Tres niveles, decididos por el rango real del usuario:
   previa para probar los tres niveles.
 
 Sonidos (`tier-sound.js`): Web Audio API pura, sin archivos ni librerías.
-Solo dos: un clic corto al **tocar** algo y otro más suave al **entrar** a
-una sección. **No hay sonido de dinero ni de pago** — se retiró junto con
-el módulo `tier-events.js` que lo disparaba, porque resultaba invasivo. Las
-superficies de pago y QR están en **silencio total**. Todo se calla bajo
-`prefers-reduced-motion`.
+**R164: solo suena al ENTRAR a una sección.** El clic al tocar cada cosa se
+retiró a pedido del propietario: `installSoundTriggers()` en `tier-gate.js`
+quedó **vacío a propósito** — no volver a poner un listener global de clic.
+Siguen existiendo dos `tap` puntuales como confirmación (guardar el nombre
+preferido y el selector de vista previa del propietario). Tampoco hay sonido
+de dinero ni de pago; pago y QR están en **silencio total**. Todo se calla
+bajo `prefers-reduced-motion`.
+
+**R164 — los niveles se reforzaron.** Gold y Diamond se veían casi iguales a
+Base en el teléfono porque el CSS era deliberadamente contenido. Ahora cada
+uno marca: sello de rango en el hero (`.hero::before`), tarjetas de categoría
+con su material, marca de la barra superior en degradado, y bordes propios en
+topbar y nav. Los bucles decorativos siguen condicionados a
+`data-r8-motion="full"`, que es lo que el CI verifica.
+
+**R167 — marcos dibujados en el repo.** Gold lleva filigrana dorada con
+volutas de esquina; Diamond, una cinta de cristal tallado con piedras en las
+cuatro esquinas. Son tres SVG propios en `v2/tiers/`:
+
+| Pieza | Archivo | Montaje |
+| --- | --- | --- |
+| Marco Gold | `frame-gold.svg` | `border-image`, slice 120, `stretch`, 26 px |
+| Marco Diamond | `frame-diamond.svg` | `border-image`, slice 120, `stretch`, 15 px |
+| Gema del logotipo | `gem-brillante.svg` | fondo de `.brand > span` |
+
+Por qué `border-image` y no un fondo estirado: es lo único que alarga los
+lados **sin deformar las esquinas**. El quinto bloque mide el doble de ancho
+que los otros cuatro y la voluta se ve igual en los cinco.
+
+Van **solo en `.category-card`** — cinco elementos estáticos del HTML. En
+`.game-card` serían decenas y es justo lo que se traba en gama baja. El borde
+pintado se paga una vez por repintado y no anima: no entra en el presupuesto
+de scroll del reflejo de R165.
+
+Detalles que ya costaron una pasada y conviene no redescubrir:
+
+- `border-image` **ignora `border-radius`**, así que el radio de la tarjeta se
+  bajó a 7 px (Gold) y 3 px (Diamond) para que el fondo no asome por fuera del
+  marco en las esquinas.
+- El `:hover` de `tier-base.css` reenciende `border-color`, y ese hilo de 1 px
+  aparecería **por fuera** del marco. Los dos niveles lo apagan explícitamente,
+  y el quinto bloque otra vez aparte porque trae borde propio de R165.
+- En el SVG los espejos van como `matrix(...)`, no como `scale()`: el origen de
+  transformación de un elemento SVG no es el del lienzo y dos de los cuatro
+  lados de Diamond se quedaban sin tallar.
+- **Diamond costó cuatro intentos.** Un zigzag de triángulos macizos se leía
+  como festón; unas lascas inclinadas sobre relleno blanco, como fichas de
+  dominó; dos hileras de facetas pequeñas, como cinta decorativa. Lo que la
+  maqueta tiene de verdad **no es un patrón repetido**: es una **losa biselada
+  con las esquinas cortadas a 45°**, y las "líneas finas" son los filos del
+  bisel, no divisiones de faceta. Son 16 caras (4 lados y 4 chaflanes, cada
+  uno partido al 38 % en escalón exterior claro e interior violeta) más un
+  barrido prismático que va **flojo fuera y fuerte dentro**: al revés queda
+  lavado. Si alguien vuelve a proponer facetas repetidas, ya se probó.
+- **El chaflán vive en dos sitios y tienen que casar**: 80 unidades del SVG y
+  el `clip-path` del CSS. En pantalla es `80 × border-image-width / 120`
+  (15 px de banda → 10 px; 12 px → 8 px). Si se separan, el fondo de la
+  tarjeta asoma por las cuatro esquinas. La prueba lo calcula y lo compara.
+- **Con `clip-path` no cabe halo hacia fuera.** El recorte se aplica *después*
+  de la sombra y del filtro, así que se come cualquier `box-shadow` exterior y
+  también `filter: drop-shadow()`. Comprobado en navegador, no deducido de la
+  especificación. La luz de Diamond viene de sombras `inset` y del propio
+  bisel; la prueba rechaza una sombra no-`inset` en una regla con `clip-path`.
+- La gema **no toca `index.html`**: el logotipo sigue diciendo 💎 y el CSS lo
+  esconde con `font-size: 0` y pinta el SVG de fondo. Base conserva el emoji.
+
+Guarda: `scripts/test-r167-tier-frames.mjs` (offline). **Veinte** regresiones
+simuladas y atrapadas: marco bajando a `.game-card`, hover sin apagar, marco
+colándose en Base, `stretch` degradado a `round`, chaflán del CSS fuera de
+sincronía con el del dibujo, halo exterior resucitado, cara del bisel o arista
+perdida, voluta/chispa/barra de luz de Gold borrada, hilo de oro en color
+plano, gema del logotipo quitada, filtro o imagen base64 metidos en un SVG.
+El tope de peso se mide **comprimido** (4 KB), que es lo que sirve GitHub
+Pages, con un tope en crudo aparte por si alguien incrusta un raster.
+
+Lo que pidió el propietario como "paquete de assets" (`gold_frame.png`,
+`diamond_frame.png`, `gold_logo.png`, `diamond_logo_graphic.png`) **nunca
+llegó como archivos**: lo que se recibió fue una sola captura RGB de 1131×944
+sin canal alfa, con el damero de transparencia pintado dentro. No hay nada que
+recortar de ahí. **No volver a pedirlos**: los tres SVG del repo cubren el
+mismo diseño y escalan mejor.
 
 Bienvenida (`tier-welcome.js`): distingue cuenta nueva, regreso y regreso
 tras 7+ días usando `user.created_at` y `user.last_sign_in_at`, que ya
 vienen en la sesión. Sin tabla, columna ni RPC nuevos.
+
+## Movimiento e interacción (R165)
+
+| Qué | Dónde | Para quién |
+| --- | --- | --- |
+| Reflejo reactivo al scroll + aparición progresiva | `v2/tiers/tier-shine.js` | **solo Gold y Diamond** |
+| Deslizar de lado para cambiar de categoría | `v2/store-swipe.js` + `.css` | **todos** (es funcionalidad) |
+
+**Base no cambia.** El reflejo y la aparición solo se cargan en niveles
+pagados; `tier-gate.js` llama a `loadShine()` al aplicar Gold/Diamond y a
+`FSTierShine.desinstalar()` al volver a Base.
+
+### Cómo NO implementar el reflejo
+
+Una propuesta externa hacía `getBoundingClientRect()` **por cada tarjeta en
+cada evento de scroll** y escribía estilos en línea uno por uno. Eso son
+decenas de reflows forzados por píxel de dedo: justo lo que traba la gama
+baja. Además usaba `mix-blend-mode: color-dodge`, que compone en CPU.
+
+Lo que hay: se lee `scrollY` **una vez por frame** (sin forzar maquetación),
+se escribe **una sola** custom property `--fs-shine` en `<html>`, y las
+tarjetas la leen desde CSS con `transform`. Coste O(1) por frame. El reflejo
+se limita a las **tarjetas de categoría** (cinco elementos), no a todo el
+catálogo. La aparición usa `IntersectionObserver` y deja de observar cada
+elemento en cuanto aparece.
+
+Cuidado: `.hero::after` ya está ocupado por el barrido de Gold y por
+`fsDiamondHeroSweep`; `.hero::before` por el sello de rango. Por eso el
+reflejo nuevo va solo en `.category-card::after`.
+
+### Deslizamiento lateral
+
+Cambia de categoría pulsando el **mismo botón** de la pestaña, así que no
+duplica lógica. Nunca llama a `preventDefault()` mientras el gesto pueda ser
+scroll vertical. Deja empezar el gesto **encima de una tarjeta** (es donde va
+el dedo) y por eso suprime el clic posterior — pero **después** de mover, o
+se tragaría su propio clic sintético. Tocar la pestaña sigue funcionando.
 
 ## Entorno de esta caja
 
@@ -311,6 +429,9 @@ Todo fusionado en `main`. No queda ninguna rama en curso.
   sutil, bienvenida y nombre preferido. **Fusionado.**
 - PR #101 `fix/solo-google-login` — R160, cierre de la superficie de
   contraseña. **Fusionado.**
+- PR #105 `claude/repo-config-analysis-203vqk` — R164 a R167: bloque de
+  cuentas en la rejilla, reflejo al bajar, deslizamiento lateral y marcos
+  dibujados. **Abierto, a la espera de fusión.**
 
 ## Deuda conocida
 

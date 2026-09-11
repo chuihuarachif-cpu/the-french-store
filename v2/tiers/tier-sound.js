@@ -1,16 +1,19 @@
 /* THE FRENCH STORE — visual tier layer: sound.
    Web Audio API only. No audio files, no libraries, no network, no autoplay.
 
-   Deliberately minimal: a short, quiet click when you touch something, and a
-   slightly softer one when you enter a section. Nothing else makes noise.
-   No music, no money sound, no payment sound — the payment and QR surfaces
-   stay completely silent.
+   R164: el clic al tocar cada cosa se retiró a pedido del propietario. Ahora
+   solo suena al ENTRAR a una sección. Las voces de `tap` se conservan porque
+   dos acciones puntuales las usan como confirmación (guardar el nombre
+   preferido y el selector de vista previa del propietario), pero ya no hay
+   ningún listener global de clic.
+   Sin música, sin sonido de dinero y sin sonido de pago: las superficies de
+   pago y QR están en silencio total.
 
    Presentation only: reads no price, order, wallet or session data. */
 (() => {
   'use strict';
 
-  const VERSION = 'tier-sound-v3-20260911';
+  const VERSION = 'tier-sound-v4-20260911';
   const MUTE_KEY = 'fs.tier.muted';
 
   /* Surfaces that stay silent, always. */

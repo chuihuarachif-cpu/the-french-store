@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <!-- THE FRENCH STORE - R167. Marco Gold.
+       Dibujado para border-image con slice 120: las esquinas (120x120) nunca
+       se deforman, los bordes se estiran. Solo trazo y degradado: sin filtros,
+       sin blur, sin mascaras. No se descarga en el nivel Base. -->
+  <defs>
+    <linearGradient id="oro" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c79b48"/>
+      <stop offset=".16" stop-color="#ffeab4"/>
+      <stop offset=".36" stop-color="#e0b968"/>
+      <stop offset=".56" stop-color="#fff6da"/>
+      <stop offset=".76" stop-color="#dfb865"/>
+      <stop offset="1" stop-color="#a8823c"/>
+    </linearGradient>
+    <linearGradient id="destello" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff8e0" stop-opacity="0"/>
+      <stop offset=".3" stop-color="#fff8e0" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#fffdf2" stop-opacity="1"/>
+      <stop offset=".7" stop-color="#fff8e0" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#fff8e0" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Una sola voluta: se instancia dos veces, girada 180. -->
+    <g id="voluta" fill="none" stroke="url(#oro)" stroke-linecap="round">
+      <path d="M14,112 C14,58 58,14 112,14" stroke-width="1.6" opacity=".55"/>
+      <path d="M30,112 C30,68 68,30 112,30" stroke-width="1.2" opacity=".4"/>
+      <path d="M112,22 C74,22 50,40 42,66 C34,92 50,112 72,108 C90,105 98,86 84,76
+               C73,68 58,76 62,89" stroke-width="3.4"/>
+      <path d="M42,66 L16,50 M50,46 L26,28 M46,92 L14,86" stroke-width="1.6" opacity=".6"/>
+      <path d="M112,22 C130,22 140,26 150,22" stroke-width="2.2" opacity=".8"/>
+    </g>
+    <g id="chispa">
+      <path d="M0,-15 L3.4,-3.4 L15,0 L3.4,3.4 L0,15 L-3.4,3.4 L-15,0 L-3.4,-3.4 Z" fill="#fffdf2"/>
+      <path d="M0,-7 L1.6,-1.6 L7,0 L1.6,1.6 L0,7 L-1.6,1.6 L-7,0 L-1.6,-1.6 Z" fill="#ffffff"/>
+    </g>
+  </defs>
+
+  <!-- Hilo principal y su acompanamiento. -->
+  <rect x="14" y="14" width="572" height="372" rx="30" fill="none" stroke="url(#oro)" stroke-width="3.4"/>
+  <rect x="23" y="23" width="554" height="354" rx="23" fill="none" stroke="url(#oro)" stroke-width="1.1" opacity=".5"/>
+
+  <!-- Barras de luz: viven en la banda de borde, asi que se estiran a lo largo. -->
+  <rect x="120" y="6" width="360" height="16" fill="url(#destello)" opacity=".3"/>
+  <rect x="120" y="12.2" width="360" height="3.6" fill="url(#destello)"/>
+  <rect x="120" y="378" width="360" height="16" fill="url(#destello)" opacity=".3"/>
+  <rect x="120" y="384.2" width="360" height="3.6" fill="url(#destello)"/>
+
+  <use href="#voluta"/>
+  <use href="#voluta" transform="rotate(180 300 200)"/>
+  <use href="#chispa" transform="translate(50 50)"/>
+  <use href="#chispa" transform="translate(550 350)"/>
+</svg>

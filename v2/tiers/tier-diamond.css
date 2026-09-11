@@ -173,11 +173,16 @@ html[data-r8-motion="full"][data-fs-tier="diamond"] .hero-gem {
 }
 
 /* ============================ IDENTITY ============================ */
-html[data-fs-tier="diamond"] .brand b {
-  background: linear-gradient(96deg, #fff 14%, #b6f2ff 44%, #e3d4ff 62%, #fff 84%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* R166: mismo blindaje que los títulos. Sin soporte de background-clip,
+   `color: transparent` dejaría la marca invisible. */
+html[data-fs-tier="diamond"] .brand b { color: #dff6ff; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="diamond"] .brand b {
+    background: linear-gradient(96deg, #fff 14%, #b6f2ff 44%, #e3d4ff 62%, #fff 84%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 html[data-fs-tier="diamond"] .eyebrow { color: #8fe6fb; }
 html[data-fs-tier="diamond"] .package-price { color: #dcf8ff; }
@@ -222,4 +227,302 @@ html[data-fs-tier="diamond"] .game-grid > * { animation-duration: 360ms; }
   html[data-fs-tier="diamond"] .hero-gem { animation: none !important; }
   html[data-fs-tier="diamond"] .game-card,
   html[data-fs-tier="diamond"] .category-card { transform: none !important; }
+}
+
+/* ========================================================================
+   R164 — refuerzo. Diamond se veía casi igual que Base en el teléfono.
+   Se sube el volumen en las mismas superficies que Gold, pero con la
+   identidad de hielo y prisma que corresponde al nivel más alto.
+   Transform/opacity solamente; los bucles siguen tras data-r8-motion="full".
+   ==================================================================== */
+
+html[data-fs-tier="diamond"] .hero { position: relative; }
+html[data-fs-tier="diamond"] .hero::before {
+  content: "◆ DIAMOND";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  color: #04222e;
+  background: linear-gradient(135deg, #eafcff 0%, #7fe4ff 34%, #27a8d8 58%, #d9f7ff 84%, #56c8ee 100%);
+  box-shadow: 0 4px 16px rgba(86, 220, 255, .5), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+html[data-fs-tier="diamond"] .category-card {
+  border-color: rgba(110, 225, 255, .5);
+  background:
+    radial-gradient(130% 130% at 100% 0%, rgba(110, 225, 255, .17), transparent 60%),
+    linear-gradient(180deg, rgba(11, 36, 54, .94), rgba(5, 16, 27, .97));
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .46),
+    0 0 22px rgba(56, 200, 255, .1),
+    inset 0 1px 0 rgba(214, 248, 255, .2);
+}
+html[data-fs-tier="diamond"] .category-card b { color: #dff6ff; }
+html[data-fs-tier="diamond"] .category-card span { filter: drop-shadow(0 2px 8px rgba(86, 220, 255, .6)); }
+
+/* Canto prismático. R165: pasa de ::after a inset box-shadow para dejar
+   ::after libre al reflejo, y de paso es una capa compuesta menos. */
+html[data-fs-tier="diamond"] .category-card {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .46),
+    0 0 22px rgba(56, 200, 255, .1),
+    inset 0 1px 0 rgba(214, 248, 255, .55);
+}
+
+html[data-fs-tier="diamond"] .brand { color: #dff6ff; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="diamond"] .brand {
+    background: linear-gradient(135deg, #eafcff 0%, #7fe4ff 40%, #b9a6ff 70%, #eafcff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+html[data-fs-tier="diamond"] .topbar {
+  border-bottom: 1px solid rgba(110, 225, 255, .34);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 6px 26px rgba(0, 0, 0, .4);
+}
+html[data-fs-tier="diamond"] .bottom-nav {
+  border-top: 1px solid rgba(110, 225, 255, .34);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 -6px 26px rgba(0, 0, 0, .45);
+}
+html[data-fs-tier="diamond"] .eyebrow { color: #8fdcf5; letter-spacing: 1.5px; }
+html[data-fs-tier="diamond"] .price,
+html[data-fs-tier="diamond"] .balance-card strong { color: #dff6ff; }
+
+/* ========================================================================
+   R165 — reflejo reactivo al scroll y aparición progresiva (diamond).
+   Solo se carga en los niveles pagados; Base queda exactamente igual.
+
+   El reflejo se mueve con una ÚNICA variable (--fs-shine) que el módulo
+   escribe una vez por frame en <html>. Aquí no se lee nada del DOM ni se
+   fuerza maquetación: es transform puro, compuesto en la GPU.
+
+   Condicionado a data-fs-shine (lo pone el módulo solo si el movimiento
+   está permitido) y a data-r8-motion="full", el modo del repositorio.
+   ==================================================================== */
+
+/* Solo las tarjetas de categoría: el hero ya tiene su propio barrido y
+   pisarlo rompería la animación que el CI verifica. Cinco elementos en vez
+   de decenas mantiene el coste bajo en gama baja. */
+html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="diamond"] .category-card {
+  position: relative;
+  overflow: hidden;
+}
+html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="diamond"] .category-card::after {
+  content: "";
+  position: absolute;
+  left: -60%;
+  right: -60%;
+  top: -130%;
+  height: 130%;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    112deg,
+    transparent 38%,
+    rgba(255, 255, 255, .06) 44%,
+    rgba(232, 252, 255, .62) 50%,
+    rgba(255, 255, 255, .06) 56%,
+    transparent 62%
+  );
+  transform: translate3d(0, calc(var(--fs-shine, 0) * 230%), 0);
+}
+/* El contenido queda por encima del reflejo. */
+html[data-fs-shine="1"][data-fs-tier="diamond"] .category-card > * { position: relative; z-index: 2; }
+
+/* ---- Aparición progresiva al bajar ---- */
+html[data-fs-tier="diamond"] .fs-reveal {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+}
+html[data-fs-tier="diamond"] .fs-reveal.fs-visible {
+  opacity: 1;
+  transform: none;
+  transition: opacity .42s cubic-bezier(.22, .8, .3, 1), transform .42s cubic-bezier(.22, .8, .3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fs-tier="diamond"] .fs-reveal { opacity: 1; transform: none; transition: none; }
+  html[data-fs-shine="1"][data-fs-tier="diamond"] .category-card::after { display: none; }
+}
+
+/* R165 — el quinto bloque (Venta de Cuentas) también toma el material Diamond. */
+html[data-fs-tier="diamond"] .category-card.cuentas-entry {
+  border-color: rgba(140, 235, 255, .6);
+  background:
+    radial-gradient(140% 130% at 100% 0%, rgba(140, 235, 255, .2), transparent 62%),
+    linear-gradient(180deg, rgba(12, 40, 60, .95), rgba(6, 18, 30, .97));
+}
+html[data-fs-tier="diamond"] .cuentas-entry-cta { color: #8ff0ff; }
+html[data-fs-tier="diamond"] .category-card.cuentas-entry small b { color: #eafcff; }
+
+/* ========================================================================
+   R166 — acercar Diamond a la maqueta que pasó el propietario.
+   Misma cobertura que Gold pero con identidad de cristal: títulos en
+   degradado prismático, botones de hielo, paneles con canto de luz,
+   tarjetas de juego enmarcadas y barra inferior en cristal.
+   Color, degradado y sombra: sin animación nueva.
+   ==================================================================== */
+
+/* Color sólido primero: si el navegador no soporta recortar el fondo al
+   texto, el título se lee igual. `color: transparent` solo se aplica dentro
+   del @supports, así que nunca puede dejar el texto invisible. */
+html[data-fs-tier="diamond"] .hero-copy h1,
+html[data-fs-tier="diamond"] .hero-copy h2,
+html[data-fs-tier="diamond"] .panel-head h2 {
+  color: #dff6ff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="diamond"] .hero-copy h1,
+  html[data-fs-tier="diamond"] .hero-copy h2,
+  html[data-fs-tier="diamond"] .panel-head h2 {
+    background: linear-gradient(180deg, #ffffff 0%, #cdf3ff 28%, #7fe4ff 56%, #a99bff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+html[data-fs-tier="diamond"] .primary-btn,
+html[data-fs-tier="diamond"] .secondary-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #eafcff 0%, #9fe9ff 40%, #3fb9e6 72%, #d7f6ff 100%);
+  border-color: #d7f6ff;
+  color: #03222e;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+  box-shadow: 0 8px 22px rgba(56, 200, 255, .3), inset 0 1px 0 rgba(255, 255, 255, .85);
+}
+html[data-fs-tier="diamond"] .primary-btn::after,
+html[data-fs-tier="diamond"] .secondary-btn::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  right: -10%;
+  width: 46%;
+  height: 220%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .7), transparent);
+  pointer-events: none;
+}
+
+html[data-fs-tier="diamond"] .panel {
+  border-color: rgba(110, 225, 255, .48);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, .48),
+    0 0 26px rgba(56, 200, 255, .08),
+    inset 0 1px 0 rgba(214, 248, 255, .35);
+}
+html[data-fs-tier="diamond"] .game-card {
+  border-color: rgba(110, 225, 255, .5);
+  background: linear-gradient(180deg, rgba(10, 34, 52, .92), rgba(5, 15, 26, .97));
+  box-shadow: inset 0 1px 0 rgba(214, 248, 255, .4), 0 10px 26px rgba(0, 0, 0, .44);
+}
+html[data-fs-tier="diamond"] .game-card-head b,
+html[data-fs-tier="diamond"] .game-info b { color: #eafcff; }
+html[data-fs-tier="diamond"] .game-logo {
+  border-color: rgba(140, 235, 255, .65);
+  box-shadow: 0 0 0 1px rgba(110, 225, 255, .28), 0 6px 18px rgba(0, 0, 0, .5);
+}
+html[data-fs-tier="diamond"] .package-price,
+html[data-fs-tier="diamond"] .package-row b { color: #8ff0ff; }
+html[data-fs-tier="diamond"] .add-btn,
+html[data-fs-tier="diamond"] .plus-btn {
+  border-color: rgba(140, 235, 255, .6);
+  color: #dff6ff;
+}
+
+html[data-fs-tier="diamond"] .category-tabs button {
+  border-color: rgba(110, 225, 255, .4);
+  color: #8fdcf5;
+}
+html[data-fs-tier="diamond"] .bottom-nav button { color: #7fc4dd; }
+html[data-fs-tier="diamond"] .bottom-nav button.active {
+  color: #03222e;
+  background: linear-gradient(180deg, #eafcff 0%, #9fe9ff 45%, #3fb9e6 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+/* ====================================================================
+   R167 — BISEL DE CRISTAL Y GEMA DEL LOGOTIPO
+   Mismo montaje que en Gold pero con `frame-diamond.svg`: border-image deja
+   los cuatro chaflanes a tamaño fijo y estira los cuatro lados.
+
+   No es un patrón de facetas repetido. Se probaron tres (zigzag de
+   triángulos, lascas inclinadas, dos hileras de facetas pequeñas) y los tres
+   se leían como cinta decorativa. La maqueta lleva una **losa biselada con
+   las esquinas cortadas a 45°**; las líneas finas son los filos del bisel,
+   no divisiones de faceta. El detalle está en `frame-diamond.svg`.
+
+   Solo `.category-card`: cinco elementos. En `.game-card` serían decenas.
+   ==================================================================== */
+html[data-fs-tier="diamond"] .category-card {
+  /* La tarjeta deja de ser un rectángulo redondeado y pasa a ser una losa
+     con las esquinas cortadas a 45°, que es lo que hace que se lea como
+     piedra tallada. El chaflán del recorte y el del dibujo TIENEN que medir
+     lo mismo: 80 unidades del SVG × 15/120 = 10 px. Si se toca uno hay que
+     tocar el otro o asoma el fondo por la esquina. */
+  border-radius: 0;
+  border-color: transparent;
+  border-image-source: url("./frame-diamond.svg");
+  border-image-slice: 120;
+  border-image-width: 15px;
+  /* `stretch`, no `round`: el sombreado de cada lado va perpendicular al
+     lado, y un degradado perpendicular se estira sin deformarse. */
+  border-image-repeat: stretch;
+  clip-path: polygon(
+    10px 0, calc(100% - 10px) 0,
+    100% 10px, 100% calc(100% - 10px),
+    calc(100% - 10px) 100%, 10px 100%,
+    0 calc(100% - 10px), 0 10px);
+  /* OJO: aquí NO cabe un halo exterior. `clip-path` se aplica DESPUÉS de la
+     sombra y del filtro, así que recorta cualquier `box-shadow` hacia fuera
+     y también un `filter: drop-shadow()`. Se probó y no se dibujaba nada.
+     La luz tiene que venir de dentro: sombra interior más el propio bisel,
+     que ya es la parte brillante. */
+  box-shadow: inset 0 0 18px rgba(138, 150, 228, .3), inset 0 1px 0 rgba(232, 240, 255, .35);
+}
+html[data-fs-tier="diamond"] .category-card:hover { border-color: transparent; }
+html[data-fs-tier="diamond"] .category-card.cuentas-entry,
+html[data-fs-tier="diamond"] .category-card.cuentas-entry:hover {
+  border-color: transparent;
+  border-radius: 0;
+}
+
+/* En pantallas muy estrechas la banda baja a 12 px, y el chaflán con ella:
+   80 × 12/120 = 8 px. */
+@media (max-width: 380px) {
+  html[data-fs-tier="diamond"] .category-card {
+    border-image-width: 12px;
+    clip-path: polygon(
+      8px 0, calc(100% - 8px) 0,
+      100% 8px, 100% calc(100% - 8px),
+      calc(100% - 8px) 100%, 8px 100%,
+      0 calc(100% - 8px), 0 8px);
+  }
+}
+
+/* La gema del logotipo: el mismo brillante, con halo frío. */
+html[data-fs-tier="diamond"] .brand > span {
+  font-size: 0;
+  line-height: 0;
+  width: 21px;
+  height: 21px;
+  flex: 0 0 auto;
+  background:
+    url("./gem-brillante.svg") center / contain no-repeat,
+    radial-gradient(circle at 50% 50%, rgba(182, 242, 255, .45), rgba(182, 242, 255, 0) 66%);
 }

@@ -1,5 +1,7 @@
 /* THE FRENCH STORE — R163 sección "Cuentas en Venta".
-   Vitrina de cuentas de juego, debajo de las 4 categorías públicas.
+   R164: el bloque de entrada vive DENTRO de la rejilla de categorías, a lo
+   ancho y debajo de Streaming y Gift Cards, y lleva a una vista propia
+   (`view-cuentas`), igual que Gift Cards lleva al catálogo.
 
    NO es una quinta categoría: las categorías públicas siguen siendo exactamente
    `Recargas por ID`, `Recargas por Cuenta`, `Streaming` y `Gift Cards`. Esta
@@ -165,8 +167,8 @@
 
   async function cargar() {
     const grid = document.getElementById('cuentasVentaGrid');
-    const seccion = document.getElementById('cuentasVenta');
-    if (!grid || !seccion) return;
+    const vacio = document.getElementById('cuentasVacio');
+    if (!grid) return;
 
     let filas = [];
     try {
@@ -179,13 +181,18 @@
       if (error) throw error;
       filas = Array.isArray(data) ? data : [];
     } catch {
-      // Fail-closed: si no se puede leer, la sección no se muestra y el resto
-      // de la tienda sigue igual. Nunca bloquea catálogo ni checkout.
-      seccion.hidden = true;
+      // Fail-closed: si no se puede leer, la vista queda con su mensaje y el
+      // resto de la tienda sigue igual. Nunca bloquea catálogo ni checkout.
+      grid.innerHTML = '';
+      if (vacio) vacio.hidden = false;
       return;
     }
 
-    if (!filas.length) { seccion.hidden = true; return; }
+    if (!filas.length) {
+      grid.innerHTML = '';
+      if (vacio) vacio.hidden = false;
+      return;
+    }
 
     // Las disponibles primero; las vendidas al final como prueba social.
     const peso = { DISPONIBLE: 0, RESERVADA: 1, VENDIDA: 2 };
@@ -193,7 +200,7 @@
       (peso[text(a.estado).toUpperCase()] ?? 3) - (peso[text(b.estado).toUpperCase()] ?? 3));
 
     grid.innerHTML = cuentas.map(tarjeta).join('');
-    seccion.hidden = false;
+    if (vacio) vacio.hidden = true;
 
     grid.querySelectorAll('.cv-card').forEach((card) => {
       card.addEventListener('click', () => abrirFicha(card.dataset.cuenta));
@@ -201,7 +208,12 @@
   }
 
   function install() {
-    cargar().catch(() => {});
+    /* El bloque de la portada lleva a la vista, como Gift Cards lleva al
+       catálogo. Se carga al entrar, no antes: así no pesa en la portada. */
+    document.getElementById('cuentasEntry')?.addEventListener('click', () => {
+      cargar().catch(() => {});
+      if (typeof navigate === 'function') navigate('cuentas');
+    });
   }
 
   window.FSCuentasVenta = Object.freeze({ version: VERSION, recargar: cargar });

@@ -80,6 +80,21 @@
     document.head.appendChild(script);
   }
 
+  /* R165: reflejo reactivo al scroll y aparición progresiva. Solo en niveles
+     pagados. Si no carga, el nivel sigue aplicando: las tarjetas conservan su
+     material y simplemente no brillan ni aparecen con retardo. */
+  let shineLoaded = false;
+  function loadShine() {
+    if (shineLoaded) return;
+    shineLoaded = true;
+    const script = document.createElement('script');
+    script.id = 'fs-tier-shine-js';
+    script.src = './tiers/tier-shine.js?v=20260912-r165';
+    script.async = true;
+    script.addEventListener('error', () => { shineLoaded = false; }, { once: true });
+    document.head.appendChild(script);
+  }
+
   async function applyLevel(level) {
     const next = LEVELS.includes(level) ? level : 'base';
     if (next !== 'base') {
@@ -91,6 +106,8 @@
     document.documentElement.dataset.fsTier = next;
     if (next === 'diamond') loadDepth();
     else window.FSTierDepth?.reset?.();
+    if (next === 'base') window.FSTierShine?.desinstalar?.();
+    else { loadShine(); window.FSTierShine?.instalar?.(); }
     syncDock();
   }
 
@@ -237,16 +254,12 @@
 
   /* --------------------------------- sound -------------------------------- */
 
-  /* One passive, delegated listener. It never calls preventDefault and never
-     awaits, so it cannot delay cart, checkout, QR or navigation. Buttons that
-     trigger navigate() are skipped here because the wrapper already sounds. */
+  /* R164: el propietario pidió quitar el sonido al tocar cada cosa. Antes aquí
+     había un listener delegado que sonaba en CADA botón y enlace de la tienda.
+     Se retira: ya no se instala nada. Solo queda el sonido de ENTRAR a una
+     sección, que lo dispara el envoltorio de navigate() más arriba. */
   function installSoundTriggers() {
-    document.addEventListener('click', (event) => {
-      const target = event.target.closest?.('button,a');
-      if (!target || dock?.contains(target)) return;
-      if (target.dataset?.nav) return; // handled by the navigate() wrapper
-      window.FSTierSound?.gesture?.('tap', currentLevel, target);
-    }, { passive: true, capture: false });
+    /* Intencionadamente vacío. No volver a poner un listener global de clic. */
   }
 
   /* --------------------------------- gate --------------------------------- */

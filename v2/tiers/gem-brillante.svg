@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- THE FRENCH STORE - R167. Talla brillante de frente: mesa, corona y
+       pabellon en facetas planas. Sustituye al emoji del logotipo en Gold y
+       Diamond via CSS (el HTML no cambia, el nivel Base sigue con el emoji). -->
+  <defs>
+    <linearGradient id="mesa" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".45" stop-color="#dff2ff"/>
+      <stop offset="1" stop-color="#e6dcff"/>
+    </linearGradient>
+    <linearGradient id="pab" x1="0" y1="0" x2=".6" y2="1">
+      <stop offset="0" stop-color="#eaf7ff"/>
+      <stop offset=".55" stop-color="#b9dcf5"/>
+      <stop offset="1" stop-color="#7fb6d6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Pabellon: seis caras que convergen en la punta. -->
+  <g>
+    <polygon points="20,78 52,78 100,182" fill="#cfe6fb"/>
+    <polygon points="52,78 76,78 100,182" fill="url(#pab)"/>
+    <polygon points="76,78 100,78 100,182" fill="#e9f7ff"/>
+    <polygon points="100,78 124,78 100,182" fill="#d7c9f2"/>
+    <polygon points="124,78 148,78 100,182" fill="url(#pab)"/>
+    <polygon points="148,78 180,78 100,182" fill="#f7d9ea"/>
+  </g>
+
+  <!-- Corona: bisel izquierdo, dos caras de mesa y bisel derecho. -->
+  <g>
+    <polygon points="20,78 60,42 76,78" fill="#bfe2f7"/>
+    <polygon points="60,42 100,42 100,78 76,78" fill="url(#mesa)"/>
+    <polygon points="100,42 140,42 124,78 100,78" fill="#f3ecff"/>
+    <polygon points="140,42 180,78 124,78" fill="#f9dcee"/>
+  </g>
+
+  <!-- Aristas: lo que hace que se lea como piedra tallada y no como mancha. -->
+  <g fill="none" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" opacity=".92">
+    <path d="M60,42 H140 L180,78 L100,182 L20,78 Z"/>
+    <path d="M20,78 H180"/>
+    <path d="M60,42 L76,78 M100,42 L100,78 M140,42 L124,78"/>
+    <path d="M52,78 L100,182 M76,78 L100,182 M124,78 L100,182 M148,78 L100,182" stroke-width="1.4" opacity=".75"/>
+  </g>
+  <!-- Reflejo especular fijo en la mesa. -->
+  <polygon points="64,46 92,46 88,60 68,60" fill="#ffffff" opacity=".85"/>
+</svg>
