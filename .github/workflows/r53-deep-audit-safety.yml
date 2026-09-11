@@ -63,8 +63,15 @@ jobs:
           set -euo pipefail
           grep -Fq "function addSignupButton(){ return null }" v2/core/ui.js
           grep -Fq "Continúa con Google para acceder a FRENCH STORE" v2/index.html
-          grep -Fq 'label class="hidden">Correo' v2/index.html
-          grep -Fq 'label class="hidden">Contraseña' v2/index.html
+          # R160: antes se exigía que los campos de correo y contraseña
+          # EXISTIERAN ocultos. Ahora se exige que NO EXISTAN, que es una
+          # garantía estrictamente más fuerte de "solo Google": un campo
+          # ausente no puede reaparecer al quitarle una clase, ni lo ve el
+          # gestor de contraseñas del navegador.
+          ! grep -Fq 'id="loginEmail"' v2/index.html
+          ! grep -Fq 'id="loginPassword"' v2/index.html
+          ! grep -Eq '<input[^>]*type="password"' v2/index.html
+          ! grep -Fq 'sb.auth.signUp(' v2/legal.js
           grep -Fq 'id="loginSubmit" class="primary-btn full hidden"' v2/index.html
           ! grep -Fq "respaldo para cuentas existentes y administración" v2/index.html
 
