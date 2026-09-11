@@ -1,0 +1,106 @@
+/* THE FRENCH STORE — visual tier layer: DIAMOND.
+   Loaded only when the Diamond level is active. Clearly above Gold: ice/cyan
+   accents, controlled glass, depth and light. No particle storms, no heavy blur.
+   Animation budget: transform and opacity only. */
+
+html[data-fs-tier="diamond"] {
+  --t-accent: #b6f2ff;
+  --t-accent-deep: #35c9e6;
+  --t-ring: rgba(182, 242, 255, .72);
+  --t-glow: rgba(110, 226, 255, .26);
+  --t-edge: rgba(150, 236, 255, .42);
+  --t-lift: 0 14px 34px rgba(0, 0, 0, .44);
+  --t-ice: linear-gradient(120deg, rgba(182, 242, 255, 0) 0%, rgba(220, 250, 255, .55) 46%, rgba(182, 242, 255, 0) 100%);
+}
+
+/* ---------- Crystal edges: one hairline of light on every raised surface ---------- */
+html[data-fs-tier="diamond"] .panel,
+html[data-fs-tier="diamond"] .game-card,
+html[data-fs-tier="diamond"] .balance-card,
+html[data-fs-tier="diamond"] .modal-card {
+  border-color: rgba(150, 236, 255, .34);
+  box-shadow: var(--t-lift), inset 0 1px 0 rgba(210, 248, 255, .16);
+}
+
+/* ---------- Restrained glass on the two surfaces that can afford it ---------- */
+html[data-fs-tier="diamond"] .topbar {
+  background: rgba(4, 14, 22, .82);
+  border-bottom-color: rgba(150, 236, 255, .3);
+}
+html[data-fs-tier="diamond"] .bottom-nav {
+  background: rgba(5, 18, 28, .9);
+  border-color: rgba(150, 236, 255, .28);
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(210, 248, 255, .14);
+}
+html[data-fs-tier="diamond"] .bottom-nav button.active {
+  background: #0d3a4d;
+  color: #cdf6ff;
+}
+
+/* ---------- Hero light sweep: a single pass, GPU-only ---------- */
+html[data-fs-tier="diamond"] .hero { position: relative; overflow: hidden; }
+html[data-fs-tier="diamond"] .hero::after {
+  content: "";
+  position: absolute;
+  inset: -50% -70%;
+  background: var(--t-ice);
+  opacity: .3;
+  pointer-events: none;
+  will-change: transform;
+  animation: fsTierIceSweep 5.5s var(--t-ease-io) infinite;
+}
+@keyframes fsTierIceSweep {
+  0%   { transform: translateX(-42%) rotate(10deg); }
+  55%  { transform: translateX(42%) rotate(10deg); }
+  100% { transform: translateX(42%) rotate(10deg); }
+}
+
+/* ---------- The gem breathes. Slow, transform-only, never blocking ---------- */
+html[data-fs-tier="diamond"] .hero-gem {
+  will-change: transform;
+  animation: fsTierGemFloat 6s ease-in-out infinite;
+}
+@keyframes fsTierGemFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-8px) scale(1.02); }
+}
+
+/* ---------- Brand mark in ice ---------- */
+html[data-fs-tier="diamond"] .brand b {
+  background: linear-gradient(96deg, #fff 18%, #b6f2ff 48%, #fff 78%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Primary action reads as the brightest thing on screen ---------- */
+html[data-fs-tier="diamond"] .primary-btn {
+  background: linear-gradient(180deg, #d7fbff, #3fd0ea);
+  border-color: #e6feff;
+  color: #03222c;
+  box-shadow: 0 6px 20px rgba(110, 226, 255, .24);
+}
+
+/* ---------- Depth on interaction, one notch above Gold ---------- */
+@media (hover: hover) and (pointer: fine) {
+  html[data-fs-tier="diamond"] .game-card:hover {
+    transform: translateY(-4px) scale(1.008);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .46), 0 0 0 1px rgba(182, 242, 255, .3);
+  }
+  html[data-fs-tier="diamond"] .category-card:hover { transform: translateY(-3px) scale(1.006); }
+  html[data-fs-tier="diamond"] .primary-btn:hover {
+    transform: translateY(-1px) scale(1.015);
+    box-shadow: 0 10px 26px rgba(110, 226, 255, .34);
+  }
+}
+
+/* ---------- Slightly deeper stagger so the grid reads as layered ---------- */
+html[data-fs-tier="diamond"] .game-grid > * { animation-duration: 340ms; }
+
+html[data-fs-tier="diamond"] .package-price { color: #d8f6ff; }
+html[data-fs-tier="diamond"] .avatar { background: #0d3a4d; color: #cdf6ff; }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fs-tier="diamond"] .hero::after { animation: none !important; opacity: .16; }
+  html[data-fs-tier="diamond"] .hero-gem { animation: none !important; }
+}

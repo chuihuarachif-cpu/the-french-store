@@ -1,0 +1,195 @@
+/* THE FRENCH STORE — visual tier layer: BASE.
+   Presentation only. Every rule is scoped under html[data-fs-tier] so that a
+   visitor without the attribute renders exactly the current storefront.
+   Animation budget: transform and opacity only. */
+
+html[data-fs-tier] {
+  /* Motion — strong custom curves; the CSS built-ins are too weak. */
+  --t-ease-out: cubic-bezier(.23, 1, .32, 1);
+  --t-ease-io: cubic-bezier(.77, 0, .175, 1);
+  --t-press: 120ms;
+  --t-fast: 160ms;
+  --t-mid: 220ms;
+  --t-slow: 280ms;
+
+  /* Rhythm — one scale instead of the current ad-hoc 7/9/11/13/14/18/20/22px. */
+  --t-s1: 4px;
+  --t-s2: 8px;
+  --t-s3: 12px;
+  --t-s4: 18px;
+  --t-s5: 26px;
+
+  /* Identity — inherits the existing cyan/blue brand tokens. */
+  --t-accent: var(--cyan);
+  --t-accent-deep: var(--cyan2);
+  --t-ring: rgba(97, 239, 255, .66);
+  --t-glow: rgba(97, 239, 255, .18);
+  --t-edge: rgba(97, 239, 255, .26);
+  --t-lift: 0 10px 26px rgba(0, 0, 0, .34);
+}
+
+/* ---------- Focus: one visible, consistent ring everywhere ---------- */
+html[data-fs-tier] :focus-visible {
+  outline: 2px solid var(--t-ring);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+html[data-fs-tier] .bottom-nav button:focus-visible { outline-offset: -3px; }
+
+/* ---------- Press feedback: the interface must answer the finger ---------- */
+html[data-fs-tier] .primary-btn,
+html[data-fs-tier] .secondary-btn,
+html[data-fs-tier] .danger-btn,
+html[data-fs-tier] .ghost-btn,
+html[data-fs-tier] .cart-btn,
+html[data-fs-tier] .icon-btn,
+html[data-fs-tier] .add-btn,
+html[data-fs-tier] .plus-btn,
+html[data-fs-tier] .category-tabs button,
+html[data-fs-tier] .bottom-nav button,
+html[data-fs-tier] .category-card {
+  transition: transform var(--t-fast) var(--t-ease-out),
+              box-shadow var(--t-fast) ease,
+              border-color var(--t-fast) ease,
+              color var(--t-fast) ease;
+}
+html[data-fs-tier] .primary-btn:active,
+html[data-fs-tier] .secondary-btn:active,
+html[data-fs-tier] .danger-btn:active,
+html[data-fs-tier] .ghost-btn:active,
+html[data-fs-tier] .cart-btn:active,
+html[data-fs-tier] .icon-btn:active,
+html[data-fs-tier] .add-btn:active,
+html[data-fs-tier] .plus-btn:active,
+html[data-fs-tier] .category-tabs button:active {
+  transform: scale(.97);
+  transition-duration: var(--t-press);
+}
+html[data-fs-tier] .category-card:active { transform: scale(.985); }
+
+/* ---------- Hover: gated so touch taps never latch a hover state ---------- */
+@media (hover: hover) and (pointer: fine) {
+  html[data-fs-tier] .primary-btn:hover,
+  html[data-fs-tier] .secondary-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px var(--t-glow);
+  }
+  html[data-fs-tier] .game-card:hover,
+  html[data-fs-tier] .category-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--t-edge);
+    box-shadow: var(--t-lift);
+  }
+  html[data-fs-tier] .package-row:hover { border-color: var(--t-edge); }
+  html[data-fs-tier] .category-tabs button:hover:not(.active) { color: #cfe6f0; }
+}
+
+html[data-fs-tier] .game-card,
+html[data-fs-tier] .package-row {
+  transition: transform var(--t-fast) var(--t-ease-out),
+              border-color var(--t-fast) ease,
+              box-shadow var(--t-fast) ease;
+}
+
+/* ---------- Section transitions: no more hard cut between views ---------- */
+@keyframes fsTierViewIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+html[data-fs-tier] .view.active {
+  animation: fsTierViewIn var(--t-mid) var(--t-ease-out) both;
+}
+
+/* ---------- Stagger: grids resolve instead of snapping in at once ---------- */
+@keyframes fsTierCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+html[data-fs-tier] .category-grid > *,
+html[data-fs-tier] .game-grid > * {
+  animation: fsTierCardIn var(--t-slow) var(--t-ease-out) both;
+}
+html[data-fs-tier] .category-grid > :nth-child(1),
+html[data-fs-tier] .game-grid > :nth-child(1) { animation-delay: 0ms; }
+html[data-fs-tier] .category-grid > :nth-child(2),
+html[data-fs-tier] .game-grid > :nth-child(2) { animation-delay: 40ms; }
+html[data-fs-tier] .category-grid > :nth-child(3),
+html[data-fs-tier] .game-grid > :nth-child(3) { animation-delay: 80ms; }
+html[data-fs-tier] .category-grid > :nth-child(4),
+html[data-fs-tier] .game-grid > :nth-child(4) { animation-delay: 120ms; }
+html[data-fs-tier] .game-grid > :nth-child(n+5) { animation-delay: 150ms; }
+
+/* ---------- Hierarchy: tighten the type rhythm without changing family ---------- */
+html[data-fs-tier] .panel h2 { letter-spacing: .005em; }
+html[data-fs-tier] .eyebrow { letter-spacing: .16em; }
+html[data-fs-tier] .hero p,
+html[data-fs-tier] .panel-head p { line-height: 1.62; }
+html[data-fs-tier] .game-info small { line-height: 1.45; }
+
+/* ---------- Surfaces: one edge treatment instead of nine hardcoded blues ---------- */
+html[data-fs-tier] .panel { border-color: rgba(53, 150, 190, .3); }
+html[data-fs-tier] .modal-card { box-shadow: 0 28px 74px rgba(0, 0, 0, .6); }
+html[data-fs-tier] input { transition: border-color var(--t-fast) ease, box-shadow var(--t-fast) ease; }
+html[data-fs-tier] input:focus { box-shadow: 0 0 0 3px var(--t-glow); }
+
+/* ---------- Modal entry: centred origin, scale from 0.96, never from 0 ---------- */
+@keyframes fsTierModalIn {
+  from { opacity: 0; transform: scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+html[data-fs-tier] .modal.open .modal-card {
+  animation: fsTierModalIn var(--t-mid) var(--t-ease-out) both;
+  transform-origin: center;
+}
+
+/* ================= Preview selector (owner-only control) ================= */
+.fs-tier-dock {
+  position: fixed;
+  left: 10px;
+  bottom: calc(var(--nav-h) + 18px);
+  z-index: 76;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(97, 239, 255, .26);
+  background: rgba(5, 16, 25, .92);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .4);
+  backdrop-filter: blur(8px);
+  font: 600 10px 'Exo 2', system-ui, sans-serif;
+}
+.fs-tier-dock[hidden] { display: none !important; }
+.fs-tier-dock button {
+  border: 0;
+  background: none;
+  color: #90aab8;
+  border-radius: 999px;
+  padding: 5px 9px;
+  line-height: 1;
+  transition: transform var(--t-press, 120ms) var(--t-ease-out, ease),
+              background var(--t-fast, 160ms) ease,
+              color var(--t-fast, 160ms) ease;
+}
+.fs-tier-dock button:active { transform: scale(.94); }
+.fs-tier-dock button[aria-pressed="true"] { background: #0b3349; color: #78eff9; }
+.fs-tier-dock button[data-tier="gold"][aria-pressed="true"] { background: #3a2a10; color: #f0cf8a; }
+.fs-tier-dock button[data-tier="diamond"][aria-pressed="true"] { background: #0d3a4d; color: #b6f2ff; }
+.fs-tier-dock .fs-tier-sep { width: 1px; align-self: stretch; background: rgba(97, 239, 255, .2); }
+.fs-tier-dock .fs-tier-mute { font-size: 13px; padding: 4px 7px; }
+
+@media (max-width: 620px) {
+  .fs-tier-dock { left: 8px; bottom: calc(var(--nav-h) + 14px); font-size: 9px; }
+  .fs-tier-dock button { padding: 5px 7px; }
+}
+
+/* ---------- Reduced motion: keep meaning, drop movement ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html[data-fs-tier] .view.active,
+  html[data-fs-tier] .category-grid > *,
+  html[data-fs-tier] .game-grid > *,
+  html[data-fs-tier] .modal.open .modal-card { animation: none !important; }
+  html[data-fs-tier] *,
+  html[data-fs-tier] *::before,
+  html[data-fs-tier] *::after { transition: none !important; }
+}

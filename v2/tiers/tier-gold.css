@@ -1,0 +1,82 @@
+/* THE FRENCH STORE — visual tier layer: GOLD.
+   Loaded only when the Gold level is active. Inherits everything from BASE and
+   adds restrained warm metal: no loud yellow, no casino.
+   Animation budget: transform and opacity only. */
+
+html[data-fs-tier="gold"] {
+  --t-accent: #f0cf8a;
+  --t-accent-deep: #c8912f;
+  --t-ring: rgba(240, 207, 138, .68);
+  --t-glow: rgba(213, 162, 76, .2);
+  --t-edge: rgba(213, 162, 76, .38);
+  --t-lift: 0 12px 30px rgba(0, 0, 0, .4);
+  --t-gold-line: linear-gradient(120deg, rgba(240, 207, 138, 0) 0%, rgba(240, 207, 138, .5) 48%, rgba(240, 207, 138, 0) 100%);
+}
+
+/* ---------- Warm the primary action without losing the cyan identity ---------- */
+html[data-fs-tier="gold"] .primary-btn {
+  background: linear-gradient(180deg, #f4d89b, #cf9c3c);
+  border-color: #f7e3b4;
+  color: #2a1c05;
+}
+html[data-fs-tier="gold"] .category-tabs button.active {
+  background: #efcf8d;
+  border-color: #f7e3b4;
+  color: #2a1c05;
+}
+html[data-fs-tier="gold"] .bottom-nav button.active { background: #34260e; color: #f0cf8a; }
+html[data-fs-tier="gold"] .avatar { background: #33250d; color: #f0cf8a; }
+
+/* ---------- Refined borders and depth on the card surfaces ---------- */
+html[data-fs-tier="gold"] .panel,
+html[data-fs-tier="gold"] .game-card,
+html[data-fs-tier="gold"] .balance-card {
+  border-color: rgba(213, 162, 76, .3);
+}
+html[data-fs-tier="gold"] .hero {
+  border-color: rgba(213, 162, 76, .34);
+  box-shadow: 0 22px 56px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(240, 207, 138, .14);
+}
+
+/* ---------- A single slow sheen across the hero. Decorative, cheap, subtle ---------- */
+html[data-fs-tier="gold"] .hero { position: relative; overflow: hidden; }
+html[data-fs-tier="gold"] .hero::after {
+  content: "";
+  position: absolute;
+  inset: -40% -60%;
+  background: var(--t-gold-line);
+  opacity: .28;
+  pointer-events: none;
+  will-change: transform;
+  animation: fsTierGoldSheen 7s linear infinite;
+}
+@keyframes fsTierGoldSheen {
+  from { transform: translateX(-38%) rotate(8deg); }
+  to   { transform: translateX(38%) rotate(8deg); }
+}
+
+/* ---------- Rank indicator on the brand mark ---------- */
+html[data-fs-tier="gold"] .brand b {
+  background: linear-gradient(96deg, #fff 20%, #f0cf8a 52%, #fff 82%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Slightly richer press/hover than Base ---------- */
+@media (hover: hover) and (pointer: fine) {
+  html[data-fs-tier="gold"] .game-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, .42), 0 0 0 1px rgba(240, 207, 138, .22);
+  }
+  html[data-fs-tier="gold"] .primary-btn:hover {
+    transform: translateY(-1px) scale(1.012);
+    box-shadow: 0 8px 22px rgba(213, 162, 76, .3);
+  }
+}
+
+html[data-fs-tier="gold"] .package-price { color: #f6dca6; }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fs-tier="gold"] .hero::after { animation: none !important; opacity: .16; }
+}
