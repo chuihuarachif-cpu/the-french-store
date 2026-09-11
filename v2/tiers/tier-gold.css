@@ -86,11 +86,16 @@ html[data-r8-motion="full"][data-fs-tier="gold"] .hero::after {
 }
 
 /* ---------- Rank identity on the brand mark and the eyebrow ---------- */
-html[data-fs-tier="gold"] .brand b {
-  background: linear-gradient(96deg, #fff 18%, #f0cf8a 50%, #fff 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* R166: mismo blindaje que los títulos. Sin soporte de background-clip,
+   `color: transparent` dejaría la marca invisible. */
+html[data-fs-tier="gold"] .brand b { color: #f0cf8a; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="gold"] .brand b {
+    background: linear-gradient(96deg, #fff 18%, #f0cf8a 50%, #fff 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 html[data-fs-tier="gold"] .eyebrow { color: #e6c284; }
 html[data-fs-tier="gold"] .package-price { color: #f6dca6; }
@@ -153,12 +158,15 @@ html[data-fs-tier="gold"] .category-card b { color: #f7e3b4; }
 html[data-fs-tier="gold"] .category-card span { filter: drop-shadow(0 2px 6px rgba(213, 162, 76, .5)); }
 
 /* Marca y barras en metal. */
-html[data-fs-tier="gold"] .brand {
-  background: var(--t-metal);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+html[data-fs-tier="gold"] .brand { color: #f0cf8a; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="gold"] .brand {
+    background: var(--t-metal);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 html[data-fs-tier="gold"] .topbar {
   border-bottom: 1px solid rgba(213, 162, 76, .3);
@@ -240,3 +248,97 @@ html[data-fs-tier="gold"] .category-card.cuentas-entry {
 }
 html[data-fs-tier="gold"] .cuentas-entry-cta { color: #f0cf8a; }
 html[data-fs-tier="gold"] .category-card.cuentas-entry small b { color: #f7e3b4; }
+
+/* ========================================================================
+   R166 — acercar Gold a la maqueta que pasó el propietario.
+   Lo anterior solo teñía bordes; la maqueta lleva oro en los TÍTULOS, en los
+   DOS botones, en los paneles, en las tarjetas de juego, en las pestañas y en
+   la barra inferior. Todo es color, degradado y sombra: cero animación nueva,
+   así que no añade coste en gama baja.
+   ==================================================================== */
+
+/* --- Títulos en oro, como en la maqueta --- */
+/* Color sólido primero: si el navegador no soporta recortar el fondo al
+   texto, el título se lee igual. `color: transparent` solo se aplica dentro
+   del @supports, así que nunca puede dejar el texto invisible. */
+html[data-fs-tier="gold"] .hero-copy h1,
+html[data-fs-tier="gold"] .hero-copy h2,
+html[data-fs-tier="gold"] .panel-head h2 {
+  color: #f0cf8a;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="gold"] .hero-copy h1,
+  html[data-fs-tier="gold"] .hero-copy h2,
+  html[data-fs-tier="gold"] .panel-head h2 {
+    background: linear-gradient(180deg, #fff4d6 0%, #f0cf8a 34%, #d5a24c 62%, #b07f26 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* --- Los DOS botones en metal, no solo el primario --- */
+html[data-fs-tier="gold"] .secondary-btn {
+  background: var(--t-metal);
+  background-size: 200% 100%;
+  border-color: #f7e3b4;
+  color: #2a1c05;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 245, 220, .45);
+  box-shadow: 0 6px 18px rgba(213, 162, 76, .24), inset 0 1px 0 rgba(255, 248, 228, .6);
+}
+/* Brillo fijo en la esquina, el "reflejo de metal pulido" de la maqueta. */
+html[data-fs-tier="gold"] .primary-btn,
+html[data-fs-tier="gold"] .secondary-btn {
+  position: relative;
+  overflow: hidden;
+}
+html[data-fs-tier="gold"] .primary-btn::after,
+html[data-fs-tier="gold"] .secondary-btn::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  right: -10%;
+  width: 46%;
+  height: 220%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent);
+  pointer-events: none;
+}
+
+/* --- Paneles y tarjetas de juego con marco dorado --- */
+html[data-fs-tier="gold"] .panel {
+  border-color: rgba(213, 162, 76, .45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 236, 197, .18);
+}
+html[data-fs-tier="gold"] .game-card {
+  border-color: rgba(213, 162, 76, .45);
+  background: linear-gradient(180deg, rgba(32, 25, 10, .9), rgba(13, 11, 7, .96));
+}
+html[data-fs-tier="gold"] .game-card-head b,
+html[data-fs-tier="gold"] .game-info b { color: #f7e3b4; }
+html[data-fs-tier="gold"] .game-logo {
+  border-color: rgba(240, 207, 138, .6);
+  box-shadow: 0 0 0 1px rgba(213, 162, 76, .25), 0 6px 16px rgba(0, 0, 0, .45);
+}
+html[data-fs-tier="gold"] .package-price,
+html[data-fs-tier="gold"] .package-row b { color: #f0cf8a; }
+html[data-fs-tier="gold"] .add-btn,
+html[data-fs-tier="gold"] .plus-btn {
+  border-color: rgba(240, 207, 138, .55);
+  color: #f7e3b4;
+}
+
+/* --- Pestañas y barra inferior --- */
+html[data-fs-tier="gold"] .category-tabs button {
+  border-color: rgba(213, 162, 76, .35);
+  color: #e0bd78;
+}
+html[data-fs-tier="gold"] .bottom-nav button { color: #caa96a; }
+html[data-fs-tier="gold"] .bottom-nav button.active {
+  color: #2a1c05;
+  background: var(--t-metal);
+  background-size: 200% 100%;
+  box-shadow: inset 0 1px 0 rgba(255, 248, 228, .6);
+}

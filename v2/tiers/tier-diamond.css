@@ -173,11 +173,16 @@ html[data-r8-motion="full"][data-fs-tier="diamond"] .hero-gem {
 }
 
 /* ============================ IDENTITY ============================ */
-html[data-fs-tier="diamond"] .brand b {
-  background: linear-gradient(96deg, #fff 14%, #b6f2ff 44%, #e3d4ff 62%, #fff 84%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* R166: mismo blindaje que los títulos. Sin soporte de background-clip,
+   `color: transparent` dejaría la marca invisible. */
+html[data-fs-tier="diamond"] .brand b { color: #dff6ff; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="diamond"] .brand b {
+    background: linear-gradient(96deg, #fff 14%, #b6f2ff 44%, #e3d4ff 62%, #fff 84%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 html[data-fs-tier="diamond"] .eyebrow { color: #8fe6fb; }
 html[data-fs-tier="diamond"] .package-price { color: #dcf8ff; }
@@ -272,11 +277,14 @@ html[data-fs-tier="diamond"] .category-card {
     inset 0 1px 0 rgba(214, 248, 255, .55);
 }
 
-html[data-fs-tier="diamond"] .brand {
-  background: linear-gradient(135deg, #eafcff 0%, #7fe4ff 40%, #b9a6ff 70%, #eafcff 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+html[data-fs-tier="diamond"] .brand { color: #dff6ff; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="diamond"] .brand {
+    background: linear-gradient(135deg, #eafcff 0%, #7fe4ff 40%, #b9a6ff 70%, #eafcff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 html[data-fs-tier="diamond"] .topbar {
   border-bottom: 1px solid rgba(110, 225, 255, .34);
@@ -358,3 +366,92 @@ html[data-fs-tier="diamond"] .category-card.cuentas-entry {
 }
 html[data-fs-tier="diamond"] .cuentas-entry-cta { color: #8ff0ff; }
 html[data-fs-tier="diamond"] .category-card.cuentas-entry small b { color: #eafcff; }
+
+/* ========================================================================
+   R166 — acercar Diamond a la maqueta que pasó el propietario.
+   Misma cobertura que Gold pero con identidad de cristal: títulos en
+   degradado prismático, botones de hielo, paneles con canto de luz,
+   tarjetas de juego enmarcadas y barra inferior en cristal.
+   Color, degradado y sombra: sin animación nueva.
+   ==================================================================== */
+
+/* Color sólido primero: si el navegador no soporta recortar el fondo al
+   texto, el título se lee igual. `color: transparent` solo se aplica dentro
+   del @supports, así que nunca puede dejar el texto invisible. */
+html[data-fs-tier="diamond"] .hero-copy h1,
+html[data-fs-tier="diamond"] .hero-copy h2,
+html[data-fs-tier="diamond"] .panel-head h2 {
+  color: #dff6ff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  html[data-fs-tier="diamond"] .hero-copy h1,
+  html[data-fs-tier="diamond"] .hero-copy h2,
+  html[data-fs-tier="diamond"] .panel-head h2 {
+    background: linear-gradient(180deg, #ffffff 0%, #cdf3ff 28%, #7fe4ff 56%, #a99bff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+html[data-fs-tier="diamond"] .primary-btn,
+html[data-fs-tier="diamond"] .secondary-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #eafcff 0%, #9fe9ff 40%, #3fb9e6 72%, #d7f6ff 100%);
+  border-color: #d7f6ff;
+  color: #03222e;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+  box-shadow: 0 8px 22px rgba(56, 200, 255, .3), inset 0 1px 0 rgba(255, 255, 255, .85);
+}
+html[data-fs-tier="diamond"] .primary-btn::after,
+html[data-fs-tier="diamond"] .secondary-btn::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  right: -10%;
+  width: 46%;
+  height: 220%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .7), transparent);
+  pointer-events: none;
+}
+
+html[data-fs-tier="diamond"] .panel {
+  border-color: rgba(110, 225, 255, .48);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, .48),
+    0 0 26px rgba(56, 200, 255, .08),
+    inset 0 1px 0 rgba(214, 248, 255, .35);
+}
+html[data-fs-tier="diamond"] .game-card {
+  border-color: rgba(110, 225, 255, .5);
+  background: linear-gradient(180deg, rgba(10, 34, 52, .92), rgba(5, 15, 26, .97));
+  box-shadow: inset 0 1px 0 rgba(214, 248, 255, .4), 0 10px 26px rgba(0, 0, 0, .44);
+}
+html[data-fs-tier="diamond"] .game-card-head b,
+html[data-fs-tier="diamond"] .game-info b { color: #eafcff; }
+html[data-fs-tier="diamond"] .game-logo {
+  border-color: rgba(140, 235, 255, .65);
+  box-shadow: 0 0 0 1px rgba(110, 225, 255, .28), 0 6px 18px rgba(0, 0, 0, .5);
+}
+html[data-fs-tier="diamond"] .package-price,
+html[data-fs-tier="diamond"] .package-row b { color: #8ff0ff; }
+html[data-fs-tier="diamond"] .add-btn,
+html[data-fs-tier="diamond"] .plus-btn {
+  border-color: rgba(140, 235, 255, .6);
+  color: #dff6ff;
+}
+
+html[data-fs-tier="diamond"] .category-tabs button {
+  border-color: rgba(110, 225, 255, .4);
+  color: #8fdcf5;
+}
+html[data-fs-tier="diamond"] .bottom-nav button { color: #7fc4dd; }
+html[data-fs-tier="diamond"] .bottom-nav button.active {
+  color: #03222e;
+  background: linear-gradient(180deg, #eafcff 0%, #9fe9ff 45%, #3fb9e6 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
+}
