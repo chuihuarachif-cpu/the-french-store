@@ -29,6 +29,7 @@
   <script defer src="./r142-maintenance-main-grid.js?v=20260902-r142"></script>
   <script defer src="./r138-account-cost-editor.js?v=20260902-r140"></script>
   <script defer src="./r139-quotations.js?v=20260907-r154"></script>
+  <script defer src="./r163-cuentas.js?v=20260911-r163"></script>
 </head>
 <body>
   <header class="topbar">
@@ -72,7 +73,7 @@
         <button type="button" data-tab="orders">🧾 Pedidos</button>
         <button type="button" data-tab="maintenance">🛠️ Mantenimiento</button>
         <button type="button" data-tab="prices">💰 Precios</button>
-        <button type="button" data-tab="quotations">🧮 Cotizaciones</button>
+        <button type="button" data-tab="quotations">🧮 Cotizaciones</button><button class="tab" data-tab="cuentas" type="button">Cuentas</button>
         <button type="button" data-tab="history">📚 Historial</button>
       </nav>
 
@@ -113,6 +114,35 @@
         <div class="panel-head"><div><span class="eyebrow">COTIZACIONES</span><h2>Cotizador rápido</h2><p>Calcula precios para productos que todavía no están en el catálogo. Bolivianos y dólares están separados y ambos reutilizan la misma escala de margen que la tienda.</p></div></div>
         <div class="r139-note"><b>Solo calcula.</b> Esta herramienta no guarda precios en el catálogo ni modifica la página pública. Las filas se conservan únicamente como borrador en este dispositivo.</div>
         <div id="quotationsList"></div>
+      </section>
+      <section id="cuentasPanel" class="panel hidden" data-panel="cuentas">
+        <div class="panel-head"><div><span class="eyebrow">CUENTAS EN VENTA</span><h2>Vitrina de cuentas</h2><p>Publica las cuentas que vendes. Aparecen en la tienda debajo de las 4 categorías. Cada una es de una sola unidad: al marcarla Vendida se queda a la vista pero apagada.</p></div></div>
+
+        <div class="r139-note"><b>Antes de subir una foto:</b> tapa o recorta el ID de jugador, el apodo y el correo. Con ese ID alguien puede pedir la recuperación de la cuenta al soporte del juego y quitársela a quien te la compre.</div>
+
+        <div id="cuentasAviso" class="notice hidden"></div>
+
+        <article class="card">
+          <b>Nueva cuenta</b>
+          <div class="form-grid">
+            <label><span>Juego</span><input id="cuentaJuego" type="text" maxlength="60" placeholder="Ej. Clash of Clans" autocomplete="off"></label>
+            <label><span>Título</span><input id="cuentaTitulo" type="text" maxlength="120" placeholder="Ej. TH14 · Héroes altos" autocomplete="off"></label>
+            <label><span>Precio (Bs)</span><input id="cuentaPrecio" type="number" min="1" step="0.01" inputmode="decimal" placeholder="Ej. 350"></label>
+            <label><span>Estado</span><select id="cuentaEstado"><option value="DISPONIBLE">Disponible</option><option value="RESERVADA">Reservada</option><option value="VENDIDA">Vendida</option><option value="OCULTA">Oculta (borrador)</option></select></label>
+            <label><span>Orden</span><input id="cuentaOrden" type="number" step="1" placeholder="0"></label>
+            <label class="wide"><span>Datos destacados · uno por línea, formato «Etiqueta: valor»</span><textarea id="cuentaDestacados" rows="4" placeholder="Ayuntamiento: TH14&#10;Héroes: 65/65/40&#10;Correo: sin vincular"></textarea></label>
+            <label class="wide"><span>Descripción</span><textarea id="cuentaDescripcion" rows="5" maxlength="4000" placeholder="Qué incluye la cuenta, cómo se entrega, condiciones…"></textarea></label>
+            <label class="wide"><span>Fotos · la primera es la portada</span><input id="cuentaArchivos" type="file" accept="image/*" multiple></label>
+          </div>
+          <div id="cuentasSubiendo" class="notice hidden"></div>
+          <div id="cuentasFotos" class="cuenta-fotos"></div>
+          <div class="card-actions">
+            <button class="primary" id="cuentaGuardar" type="button">Publicar cuenta</button>
+            <button id="cuentaLimpiar" type="button">Limpiar</button>
+          </div>
+        </article>
+
+        <div id="cuentasLista"></div>
       </section>
 
       <section id="historyPanel" class="panel hidden" data-panel="history">

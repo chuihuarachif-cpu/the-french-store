@@ -91,6 +91,12 @@
     await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260911-r160');
     await loadScript('./tiers/tier-welcome.js', 'fs-tier-welcome-js', '20260911-r160');
     await loadScript('./tiers/tier-gate.js', 'fs-tier-gate-js', '20260911-r160');
+    // R163: vitrina "Cuentas en Venta", debajo de las 4 categorías públicas.
+    // Presentación pura y fail-closed: si no puede leer, la sección no se
+    // muestra y el resto de la tienda sigue igual. No toca catálogo, precios,
+    // checkout, Wallet ni proveedores, y no añade una quinta categoría.
+    await loadStyle('./cuentas-venta.css', 'fs-cuentas-venta-css');
+    await loadScript('./cuentas-venta.js', 'fs-cuentas-venta-js', '20260911-r163');
   }
 
   const FEATURE_LOADERS = {
