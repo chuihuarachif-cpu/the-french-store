@@ -67,7 +67,10 @@ html[data-fs-tier="gold"] .hero {
 
 /* ---------- A single slow sheen across the hero ---------- */
 html[data-fs-tier="gold"] .hero { position: relative; overflow: hidden; }
-html[data-fs-tier="gold"] .hero::after {
+/* Condicionado a data-r8-motion="full", igual que el barrido de Diamond que ya
+   existe en rank-pass-premium.css. En modo ligero no debe animarse nada
+   decorativo; el CI lo verifica. */
+html[data-r8-motion="full"][data-fs-tier="gold"] .hero::after {
   content: "";
   position: absolute;
   inset: -40% -60%;

@@ -152,28 +152,20 @@ html[data-fs-tier="diamond"] .hero {
     linear-gradient(135deg, #062232, #03101a 58%, #073347);
   box-shadow: 0 28px 66px rgba(0, 0, 0, .46), inset 0 1px 0 rgba(214, 250, 255, .22);
 }
-html[data-fs-tier="diamond"] .hero::after {
-  content: "";
-  position: absolute;
-  inset: -50% -70%;
-  background: var(--t-ice);
-  opacity: .3;
-  pointer-events: none;
-  will-change: transform;
-  animation: fsTierIceSweep 5.5s var(--t-ease-io) infinite;
-}
-@keyframes fsTierIceSweep {
-  0%   { transform: translateX(-42%) rotate(10deg); }
-  55%  { transform: translateX(42%) rotate(10deg); }
-  100% { transform: translateX(42%) rotate(10deg); }
-}
+/* El barrido del hero de Diamond ya lo provee rank-pass-premium.css
+   (fsDiamondHeroSweep, condicionado a data-r8-motion="full"). No se
+   sobreescribe aquí: el CI verifica ese nombre de animación exacto. */
 
-/* The gem is a real object: it floats and turns in space. */
+/* The gem is a real object: it floats and turns in space. The orbit is
+   decorative, so it follows the repo's lightweight-mode discipline and only
+   runs under data-r8-motion="full"; the glow stays at every motion level. */
 html[data-fs-tier="diamond"] .hero-gem {
-  will-change: transform;
   transform-style: preserve-3d;
-  animation: fsTierGemOrbit 9s ease-in-out infinite;
   filter: drop-shadow(0 0 34px rgba(110, 226, 255, .4));
+}
+html[data-r8-motion="full"][data-fs-tier="diamond"] .hero-gem {
+  will-change: transform;
+  animation: fsTierGemOrbit 9s ease-in-out infinite;
 }
 @keyframes fsTierGemOrbit {
   0%, 100% { transform: translateY(0) rotateY(-14deg) rotateX(4deg) scale(1); }
@@ -227,7 +219,6 @@ html[data-fs-tier="diamond"] .game-grid > * { animation-duration: 360ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-fs-tier="diamond"] .hero::after { animation: none !important; opacity: .14; }
   html[data-fs-tier="diamond"] .hero-gem { animation: none !important; }
   html[data-fs-tier="diamond"] .game-card,
   html[data-fs-tier="diamond"] .category-card { transform: none !important; }
