@@ -291,6 +291,52 @@ con su material, marca de la barra superior en degradado, y bordes propios en
 topbar y nav. Los bucles decorativos siguen condicionados a
 `data-r8-motion="full"`, que es lo que el CI verifica.
 
+**R167 — marcos dibujados en el repo.** Gold lleva filigrana dorada con
+volutas de esquina; Diamond, una cinta de cristal tallado con piedras en las
+cuatro esquinas. Son tres SVG propios en `v2/tiers/`:
+
+| Pieza | Archivo | Montaje |
+| --- | --- | --- |
+| Marco Gold | `frame-gold.svg` | `border-image`, slice 120, `stretch`, 26 px |
+| Marco Diamond | `frame-diamond.svg` | `border-image`, slice 120, `round`, 10 px |
+| Gema del logotipo | `gem-brillante.svg` | fondo de `.brand > span` |
+
+Por qué `border-image` y no un fondo estirado: es lo único que alarga los
+lados **sin deformar las esquinas**. El quinto bloque mide el doble de ancho
+que los otros cuatro y la voluta se ve igual en los cinco.
+
+Van **solo en `.category-card`** — cinco elementos estáticos del HTML. En
+`.game-card` serían decenas y es justo lo que se traba en gama baja. El borde
+pintado se paga una vez por repintado y no anima: no entra en el presupuesto
+de scroll del reflejo de R165.
+
+Detalles que ya costaron una pasada y conviene no redescubrir:
+
+- `border-image` **ignora `border-radius`**, así que el radio de la tarjeta se
+  bajó a 7 px (Gold) y 3 px (Diamond) para que el fondo no asome por fuera del
+  marco en las esquinas.
+- El `:hover` de `tier-base.css` reenciende `border-color`, y ese hilo de 1 px
+  aparecería **por fuera** del marco. Los dos niveles lo apagan explícitamente,
+  y el quinto bloque otra vez aparte porque trae borde propio de R165.
+- En el SVG los espejos van como `matrix(...)`, no como `scale()`: el origen de
+  transformación de un elemento SVG no es el del lienzo y dos de los cuatro
+  lados de Diamond se quedaban sin tallar.
+- La escala de las facetas está elegida para el tamaño **real** de una tarjeta,
+  no para que el archivo se vea bonito: facetas gruesas y pocas se leen como
+  talla; finas y muchas, como festón de tarta.
+- La gema **no toca `index.html`**: el logotipo sigue diciendo 💎 y el CSS lo
+  esconde con `font-size: 0` y pinta el SVG de fondo. Base conserva el emoji.
+
+Guarda: `scripts/test-r167-tier-frames.mjs` (offline). Sus ocho aserciones
+negativas están comprobadas simulando la regresión que deben atrapar.
+
+Lo que pidió el propietario como "paquete de assets" (`gold_frame.png`,
+`diamond_frame.png`, `gold_logo.png`, `diamond_logo_graphic.png`) **nunca
+llegó como archivos**: lo que se recibió fue una sola captura RGB de 1131×944
+sin canal alfa, con el damero de transparencia pintado dentro. No hay nada que
+recortar de ahí. **No volver a pedirlos**: los tres SVG del repo cubren el
+mismo diseño y escalan mejor.
+
 Bienvenida (`tier-welcome.js`): distingue cuenta nueva, regreso y regreso
 tras 7+ días usando `user.created_at` y `user.last_sign_in_at`, que ya
 vienen en la sesión. Sin tabla, columna ni RPC nuevos.
@@ -362,6 +408,9 @@ Todo fusionado en `main`. No queda ninguna rama en curso.
   sutil, bienvenida y nombre preferido. **Fusionado.**
 - PR #101 `fix/solo-google-login` — R160, cierre de la superficie de
   contraseña. **Fusionado.**
+- PR #105 `claude/repo-config-analysis-203vqk` — R164 a R167: bloque de
+  cuentas en la rejilla, reflejo al bajar, deslizamiento lateral y marcos
+  dibujados. **Abierto, a la espera de fusión.**
 
 ## Deuda conocida
 

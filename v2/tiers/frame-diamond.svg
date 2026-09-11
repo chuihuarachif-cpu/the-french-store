@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <!-- THE FRENCH STORE - R167. Marco Diamond.
+       Cinta de cristal tallado para border-image con slice 120: las cuatro
+       piedras de esquina se dibujan a tamano fijo y nunca se deforman; la
+       banda facetada de los lados se repite con border-image-repeat: round.
+
+       La escala esta elegida para el tamano REAL de una tarjeta, no para que
+       el archivo se vea bien: con border-image-width 10 el factor es 10/120,
+       asi que una faceta de 120 en el dibujo mide 10 px en pantalla. Facetas
+       gruesas y pocas se leen como talla; finas y muchas se leen como feston.
+
+       Los espejos van como matrices explicitas (matrix(...)) y no como
+       scale(): en SVG el origen de transformacion de un elemento no es el
+       del lienzo, y con scale() las bandas inferior y derecha se quedaban
+       sin tallar. Cero filtros, cero blur. -->
+  <defs>
+    <linearGradient id="hielo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".26" stop-color="#b4dcf2"/>
+      <stop offset=".5" stop-color="#ffffff"/>
+      <stop offset=".72" stop-color="#dfd8f5"/>
+      <stop offset=".88" stop-color="#f6e6f0"/>
+      <stop offset="1" stop-color="#8fc0dd"/>
+    </linearGradient>
+
+    <!-- Talla de los lados: una faceta clara y dos valles por cada 120. -->
+    <pattern id="facetaH" width="180" height="110" patternUnits="userSpaceOnUse" x="0" y="0">
+      <polygon points="0,0 90,74 180,0" fill="#ffffff" opacity=".95"/>
+      <polygon points="90,74 180,0 270,74" fill="#4a89ad" opacity=".5"/>
+      <polygon points="-90,74 0,0 90,74" fill="#4a89ad" opacity=".5"/>
+      <polygon points="0,0 90,74 44,74" fill="#ded6f7" opacity=".5"/>
+      <path d="M-90,74 L0,0 L90,74 L180,0 L270,74" fill="none" stroke="#eafaff" stroke-width="2.4" opacity=".85"/>
+      <rect x="-90" y="74" width="360" height="36" fill="#f2fbff" opacity=".72"/>
+      <rect x="-90" y="74" width="360" height="3" fill="#ffffff"/>
+    </pattern>
+    <pattern id="facetaV" width="110" height="180" patternUnits="userSpaceOnUse" x="0" y="0">
+      <polygon points="0,0 74,90 0,180" fill="#ffffff" opacity=".95"/>
+      <polygon points="74,90 0,180 74,270" fill="#4a89ad" opacity=".5"/>
+      <polygon points="74,-90 0,0 74,90" fill="#4a89ad" opacity=".5"/>
+      <polygon points="0,0 74,90 74,44" fill="#ded6f7" opacity=".5"/>
+      <path d="M74,-90 L0,0 L74,90 L0,180 L74,270" fill="none" stroke="#eafaff" stroke-width="2.4" opacity=".85"/>
+      <rect x="74" y="-90" width="36" height="360" fill="#f2fbff" opacity=".72"/>
+      <rect x="74" y="-90" width="3" height="360" fill="#ffffff"/>
+    </pattern>
+
+    <!-- Piedra de esquina: cuatro caras hacia un vertice y una mesa girada
+         encima. Es lo unico que border-image dibuja a tamano fijo, asi que
+         es donde se juega la lectura de "tallado". -->
+    <g id="piedra">
+      <polygon points="0,0 110,0 55,55" fill="#ffffff"/>
+      <polygon points="0,0 55,55 0,110" fill="#e6f5ff"/>
+      <polygon points="110,0 110,110 55,55" fill="#b9a9e8" opacity=".85"/>
+      <polygon points="0,110 110,110 55,55" fill="#3b7ea6"/>
+      <polygon points="55,20 90,55 55,90 20,55" fill="url(#hielo)"/>
+      <path d="M0,0 L55,55 M110,0 L55,55 M0,110 L55,55 M110,110 L55,55"
+            fill="none" stroke="#eafaff" stroke-width="2.6" opacity=".9"/>
+      <path d="M55,20 L90,55 L55,90 L20,55 Z" fill="none" stroke="#ffffff" stroke-width="3" opacity=".95"/>
+    </g>
+  </defs>
+
+  <!-- Cinta: rectangulo exterior menos hueco interior. -->
+  <path d="M0,0 H600 V400 H0 Z M110,110 V290 H490 V110 Z" fill-rule="evenodd" fill="url(#hielo)"/>
+
+  <!-- Talla de los cuatro lados. Las bandas de abajo y de la derecha son la
+       misma pieza reflejada, para que las cuatro casen en las esquinas. -->
+  <rect x="120" y="0" width="360" height="110" fill="url(#facetaH)"/>
+  <rect x="120" y="0" width="360" height="110" fill="url(#facetaH)" transform="matrix(1,0,0,-1,0,400)"/>
+  <rect x="0" y="120" width="110" height="160" fill="url(#facetaV)"/>
+  <rect x="0" y="120" width="110" height="160" fill="url(#facetaV)" transform="matrix(-1,0,0,1,600,0)"/>
+
+  <use href="#piedra"/>
+  <use href="#piedra" transform="matrix(-1,0,0,1,600,0)"/>
+  <use href="#piedra" transform="matrix(1,0,0,-1,0,400)"/>
+  <use href="#piedra" transform="matrix(-1,0,0,-1,600,400)"/>
+
+  <!-- Filos: el canto exterior e interior siempre encienden. -->
+  <rect x="1.5" y="1.5" width="597" height="397" fill="none" stroke="#ffffff" stroke-width="3" opacity=".95"/>
+  <rect x="110" y="110" width="380" height="180" fill="none" stroke="#cfeaff" stroke-width="3" opacity=".85"/>
+</svg>

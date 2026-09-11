@@ -342,3 +342,58 @@ html[data-fs-tier="gold"] .bottom-nav button.active {
   background-size: 200% 100%;
   box-shadow: inset 0 1px 0 rgba(255, 248, 228, .6);
 }
+
+/* ====================================================================
+   R167 — MARCO DE FILIGRANA Y GEMA DEL LOGOTIPO
+   El marco es `v2/tiers/frame-gold.svg` montado con border-image, que es la
+   única herramienta que estira los lados SIN deformar las esquinas: la
+   voluta se dibuja siempre al mismo tamaño, mida lo que mida la tarjeta.
+   Por eso el quinto bloque, que ocupa el doble de ancho, luce igual de bien.
+
+   Va sobre `.category-card` y nada más: son cinco elementos estáticos del
+   HTML. Ponerlo también en cada `.game-card` multiplicaría la pintura por
+   decenas y es justo lo que se traba en gama baja.
+
+   El borde pintado se paga una vez por repintado y no anima nunca, así que
+   no entra en el presupuesto de scroll del reflejo (R165).
+   ==================================================================== */
+html[data-fs-tier="gold"] .category-card {
+  /* border-image ignora border-radius, así que el radio de la tarjeta se
+     ajusta al que trae dibujado el SVG (rx 30 · 26/120 ≈ 6,5 px). Si no,
+     el fondo asomaría por fuera del hilo dorado en las cuatro esquinas. */
+  border-radius: 7px;
+  border-color: transparent;
+  border-image-source: url("./frame-gold.svg");
+  border-image-slice: 120;
+  border-image-width: 26px;
+  border-image-repeat: stretch;
+}
+/* La capa base reenciende el borde de 1 px al pasar por encima; quedaría un
+   hilo suelto por FUERA del marco. Misma especificidad y va después, gana. */
+html[data-fs-tier="gold"] .category-card:hover { border-color: transparent; }
+/* El quinto bloque trae su propio borde de R165: hay que apagarlo igual. */
+html[data-fs-tier="gold"] .category-card.cuentas-entry,
+html[data-fs-tier="gold"] .category-card.cuentas-entry:hover {
+  border-color: transparent;
+  border-radius: 7px;
+}
+
+/* En pantallas muy estrechas la tarjeta mide ~140 px: el marco se encoge
+   para que no se coma el texto. */
+@media (max-width: 380px) {
+  html[data-fs-tier="gold"] .category-card { border-image-width: 19px; }
+}
+
+/* La gema del logotipo. El HTML sigue diciendo 💎 (hay workflows que leen
+   index.html): `font-size: 0` esconde el emoji y deja ver el SVG de fondo.
+   El nivel Base no entra aquí, así que conserva el emoji tal cual. */
+html[data-fs-tier="gold"] .brand > span {
+  font-size: 0;
+  line-height: 0;
+  width: 21px;
+  height: 21px;
+  flex: 0 0 auto;
+  background:
+    url("./gem-brillante.svg") center / contain no-repeat,
+    radial-gradient(circle at 50% 50%, rgba(255, 232, 170, .42), rgba(255, 232, 170, 0) 66%);
+}
