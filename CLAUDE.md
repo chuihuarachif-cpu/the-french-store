@@ -118,6 +118,60 @@ RPC de rango: `get_my_loyalty_summary` → `active_pass.code`
 
 Lista completa de RPC en `docs/ARCHITECTURE.md`.
 
+## Proveedores y precios (R162)
+
+**Solo se usan dos proveedores: Gameton y Bonoxs.** Códigos internos:
+`gameton` = **G**, `bonoxs` = **B**. (`gamerhub` era **H** y está retirado.)
+
+Gana **siempre el más barato de los dos**. El margen no se calcula en
+ningún sitio nuevo: `productos.precio` es una **columna generada**:
+
+```
+Streaming o id=54          -> precio_venta_fijo
+Recargas por Cuenta fija   -> precio_venta_fijo
+resto                      -> round(costo + store_competitive_margin_from_cost(costo), 2)
+```
+
+donde `costo = precio_proveedor * tipo_cambio`. Por eso "el más barato +
+mi margen" se reduce a **dejar el costo más bajo en `precio_proveedor`**;
+el margen sale solo. El producto 54 (Pase Semanal MLBB) conserva su regla
+propia de costo + Bs 0,50 vía `recalcular_precio_pase_semanal_mlbb`.
+
+Piezas:
+
+| Qué | Dónde |
+| --- | --- |
+| Fija el costo más barato | `aplicar_costo_mas_barato(p_producto_id default null)` |
+| Lo mantiene al día | trigger `oferta_aplica_costo_mas_barato` en `ofertas_proveedor` |
+| Elige proveedor del pedido | `resolver_proveedor_competitivo` → `winner_price` |
+| Lo sella en el pedido | `set_order_item_provider_snapshot` → `order_items.provider` |
+
+`resolver_proveedor_competitivo` ya **no** considera GamerHub ni tiene
+política de preferencia: `preference_reason` es siempre `LOWEST_PRICE`.
+Se conservaron todas las claves de su JSON para no romper a sus cuatro
+consumidores; las de GamerHub van en `null`.
+
+Cinco triggers de GamerHub quedaron **desactivados** para que no vuelvan a
+escribir precios: `r147_refresh_mlbb_from_gamerhub_offer`,
+`r147b_refresh_existing_mlbb_from_offer`, `gamerhub_offer_refresh_mlbb_weekly`
+(en `ofertas_proveedor`), `r147_refresh_mlbb_from_inventory`
+(en `fx_usdt_inventory`) y `gamerhub_catalog_state_refresh_mlbb_weekly`.
+
+**Sigue pendiente:** el cron del Worker (`* * * * *` en `wrangler.jsonc`,
+`src/gamerhub-bolivia-offer-refresh.js`) todavía sincroniza ofertas de
+GamerHub. Ya no afectan al precio, pero conviene apagarlo.
+
+### Aviso de "ya pagué" por WhatsApp
+
+`v2/paid-whatsapp.js` arma el mensaje y pinta `🔖 Ref: G/B` por producto.
+El reclamo es **único por pedido y se impone en Supabase**
+(`customer_paid_whatsapp_claims`), no en `localStorage`, así que recargar o
+cambiar de navegador no lo regenera.
+
+En R162 se corrigió que `claim_my_paid_whatsapp_notice` **no devolvía
+`ref_code`**, así que esa línea se omitía siempre y el proveedor nunca
+aparecía. Ahora se deriva de `order_items.provider`.
+
 ## Autenticación (R160)
 
 **El ingreso público es solo Google. No hay correo ni contraseña en
@@ -226,12 +280,10 @@ Todo fusionado en `main`. No queda ninguna rama en curso.
 
 ## Deuda conocida
 
-- **GamerHub en Admin está solo oculto, no eliminado.**
-  `admin/remove-gamerhub-ui.js` borra nodos del DOM tras renderizar, pero
-  `admin/app.js` conserva toda la ruta (líneas 17, 71, 100-103, 237-269,
-  281-304) y tres RPC vivas: `admin_app_gamerhub_state`,
-  `admin_app_gamerhub_add`, `admin_app_gamerhub_consume`. El router aún
-  acepta `name==='gamerhub'`. La tienda pública `v2/` sí está limpia.
+- GamerHub quedó retirado del Admin y de los precios en R161/R162. Las ~40
+  funciones y las tablas `gamerhub_*` siguen en la base de datos con el
+  histórico; cinco triggers suyos están **desactivados, no borrados**
+  (reversibles con `ENABLE TRIGGER`). Ver la sección Proveedores.
 - RPC de Admin duplicadas: pares `admin_*` / `admin_app_*`
   (`admin_update_order_status` vs `admin_app_update_order_status`, etc.).
   Migración a medias hacia el prefijo `admin_app_`.
