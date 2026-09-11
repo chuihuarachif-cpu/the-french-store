@@ -68,10 +68,21 @@ jobs:
           # garantía estrictamente más fuerte de "solo Google": un campo
           # ausente no puede reaparecer al quitarle una clase, ni lo ve el
           # gestor de contraseñas del navegador.
-          ! grep -Fq 'id="loginEmail"' v2/index.html
-          ! grep -Fq 'id="loginPassword"' v2/index.html
-          ! grep -Eq '<input[^>]*type="password"' v2/index.html
-          ! grep -Fq 'sb.auth.signUp(' v2/legal.js
+          #
+          # Se comprueban con prohibido() y no con `! grep`: bash ignora
+          # `set -e` cuando el valor de retorno se invierte con `!`, así que
+          # un `! grep` que no sea el último comando del paso NUNCA falla.
+          prohibido() {
+            descripcion="$1"; shift
+            if "$@" >/dev/null 2>&1; then
+              echo "PROHIBIDO: $descripcion"
+              exit 1
+            fi
+          }
+          prohibido "campo de correo en el modal"       grep -Fq 'id="loginEmail"' v2/index.html
+          prohibido "campo de contraseña en el modal"   grep -Fq 'id="loginPassword"' v2/index.html
+          prohibido "cualquier input de contraseña"     grep -Eq '<input[^>]*type="password"' v2/index.html
+          prohibido "creación de cuenta con contraseña" grep -Fq 'sb.auth.signUp(' v2/legal.js
           grep -Fq 'id="loginSubmit" class="primary-btn full hidden"' v2/index.html
           ! grep -Fq "respaldo para cuentas existentes y administración" v2/index.html
 

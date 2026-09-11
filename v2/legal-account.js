@@ -6,7 +6,7 @@
 
   const VERSION = 'legal-account-v2-20260824-r44';
   const LEGAL_VERSION = '2026-08-24';
-  let patched = false;
+  let clientReady = false;
   let oauthRecording = false;
 
   function checkboxAccepted() {
@@ -22,28 +22,24 @@
     };
   }
 
-  function patchSignUp() {
-    if (patched) return true;
+  /* R160: aquí había un envoltorio sobre la creación de cuentas con contraseña
+     (signUp), que le inyectaba los metadatos legales. Esa vía ya no existe en
+     la tienda, así que el envoltorio quedaba muerto y solo dejaba un gancho
+     puesto sobre una API de autenticación que ya no queremos usar.
+
+     Se conserva únicamente su segunda función: servir de sonda para saber si
+     el cliente de Supabase ya está disponible antes de instalar el
+     seguimiento de OAuth. La aceptación legal de Google sigue registrándose
+     igual, en recordGoogleAcceptance(). */
+  function supabaseReady() {
+    if (clientReady) return true;
+    /* El try/catch no es decorativo: `sb` se declara con `let` en
+       core/runtime.js, así que mientras ese módulo no haya corrido leerlo
+       lanza ReferenceError, no `undefined`. install() sondea esto cada 25 ms,
+       de modo que sin el try/catch el error se repetiría en bucle. */
     try {
-      if (!sb?.auth || typeof sb.auth.signUp !== 'function') return false;
-      const original = sb.auth.signUp.bind(sb.auth);
-      sb.auth.signUp = async function fsLegalSignUp(credentials) {
-        const input = credentials && typeof credentials === 'object' ? credentials : {};
-        if (!checkboxAccepted()) return original(input);
-        const options = input.options && typeof input.options === 'object' ? input.options : {};
-        const existingData = options.data && typeof options.data === 'object' ? options.data : {};
-        return original({
-          ...input,
-          options: {
-            ...options,
-            data: {
-              ...existingData,
-              ...legalMetadata()
-            }
-          }
-        });
-      };
-      patched = true;
+      if (!sb?.auth || typeof sb.auth.getSession !== 'function') return false;
+      clientReady = true;
       document.documentElement.dataset.fsLegalAccount = VERSION;
       return true;
     } catch {
@@ -91,14 +87,14 @@
   }
 
   function install() {
-    if (patchSignUp()) {
+    if (supabaseReady()) {
       installOAuthTracking();
       return;
     }
     let attempts = 0;
     const timer = setInterval(() => {
       attempts += 1;
-      if (patchSignUp()) {
+      if (supabaseReady()) {
         clearInterval(timer);
         installOAuthTracking();
       } else if (attempts >= 200) {

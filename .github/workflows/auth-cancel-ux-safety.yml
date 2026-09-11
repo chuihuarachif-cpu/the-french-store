@@ -68,14 +68,26 @@ jobs:
           # referencia de rollback hasta una revisión de limpieza aprobada.
           # Conserva llamadas de contraseña muertas; se sirve pero no se
           # ejecuta. Queda anotado como deuda, no como vía activa.
-          ! grep -rq --exclude=app.js "sb.auth.resetPasswordForEmail" v2/
-          ! grep -rq --exclude=app.js "sb.auth.updateUser({ password" v2/
-          ! grep -rq --exclude=app.js "sb.auth.verifyOtp" v2/
-          ! grep -rq --exclude=app.js "sb.auth.signUp(" v2/
-          ! grep -rq --exclude=app.js "sb.auth.signInWithPassword" v2/
-          ! grep -rEq --exclude=app.js '<input[^>]*type="password"' v2/
+          #
+          # Se comprueban con prohibido() y no con `! grep`: bash ignora
+          # `set -e` cuando el valor de retorno se invierte con `!`, así que
+          # un `! grep` que no sea el último comando del paso NUNCA falla.
+          # Escritas como `! grep`, estas garantías serían decorativas.
+          prohibido() {
+            descripcion="$1"; shift
+            if "$@" >/dev/null 2>&1; then
+              echo "PROHIBIDO: $descripcion"
+              exit 1
+            fi
+          }
+          prohibido "restablecimiento de contraseña"    grep -rq --exclude=app.js "sb.auth.resetPasswordForEmail" v2/
+          prohibido "definir una contraseña nueva"      grep -rq --exclude=app.js "sb.auth.updateUser({ password" v2/
+          prohibido "validación de enlaces de correo"   grep -rq --exclude=app.js "sb.auth.verifyOtp" v2/
+          prohibido "creación de cuenta con contraseña" grep -rq --exclude=app.js "sb.auth.signUp(" v2/
+          prohibido "ingreso con contraseña"            grep -rq --exclude=app.js "sb.auth.signInWithPassword" v2/
+          prohibido "cualquier input de contraseña"     grep -rEq --exclude=app.js '<input[^>]*type="password"' v2/
           # app.js debe seguir sin cargarse desde el shell público.
-          ! grep -q 'app\.js' v2/index.html
+          prohibido "app.js cargado desde index.html"   grep -q 'app\.js' v2/index.html
           grep -q "specialAuthFlow" v2/auth-ease.js
           grep -q "specialAuthFlow" v2/auth-google.js
           echo 'Sin creación de cuenta, sin restablecimiento y sin definición de contraseña en la tienda pública.'
