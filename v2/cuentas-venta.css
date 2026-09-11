@@ -2,17 +2,37 @@
    Solo presentación. No toca precios de catálogo, checkout, Wallet ni proveedores.
    Va a lo ancho, debajo de las 4 categorías, para mantener la simetría. */
 
-#cuentasVenta {
-  margin: 18px 0 0;
-  padding: 18px 16px 20px;
-  border: 1px solid rgba(86, 170, 214, .18);
-  border-radius: 18px;
+/* Bloque de entrada: vive dentro de la rejilla de categorías y ocupa las dos
+   columnas, debajo de Streaming y Gift Cards, para mantener la simetría. */
+.category-card.cuentas-entry {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(120, 200, 255, .34);
   background:
-    radial-gradient(120% 100% at 0% 0%, rgba(56, 215, 255, .07), transparent 60%),
-    linear-gradient(180deg, rgba(10, 24, 38, .72), rgba(6, 16, 27, .86));
+    radial-gradient(130% 120% at 100% 0%, rgba(56, 215, 255, .13), transparent 62%),
+    linear-gradient(180deg, rgba(13, 32, 51, .95), rgba(7, 19, 32, .97));
+}
+.category-card.cuentas-entry small { max-width: 62ch; }
+.category-card.cuentas-entry small b { color: #d5ecf9; font-weight: 700; }
+.cuentas-entry-cta {
+  margin-top: 4px;
+  font-style: normal;
+  font-weight: 800;
+  font-size: .82rem;
+  color: #55dcff;
+  letter-spacing: .2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .category-card.cuentas-entry:hover { border-color: rgba(86, 220, 255, .6); }
 }
 
-#cuentasVenta .cv-head {
+/* Cabecera de la vista propia. */
+#view-cuentas .cv-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -20,12 +40,12 @@
   flex-wrap: wrap;
   margin-bottom: 14px;
 }
-#cuentasVenta .cv-head h2 {
+#view-cuentas .cv-head h2 {
   margin: 0;
   font-size: 1.12rem;
   letter-spacing: .2px;
 }
-#cuentasVenta .cv-head small {
+#view-cuentas .cv-head small {
   color: #8fa7b6;
   font-size: .82rem;
   line-height: 1.4;
@@ -160,8 +180,18 @@
   line-height: 1.45;
 }
 
+.cv-vacio {
+  margin: 18px 0 0;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px dashed rgba(86, 170, 214, .28);
+  color: #8fa7b6;
+  font-size: .88rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
 @media (max-width: 420px) {
-  #cuentasVenta { padding: 15px 13px 17px; border-radius: 15px; }
   .cv-grid { grid-template-columns: 1fr; }
 }
 

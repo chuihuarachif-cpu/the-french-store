@@ -174,9 +174,14 @@ aparecía. Ahora se deriva de `order_items.provider`.
 
 ## Cuentas en Venta (R163)
 
-Vitrina de cuentas de juego, **debajo** de las 4 categorías y a lo ancho.
+**R164:** el bloque de entrada vive **dentro de `#categoryGrid`**, ocupando
+las dos columnas (`grid-column: 1 / -1`) debajo de Streaming y Gift Cards, y
+**lleva a una vista propia** (`#view-cuentas`), igual que Gift Cards lleva al
+catálogo. El bloque es HTML estático, así que siempre se ve y no parpadea; la
+vista carga las cuentas solo al entrar.
+
 **No es una quinta categoría**: las públicas siguen siendo exactamente 4 y
-el CI lo verifica en `v2/config/storefront.js`. Es una sección aparte.
+el CI lo verifica en `v2/config/storefront.js`.
 
 Diferencia clave con el resto de la tienda: **inventario de una sola
 unidad**. Una recarga se vende infinitas veces; una cuenta se vende una vez.
@@ -186,7 +191,7 @@ compra se cierra **por WhatsApp**, no por el carrito: no se tocó checkout.
 | Qué | Dónde |
 | --- | --- |
 | Vitrina pública | `v2/cuentas-venta.js` + `v2/cuentas-venta.css` |
-| Contenedor y modal | `v2/index.html` (`#cuentasVenta`, `#cuentaModal`) |
+| Bloque, vista y modal | `v2/index.html` (`#cuentasEntry`, `#view-cuentas`, `#cuentaModal`) |
 | Carga diferida | `v2/bootstrap.js`, al final de `loadCore()` |
 | Panel privado | `admin/r163-cuentas.js` + pestaña `data-tab="cuentas"` |
 | Tabla | `public.cuentas_en_venta` |
@@ -203,8 +208,8 @@ Fotos: se reescalan a 1600 px y se convierten a **WebP** en el navegador
 ~250 KB. En la tienda van con `loading="lazy"` y la galería completa solo
 se pide al abrir la ficha, así que no retrasan la portada.
 
-Fail-closed: si la consulta falla o no hay cuentas, la sección se oculta y
-el resto de la tienda sigue igual.
+Fail-closed: si la consulta falla o no hay cuentas, la vista muestra su
+mensaje vacío y el resto de la tienda sigue igual.
 
 ## Autenticación (R160)
 
@@ -271,11 +276,20 @@ Tres niveles, decididos por el rango real del usuario:
   previa para probar los tres niveles.
 
 Sonidos (`tier-sound.js`): Web Audio API pura, sin archivos ni librerías.
-Solo dos: un clic corto al **tocar** algo y otro más suave al **entrar** a
-una sección. **No hay sonido de dinero ni de pago** — se retiró junto con
-el módulo `tier-events.js` que lo disparaba, porque resultaba invasivo. Las
-superficies de pago y QR están en **silencio total**. Todo se calla bajo
-`prefers-reduced-motion`.
+**R164: solo suena al ENTRAR a una sección.** El clic al tocar cada cosa se
+retiró a pedido del propietario: `installSoundTriggers()` en `tier-gate.js`
+quedó **vacío a propósito** — no volver a poner un listener global de clic.
+Siguen existiendo dos `tap` puntuales como confirmación (guardar el nombre
+preferido y el selector de vista previa del propietario). Tampoco hay sonido
+de dinero ni de pago; pago y QR están en **silencio total**. Todo se calla
+bajo `prefers-reduced-motion`.
+
+**R164 — los niveles se reforzaron.** Gold y Diamond se veían casi iguales a
+Base en el teléfono porque el CSS era deliberadamente contenido. Ahora cada
+uno marca: sello de rango en el hero (`.hero::before`), tarjetas de categoría
+con su material, marca de la barra superior en degradado, y bordes propios en
+topbar y nav. Los bucles decorativos siguen condicionados a
+`data-r8-motion="full"`, que es lo que el CI verifica.
 
 Bienvenida (`tier-welcome.js`): distingue cuenta nueva, regreso y regreso
 tras 7+ días usando `user.created_at` y `user.last_sign_in_at`, que ya

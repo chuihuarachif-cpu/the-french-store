@@ -223,3 +223,70 @@ html[data-fs-tier="diamond"] .game-grid > * { animation-duration: 360ms; }
   html[data-fs-tier="diamond"] .game-card,
   html[data-fs-tier="diamond"] .category-card { transform: none !important; }
 }
+
+/* ========================================================================
+   R164 — refuerzo. Diamond se veía casi igual que Base en el teléfono.
+   Se sube el volumen en las mismas superficies que Gold, pero con la
+   identidad de hielo y prisma que corresponde al nivel más alto.
+   Transform/opacity solamente; los bucles siguen tras data-r8-motion="full".
+   ==================================================================== */
+
+html[data-fs-tier="diamond"] .hero { position: relative; }
+html[data-fs-tier="diamond"] .hero::before {
+  content: "◆ DIAMOND";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  color: #04222e;
+  background: linear-gradient(135deg, #eafcff 0%, #7fe4ff 34%, #27a8d8 58%, #d9f7ff 84%, #56c8ee 100%);
+  box-shadow: 0 4px 16px rgba(86, 220, 255, .5), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+html[data-fs-tier="diamond"] .category-card {
+  border-color: rgba(110, 225, 255, .5);
+  background:
+    radial-gradient(130% 130% at 100% 0%, rgba(110, 225, 255, .17), transparent 60%),
+    linear-gradient(180deg, rgba(11, 36, 54, .94), rgba(5, 16, 27, .97));
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .46),
+    0 0 22px rgba(56, 200, 255, .1),
+    inset 0 1px 0 rgba(214, 248, 255, .2);
+}
+html[data-fs-tier="diamond"] .category-card b { color: #dff6ff; }
+html[data-fs-tier="diamond"] .category-card span { filter: drop-shadow(0 2px 8px rgba(86, 220, 255, .6)); }
+
+/* Canto prismático: una línea de luz en el borde superior de cada tarjeta. */
+html[data-fs-tier="diamond"] .category-card { position: relative; overflow: hidden; }
+html[data-fs-tier="diamond"] .category-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(214, 248, 255, .85), rgba(160, 120, 255, .5), transparent);
+}
+
+html[data-fs-tier="diamond"] .brand {
+  background: linear-gradient(135deg, #eafcff 0%, #7fe4ff 40%, #b9a6ff 70%, #eafcff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+html[data-fs-tier="diamond"] .topbar {
+  border-bottom: 1px solid rgba(110, 225, 255, .34);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 6px 26px rgba(0, 0, 0, .4);
+}
+html[data-fs-tier="diamond"] .bottom-nav {
+  border-top: 1px solid rgba(110, 225, 255, .34);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 -6px 26px rgba(0, 0, 0, .45);
+}
+html[data-fs-tier="diamond"] .eyebrow { color: #8fdcf5; letter-spacing: 1.5px; }
+html[data-fs-tier="diamond"] .price,
+html[data-fs-tier="diamond"] .balance-card strong { color: #dff6ff; }

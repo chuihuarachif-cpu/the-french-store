@@ -57,21 +57,19 @@
   <main id="mainContent">
     <section id="view-inicio" class="view active">
       <div class="hero"><div class="hero-copy"><span class="eyebrow">RECARGAS Y CÓDIGOS DIGITALES</span><h1>Recargas, streaming y Gift Cards en Bolivia.</h1><p>Juegos y servicios digitales en una tienda simple, rápida y segura, con precios visibles en bolivianos.</p><div class="hero-actions"><button class="primary-btn" data-nav="tienda">Explorar catálogo</button><button class="secondary-btn" id="whatsappQuote">Cotizar por WhatsApp</button></div></div><div class="hero-gem" aria-hidden="true">💎</div></div>
-      <div class="category-grid" id="categoryGrid"><button class="category-card blue" data-category="Recargas por ID"><span>🎮</span><b>Recargas por ID</b><small>Diamantes, monedas y pases</small></button><button class="category-card navy" data-category="Recargas por Cuenta"><span>👤</span><b>Recargas por Cuenta</b><small>Productos con atención asistida</small></button><button class="category-card purple" data-category="Streaming"><span>📺</span><b>Streaming</b><small>Entretenimiento y música</small></button><button class="category-card gold" data-category="Gift Cards"><span>🎁</span><b>Gift Cards</b><small>Códigos digitales · entrega manual</small></button></div>
-      <!-- R163: sección "Cuentas en Venta". NO es una quinta categoría: las
-           públicas siguen siendo exactamente 4. Va a lo ancho, debajo de la
-           rejilla, y arranca oculta hasta que haya cuentas publicadas. -->
-      <section id="cuentasVenta" hidden>
-        <div class="cv-head">
-          <h2>🧾 Cuentas en Venta</h2>
-          <small>Una sola unidad de cada una · entrega manual coordinada por WhatsApp</small>
-        </div>
-        <div class="cv-grid" id="cuentasVentaGrid"></div>
-      </section>
+      <div class="category-grid" id="categoryGrid"><button class="category-card blue" data-category="Recargas por ID"><span>🎮</span><b>Recargas por ID</b><small>Diamantes, monedas y pases</small></button><button class="category-card navy" data-category="Recargas por Cuenta"><span>👤</span><b>Recargas por Cuenta</b><small>Productos con atención asistida</small></button><button class="category-card purple" data-category="Streaming"><span>📺</span><b>Streaming</b><small>Entretenimiento y música</small></button><button class="category-card gold" data-category="Gift Cards"><span>🎁</span><b>Gift Cards</b><small>Códigos digitales · entrega manual</small></button><button class="category-card cuentas-entry" id="cuentasEntry" type="button"><span>🧾</span><b>Venta de Cuentas</b><small>Cuentas de <b>Free Fire</b> y <b>Clash of Clans</b> listas para jugar, con fotos reales y entrega personal. Próximamente más juegos.</small><em class="cuentas-entry-cta">Ver cuentas disponibles →</em></button></div>
       <section class="panel compact-panel"><div class="panel-head"><div><span class="eyebrow">SELECCIÓN RÁPIDA</span><h2>Productos destacados</h2></div></div><div id="featuredList" class="game-grid skeleton-area"></div></section>
     </section>
 
-    <section id="view-tienda" class="view"><section class="panel catalog-panel"><div class="panel-head catalog-heading"><div><span class="eyebrow" id="categoryEyebrow">CATÁLOGO</span><h2>Catálogo de juegos</h2><p id="catalogMeta">Cargando productos…</p></div><button id="cartInline" class="cart-inline">🛒 Carrito <span id="cartInlineCount">0</span></button></div><div id="categoryTabs" class="category-tabs" aria-label="Categorías"></div><div id="catalogList" class="game-list skeleton-area"></div></section></section>
+    <section id="view-cuentas" class="view">
+        <div class="cv-head">
+          <h2>🧾 Venta de Cuentas</h2>
+          <small>Cada cuenta es única y se vende una sola vez. Entrega personal coordinada por WhatsApp.</small>
+        </div>
+        <div class="cv-grid" id="cuentasVentaGrid"></div>
+        <p class="cv-vacio" id="cuentasVacio" hidden>Todavía no hay cuentas publicadas. Escríbenos por WhatsApp y te avisamos cuando entren.</p>
+      </section>
+      <section id="view-tienda" class="view"><section class="panel catalog-panel"><div class="panel-head catalog-heading"><div><span class="eyebrow" id="categoryEyebrow">CATÁLOGO</span><h2>Catálogo de juegos</h2><p id="catalogMeta">Cargando productos…</p></div><button id="cartInline" class="cart-inline">🛒 Carrito <span id="cartInlineCount">0</span></button></div><div id="categoryTabs" class="category-tabs" aria-label="Categorías"></div><div id="catalogList" class="game-list skeleton-area"></div></section></section>
 
     <section id="view-wallet" class="view auth-view"><section class="panel"><div class="panel-head"><div><span class="eyebrow">FRENCH WALLET</span><h2>Mi saldo</h2></div><button id="refreshWallet" class="icon-btn" aria-label="Actualizar Wallet" title="Actualizar Wallet">↻</button></div><div class="balance-card"><span>Saldo disponible</span><strong id="walletBalance">—</strong><small id="walletStatus" role="status" aria-live="polite">Inicia sesión para usar French Wallet.</small></div><div class="topup-box"><label for="topupAmount">Monto a cargar (Bs)</label><div class="input-row"><input id="topupAmount" type="number" min="1" max="5000" step="0.01" inputmode="decimal" placeholder="Ej. 20"><button id="requestTopup" class="primary-btn">Solicitar carga</button></div><div id="topupResult" class="notice hidden"></div></div><div class="split-grid"><div><h3>Solicitudes de carga</h3><div id="topupHistory" class="record-list"></div></div><div><h3>Movimientos</h3><div id="walletHistory" class="record-list"></div></div></div></section></section>
 

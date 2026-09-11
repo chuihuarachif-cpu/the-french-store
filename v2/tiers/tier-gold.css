@@ -112,3 +112,64 @@ html[data-fs-tier="gold"] .cart-total strong { color: #f6dca6; }
 @media (prefers-reduced-motion: reduce) {
   html[data-fs-tier="gold"] .hero::after { animation: none !important; opacity: .14; }
 }
+
+/* ========================================================================
+   R164 — refuerzo. El propietario reportó que Gold se veía flojo, sin la
+   energía de algo que se ha pagado. La versión anterior era deliberadamente
+   contenida y el resultado era que apenas se notaba en el teléfono.
+   Se sube el volumen donde MÁS se mira: las tarjetas de categoría, el hero,
+   la barra superior y la de abajo. Sigue siendo transform/opacity y todo
+   bucle decorativo sigue condicionado a data-r8-motion="full".
+   ==================================================================== */
+
+/* Sello de rango: se lee de inmediato al abrir la tienda. */
+html[data-fs-tier="gold"] .hero { position: relative; }
+html[data-fs-tier="gold"] .hero::before {
+  content: "★ GOLD";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  color: #2a1c05;
+  background: var(--t-metal);
+  background-size: 200% 100%;
+  box-shadow: 0 4px 14px rgba(213, 162, 76, .45), inset 0 1px 0 rgba(255, 248, 228, .7);
+}
+
+/* Las 4 tarjetas de categoría: es lo que más se mira y antes no cambiaban. */
+html[data-fs-tier="gold"] .category-card {
+  border-color: rgba(213, 162, 76, .42);
+  background:
+    radial-gradient(120% 130% at 0% 0%, rgba(240, 207, 138, .12), transparent 58%),
+    linear-gradient(180deg, rgba(38, 29, 10, .92), rgba(14, 12, 7, .96));
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 236, 197, .16);
+}
+html[data-fs-tier="gold"] .category-card b { color: #f7e3b4; }
+html[data-fs-tier="gold"] .category-card span { filter: drop-shadow(0 2px 6px rgba(213, 162, 76, .5)); }
+
+/* Marca y barras en metal. */
+html[data-fs-tier="gold"] .brand {
+  background: var(--t-metal);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+html[data-fs-tier="gold"] .topbar {
+  border-bottom: 1px solid rgba(213, 162, 76, .3);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, .35);
+}
+html[data-fs-tier="gold"] .bottom-nav {
+  border-top: 1px solid rgba(213, 162, 76, .3);
+  box-shadow: 0 -6px 22px rgba(0, 0, 0, .4);
+}
+html[data-fs-tier="gold"] .eyebrow { color: #e0bd78; letter-spacing: 1.5px; }
+
+/* Precio y saldo destacados en dorado: lo que el cliente mira al comprar. */
+html[data-fs-tier="gold"] .price,
+html[data-fs-tier="gold"] .balance-card strong { color: #f7e3b4; }

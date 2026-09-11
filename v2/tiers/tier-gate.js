@@ -237,16 +237,12 @@
 
   /* --------------------------------- sound -------------------------------- */
 
-  /* One passive, delegated listener. It never calls preventDefault and never
-     awaits, so it cannot delay cart, checkout, QR or navigation. Buttons that
-     trigger navigate() are skipped here because the wrapper already sounds. */
+  /* R164: el propietario pidió quitar el sonido al tocar cada cosa. Antes aquí
+     había un listener delegado que sonaba en CADA botón y enlace de la tienda.
+     Se retira: ya no se instala nada. Solo queda el sonido de ENTRAR a una
+     sección, que lo dispara el envoltorio de navigate() más arriba. */
   function installSoundTriggers() {
-    document.addEventListener('click', (event) => {
-      const target = event.target.closest?.('button,a');
-      if (!target || dock?.contains(target)) return;
-      if (target.dataset?.nav) return; // handled by the navigate() wrapper
-      window.FSTierSound?.gesture?.('tap', currentLevel, target);
-    }, { passive: true, capture: false });
+    /* Intencionadamente vacío. No volver a poner un listener global de clic. */
   }
 
   /* --------------------------------- gate --------------------------------- */
