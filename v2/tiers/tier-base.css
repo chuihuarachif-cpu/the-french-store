@@ -91,13 +91,42 @@ html[data-fs-tier] .package-row {
               box-shadow var(--t-fast) ease;
 }
 
-/* ---------- Section transitions: no more hard cut between views ---------- */
+/* ---------- Section transitions: direction-aware, no more hard cut ----------
+   tier-gate.js stamps data-fs-nav="forward" or "back" on the incoming view,
+   so advancing and going back read as opposite movements. */
 @keyframes fsTierViewIn {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: none; }
 }
+@keyframes fsTierViewForward {
+  from { opacity: 0; transform: translate3d(18px, 0, 0); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fsTierViewBack {
+  from { opacity: 0; transform: translate3d(-18px, 0, 0); }
+  to   { opacity: 1; transform: none; }
+}
 html[data-fs-tier] .view.active {
   animation: fsTierViewIn var(--t-mid) var(--t-ease-out) both;
+}
+html[data-fs-tier] .view.active[data-fs-nav="forward"] {
+  animation: fsTierViewForward var(--t-mid) var(--t-ease-out) both;
+}
+html[data-fs-tier] .view.active[data-fs-nav="back"] {
+  animation: fsTierViewBack var(--t-mid) var(--t-ease-out) both;
+}
+
+/* ---------- Server-confirmed payment / Wallet credit ----------
+   tier-events.js adds .fs-tier-confirm to the checkmark that bisa-checkout.js
+   and bisa-wallet.js render only after the backend confirms. Cosmetic echo of
+   a confirmation that already happened; it confirms nothing by itself. */
+@keyframes fsTierConfirm {
+  0%   { opacity: 0; transform: scale(.72); }
+  55%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+html[data-fs-tier] .payment-checkmark.fs-tier-confirm {
+  animation: fsTierConfirm 420ms var(--t-ease-out) both;
 }
 
 /* ---------- Stagger: grids resolve instead of snapping in at once ---------- */
@@ -177,6 +206,7 @@ html[data-fs-tier] .modal.open .modal-card {
 .fs-tier-dock button[data-tier="diamond"][aria-pressed="true"] { background: #0d3a4d; color: #b6f2ff; }
 .fs-tier-dock .fs-tier-sep { width: 1px; align-self: stretch; background: rgba(97, 239, 255, .2); }
 .fs-tier-dock .fs-tier-mute { font-size: 13px; padding: 4px 7px; }
+.fs-tier-dock button[data-tier="auto"][aria-pressed="true"] { background: #10313f; color: #9fdcea; }
 
 @media (max-width: 620px) {
   .fs-tier-dock { left: 8px; bottom: calc(var(--nav-h) + 14px); font-size: 9px; }
@@ -186,8 +216,11 @@ html[data-fs-tier] .modal.open .modal-card {
 /* ---------- Reduced motion: keep meaning, drop movement ---------- */
 @media (prefers-reduced-motion: reduce) {
   html[data-fs-tier] .view.active,
+  html[data-fs-tier] .view.active[data-fs-nav="forward"],
+  html[data-fs-tier] .view.active[data-fs-nav="back"],
   html[data-fs-tier] .category-grid > *,
   html[data-fs-tier] .game-grid > *,
+  html[data-fs-tier] .payment-checkmark.fs-tier-confirm,
   html[data-fs-tier] .modal.open .modal-card { animation: none !important; }
   html[data-fs-tier] *,
   html[data-fs-tier] *::before,

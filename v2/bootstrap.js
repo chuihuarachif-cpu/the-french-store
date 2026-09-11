@@ -80,10 +80,13 @@
     await loadScript('./legal.js', 'fs-legal-js');
     await loadScript('./auth-confirm.js', 'fs-auth-confirm-js');
     await loadScript('./storefront-safety-overlays.js', 'fs-storefront-safety-overlays-js');
-    // Visual tier layer (presentation only). Both modules are inert unless the
-    // authenticated account is the owner; no style or element is applied for
-    // any other visitor. Never gates checkout, Wallet or QR.
+    // Visual tier layer (presentation only). Base ships statically in
+    // index.html; the gate only upgrades to Gold/Diamond by real rank and
+    // falls back to Base on any failure. tier-events observes the payment
+    // confirmation the backend already rendered. Never gates checkout,
+    // Wallet or QR, and never decides whether a payment succeeded.
     await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260911-r159');
+    await loadScript('./tiers/tier-events.js', 'fs-tier-events-js', '20260911-r159');
     await loadScript('./tiers/tier-gate.js', 'fs-tier-gate-js', '20260911-r159');
   }
 

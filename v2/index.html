@@ -1,5 +1,9 @@
 <!doctype html>
-<html lang="es">
+<!-- data-fs-tier="base" is set statically so the Base visual layer applies on
+     the first paint with no flash. tier-gate.js only ever upgrades it to
+     "gold" or "diamond" when the account's real rank says so, and falls back
+     to "base" if the rank cannot be read. -->
+<html lang="es" data-fs-tier="base">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -41,6 +45,7 @@
   <link rel="stylesheet" href="./rank-pass-premium.css?v=20260906-r150">
   <link rel="stylesheet" href="./cpx-rewards.css?v=20260825-r47">
   <link rel="stylesheet" href="./premium-surfaces.css?v=20260907-r153">
+  <link rel="stylesheet" href="./tiers/tier-base.css?v=20260911-r159">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
