@@ -27,6 +27,10 @@
   }
 
   function firstName(session) {
+    // Si el cliente eligió cómo quiere que le llamen, eso manda.
+    const preferred = window.FSProfileName?.resolvedName?.();
+    if (preferred) return preferred;
+
     const meta = session?.user?.user_metadata || {};
     const raw = meta.full_name || meta.name || meta.given_name || '';
     const name = String(raw).trim().split(/\s+/)[0] || '';
@@ -112,7 +116,6 @@
       return;
     }
 
-    const copy = messageFor(session);
     shownFor = key;
 
     // Remember before showing, so a failed toast never loops.
@@ -120,11 +123,11 @@
     write(SEEN_KEY, next);
     write(LAST_VISIT_KEY, JSON.stringify(new Date().toISOString()));
 
-    // Read the tone at show time, not now: the tier is resolved
-    // asynchronously and a Gold or Diamond customer must not be greeted with
-    // the plain look.
+    // Se resuelve todo al mostrar, no ahora: el nivel y el nombre preferido
+    // se resuelven de forma asíncrona, y un cliente Gold o Diamond no debe
+    // recibir el saludo con la apariencia genérica.
     const show = () => {
-      try { window.FSNotify?.toast?.({ ...copy, ...toneFor() }); } catch {}
+      try { window.FSNotify?.toast?.({ ...messageFor(session), ...toneFor() }); } catch {}
     };
 
     whenTierResolved(() => setTimeout(show, 450));
