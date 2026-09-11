@@ -55,6 +55,10 @@ Rama principal en ambos: `main`.
 | Campos de identificador | `v2/fulfillment-inputs.js` |
 | Rango / Rank Pass | `v2/loyalty.js`, `v2/loyalty-rank-extras.js` |
 | Capa visual por niveles | `v2/tiers/` |
+| Nombre preferido del cliente | `v2/profile-name.js` |
+| Bienvenida al iniciar sesión | `v2/tiers/tier-welcome.js` |
+| Puerta legal del checkout | `v2/legal.js` |
+| Aceptación legal de la cuenta | `v2/legal-account.js` |
 | Categorías declaradas | `v2/config/storefront.js` |
 | Admin | `admin/app.js` + módulos `r1xx-*.js` |
 
@@ -79,6 +83,27 @@ Pruebas locales que sí corren sin red:
 for f in scripts/test-*.mjs; do node "$f" || echo "FALLA $f"; done
 ```
 
+### Trampa: `! grep` no falla nunca (R160)
+
+bash **ignora `set -e` cuando el valor de retorno se invierte con `!`**.
+Por eso un `! grep ...` que no sea el último comando del paso **jamás**
+detiene el paso, aunque encuentre lo que prohíbe. Varios workflows tienen
+aserciones escritas así: son decorativas, pasan en verde siempre.
+
+Para una aserción negativa que sí proteja, usa el patrón de
+`auth-cancel-ux-safety.yml` y `r53-deep-audit-safety.yml`:
+
+```bash
+prohibido() {
+  descripcion="$1"; shift
+  if "$@" >/dev/null 2>&1; then echo "PROHIBIDO: $descripcion"; exit 1; fi
+}
+prohibido "campo de contraseña" grep -Fq 'id="loginPassword"' v2/index.html
+```
+
+Antes de confiar en una aserción negativa, **compruébala simulando la
+regresión** que debería atrapar. Si pasa en verde, no servía.
+
 ## Supabase
 
 Cliente anon en `v2/core/runtime.js`. Nunca `service_role` en el navegador.
@@ -92,6 +117,38 @@ RPC de rango: `get_my_loyalty_summary` → `active_pass.code`
 (`ECLAT_OR` = Gold, `DIAMANT_BLEU` = Diamond).
 
 Lista completa de RPC en `docs/ARCHITECTURE.md`.
+
+## Autenticación (R160)
+
+**El ingreso público es solo Google. No hay correo ni contraseña en
+ninguna parte de la tienda.** `v2/auth-google.js` es la única vía.
+
+Lo que se retiró y **no debe volver**: creación de cuenta (`signUp`),
+restablecimiento (`resetPasswordForEmail`), definición de contraseña
+(`updateUser` con `password`), reenvío de confirmación, validación de
+enlaces de correo (`verifyOtp`) y los campos del modal. `v2/legal.js`
+quedó reducido a la puerta legal del checkout.
+
+`#legalAccept` y `#loginSubmit` **siguen en el HTML**: cinco workflows los
+exigen. `loginSubmit` está enlazado a `signIn()` en `core/ui.js`, que falla
+cerrado mostrando "usa Continuar con Google" y nunca autentica. No los
+borres.
+
+El botón de Google no está en `index.html`: lo inyecta `auth-google.js`
+tras consultar `/auth/v1/settings` y solo si `external.google === true`.
+Por eso en pruebas con stub el botón no aparece — no es un fallo.
+
+El Admin también entra solo con Google (`admin/app.js` usa
+`signInWithOAuth`), y la autorización se re-valida en el servidor con las
+RPC `admin_app_*`.
+
+### Pendiente, fuera del repositorio
+
+**El proveedor Email sigue habilitado en Supabase.** Cerrar la interfaz no
+cierra la API: `POST /auth/v1/signup` y `/auth/v1/token?grant_type=password`
+seguirían respondiendo. Hay que desactivar *Email* en
+Authentication → Providers del panel. Ninguna parte del producto depende de
+una contraseña, así que es seguro.
 
 ## Capa visual por niveles (`v2/tiers/`)
 
@@ -111,9 +168,16 @@ Tres niveles, decididos por el rango real del usuario:
 - La cuenta `chuihuarachif@gmail.com` ve además un selector de vista
   previa para probar los tres niveles.
 
-Sonidos: Web Audio API pura, sin archivos ni librerías. Los sonidos de
-dinero se disparan cuando el **servidor confirma** el pago o la recarga,
-nunca al pulsar un botón.
+Sonidos (`tier-sound.js`): Web Audio API pura, sin archivos ni librerías.
+Solo dos: un clic corto al **tocar** algo y otro más suave al **entrar** a
+una sección. **No hay sonido de dinero ni de pago** — se retiró junto con
+el módulo `tier-events.js` que lo disparaba, porque resultaba invasivo. Las
+superficies de pago y QR están en **silencio total**. Todo se calla bajo
+`prefers-reduced-motion`.
+
+Bienvenida (`tier-welcome.js`): distingue cuenta nueva, regreso y regreso
+tras 7+ días usando `user.created_at` y `user.last_sign_in_at`, que ya
+vienen en la sesión. Sin tabla, columna ni RPC nuevos.
 
 ## Entorno de esta caja
 
@@ -123,11 +187,28 @@ nunca al pulsar un botón.
   en `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`. No instalar nada.
 - No hay `package.json` en este repo.
 
+### Trampa: `sb` lanza, no da `undefined`
+
+En `core/runtime.js`, `sb` se declara con `const` (línea 8) y `session`,
+`profile`, `cart`, `inventory` y el resto con `let` (línea 9). Ambas son
+declaraciones léxicas de nivel superior de un script clásico, así que **no
+son propiedades de `window`**:
+
+- Se leen por identificador desnudo, no como `window.sb`.
+- Leerlas antes de que `runtime.js` haya corrido lanza **`ReferenceError`**
+  (zona muerta temporal), no devuelve `undefined`. Por eso `sb?.auth` **no**
+  es seguro por sí solo: necesita `try/catch` alrededor. Esto ya rompió
+  `legal-account.js` una vez, en un sondeo que corría cada 25 ms.
+
 ## Estado del trabajo
 
-- PR #99 `chore/agent-skills` — 13 skills en `.claude/skills/`. Sin fusionar.
-- PR #100 `feat/tienda-niveles-esteticos` — capa visual por niveles.
-  Sin fusionar.
+Todo fusionado en `main`. No queda ninguna rama en curso.
+
+- PR #99 `chore/agent-skills` — 13 skills en `.claude/skills/`. **Fusionado.**
+- PR #100 `feat/tienda-niveles-esteticos` — capa visual por niveles, sonido
+  sutil, bienvenida y nombre preferido. **Fusionado.**
+- PR #101 `fix/solo-google-login` — R160, cierre de la superficie de
+  contraseña. **Fusionado.**
 
 ## Deuda conocida
 
@@ -142,3 +223,19 @@ nunca al pulsar un botón.
   Migración a medias hacia el prefijo `admin_app_`.
 - `styles.css` está minificado en 7 líneas y define tokens en `:root` que
   casi no se usan; hay decenas de hex a mano.
+- **`v2/app.js` conserva llamadas de contraseña muertas** (`signUp`,
+  `signInWithPassword`, recuperación). `index.html` **no lo carga** (0
+  referencias) pero GitHub Pages lo sirve. `AGENTS.md` manda conservarlo
+  como referencia de rollback hasta una limpieza aprobada, así que las
+  aserciones de R160 lo excluyen con `--exclude=app.js`. Si algún día se
+  aprueba borrarlo, quita también esas exclusiones.
+- **Aserción latente en conflicto:** `auth-cancel-ux-safety.yml` (líneas
+  52-53) exige que `authChoiceSignup` y `authLegacySignupFallback` **no**
+  aparezcan en `v2/auth-ease.js`, pero sí aparecen (líneas 28-29), dentro de
+  llamadas `.remove()` que **borran** esa interfaz heredada. El CI no lo
+  nota porque están escritas como `! grep` (ver la trampa de arriba). La
+  intención del código es correcta; lo que está mal es la aserción. Si se
+  hace efectiva, hay que reescribirla, no editar `auth-ease.js`.
+- Tres funciones de trigger `trg_r147_*` son ejecutables por el rol `anon`
+  vía REST, y la protección contra contraseñas filtradas está desactivada
+  en Supabase. Ambas cosas son cambios de base de datos: no se tocaron.
