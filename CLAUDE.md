@@ -142,13 +142,27 @@ El Admin también entra solo con Google (`admin/app.js` usa
 `signInWithOAuth`), y la autorización se re-valida en el servidor con las
 RPC `admin_app_*`.
 
-### Pendiente, fuera del repositorio
+### Proveedor Email: DESACTIVADO — no volver a preguntar
 
-**El proveedor Email sigue habilitado en Supabase.** Cerrar la interfaz no
-cierra la API: `POST /auth/v1/signup` y `/auth/v1/token?grant_type=password`
-seguirían respondiendo. Hay que desactivar *Email* en
-Authentication → Providers del panel. Ninguna parte del producto depende de
-una contraseña, así que es seguro.
+**El propietario desactivó el proveedor *Email* en Supabase el 2026-09-11.**
+La puerta queda cerrada en los dos lados: la interfaz no ofrece contraseña y
+la API tampoco la acepta (`POST /auth/v1/signup` y
+`/auth/v1/token?grant_type=password`). **Está hecho. No lo vuelvas a
+plantear como pendiente.**
+
+Solo queda **Google** habilitado, y así debe seguir. Si alguna vez hay que
+tocar proveedores, ojo con el nombre: el de correo y contraseña se llama
+*Email*; el de Google se llama *Google*. Apagar el segundo deja a todo el
+mundo fuera, incluido el propietario.
+
+Cómo comprobarlo si hiciera falta: **no se puede desde esta caja** — el
+proxy bloquea `supabase.co` y la configuración de Auth no es legible por
+SQL (`auth.config` no existe). Tampoco sirve el aviso
+`auth_leaked_password_protection` de `get_advisors`: **sigue apareciendo con
+el proveedor Email ya apagado**, así que no indica nada sobre su estado.
+La vía práctica es abrir la tienda en una ventana privada: si el botón
+"Continuar con Google" aparece, Google sigue activo (`auth-google.js` solo
+lo dibuja si `/auth/v1/settings` responde `external.google === true`).
 
 ## Capa visual por niveles (`v2/tiers/`)
 
@@ -237,5 +251,7 @@ Todo fusionado en `main`. No queda ninguna rama en curso.
   intención del código es correcta; lo que está mal es la aserción. Si se
   hace efectiva, hay que reescribirla, no editar `auth-ease.js`.
 - Tres funciones de trigger `trg_r147_*` son ejecutables por el rol `anon`
-  vía REST, y la protección contra contraseñas filtradas está desactivada
-  en Supabase. Ambas cosas son cambios de base de datos: no se tocaron.
+  vía REST. Es un cambio de base de datos: no se tocó.
+- La protección contra contraseñas filtradas sigue desactivada en Supabase,
+  pero **ya no tiene efecto práctico**: sin proveedor Email no se crean ni
+  se validan contraseñas. Solo importaría si alguna vez se reactivara.
