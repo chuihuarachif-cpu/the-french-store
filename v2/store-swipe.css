@@ -1,0 +1,23 @@
+/* THE FRENCH STORE — R165 transición al cambiar de categoría deslizando.
+   Solo transform y opacity: se compone en la GPU y no provoca maquetación,
+   que es lo que mantiene fluidos los teléfonos de gama baja. */
+
+@keyframes fsSwipeIzq {
+  from { opacity: 0; transform: translate3d(22px, 0, 0); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fsSwipeDer {
+  from { opacity: 0; transform: translate3d(-22px, 0, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+#catalogList.fs-swipe-izq { animation: fsSwipeIzq .26s cubic-bezier(.22, .8, .3, 1) both; }
+#catalogList.fs-swipe-der { animation: fsSwipeDer .26s cubic-bezier(.22, .8, .3, 1) both; }
+
+/* Pista de que se puede deslizar, sin ocupar sitio. */
+#categoryTabs { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  #catalogList.fs-swipe-izq,
+  #catalogList.fs-swipe-der { animation: none; }
+}

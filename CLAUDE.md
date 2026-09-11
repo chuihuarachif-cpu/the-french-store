@@ -295,6 +295,43 @@ Bienvenida (`tier-welcome.js`): distingue cuenta nueva, regreso y regreso
 tras 7+ días usando `user.created_at` y `user.last_sign_in_at`, que ya
 vienen en la sesión. Sin tabla, columna ni RPC nuevos.
 
+## Movimiento e interacción (R165)
+
+| Qué | Dónde | Para quién |
+| --- | --- | --- |
+| Reflejo reactivo al scroll + aparición progresiva | `v2/tiers/tier-shine.js` | **solo Gold y Diamond** |
+| Deslizar de lado para cambiar de categoría | `v2/store-swipe.js` + `.css` | **todos** (es funcionalidad) |
+
+**Base no cambia.** El reflejo y la aparición solo se cargan en niveles
+pagados; `tier-gate.js` llama a `loadShine()` al aplicar Gold/Diamond y a
+`FSTierShine.desinstalar()` al volver a Base.
+
+### Cómo NO implementar el reflejo
+
+Una propuesta externa hacía `getBoundingClientRect()` **por cada tarjeta en
+cada evento de scroll** y escribía estilos en línea uno por uno. Eso son
+decenas de reflows forzados por píxel de dedo: justo lo que traba la gama
+baja. Además usaba `mix-blend-mode: color-dodge`, que compone en CPU.
+
+Lo que hay: se lee `scrollY` **una vez por frame** (sin forzar maquetación),
+se escribe **una sola** custom property `--fs-shine` en `<html>`, y las
+tarjetas la leen desde CSS con `transform`. Coste O(1) por frame. El reflejo
+se limita a las **tarjetas de categoría** (cinco elementos), no a todo el
+catálogo. La aparición usa `IntersectionObserver` y deja de observar cada
+elemento en cuanto aparece.
+
+Cuidado: `.hero::after` ya está ocupado por el barrido de Gold y por
+`fsDiamondHeroSweep`; `.hero::before` por el sello de rango. Por eso el
+reflejo nuevo va solo en `.category-card::after`.
+
+### Deslizamiento lateral
+
+Cambia de categoría pulsando el **mismo botón** de la pestaña, así que no
+duplica lógica. Nunca llama a `preventDefault()` mientras el gesto pueda ser
+scroll vertical. Deja empezar el gesto **encima de una tarjeta** (es donde va
+el dedo) y por eso suprime el clic posterior — pero **después** de mover, o
+se tragaría su propio clic sintético. Tocar la pestaña sigue funcionando.
+
 ## Entorno de esta caja
 
 - `cdn.jsdelivr.net` y `*.supabase.co` están **bloqueados** por el proxy.

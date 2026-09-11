@@ -80,6 +80,21 @@
     document.head.appendChild(script);
   }
 
+  /* R165: reflejo reactivo al scroll y aparición progresiva. Solo en niveles
+     pagados. Si no carga, el nivel sigue aplicando: las tarjetas conservan su
+     material y simplemente no brillan ni aparecen con retardo. */
+  let shineLoaded = false;
+  function loadShine() {
+    if (shineLoaded) return;
+    shineLoaded = true;
+    const script = document.createElement('script');
+    script.id = 'fs-tier-shine-js';
+    script.src = './tiers/tier-shine.js?v=20260912-r165';
+    script.async = true;
+    script.addEventListener('error', () => { shineLoaded = false; }, { once: true });
+    document.head.appendChild(script);
+  }
+
   async function applyLevel(level) {
     const next = LEVELS.includes(level) ? level : 'base';
     if (next !== 'base') {
@@ -91,6 +106,8 @@
     document.documentElement.dataset.fsTier = next;
     if (next === 'diamond') loadDepth();
     else window.FSTierDepth?.reset?.();
+    if (next === 'base') window.FSTierShine?.desinstalar?.();
+    else { loadShine(); window.FSTierShine?.instalar?.(); }
     syncDock();
   }
 

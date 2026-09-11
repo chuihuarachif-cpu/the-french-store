@@ -97,6 +97,11 @@
     // checkout, Wallet ni proveedores, y no añade una quinta categoría.
     await loadStyle('./cuentas-venta.css', 'fs-cuentas-venta-css');
     await loadScript('./cuentas-venta.js', 'fs-cuentas-venta-js', '20260911-r163');
+    // R165: cambiar de categoría deslizando de lado. Es funcionalidad, no
+    // adorno, así que va en todos los niveles. No usa preventDefault mientras
+    // el gesto pueda ser scroll vertical, de modo que nunca lo secuestra.
+    await loadStyle('./store-swipe.css', 'fs-store-swipe-css');
+    await loadScript('./store-swipe.js', 'fs-store-swipe-js', '20260912-r165');
   }
 
   const FEATURE_LOADERS = {

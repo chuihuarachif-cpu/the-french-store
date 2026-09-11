@@ -173,3 +173,70 @@ html[data-fs-tier="gold"] .eyebrow { color: #e0bd78; letter-spacing: 1.5px; }
 /* Precio y saldo destacados en dorado: lo que el cliente mira al comprar. */
 html[data-fs-tier="gold"] .price,
 html[data-fs-tier="gold"] .balance-card strong { color: #f7e3b4; }
+
+/* ========================================================================
+   R165 — reflejo reactivo al scroll y aparición progresiva (gold).
+   Solo se carga en los niveles pagados; Base queda exactamente igual.
+
+   El reflejo se mueve con una ÚNICA variable (--fs-shine) que el módulo
+   escribe una vez por frame en <html>. Aquí no se lee nada del DOM ni se
+   fuerza maquetación: es transform puro, compuesto en la GPU.
+
+   Condicionado a data-fs-shine (lo pone el módulo solo si el movimiento
+   está permitido) y a data-r8-motion="full", el modo del repositorio.
+   ==================================================================== */
+
+/* Solo las tarjetas de categoría: el hero ya tiene su propio barrido y
+   pisarlo rompería la animación que el CI verifica. Cinco elementos en vez
+   de decenas mantiene el coste bajo en gama baja. */
+html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="gold"] .category-card {
+  position: relative;
+  overflow: hidden;
+}
+html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="gold"] .category-card::after {
+  content: "";
+  position: absolute;
+  left: -60%;
+  right: -60%;
+  top: -130%;
+  height: 130%;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    112deg,
+    transparent 38%,
+    rgba(255, 255, 255, .06) 44%,
+    rgba(255, 250, 232, .58) 50%,
+    rgba(255, 255, 255, .06) 56%,
+    transparent 62%
+  );
+  transform: translate3d(0, calc(var(--fs-shine, 0) * 230%), 0);
+}
+/* El contenido queda por encima del reflejo. */
+html[data-fs-shine="1"][data-fs-tier="gold"] .category-card > * { position: relative; z-index: 2; }
+
+/* ---- Aparición progresiva al bajar ---- */
+html[data-fs-tier="gold"] .fs-reveal {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+}
+html[data-fs-tier="gold"] .fs-reveal.fs-visible {
+  opacity: 1;
+  transform: none;
+  transition: opacity .42s cubic-bezier(.22, .8, .3, 1), transform .42s cubic-bezier(.22, .8, .3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fs-tier="gold"] .fs-reveal { opacity: 1; transform: none; transition: none; }
+  html[data-fs-shine="1"][data-fs-tier="gold"] .category-card::after { display: none; }
+}
+
+/* R165 — el quinto bloque (Venta de Cuentas) también toma el material Gold. */
+html[data-fs-tier="gold"] .category-card.cuentas-entry {
+  border-color: rgba(240, 207, 138, .55);
+  background:
+    radial-gradient(140% 130% at 100% 0%, rgba(240, 207, 138, .16), transparent 62%),
+    linear-gradient(180deg, rgba(44, 33, 11, .95), rgba(16, 13, 7, .97));
+}
+html[data-fs-tier="gold"] .cuentas-entry-cta { color: #f0cf8a; }
+html[data-fs-tier="gold"] .category-card.cuentas-entry small b { color: #f7e3b4; }

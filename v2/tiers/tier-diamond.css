@@ -261,14 +261,15 @@ html[data-fs-tier="diamond"] .category-card {
 html[data-fs-tier="diamond"] .category-card b { color: #dff6ff; }
 html[data-fs-tier="diamond"] .category-card span { filter: drop-shadow(0 2px 8px rgba(86, 220, 255, .6)); }
 
-/* Canto prismático: una línea de luz en el borde superior de cada tarjeta. */
-html[data-fs-tier="diamond"] .category-card { position: relative; overflow: hidden; }
-html[data-fs-tier="diamond"] .category-card::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(214, 248, 255, .85), rgba(160, 120, 255, .5), transparent);
+/* Canto prismático. R165: pasa de ::after a inset box-shadow para dejar
+   ::after libre al reflejo, y de paso es una capa compuesta menos. */
+html[data-fs-tier="diamond"] .category-card {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .46),
+    0 0 22px rgba(56, 200, 255, .1),
+    inset 0 1px 0 rgba(214, 248, 255, .55);
 }
 
 html[data-fs-tier="diamond"] .brand {
@@ -290,3 +291,70 @@ html[data-fs-tier="diamond"] .bottom-nav {
 html[data-fs-tier="diamond"] .eyebrow { color: #8fdcf5; letter-spacing: 1.5px; }
 html[data-fs-tier="diamond"] .price,
 html[data-fs-tier="diamond"] .balance-card strong { color: #dff6ff; }
+
+/* ========================================================================
+   R165 — reflejo reactivo al scroll y aparición progresiva (diamond).
+   Solo se carga en los niveles pagados; Base queda exactamente igual.
+
+   El reflejo se mueve con una ÚNICA variable (--fs-shine) que el módulo
+   escribe una vez por frame en <html>. Aquí no se lee nada del DOM ni se
+   fuerza maquetación: es transform puro, compuesto en la GPU.
+
+   Condicionado a data-fs-shine (lo pone el módulo solo si el movimiento
+   está permitido) y a data-r8-motion="full", el modo del repositorio.
+   ==================================================================== */
+
+/* Solo las tarjetas de categoría: el hero ya tiene su propio barrido y
+   pisarlo rompería la animación que el CI verifica. Cinco elementos en vez
+   de decenas mantiene el coste bajo en gama baja. */
+html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="diamond"] .category-card {
+  position: relative;
+  overflow: hidden;
+}
+html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="diamond"] .category-card::after {
+  content: "";
+  position: absolute;
+  left: -60%;
+  right: -60%;
+  top: -130%;
+  height: 130%;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    112deg,
+    transparent 38%,
+    rgba(255, 255, 255, .06) 44%,
+    rgba(232, 252, 255, .62) 50%,
+    rgba(255, 255, 255, .06) 56%,
+    transparent 62%
+  );
+  transform: translate3d(0, calc(var(--fs-shine, 0) * 230%), 0);
+}
+/* El contenido queda por encima del reflejo. */
+html[data-fs-shine="1"][data-fs-tier="diamond"] .category-card > * { position: relative; z-index: 2; }
+
+/* ---- Aparición progresiva al bajar ---- */
+html[data-fs-tier="diamond"] .fs-reveal {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+}
+html[data-fs-tier="diamond"] .fs-reveal.fs-visible {
+  opacity: 1;
+  transform: none;
+  transition: opacity .42s cubic-bezier(.22, .8, .3, 1), transform .42s cubic-bezier(.22, .8, .3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fs-tier="diamond"] .fs-reveal { opacity: 1; transform: none; transition: none; }
+  html[data-fs-shine="1"][data-fs-tier="diamond"] .category-card::after { display: none; }
+}
+
+/* R165 — el quinto bloque (Venta de Cuentas) también toma el material Diamond. */
+html[data-fs-tier="diamond"] .category-card.cuentas-entry {
+  border-color: rgba(140, 235, 255, .6);
+  background:
+    radial-gradient(140% 130% at 100% 0%, rgba(140, 235, 255, .2), transparent 62%),
+    linear-gradient(180deg, rgba(12, 40, 60, .95), rgba(6, 18, 30, .97));
+}
+html[data-fs-tier="diamond"] .cuentas-entry-cta { color: #8ff0ff; }
+html[data-fs-tier="diamond"] .category-card.cuentas-entry small b { color: #eafcff; }
