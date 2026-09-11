@@ -172,6 +172,40 @@ En R162 se corrigió que `claim_my_paid_whatsapp_notice` **no devolvía
 `ref_code`**, así que esa línea se omitía siempre y el proveedor nunca
 aparecía. Ahora se deriva de `order_items.provider`.
 
+## Cuentas en Venta (R163)
+
+Vitrina de cuentas de juego, **debajo** de las 4 categorías y a lo ancho.
+**No es una quinta categoría**: las públicas siguen siendo exactamente 4 y
+el CI lo verifica en `v2/config/storefront.js`. Es una sección aparte.
+
+Diferencia clave con el resto de la tienda: **inventario de una sola
+unidad**. Una recarga se vende infinitas veces; una cuenta se vende una vez.
+Por eso hay estado (`DISPONIBLE`, `RESERVADA`, `VENDIDA`, `OCULTA`) y la
+compra se cierra **por WhatsApp**, no por el carrito: no se tocó checkout.
+
+| Qué | Dónde |
+| --- | --- |
+| Vitrina pública | `v2/cuentas-venta.js` + `v2/cuentas-venta.css` |
+| Contenedor y modal | `v2/index.html` (`#cuentasVenta`, `#cuentaModal`) |
+| Carga diferida | `v2/bootstrap.js`, al final de `loadCore()` |
+| Panel privado | `admin/r163-cuentas.js` + pestaña `data-tab="cuentas"` |
+| Tabla | `public.cuentas_en_venta` |
+| Fotos | bucket `cuentas` de Supabase Storage |
+
+Seguridad: la tabla y el bucket tienen RLS. Lectura pública de todo lo que
+no esté `OCULTA`; **escritura solo con `admin_app_is_allowed()`**, el
+predicado estricto que exige estar en `admin_app_users`, habilitado, rol
+admin y con el correo del propietario. El panel de Admin no es la barrera:
+la barrera está en Supabase.
+
+Fotos: se reescalan a 1600 px y se convierten a **WebP** en el navegador
+(canvas, sin librerías) antes de subirlas. Una captura de 4 MB queda en
+~250 KB. En la tienda van con `loading="lazy"` y la galería completa solo
+se pide al abrir la ficha, así que no retrasan la portada.
+
+Fail-closed: si la consulta falla o no hay cuentas, la sección se oculta y
+el resto de la tienda sigue igual.
+
 ## Autenticación (R160)
 
 **El ingreso público es solo Google. No hay correo ni contraseña en

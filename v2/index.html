@@ -58,6 +58,16 @@
     <section id="view-inicio" class="view active">
       <div class="hero"><div class="hero-copy"><span class="eyebrow">RECARGAS Y CÓDIGOS DIGITALES</span><h1>Recargas, streaming y Gift Cards en Bolivia.</h1><p>Juegos y servicios digitales en una tienda simple, rápida y segura, con precios visibles en bolivianos.</p><div class="hero-actions"><button class="primary-btn" data-nav="tienda">Explorar catálogo</button><button class="secondary-btn" id="whatsappQuote">Cotizar por WhatsApp</button></div></div><div class="hero-gem" aria-hidden="true">💎</div></div>
       <div class="category-grid" id="categoryGrid"><button class="category-card blue" data-category="Recargas por ID"><span>🎮</span><b>Recargas por ID</b><small>Diamantes, monedas y pases</small></button><button class="category-card navy" data-category="Recargas por Cuenta"><span>👤</span><b>Recargas por Cuenta</b><small>Productos con atención asistida</small></button><button class="category-card purple" data-category="Streaming"><span>📺</span><b>Streaming</b><small>Entretenimiento y música</small></button><button class="category-card gold" data-category="Gift Cards"><span>🎁</span><b>Gift Cards</b><small>Códigos digitales · entrega manual</small></button></div>
+      <!-- R163: sección "Cuentas en Venta". NO es una quinta categoría: las
+           públicas siguen siendo exactamente 4. Va a lo ancho, debajo de la
+           rejilla, y arranca oculta hasta que haya cuentas publicadas. -->
+      <section id="cuentasVenta" hidden>
+        <div class="cv-head">
+          <h2>🧾 Cuentas en Venta</h2>
+          <small>Una sola unidad de cada una · entrega manual coordinada por WhatsApp</small>
+        </div>
+        <div class="cv-grid" id="cuentasVentaGrid"></div>
+      </section>
       <section class="panel compact-panel"><div class="panel-head"><div><span class="eyebrow">SELECCIÓN RÁPIDA</span><h2>Productos destacados</h2></div></div><div id="featuredList" class="game-grid skeleton-area"></div></section>
     </section>
 
@@ -104,6 +114,8 @@
 
   <nav class="bottom-nav" aria-label="Navegación principal"><button class="active" data-nav="inicio"><span>⌂</span>Inicio</button><button data-nav="tienda"><span>▦</span>Tienda</button><button data-nav="wallet"><span>▣</span>Wallet</button><button data-nav="pedidos"><span>☷</span>Pedidos</button><button data-nav="perfil"><span>●</span>Perfil</button></nav>
   <button id="floatingWhatsapp" class="floating-whatsapp" aria-label="WhatsApp">💬</button>
+
+  <div id="cuentaModal" class="modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" aria-label="Cerrar diálogo" data-close="cuentaModal">×</button><span class="eyebrow">FRENCH STORE</span><h2 id="cuentaModalTitle">Cuenta en venta</h2><div id="cuentaModalBody"></div></div></div>
 
   <div id="authModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" aria-label="Cerrar diálogo" data-close="authModal">×</button><span class="eyebrow">FRENCH STORE</span><h2>Iniciar sesión</h2><p>Continúa con Google para acceder a FRENCH STORE.</p><!-- R160: campos de correo y contraseña retirados. El ingreso público es solo Google. --><label class="legal-check hidden"><input id="legalAccept" type="checkbox"><span>He leído y acepto los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.</span></label><button id="loginSubmit" class="primary-btn full hidden">Entrar</button><div id="loginMessage" class="notice hidden"></div></div></div>
 

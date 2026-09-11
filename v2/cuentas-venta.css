@@ -1,0 +1,170 @@
+/* THE FRENCH STORE — R163 sección "Cuentas en Venta".
+   Solo presentación. No toca precios de catálogo, checkout, Wallet ni proveedores.
+   Va a lo ancho, debajo de las 4 categorías, para mantener la simetría. */
+
+#cuentasVenta {
+  margin: 18px 0 0;
+  padding: 18px 16px 20px;
+  border: 1px solid rgba(86, 170, 214, .18);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 100% at 0% 0%, rgba(56, 215, 255, .07), transparent 60%),
+    linear-gradient(180deg, rgba(10, 24, 38, .72), rgba(6, 16, 27, .86));
+}
+
+#cuentasVenta .cv-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+#cuentasVenta .cv-head h2 {
+  margin: 0;
+  font-size: 1.12rem;
+  letter-spacing: .2px;
+}
+#cuentasVenta .cv-head small {
+  color: #8fa7b6;
+  font-size: .82rem;
+  line-height: 1.4;
+}
+
+.cv-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.cv-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(86, 170, 214, .2);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(12, 28, 45, .9), rgba(7, 18, 30, .95));
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cv-card:hover { border-color: rgba(86, 220, 255, .45); }
+}
+.cv-card:focus-visible { outline: 2px solid #55dcff; outline-offset: 2px; }
+
+.cv-shot {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #06121f;
+  overflow: hidden;
+}
+.cv-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cv-shot .cv-count {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(3, 17, 29, .82);
+  color: #cfe6f5;
+  font-size: .74rem;
+  font-weight: 700;
+}
+.cv-shot .cv-sin-foto {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #5d7a8e;
+  font-size: .84rem;
+}
+
+.cv-body { padding: 12px 13px 14px; display: flex; flex-direction: column; gap: 9px; }
+.cv-juego { color: #8fa7b6; font-size: .76rem; text-transform: uppercase; letter-spacing: .6px; }
+.cv-titulo { margin: 0; font-size: .98rem; line-height: 1.32; font-weight: 700; }
+
+.cv-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cv-chip {
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(86, 170, 214, .26);
+  background: rgba(56, 215, 255, .07);
+  color: #bcd8e8;
+  font-size: .74rem;
+  white-space: nowrap;
+}
+
+.cv-pie { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
+.cv-precio { font-size: 1.08rem; font-weight: 800; color: #eaf6ff; }
+
+.cv-estado {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .3px;
+}
+.cv-estado.disponible { background: rgba(46, 204, 113, .16); color: #74e0a3; border: 1px solid rgba(46, 204, 113, .32); }
+.cv-estado.reservada  { background: rgba(241, 196, 15, .14); color: #f2ce5a; border: 1px solid rgba(241, 196, 15, .3); }
+.cv-estado.vendida    { background: rgba(160, 174, 192, .14); color: #a8bccb; border: 1px solid rgba(160, 174, 192, .28); }
+
+/* Una cuenta vendida se queda a la vista como prueba social, pero apagada. */
+.cv-card.es-vendida .cv-shot img { filter: grayscale(.85) brightness(.65); }
+.cv-card.es-vendida .cv-precio { color: #90a6b6; text-decoration: line-through; }
+
+/* ---- Ficha ampliada ---- */
+.cv-detalle { display: flex; flex-direction: column; gap: 14px; }
+.cv-galeria { display: flex; flex-direction: column; gap: 8px; }
+.cv-galeria-principal {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #06121f;
+}
+.cv-galeria-principal img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.cv-miniaturas { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 4px; }
+.cv-miniaturas button {
+  flex: 0 0 auto;
+  width: 62px;
+  aspect-ratio: 16 / 10;
+  border-radius: 9px;
+  overflow: hidden;
+  border: 1px solid rgba(86, 170, 214, .24);
+  background: #06121f;
+  padding: 0;
+  cursor: pointer;
+}
+.cv-miniaturas button[aria-current="true"] { border-color: #55dcff; }
+.cv-miniaturas img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.cv-desc { color: #c2d8e6; font-size: .9rem; line-height: 1.5; white-space: pre-wrap; margin: 0; }
+
+.cv-aviso {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 11px;
+  border: 1px solid rgba(241, 196, 15, .22);
+  background: rgba(241, 196, 15, .07);
+  color: #d9c98a;
+  font-size: .8rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 420px) {
+  #cuentasVenta { padding: 15px 13px 17px; border-radius: 15px; }
+  .cv-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-card, .cv-card * { transition: none !important; animation: none !important; }
+}
