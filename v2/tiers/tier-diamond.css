@@ -457,11 +457,15 @@ html[data-fs-tier="diamond"] .bottom-nav button.active {
 }
 
 /* ====================================================================
-   R167 — CINTA DE CRISTAL TALLADO Y GEMA DEL LOGOTIPO
+   R167 — BISEL DE CRISTAL Y GEMA DEL LOGOTIPO
    Mismo montaje que en Gold pero con `frame-diamond.svg`: border-image deja
-   las cuatro piedras de esquina a tamaño fijo y repite la banda facetada por
-   los lados con `round`, que encaja un número entero de facetas en cada
-   tarjeta en vez de estirar una sola y dejarla emborronada.
+   los cuatro chaflanes a tamaño fijo y estira los cuatro lados.
+
+   No es un patrón de facetas repetido. Se probaron tres (zigzag de
+   triángulos, lascas inclinadas, dos hileras de facetas pequeñas) y los tres
+   se leían como cinta decorativa. La maqueta lleva una **losa biselada con
+   las esquinas cortadas a 45°**; las líneas finas son los filos del bisel,
+   no divisiones de faceta. El detalle está en `frame-diamond.svg`.
 
    Solo `.category-card`: cinco elementos. En `.game-card` serían decenas.
    ==================================================================== */
