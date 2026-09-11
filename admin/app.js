@@ -14,7 +14,6 @@
   let topups=[];
   let bankPayments=[];
   let orders=[];
-  let gamerhubState=null;
   let activeFilter='editable';
   let currentTab='overview';
   let toastTimer=null;
@@ -68,7 +67,7 @@
     try{const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:`${location.origin}/admin/`}});if(error)throw error}
     catch{showLoginError('No se pudo iniciar sesión con Google. Intenta nuevamente.');button.disabled=false;button.textContent='G  Continuar con Google'}
   }
-  async function logout(){await sb.auth.signOut();products=[];topups=[];bankPayments=[];orders=[];gamerhubState=null;showOnly('loginView')}
+  async function logout(){await sb.auth.signOut();products=[];topups=[];bankPayments=[];orders=[];showOnly('loginView')}
 
   async function verifyPrivateAccess(){
     const{data:sessionData}=await sb.auth.getSession();const session=sessionData?.session;
@@ -96,11 +95,7 @@
         ['Wallet pendiente',d?.wallet_pending||0,'Solicitudes por aprobar/rechazar'],
         ['ACH por revisar',d?.ach_review||0,'Pagos ambiguos'],
         ['Pedidos a gestionar',d?.orders_attention||0,'Pagados/manuales/en proceso/error'],
-        ['Pedidos hoy',d?.orders_today||0,'Creados desde medianoche'],
-        ['GamerHub cargado',`${qty(d?.gamerhub_loaded_usdt)} USDT`,'Total histórico registrado'],
-        ['GamerHub disponible',`${qty(d?.gamerhub_balance_usdt)} USDT`,'Saldo contable actual'],
-        ['GamerHub consumido',`${qty(d?.gamerhub_consumed_usdt)} USDT`,'Compras + ajustes'],
-        ['Capital restante',money(d?.gamerhub_cost_total_bob),'Costo contable del saldo actual']
+        ['Pedidos hoy',d?.orders_today||0,'Creados desde medianoche']
       ].map(([label,value,small])=>`<article class="summary-card"><span>${esc(label)}</span><strong>${esc(value)}</strong><small>${esc(small)}</small></article>`).join('');
     }catch(error){if(host)host.innerHTML=`<article class="card"><small>${esc(error.message||'No se pudo cargar el resumen.')}</small></article>`}
   }
@@ -234,63 +229,24 @@
     }catch(error){$('infoBody').innerHTML=`<article class="card"><small>${esc(error.message||'No se pudieron cargar los datos.')}</small></article>`}
   }
 
-  async function loadGamerhub(){
-    const host=$('gamerhubList');host.innerHTML='<article class="card"><small>Cargando inventario GamerHub…</small></article>';
-    try{gamerhubState=await rpc('admin_app_gamerhub_state');renderGamerhub()}
-    catch(error){host.innerHTML=`<article class="card"><small>${esc(error.message||'No se pudo cargar GamerHub.')}</small></article>`}
-  }
-  function renderGamerhub(){
-    const s=gamerhubState||{};const history=Array.isArray(s.history)?s.history:[];const host=$('gamerhubList');
-    host.innerHTML=`<div class="summary-grid">
-      <article class="summary-card"><span>Total cargado</span><strong>${qty(s.total_loaded_usdt)} USDT</strong><small>${money(s.total_loaded_bob)} invertidos históricamente</small></article>
-      <article class="summary-card"><span>Saldo actual</span><strong>${qty(s.balance_usdt)} USDT</strong><small>Saldo contable registrado</small></article>
-      <article class="summary-card"><span>Total consumido</span><strong>${qty(s.total_consumed_usdt)} USDT</strong><small>Compras automáticas + ajustes</small></article>
-      <article class="summary-card"><span>Capital restante</span><strong>${money(s.cost_total_bob)}</strong><small>Costo contable del saldo actual</small></article>
-      <article class="summary-card"><span>Costo medio</span><strong>${rate(s.average_rate_bob)}</strong><small>por USDT</small></article>
-      <article class="summary-card"><span>Binance RAW</span><strong>${rate(s.binance_raw_bob)}</strong><small>sin Bs 0,25</small></article>
-      <article class="summary-card"><span>Tasa usada</span><strong>${rate(s.effective_rate_bob)}</strong><small>máx. mercado/costo medio</small></article>
-      <article class="summary-card"><span>Protección costo</span><strong>${s.protection_active?'ACTIVA':'NO'}</strong><small>${s.protection_active?'Tu costo medio es el piso.':'Binance está igual o arriba.'}</small></article>
-    </div>
-    <article class="card"><b>Registrar USDT añadidos a GamerHub</b><small>Registra únicamente capital realmente comprado/acreditado. No realiza ningún depósito.</small><div class="form-grid"><label><span>USDT añadidos</span><input id="ghAddAmount" type="number" min="0.01" max="100000" step="0.01" inputmode="decimal" placeholder="Ej. 50"></label><label><span>Costo real Bs/USDT</span><input id="ghAddRate" type="number" min="1" max="100" step="0.01" inputmode="decimal" placeholder="Ej. 11.62"></label><label class="wide"><span>Nota opcional</span><input id="ghAddNote" type="text" maxlength="120" placeholder="Ej. Binance P2P agosto"></label></div><div class="card-actions"><button class="primary" id="ghAddButton" type="button">Registrar USDT</button></div></article>
-    <article class="card"><b>Ajuste manual excepcional</b><small>El consumo normal ya es automático. Úsalo solo para reconciliar compras manuales o corregir el saldo contable.</small><div class="card-actions"><input id="ghConsumeAmount" type="number" min="0.01" max="100000" step="0.01" inputmode="decimal" placeholder="USDT a descontar"><button id="ghConsumeButton" type="button">Registrar ajuste</button></div></article>
-    <div class="history-section"><h3>MOVIMIENTOS RECIENTES</h3>${history.length?history.map((h)=>`<article class="card"><div class="card-top"><div><b>${h.operation==='PURCHASE'?'+':'−'}${qty(h.amount_usdt)} USDT · ${h.operation==='PURCHASE'?'Entrada':'Salida'}</b><small>${fmtDate(h.created_at)}</small></div><span class="badge ${h.operation==='PURCHASE'?'ok':'warn'}">${esc(h.operation)}</span></div><div class="meta"><span>${rate(h.rate_bob)}/USDT</span><span>${money(h.total_bob)}</span>${h.note?`<span>${esc(h.note)}</span>`:''}</div></article>`).join(''):'<article class="card"><small>Sin movimientos registrados.</small></article>'}</div>`;
-    $('ghAddButton').addEventListener('click',addGamerhubBalance);$('ghConsumeButton').addEventListener('click',consumeGamerhubBalance);
-  }
-  async function addGamerhubBalance(){
-    const amount=Number($('ghAddAmount')?.value);const acquisitionRate=Number($('ghAddRate')?.value);const note=$('ghAddNote')?.value.trim()||null;
-    if(!(amount>0)||!(acquisitionRate>=1)){toast('Completa USDT y costo real por USDT.');return}
-    const accepted=await confirmAction('Registrar USDT GamerHub',`<p><b>${qty(amount)} USDT</b> a ${rate(acquisitionRate)}/USDT</p><p>Total contable: <b>${money(amount*acquisitionRate)}</b></p>`,'Registrar');if(!accepted)return;
-    try{await rpc('admin_app_gamerhub_add',{p_usdt:amount,p_rate_bob:acquisitionRate,p_note:note});await Promise.all([loadGamerhub(),loadDashboard()]);toast('USDT registrados en el inventario GamerHub.')}
-    catch(error){toast(error.message||'No se pudo registrar el saldo.')}
-  }
-  async function consumeGamerhubBalance(){
-    const amount=Number($('ghConsumeAmount')?.value);if(!(amount>0)){toast('Escribe un monto válido.');return}
-    const accepted=await confirmAction('Ajuste manual GamerHub',`<p>Descontar <b>${qty(amount)} USDT</b> del saldo contable registrado.</p><p>El consumo automático normal no necesita este ajuste.</p>`,'Descontar');if(!accepted)return;
-    try{await rpc('admin_app_gamerhub_consume',{p_usdt:amount,p_note:'Ajuste manual desde Admin privado'});await Promise.all([loadGamerhub(),loadDashboard()]);toast('Ajuste GamerHub registrado.')}
-    catch(error){toast(error.message||'No se pudo registrar el ajuste.')}
-  }
-
-  async function loadHistory(){
+          async function loadHistory(){
     const host=$('historyList');host.innerHTML='<article class="card"><small>Cargando historial…</small></article>';
     try{
       const [priceRows]=await Promise.all([
         rpc('admin_app_price_history',{p_limit:30}),
         topups.length?Promise.resolve(topups):loadWallet(),
         bankPayments.length?Promise.resolve(bankPayments):loadAch(),
-        orders.length?Promise.resolve(orders):loadOrdersAdmin(),
-        gamerhubState?Promise.resolve(gamerhubState):loadGamerhub()
+        orders.length?Promise.resolve(orders):loadOrdersAdmin()
       ]);
       const prices=Array.isArray(priceRows)?priceRows:[];
       const walletHistory=topups.slice(0,15);
       const achHistory=bankPayments.slice(0,15);
       const orderHistory=orders.slice(0,15);
-      const ghHistory=Array.isArray(gamerhubState?.history)?gamerhubState.history.slice(0,12):[];
       host.innerHTML=`
         <div class="history-section"><h3>FRENCH WALLET</h3>${walletHistory.map((t)=>`<article class="card"><div class="card-top"><div><b>${money(t.amount)} · ${esc(t.payment_reference||'Sin referencia')}</b><small>${esc(t.customer_email||'')} · ${fmtDate(t.created_at)}${t.reviewed_at?` · revisado ${fmtDate(t.reviewed_at)}`:''}</small></div>${badge(t.status)}</div></article>`).join('')||'<article class="card"><small>Sin historial Wallet.</small></article>'}</div>
         <div class="history-section"><h3>PAGOS ACH</h3>${achHistory.map((p)=>`<article class="card"><div class="card-top"><div><b>${money(p.amount)} · ${esc(p.origin_name||'Origen no identificado')}</b><small>ACH ${esc(p.ach_order_number||'—')} · ${fmtDate(p.transaction_at||p.created_at)}</small></div>${badge(p.match_status)}</div></article>`).join('')||'<article class="card"><small>Sin historial ACH.</small></article>'}</div>
         <div class="history-section"><h3>PEDIDOS</h3>${orderHistory.map((o)=>`<article class="card"><div class="card-top"><div><b>${esc(o.order_code)} · ${money(o.total_amount)}</b><small>${esc(o.customer_email||'')} · ${fmtDate(o.created_at)}</small></div>${badge(o.status)}</div></article>`).join('')||'<article class="card"><small>Sin pedidos.</small></article>'}</div>
-        <div class="history-section"><h3>CAMBIOS DE PRECIO</h3>${prices.map((row)=>`<article class="card history-row"><div><b>${esc(row.juego)}</b><small>${esc(row.paquete)} · ${fmtDate(row.changed_at)}</small></div><div class="price-change"><span class="old">${money(row.old_price)}</span><span class="new">→ ${money(row.new_price)}</span></div></article>`).join('')||'<article class="card"><small>Sin cambios de precio desde esta app.</small></article>'}</div>
-        <div class="history-section"><h3>GAMERHUB</h3>${ghHistory.map((h)=>`<article class="card"><div class="card-top"><div><b>${h.operation==='PURCHASE'?'+':'−'}${qty(h.amount_usdt)} USDT</b><small>${fmtDate(h.created_at)} · ${esc(h.note||'')}</small></div><span class="badge ${h.operation==='PURCHASE'?'ok':'warn'}">${esc(h.operation)}</span></div></article>`).join('')||'<article class="card"><small>Sin movimientos GamerHub.</small></article>'}</div>`;
+        <div class="history-section"><h3>CAMBIOS DE PRECIO</h3>${prices.map((row)=>`<article class="card history-row"><div><b>${esc(row.juego)}</b><small>${esc(row.paquete)} · ${fmtDate(row.changed_at)}</small></div><div class="price-change"><span class="old">${money(row.old_price)}</span><span class="new">→ ${money(row.new_price)}</span></div></article>`).join('')||'<article class="card"><small>Sin cambios de precio desde esta app.</small></article>'}</div>`;
     }catch(error){host.innerHTML=`<article class="card"><small>${esc(error.message||'No se pudo cargar el historial.')}</small></article>`}
   }
 
@@ -301,7 +257,6 @@
     if(name==='orders')return loadOrdersAdmin();
     if(name==='maintenance')return loadProducts();
     if(name==='prices')return loadProducts();
-    if(name==='gamerhub')return loadGamerhub();
     if(name==='history')return loadHistory();
   }
   async function selectTab(name){

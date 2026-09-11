@@ -60,9 +60,19 @@ jobs:
           grep -q "admin_app_list_orders" admin/app.js
           grep -q "admin_app_update_order_status" admin/app.js
           grep -q "admin_app_get_order_fulfillment_inputs" admin/app.js
-          grep -q "admin_app_gamerhub_state" admin/app.js
-          grep -q "admin_app_gamerhub_add" admin/app.js
-          grep -q "admin_app_gamerhub_consume" admin/app.js
+          # R161: GamerHub se retira del Admin. Antes se EXIGÍA que estas tres
+          # RPC estuvieran en admin/app.js; ahora se exige lo contrario, que no
+          # vuelvan. Se usa prohibido() y no `! grep`, porque bash ignora
+          # `set -e` cuando el retorno se invierte con `!` y esa forma nunca
+          # falla si no es el último comando del paso.
+          prohibido() {
+            descripcion="$1"; shift
+            if "$@" >/dev/null 2>&1; then echo "PROHIBIDO: $descripcion"; exit 1; fi
+          }
+          prohibido "RPC de inventario GamerHub"  grep -q "admin_app_gamerhub_state" admin/app.js
+          prohibido "RPC de carga GamerHub"       grep -q "admin_app_gamerhub_add" admin/app.js
+          prohibido "RPC de consumo GamerHub"     grep -q "admin_app_gamerhub_consume" admin/app.js
+          prohibido "cualquier resto de GamerHub" grep -riq "gamerhub" admin/
           grep -q "PRICE_RULE_MANAGED" admin/app.js
           grep -q "PROVIDER_MANAGED_PRICE" admin/app.js
           grep -q "chuihuarachif@gmail.com" admin/index.html
