@@ -43,34 +43,9 @@
       : 'No se pudo enviar el correo de recuperación en este momento. Intenta nuevamente en unos minutos.';
   }
 
-  async function signUpOfficial(button){
-    clearNotice();
-    const email = authEmail();
-    const password = document.getElementById('loginPassword')?.value || '';
-    if(!validEmail(email) || password.length < 8){
-      notice(document.getElementById('loginMessage'),'Usa un correo válido y una contraseña de al menos 8 caracteres.');
-      return;
-    }
-    if(button){ button.disabled = true; button.textContent = 'Creando…'; }
-    try{
-      const { data, error } = await sb.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: AUTH_REDIRECT }
-      });
-      if(error){
-        notice(document.getElementById('loginMessage'), authErrorMessage(error,'signup'));
-        return;
-      }
-      if(data?.session){
-        if(typeof closeModal === 'function') closeModal('authModal');
-      }else{
-        notice(document.getElementById('loginMessage'),'Cuenta creada. Revisa tu correo para confirmar la cuenta. El enlace te devolverá a frenchstorebo.com.','success');
-      }
-    } finally {
-      if(button){ button.disabled = false; button.textContent = 'Crear cuenta'; }
-    }
-  }
+  /* R160: la creación de cuenta con correo y contraseña queda retirada.
+     El ingreso público es exclusivamente Google (AGENTS.md). Ya no existe
+     ninguna llamada a sb.auth.signUp desde la tienda. */
 
   async function resendConfirmation(){
     clearNotice();
@@ -234,17 +209,7 @@
     const button = event.target.closest?.('button');
     if(!button) return;
 
-    if(button.closest('#authModal') && button.textContent.trim() === 'Crear cuenta'){
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      const accept = document.getElementById('legalAccept');
-      if(accept && !accept.checked){
-        notice(document.getElementById('loginMessage'), 'Para crear tu cuenta, confirma que leíste los Términos y la Política de Privacidad.');
-        return;
-      }
-      signUpOfficial(button);
-      return;
-    }
+    /* R160: el botón "Crear cuenta" ya no existe ni se atiende. */
 
     if(button.id === 'checkoutWallet' || button.id === 'checkoutQR'){
       const accept = document.getElementById('purchaseLegalAccept');
