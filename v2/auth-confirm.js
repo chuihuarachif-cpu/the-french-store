@@ -1,12 +1,24 @@
-/* FRENCH STORE — explicit auth-link confirmation step.
-   Prevents email security scanners/prefetchers from consuming Supabase one-time links.
-   No pricing, checkout, provider, Wallet or Admin logic is changed. */
+/* FRENCH STORE — enlaces de cuenta heredados.
+   Solo presentación. No toca precios, checkout, pedidos, Wallet ni proveedores.
+
+   R160: este módulo validaba enlaces de correo (verifyOtp), tanto de
+   confirmación de cuenta (`?confirm_signup=1`) como de recuperación de
+   contraseña (`?recover_account=1`). Ambos tipos de enlace solo existían para
+   cuentas de correo y contraseña, que ya no se pueden crear ni recuperar desde
+   la tienda.
+
+   Ya no se valida ningún token. Si alguien llega con un enlace antiguo se le
+   explica, en su idioma y sin jerga, que entre con Google. Es seguro decirlo:
+   se verificó en base de datos que 0 usuarios dependen solo de correo, así que
+   cualquiera que tenga uno de esos enlaces también tiene identidad de Google.
+
+   No consumir el token es además lo correcto: un enlace no usado caduca solo,
+   mientras que validarlo abriría una sesión que ya no queremos abrir por esa
+   vía. */
 (() => {
   'use strict';
 
-  const CLEAN_URL = 'https://frenchstorebo.com/v2/';
-
-  function notice(message, type = 'error') {
+  function notice(message, type = 'info') {
     const el = document.getElementById('loginMessage');
     if (!el) return;
     if (typeof showNotice === 'function') showNotice(el, message, type);
@@ -17,124 +29,33 @@
     }
   }
 
-  function hideNormalAuth() {
-    const modal = document.getElementById('authModal');
-    if (!modal) return null;
-    if (typeof openModal === 'function') openModal('authModal');
-    document.getElementById('loginEmail')?.closest('label')?.classList.add('hidden');
-    document.getElementById('loginPassword')?.closest('label')?.classList.add('hidden');
-    document.getElementById('legalAccept')?.closest('label')?.classList.add('hidden');
-    document.getElementById('loginSubmit')?.classList.add('hidden');
-    document.getElementById('authExtraActions')?.classList.add('hidden');
-    [...modal.querySelectorAll('button')].forEach((b) => {
-      if (b.textContent.trim() === 'Crear cuenta') b.classList.add('hidden');
-    });
-    return modal;
-  }
-
-  function setHeading(titleText, introText) {
-    const modal = document.getElementById('authModal');
-    const card = modal?.querySelector('.modal-card');
-    const title = card?.querySelector('h2');
-    const intro = title?.nextElementSibling;
-    if (title) title.textContent = titleText;
-    if (intro?.tagName === 'P') intro.textContent = introText;
-  }
-
-  function buildActionBox(kind) {
-    const existing = document.getElementById('authLinkActionBox');
-    if (existing) return existing;
-    const box = document.createElement('div');
-    box.id = 'authLinkActionBox';
-    box.className = 'auth-recovery-box';
-    const isRecovery = kind === 'recovery';
-    box.innerHTML = `
-      <p style="margin:0 0 10px;color:#a9bfd0;line-height:1.45">${isRecovery
-        ? 'Por seguridad, el enlace no cambia nada automáticamente. Pulsa el botón para validar tu recuperación.'
-        : 'Último paso: pulsa el botón para confirmar tu correo y entrar automáticamente a FRENCH STORE.'}</p>
-      <button id="authLinkConfirmButton" type="button" class="primary-btn full">${isRecovery
-        ? 'Continuar recuperación'
-        : 'Confirmar y entrar'}</button>
-      <button id="authLinkBackButton" type="button" class="ghost-btn full" style="margin-top:8px">Volver al inicio de sesión</button>`;
-    const message = document.getElementById('loginMessage');
-    message?.parentNode?.insertBefore(box, message);
-    document.getElementById('authLinkBackButton')?.addEventListener('click', () => location.assign(CLEAN_URL));
-    return box;
-  }
-
-  async function verifyLink(tokenHash, kind) {
-    const button = document.getElementById('authLinkConfirmButton');
-    if (button) {
-      button.disabled = true;
-      button.textContent = 'Verificando…';
-    }
-
-    const type = kind === 'recovery' ? 'recovery' : 'email';
-    const { data, error } = await sb.auth.verifyOtp({ token_hash: tokenHash, type });
-
-    if (error || !data?.session) {
-      if (button) {
-        button.disabled = false;
-        button.textContent = kind === 'recovery' ? 'Continuar recuperación' : 'Confirmar y entrar';
-      }
-      const raw = String(error?.message || '').toLowerCase();
-      if (raw.includes('expired') || raw.includes('invalid') || raw.includes('token')) {
-        notice('Este enlace ya fue usado o dejó de ser válido. Vuelve al inicio de sesión y solicita un correo nuevo.', 'error');
-      } else {
-        notice('No se pudo validar el enlace. Solicita un correo nuevo e inténtalo otra vez.', 'error');
-      }
-      return;
-    }
-
-    if (kind === 'recovery') {
-      try { sessionStorage.setItem('fs_password_recovery', '1'); } catch {}
-      notice('Enlace validado. Abriendo el formulario para crear tu nueva contraseña…', 'success');
-      setTimeout(() => location.assign(`${CLEAN_URL}?reset=1`), 700);
-      return;
-    }
-
-    notice('Correo confirmado correctamente. Entrando a tu cuenta…', 'success');
+  function cleanUrl() {
     try {
-      history.replaceState({}, '', new URL(CLEAN_URL).pathname);
+      const url = new URL(location.href);
+      for (const p of ['token_hash', 'confirm_signup', 'recover_account', 'type', 'reset']) {
+        url.searchParams.delete(p);
+      }
+      history.replaceState({}, '', url.pathname + (url.search || '') );
     } catch {}
-    setTimeout(() => location.assign(CLEAN_URL), 700);
   }
 
-  function initAuthConfirmation() {
+  function initLegacyAuthLink() {
     const params = new URL(location.href).searchParams;
-    const tokenHash = params.get('token_hash');
     const isSignup = params.get('confirm_signup') === '1';
     const isRecovery = params.get('recover_account') === '1';
     if (!isSignup && !isRecovery) return;
 
-    hideNormalAuth();
-    const kind = isRecovery ? 'recovery' : 'signup';
-    setHeading(
-      isRecovery ? 'Recuperar contraseña' : 'Confirmar correo',
-      isRecovery
-        ? 'Valida el enlace antes de crear una contraseña nueva.'
-        : 'Completa la confirmación de tu cuenta de FRENCH STORE.'
-    );
-    buildActionBox(kind);
+    /* El token no se usa ni se envía a ninguna parte: se descarta de la URL
+       para que no quede en el historial ni en el encabezado Referer. */
+    cleanUrl();
 
-    if (!tokenHash) {
-      document.getElementById('authLinkConfirmButton')?.setAttribute('disabled', 'disabled');
-      notice('El enlace no contiene un código de confirmación válido. Solicita un correo nuevo.', 'error');
-      return;
-    }
-
-    notice(
-      isRecovery
-        ? 'Enlace recibido. Pulsa “Continuar recuperación” para validarlo.'
-        : 'Enlace recibido. Pulsa “Confirmar y entrar” para terminar.',
-      'success'
-    );
-    document.getElementById('authLinkConfirmButton')?.addEventListener('click', () => verifyLink(tokenHash, kind), { once: true });
+    if (typeof openModal === 'function') openModal('authModal');
+    notice('FRENCH STORE ahora entra solo con Google. Usa “Continuar con Google” con el mismo correo y tu cuenta seguirá igual, con tus pedidos y tu saldo.', 'info');
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAuthConfirmation, { once: true });
+    document.addEventListener('DOMContentLoaded', initLegacyAuthLink, { once: true });
   } else {
-    initAuthConfirmation();
+    initLegacyAuthLink();
   }
 })();
