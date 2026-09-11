@@ -116,18 +116,6 @@ html[data-fs-tier] .view.active[data-fs-nav="back"] {
   animation: fsTierViewBack var(--t-mid) var(--t-ease-out) both;
 }
 
-/* ---------- Server-confirmed payment / Wallet credit ----------
-   tier-events.js adds .fs-tier-confirm to the checkmark that bisa-checkout.js
-   and bisa-wallet.js render only after the backend confirms. Cosmetic echo of
-   a confirmation that already happened; it confirms nothing by itself. */
-@keyframes fsTierConfirm {
-  0%   { opacity: 0; transform: scale(.72); }
-  55%  { opacity: 1; transform: scale(1.08); }
-  100% { opacity: 1; transform: scale(1); }
-}
-html[data-fs-tier] .payment-checkmark.fs-tier-confirm {
-  animation: fsTierConfirm 420ms var(--t-ease-out) both;
-}
 
 /* ---------- Stagger: grids resolve instead of snapping in at once ---------- */
 @keyframes fsTierCardIn {
@@ -220,7 +208,6 @@ html[data-fs-tier] .modal.open .modal-card {
   html[data-fs-tier] .view.active[data-fs-nav="back"],
   html[data-fs-tier] .category-grid > *,
   html[data-fs-tier] .game-grid > *,
-  html[data-fs-tier] .payment-checkmark.fs-tier-confirm,
   html[data-fs-tier] .modal.open .modal-card { animation: none !important; }
   html[data-fs-tier] *,
   html[data-fs-tier] *::before,

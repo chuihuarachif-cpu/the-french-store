@@ -82,12 +82,12 @@
     await loadScript('./storefront-safety-overlays.js', 'fs-storefront-safety-overlays-js');
     // Visual tier layer (presentation only). Base ships statically in
     // index.html; the gate only upgrades to Gold/Diamond by real rank and
-    // falls back to Base on any failure. tier-events observes the payment
-    // confirmation the backend already rendered. Never gates checkout,
-    // Wallet or QR, and never decides whether a payment succeeded.
-    await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260911-r159');
-    await loadScript('./tiers/tier-events.js', 'fs-tier-events-js', '20260911-r159');
-    await loadScript('./tiers/tier-gate.js', 'fs-tier-gate-js', '20260911-r159');
+    // falls back to Base on any failure. Sound is limited to a short, quiet
+    // click on tap and on entering a section — the payment and QR surfaces
+    // stay silent. Never gates checkout, Wallet or QR.
+    await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260911-r160');
+    await loadScript('./tiers/tier-welcome.js', 'fs-tier-welcome-js', '20260911-r160');
+    await loadScript('./tiers/tier-gate.js', 'fs-tier-gate-js', '20260911-r160');
   }
 
   const FEATURE_LOADERS = {

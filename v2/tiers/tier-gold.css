@@ -1,51 +1,78 @@
 /* THE FRENCH STORE — visual tier layer: GOLD.
-   Loaded only when the Gold level is active. Inherits everything from BASE and
-   adds restrained warm metal: no loud yellow, no casino.
+   Loaded only when the Gold pass is active. Inherits everything from BASE and
+   adds restrained warm metal: this must read as clearly paid-for without
+   turning into loud yellow or a casino.
    Animation budget: transform and opacity only. */
 
 html[data-fs-tier="gold"] {
   --t-accent: #f0cf8a;
   --t-accent-deep: #c8912f;
   --t-ring: rgba(240, 207, 138, .68);
-  --t-glow: rgba(213, 162, 76, .2);
-  --t-edge: rgba(213, 162, 76, .38);
-  --t-lift: 0 12px 30px rgba(0, 0, 0, .4);
-  --t-gold-line: linear-gradient(120deg, rgba(240, 207, 138, 0) 0%, rgba(240, 207, 138, .5) 48%, rgba(240, 207, 138, 0) 100%);
+  --t-glow: rgba(213, 162, 76, .22);
+  --t-edge: rgba(213, 162, 76, .4);
+  --t-lift: 0 14px 32px rgba(0, 0, 0, .42);
+  --t-metal: linear-gradient(135deg, #f7e3b4 0%, #d5a24c 38%, #8a6320 58%, #f4d89b 82%, #c8912f 100%);
+  --t-sheen: linear-gradient(120deg, rgba(240, 207, 138, 0) 0%, rgba(255, 240, 205, .55) 48%, rgba(240, 207, 138, 0) 100%);
 }
 
-/* ---------- Warm the primary action without losing the cyan identity ---------- */
+/* ---------- Ambient: the whole page sits in warmer light ---------- */
+html[data-fs-tier="gold"] body {
+  background:
+    radial-gradient(circle at 25% -10%, rgba(213, 162, 76, .16), transparent 32%),
+    radial-gradient(circle at 82% 8%, rgba(240, 207, 138, .08), transparent 26%),
+    linear-gradient(180deg, #0f1207, #05090f 52%, #0a0d12);
+}
+
+/* ---------- Primary action in real metal ---------- */
 html[data-fs-tier="gold"] .primary-btn {
-  background: linear-gradient(180deg, #f4d89b, #cf9c3c);
+  background: var(--t-metal);
+  background-size: 200% 100%;
   border-color: #f7e3b4;
   color: #2a1c05;
+  text-shadow: 0 1px 0 rgba(255, 245, 220, .45);
+  box-shadow: 0 6px 20px rgba(213, 162, 76, .28), inset 0 1px 0 rgba(255, 248, 228, .6);
 }
 html[data-fs-tier="gold"] .category-tabs button.active {
-  background: #efcf8d;
+  background: var(--t-metal);
+  background-size: 200% 100%;
   border-color: #f7e3b4;
   color: #2a1c05;
 }
 html[data-fs-tier="gold"] .bottom-nav button.active { background: #34260e; color: #f0cf8a; }
-html[data-fs-tier="gold"] .avatar { background: #33250d; color: #f0cf8a; }
+html[data-fs-tier="gold"] .avatar {
+  background: #33250d;
+  color: #f0cf8a;
+  box-shadow: inset 0 0 0 1px rgba(240, 207, 138, .45);
+}
 
-/* ---------- Refined borders and depth on the card surfaces ---------- */
+/* ---------- Surfaces: warm edge + inner highlight, the "bezel" read ---------- */
 html[data-fs-tier="gold"] .panel,
 html[data-fs-tier="gold"] .game-card,
-html[data-fs-tier="gold"] .balance-card {
-  border-color: rgba(213, 162, 76, .3);
+html[data-fs-tier="gold"] .balance-card,
+html[data-fs-tier="gold"] .profile-card,
+html[data-fs-tier="gold"] .modal-card {
+  border-color: rgba(213, 162, 76, .32);
+  box-shadow: var(--t-lift), inset 0 1px 0 rgba(255, 236, 197, .14);
 }
+html[data-fs-tier="gold"] .package-row { border-color: rgba(213, 162, 76, .2); }
+html[data-fs-tier="gold"] .game-logo { border-color: rgba(240, 207, 138, .35); }
+
 html[data-fs-tier="gold"] .hero {
-  border-color: rgba(213, 162, 76, .34);
-  box-shadow: 0 22px 56px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(240, 207, 138, .14);
+  border-color: rgba(213, 162, 76, .38);
+  background:
+    radial-gradient(circle at 78% 50%, rgba(213, 162, 76, .2), transparent 30%),
+    linear-gradient(135deg, #1a1407, #0a0d12 58%, #241a08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 236, 197, .16);
 }
 
-/* ---------- A single slow sheen across the hero. Decorative, cheap, subtle ---------- */
+/* ---------- A single slow sheen across the hero ---------- */
 html[data-fs-tier="gold"] .hero { position: relative; overflow: hidden; }
 html[data-fs-tier="gold"] .hero::after {
   content: "";
   position: absolute;
   inset: -40% -60%;
-  background: var(--t-gold-line);
-  opacity: .28;
+  background: var(--t-sheen);
+  opacity: .26;
   pointer-events: none;
   will-change: transform;
   animation: fsTierGoldSheen 7s linear infinite;
@@ -55,28 +82,30 @@ html[data-fs-tier="gold"] .hero::after {
   to   { transform: translateX(38%) rotate(8deg); }
 }
 
-/* ---------- Rank indicator on the brand mark ---------- */
+/* ---------- Rank identity on the brand mark and the eyebrow ---------- */
 html[data-fs-tier="gold"] .brand b {
-  background: linear-gradient(96deg, #fff 20%, #f0cf8a 52%, #fff 82%);
+  background: linear-gradient(96deg, #fff 18%, #f0cf8a 50%, #fff 80%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
+html[data-fs-tier="gold"] .eyebrow { color: #e6c284; }
+html[data-fs-tier="gold"] .package-price { color: #f6dca6; }
+html[data-fs-tier="gold"] .cart-total strong { color: #f6dca6; }
 
-/* ---------- Slightly richer press/hover than Base ---------- */
+/* ---------- Interaction: one notch richer than Base ---------- */
 @media (hover: hover) and (pointer: fine) {
-  html[data-fs-tier="gold"] .game-card:hover {
+  html[data-fs-tier="gold"] .game-card:hover,
+  html[data-fs-tier="gold"] .category-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, .42), 0 0 0 1px rgba(240, 207, 138, .22);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, .44), 0 0 0 1px rgba(240, 207, 138, .26);
   }
   html[data-fs-tier="gold"] .primary-btn:hover {
     transform: translateY(-1px) scale(1.012);
-    box-shadow: 0 8px 22px rgba(213, 162, 76, .3);
+    box-shadow: 0 10px 26px rgba(213, 162, 76, .34), inset 0 1px 0 rgba(255, 248, 228, .6);
   }
 }
 
-html[data-fs-tier="gold"] .package-price { color: #f6dca6; }
-
 @media (prefers-reduced-motion: reduce) {
-  html[data-fs-tier="gold"] .hero::after { animation: none !important; opacity: .16; }
+  html[data-fs-tier="gold"] .hero::after { animation: none !important; opacity: .14; }
 }

@@ -38,6 +38,7 @@
   let currentLevel = 'base';
   let rankLevel = 'base';
   let isOwner = false;
+  let resolved = false;
   let dock = null;
 
   function levelFromRankCode(code) {
@@ -52,7 +53,7 @@
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.id = `fs-tier-${level}-css`;
-    link.href = `./tiers/tier-${level}.css?v=20260911-r159`;
+    link.href = `./tiers/tier-${level}.css?v=20260911-r160`;
     const promise = new Promise((resolve) => {
       link.addEventListener('load', () => resolve(true), { once: true });
       link.addEventListener('error', () => resolve(false), { once: true });
@@ -64,6 +65,21 @@
 
   /* ------------------------------ level apply ---------------------------- */
 
+  /* Diamond's pointer depth is a separate, optional enhancement. If it fails
+     to load the level still applies — the cards keep their material and
+     shadows, they just stop tilting. */
+  let depthLoaded = false;
+  function loadDepth() {
+    if (depthLoaded) return;
+    depthLoaded = true;
+    const script = document.createElement('script');
+    script.id = 'fs-tier-depth-js';
+    script.src = './tiers/tier-depth.js?v=20260911-r160';
+    script.async = true;
+    script.addEventListener('error', () => { depthLoaded = false; }, { once: true });
+    document.head.appendChild(script);
+  }
+
   async function applyLevel(level) {
     const next = LEVELS.includes(level) ? level : 'base';
     if (next !== 'base') {
@@ -73,6 +89,8 @@
     }
     currentLevel = next;
     document.documentElement.dataset.fsTier = next;
+    if (next === 'diamond') loadDepth();
+    else window.FSTierDepth?.reset?.();
     syncDock();
   }
 
@@ -244,6 +262,13 @@
 
     rankLevel = await resolveRankLevel(session);
     await refresh();
+
+    /* Announce that the level is settled so anything that wants to match the
+       tier's look (the welcome message) can wait instead of guessing. */
+    resolved = true;
+    try {
+      document.dispatchEvent(new CustomEvent('fs-tier-resolved', { detail: { level: currentLevel } }));
+    } catch {}
   }
 
   function start() {
@@ -264,6 +289,7 @@
     version: VERSION,
     levels: Object.freeze([...LEVELS]),
     currentLevel: () => currentLevel,
+    isResolved: () => resolved,
     rankLevel: () => rankLevel,
     isOwner: () => isOwner,
     levelFromRankCode,

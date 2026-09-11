@@ -1,44 +1,157 @@
 /* THE FRENCH STORE — visual tier layer: DIAMOND.
-   Loaded only when the Diamond level is active. Clearly above Gold: ice/cyan
-   accents, controlled glass, depth and light. No particle storms, no heavy blur.
-   Animation budget: transform and opacity only. */
+   The top pass. It has to read as a different, more expensive product the
+   moment it loads: real 3D depth (perspective + rotate3d), layered crystal
+   glass, specular edges and material light.
+
+   Discipline kept from AGENTS.md: dark blue/black base and cyan identity are
+   preserved, motion is transform/opacity only, blur stays cheap, and nothing
+   here can delay cart, checkout or QR. */
 
 html[data-fs-tier="diamond"] {
   --t-accent: #b6f2ff;
   --t-accent-deep: #35c9e6;
-  --t-ring: rgba(182, 242, 255, .72);
-  --t-glow: rgba(110, 226, 255, .26);
-  --t-edge: rgba(150, 236, 255, .42);
-  --t-lift: 0 14px 34px rgba(0, 0, 0, .44);
-  --t-ice: linear-gradient(120deg, rgba(182, 242, 255, 0) 0%, rgba(220, 250, 255, .55) 46%, rgba(182, 242, 255, 0) 100%);
+  --t-ring: rgba(182, 242, 255, .74);
+  --t-glow: rgba(110, 226, 255, .28);
+  --t-edge: rgba(150, 236, 255, .46);
+  --t-lift: 0 18px 40px rgba(0, 0, 0, .5);
+
+  /* Material light: one specular sweep and one prismatic edge. The prism is
+     deliberately desaturated — a hint of refraction, not a rainbow. */
+  --t-ice: linear-gradient(120deg, rgba(182, 242, 255, 0) 0%, rgba(232, 253, 255, .6) 46%, rgba(182, 242, 255, 0) 100%);
+  --t-prism: linear-gradient(115deg, rgba(150, 236, 255, .5) 0%, rgba(176, 200, 255, .34) 28%, rgba(214, 178, 255, .26) 48%, rgba(150, 236, 255, .44) 72%, rgba(226, 252, 255, .5) 100%);
+  --t-facet: linear-gradient(160deg, rgba(255, 255, 255, .14) 0%, rgba(255, 255, 255, 0) 38%);
+
+  /* Depth scene. Cards tilt inside this perspective. */
+  --t-perspective: 900px;
 }
 
-/* ---------- Crystal edges: one hairline of light on every raised surface ---------- */
-html[data-fs-tier="diamond"] .panel,
+/* ---------- Ambient: colder, deeper room ---------- */
+html[data-fs-tier="diamond"] body {
+  background:
+    radial-gradient(circle at 22% -12%, rgba(53, 201, 230, .2), transparent 34%),
+    radial-gradient(circle at 84% 6%, rgba(150, 236, 255, .1), transparent 28%),
+    linear-gradient(180deg, #04121b, #02070d 54%, #05101a);
+}
+
+/* ============================ 3D DEPTH SCENE ============================
+   The grids become perspective scenes; each card is a solid slab that tilts
+   toward the pointer. tier-depth.js feeds --rx/--ry from pointer position on
+   fine-pointer devices; without it the cards still lift, just without tilt. */
+html[data-fs-tier="diamond"] .game-grid,
+html[data-fs-tier="diamond"] .category-grid,
+html[data-fs-tier="diamond"] .game-list {
+  perspective: var(--t-perspective);
+  perspective-origin: 50% 40%;
+}
+
 html[data-fs-tier="diamond"] .game-card,
-html[data-fs-tier="diamond"] .balance-card,
-html[data-fs-tier="diamond"] .modal-card {
-  border-color: rgba(150, 236, 255, .34);
-  box-shadow: var(--t-lift), inset 0 1px 0 rgba(210, 248, 255, .16);
+html[data-fs-tier="diamond"] .category-card {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform:
+    rotateX(calc(var(--rx, 0) * 1deg))
+    rotateY(calc(var(--ry, 0) * 1deg))
+    translateZ(0);
+  transition: transform 220ms var(--t-ease-out), box-shadow 220ms ease;
+  box-shadow: var(--t-lift), inset 0 1px 0 rgba(214, 250, 255, .18);
 }
 
-/* ---------- Restrained glass on the two surfaces that can afford it ---------- */
+/* Facet highlight: the lit top-left plane of a cut stone. */
+html[data-fs-tier="diamond"] .game-card::before,
+html[data-fs-tier="diamond"] .category-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--t-facet);
+  pointer-events: none;
+  opacity: .9;
+}
+
+/* Prismatic rim: a hairline of refracted light on the raised edge. */
+html[data-fs-tier="diamond"] .game-card::after,
+html[data-fs-tier="diamond"] .category-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--t-prism);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: .55;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-fs-tier="diamond"] .game-card:hover,
+  html[data-fs-tier="diamond"] .category-card:hover {
+    box-shadow: 0 26px 54px rgba(0, 0, 0, .56), 0 0 0 1px rgba(182, 242, 255, .32), inset 0 1px 0 rgba(214, 250, 255, .26);
+  }
+  html[data-fs-tier="diamond"] .game-card:hover::after,
+  html[data-fs-tier="diamond"] .category-card:hover::after { opacity: .95; }
+  /* The logo lifts off the card surface — real parallax, not a shadow trick. */
+  html[data-fs-tier="diamond"] .game-card:hover .game-logo { transform: translateZ(26px) scale(1.04); }
+}
+
+html[data-fs-tier="diamond"] .game-logo {
+  border-color: rgba(150, 236, 255, .4);
+  transform: translateZ(0);
+  transition: transform 240ms var(--t-ease-out);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .45);
+}
+
+/* ============================ CRYSTAL SURFACES ============================ */
+html[data-fs-tier="diamond"] .panel,
+html[data-fs-tier="diamond"] .balance-card,
+html[data-fs-tier="diamond"] .profile-card,
+html[data-fs-tier="diamond"] .modal-card {
+  position: relative;
+  border-color: rgba(150, 236, 255, .36);
+  box-shadow: var(--t-lift), inset 0 1px 0 rgba(214, 250, 255, .2);
+}
+html[data-fs-tier="diamond"] .panel::before,
+html[data-fs-tier="diamond"] .modal-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--t-facet);
+  pointer-events: none;
+}
+html[data-fs-tier="diamond"] .panel > *,
+html[data-fs-tier="diamond"] .modal-card > * { position: relative; }
+
+/* Restrained glass on the two chrome surfaces that can afford it. */
 html[data-fs-tier="diamond"] .topbar {
-  background: rgba(4, 14, 22, .82);
-  border-bottom-color: rgba(150, 236, 255, .3);
+  background: rgba(3, 13, 21, .78);
+  border-bottom-color: rgba(150, 236, 255, .32);
+  box-shadow: 0 6px 26px rgba(0, 0, 0, .4);
 }
 html[data-fs-tier="diamond"] .bottom-nav {
-  background: rgba(5, 18, 28, .9);
-  border-color: rgba(150, 236, 255, .28);
-  box-shadow: 0 -16px 40px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(210, 248, 255, .14);
+  background: rgba(4, 16, 26, .88);
+  border-color: rgba(150, 236, 255, .3);
+  box-shadow: 0 -18px 44px rgba(0, 0, 0, .46), inset 0 1px 0 rgba(214, 250, 255, .18);
 }
 html[data-fs-tier="diamond"] .bottom-nav button.active {
-  background: #0d3a4d;
-  color: #cdf6ff;
+  background: linear-gradient(180deg, #10465c, #0a2f41);
+  color: #dffaff;
+  box-shadow: inset 0 1px 0 rgba(214, 250, 255, .3);
 }
 
-/* ---------- Hero light sweep: a single pass, GPU-only ---------- */
-html[data-fs-tier="diamond"] .hero { position: relative; overflow: hidden; }
+/* ============================ HERO: LIT STAGE ============================ */
+html[data-fs-tier="diamond"] .hero {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(150, 236, 255, .4);
+  background:
+    radial-gradient(circle at 76% 46%, rgba(53, 201, 230, .28), transparent 32%),
+    linear-gradient(135deg, #062232, #03101a 58%, #073347);
+  box-shadow: 0 28px 66px rgba(0, 0, 0, .46), inset 0 1px 0 rgba(214, 250, 255, .22);
+}
 html[data-fs-tier="diamond"] .hero::after {
   content: "";
   position: absolute;
@@ -55,52 +168,67 @@ html[data-fs-tier="diamond"] .hero::after {
   100% { transform: translateX(42%) rotate(10deg); }
 }
 
-/* ---------- The gem breathes. Slow, transform-only, never blocking ---------- */
+/* The gem is a real object: it floats and turns in space. */
 html[data-fs-tier="diamond"] .hero-gem {
   will-change: transform;
-  animation: fsTierGemFloat 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+  animation: fsTierGemOrbit 9s ease-in-out infinite;
+  filter: drop-shadow(0 0 34px rgba(110, 226, 255, .4));
 }
-@keyframes fsTierGemFloat {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(-8px) scale(1.02); }
+@keyframes fsTierGemOrbit {
+  0%, 100% { transform: translateY(0) rotateY(-14deg) rotateX(4deg) scale(1); }
+  50%      { transform: translateY(-12px) rotateY(14deg) rotateX(-4deg) scale(1.04); }
 }
 
-/* ---------- Brand mark in ice ---------- */
+/* ============================ IDENTITY ============================ */
 html[data-fs-tier="diamond"] .brand b {
-  background: linear-gradient(96deg, #fff 18%, #b6f2ff 48%, #fff 78%);
+  background: linear-gradient(96deg, #fff 14%, #b6f2ff 44%, #e3d4ff 62%, #fff 84%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-
-/* ---------- Primary action reads as the brightest thing on screen ---------- */
-html[data-fs-tier="diamond"] .primary-btn {
-  background: linear-gradient(180deg, #d7fbff, #3fd0ea);
-  border-color: #e6feff;
-  color: #03222c;
-  box-shadow: 0 6px 20px rgba(110, 226, 255, .24);
+html[data-fs-tier="diamond"] .eyebrow { color: #8fe6fb; }
+html[data-fs-tier="diamond"] .package-price { color: #dcf8ff; }
+html[data-fs-tier="diamond"] .cart-total strong { color: #dcf8ff; }
+html[data-fs-tier="diamond"] .avatar {
+  background: linear-gradient(160deg, #10465c, #0a2f41);
+  color: #dffaff;
+  box-shadow: inset 0 0 0 1px rgba(182, 242, 255, .5), 0 6px 16px rgba(0, 0, 0, .4);
 }
 
-/* ---------- Depth on interaction, one notch above Gold ---------- */
+html[data-fs-tier="diamond"] .primary-btn {
+  background: linear-gradient(180deg, #e2fdff, #3fd0ea 62%, #1ba7c4);
+  border-color: #eeffff;
+  color: #022029;
+  box-shadow: 0 8px 24px rgba(110, 226, 255, .3), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
 @media (hover: hover) and (pointer: fine) {
-  html[data-fs-tier="diamond"] .game-card:hover {
-    transform: translateY(-4px) scale(1.008);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, .46), 0 0 0 1px rgba(182, 242, 255, .3);
-  }
-  html[data-fs-tier="diamond"] .category-card:hover { transform: translateY(-3px) scale(1.006); }
   html[data-fs-tier="diamond"] .primary-btn:hover {
     transform: translateY(-1px) scale(1.015);
-    box-shadow: 0 10px 26px rgba(110, 226, 255, .34);
+    box-shadow: 0 14px 32px rgba(110, 226, 255, .42), inset 0 1px 0 rgba(255, 255, 255, .85);
   }
 }
 
-/* ---------- Slightly deeper stagger so the grid reads as layered ---------- */
-html[data-fs-tier="diamond"] .game-grid > * { animation-duration: 340ms; }
+/* Slightly deeper stagger so the grid reads as layered depth. */
+html[data-fs-tier="diamond"] .game-grid > * { animation-duration: 360ms; }
 
-html[data-fs-tier="diamond"] .package-price { color: #d8f6ff; }
-html[data-fs-tier="diamond"] .avatar { background: #0d3a4d; color: #cdf6ff; }
+/* ============================ DEGRADATION ============================
+   Coarse pointers (phones) get the material and the depth shadows but no
+   tilt: it cannot be aimed and it costs compositing on weak hardware. */
+@media (hover: none), (pointer: coarse) {
+  html[data-fs-tier="diamond"] .game-card,
+  html[data-fs-tier="diamond"] .category-card {
+    transform: none;
+    will-change: auto;
+  }
+  html[data-fs-tier="diamond"] .game-grid,
+  html[data-fs-tier="diamond"] .category-grid,
+  html[data-fs-tier="diamond"] .game-list { perspective: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-fs-tier="diamond"] .hero::after { animation: none !important; opacity: .16; }
+  html[data-fs-tier="diamond"] .hero::after { animation: none !important; opacity: .14; }
   html[data-fs-tier="diamond"] .hero-gem { animation: none !important; }
+  html[data-fs-tier="diamond"] .game-card,
+  html[data-fs-tier="diamond"] .category-card { transform: none !important; }
 }
