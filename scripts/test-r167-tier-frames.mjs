@@ -14,6 +14,7 @@
      fondo CSS sobre ellos, así que si desaparecen, desaparece la gema. */
 import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 
 const leer = (p) => readFileSync(p, 'utf8');
 const gold = leer('v2/tiers/tier-gold.css');
@@ -42,20 +43,87 @@ for (const [ruta, dim] of Object.entries(PIEZAS)) {
   assert.doesNotMatch(svg, /<image\b|<foreignObject\b/i, `${ruta}: sin imágenes incrustadas`);
   /* Los filtros SVG (blur, sombras) son lo caro de verdad en gama baja. */
   assert.doesNotMatch(svg, /<filter\b|feGaussianBlur|feDropShadow/i, `${ruta}: sin filtros`);
-  assert.ok(statSync(ruta).size < 6000, `${ruta} debe seguir pesando poco`);
+  /* Lo que de verdad paga el cliente es el tamaño comprimido, que es como
+     lo sirve GitHub Pages; el crudo se mira aparte por si alguien incrusta
+     una imagen en base64, que no comprime y delataría el descuido. */
+  const crudo = statSync(ruta).size;
+  const comprimido = gzipSync(readFileSync(ruta), { level: 9 }).length;
+  assert.ok(comprimido < 4000, `${ruta} pesa ${comprimido} B comprimido; el tope son 4000`);
+  assert.ok(crudo < 12000, `${ruta} pesa ${crudo} B en crudo; el tope son 12000`);
 }
 
-/* Los cuatro lados y las cuatro esquinas: el marco de Diamond refleja una
-   sola pieza, así que si falta un espejo se queda un lado sin tallar. */
+/* El bisel de Diamond son dieciséis caras (cuatro lados y cuatro chaflanes,
+   cada uno partido en escalón exterior e interior) más tres octógonos de
+   arista. Si falta una cara queda un hueco transparente en el marco. */
 const marcoDiamond = leer('v2/tiers/frame-diamond.svg');
-assert.equal((marcoDiamond.match(/<use href="#piedra"/g) || []).length, 4,
-  'Diamond necesita las cuatro piedras de esquina');
-assert.equal((marcoDiamond.match(/url\(#faceta[HV]\)/g) || []).length, 4,
-  'Diamond necesita los cuatro lados tallados');
-/* Los espejos van como matrix(...) a propósito: con scale() el origen de
-   transformación en SVG no es el del lienzo y dos lados se quedaban lisos. */
-assert.doesNotMatch(marcoDiamond, /transform="matrix[^"]*"\s+style="transform-origin/,
-  'Los espejos no deben depender de transform-origin');
+assert.equal((marcoDiamond.match(/<polygon /g) || []).length, 16,
+  'El bisel necesita sus dieciséis caras');
+for (const [nombre, octogono] of [
+  ['exterior', 'M80,0 L520,0 L600,80 L600,320 L520,400 L80,400 L0,320 L0,80 Z'],
+  ['del escalón', 'M92.6,30.4 L507.4,30.4 L569.6,92.6 L569.6,307.4 L507.4,369.6'],
+  ['interior', 'M113.1,80 L486.9,80 L520,113.1 L520,286.9 L486.9,320 L113.1,320 L80,286.9 L80,113.1 Z'],
+]) {
+  assert.ok(marcoDiamond.includes(octogono), `Falta la arista ${nombre} del bisel`);
+}
+
+/* La invariante que de verdad se puede romper sin que se note al leer el
+   diff: el chaflán del dibujo (80 unidades sobre un slice de 120) y el del
+   clip-path del CSS tienen que medir lo mismo en pantalla. Si se separan,
+   el fondo de la tarjeta asoma por las cuatro esquinas. */
+const CHAFLAN_SVG = 80;
+const SLICE = 120;
+const sinComentariosCss = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '');
+const diamondLimpio = sinComentariosCss(diamond);
+const anchos = [...diamondLimpio.matchAll(/border-image-width:\s*(\d+)px/g)].map((m) => Number(m[1]));
+const chaflanes = [...diamondLimpio.matchAll(/polygon\(\s*(\d+)px 0/g)].map((m) => Number(m[1]));
+assert.ok(anchos.length >= 1, 'Se esperaba al menos un border-image-width en Diamond');
+assert.equal(anchos.length, chaflanes.length,
+  'Cada border-image-width de Diamond necesita su clip-path con el chaflán a juego');
+anchos.forEach((ancho, i) => {
+  const esperado = (CHAFLAN_SVG * ancho) / SLICE;
+  assert.equal(chaflanes[i], esperado,
+    `Con banda de ${ancho} px el chaflán debe medir ${esperado} px, no ${chaflanes[i]}`);
+});
+
+/* Un halo hacia fuera en esta tarjeta es código muerto: clip-path se aplica
+   después de la sombra y del filtro, así que recorta cualquier box-shadow
+   exterior y también drop-shadow(). Comprobado en navegador, no deducido. */
+for (const regla of diamondLimpio.split('}')) {
+  if (!regla.includes('clip-path')) continue;
+  const sombra = regla.match(/box-shadow:([^;]*)/);
+  if (!sombra) continue;
+  /* Partir por comas a secas no vale: rgba(138, 150, 228, .3) lleva las
+     suyas dentro. Se parte solo por las comas de nivel cero. */
+  const capas = [];
+  let nivel = 0;
+  let actual = '';
+  for (const c of sombra[1]) {
+    if (c === '(') nivel += 1;
+    else if (c === ')') nivel -= 1;
+    if (c === ',' && nivel === 0) { capas.push(actual); actual = ''; continue; }
+    actual += c;
+  }
+  capas.push(actual);
+  for (const capa of capas) {
+    assert.match(capa, /inset/,
+      'Con clip-path solo sirven sombras inset: las de fuera se recortan');
+  }
+}
+
+/* La filigrana de Gold: dos volutas enfrentadas (arriba a la izquierda y,
+   girada 180, abajo a la derecha), sus dos chispas, el doble hilo y las
+   barras de luz de los cantos. Sin esto, borrar una pieza pasaría en verde. */
+const marcoGold = leer('v2/tiers/frame-gold.svg');
+assert.equal((marcoGold.match(/<use href="#voluta"/g) || []).length, 2,
+  'Gold necesita sus dos volutas de esquina');
+assert.match(marcoGold, /<use href="#voluta" transform="rotate\(180 300 200\)"\/>/,
+  'La segunda voluta es la primera girada 180: así las dos esquinas casan');
+assert.equal((marcoGold.match(/<use href="#chispa"/g) || []).length, 2,
+  'Gold necesita sus dos chispas');
+assert.equal((marcoGold.match(/url\(#destello\)/g) || []).length, 4,
+  'Las barras de luz van arriba y abajo, cada una con su halo');
+assert.equal((marcoGold.match(/stroke="url\(#oro\)"/g) || []).length, 3,
+  'El hilo principal, el de acompañamiento y la voluta van en oro');
 
 /* ---- Montaje en Gold ---- */
 assert.match(gold, /border-image-source:\s*url\("\.\/frame-gold\.svg"\)/);
@@ -67,8 +135,8 @@ assert.match(gold, /html\[data-fs-tier="gold"\] \.category-card:hover \{ border-
 /* ---- Montaje en Diamond ---- */
 assert.match(diamond, /border-image-source:\s*url\("\.\/frame-diamond\.svg"\)/);
 assert.match(diamond, /border-image-slice:\s*120/);
-assert.match(diamond, /border-image-repeat:\s*round/,
-  'La banda facetada se repite; estirada se emborrona');
+assert.match(diamond, /border-image-repeat:\s*stretch/,
+  'El sombreado de cada lado va perpendicular al lado, y así se estira sin deformarse');
 assert.match(diamond, /html\[data-fs-tier="diamond"\] \.category-card:hover \{ border-color: transparent; \}/);
 
 /* ---- La gema del logotipo, en los dos niveles ---- */
@@ -90,9 +158,8 @@ assert.doesNotMatch(base, /border-image|frame-gold|frame-diamond|gem-brillante/,
    Se miran las REGLAS, no el texto: los comentarios nombran `.game-card` al
    explicar por qué se queda fuera, y una comprobación ingenua se dispararía
    sola con la explicación. */
-const sinComentarios = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '');
 for (const [nombre, css] of [['gold', gold], ['diamond', diamond]]) {
-  const reglas = sinComentarios(css).split('}');
+  const reglas = sinComentariosCss(css).split('}');
   const conMarco = reglas.filter((r) => r.includes('border-image-source'));
   assert.ok(conMarco.length > 0, `${nombre}: se esperaba al menos una regla con marco`);
   for (const regla of conMarco) {

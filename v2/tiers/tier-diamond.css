@@ -466,24 +466,49 @@ html[data-fs-tier="diamond"] .bottom-nav button.active {
    Solo `.category-card`: cinco elementos. En `.game-card` serían decenas.
    ==================================================================== */
 html[data-fs-tier="diamond"] .category-card {
-  /* El marco es de cantos rectos, como la maqueta; el radio de la tarjeta
-     baja para que el fondo no asome por fuera de la cinta. */
-  border-radius: 3px;
+  /* La tarjeta deja de ser un rectángulo redondeado y pasa a ser una losa
+     con las esquinas cortadas a 45°, que es lo que hace que se lea como
+     piedra tallada. El chaflán del recorte y el del dibujo TIENEN que medir
+     lo mismo: 80 unidades del SVG × 15/120 = 10 px. Si se toca uno hay que
+     tocar el otro o asoma el fondo por la esquina. */
+  border-radius: 0;
   border-color: transparent;
   border-image-source: url("./frame-diamond.svg");
   border-image-slice: 120;
-  border-image-width: 10px;
-  border-image-repeat: round;
+  border-image-width: 15px;
+  /* `stretch`, no `round`: el sombreado de cada lado va perpendicular al
+     lado, y un degradado perpendicular se estira sin deformarse. */
+  border-image-repeat: stretch;
+  clip-path: polygon(
+    10px 0, calc(100% - 10px) 0,
+    100% 10px, 100% calc(100% - 10px),
+    calc(100% - 10px) 100%, 10px 100%,
+    0 calc(100% - 10px), 0 10px);
+  /* OJO: aquí NO cabe un halo exterior. `clip-path` se aplica DESPUÉS de la
+     sombra y del filtro, así que recorta cualquier `box-shadow` hacia fuera
+     y también un `filter: drop-shadow()`. Se probó y no se dibujaba nada.
+     La luz tiene que venir de dentro: sombra interior más el propio bisel,
+     que ya es la parte brillante. */
+  box-shadow: inset 0 0 18px rgba(138, 150, 228, .3), inset 0 1px 0 rgba(232, 240, 255, .35);
 }
 html[data-fs-tier="diamond"] .category-card:hover { border-color: transparent; }
 html[data-fs-tier="diamond"] .category-card.cuentas-entry,
 html[data-fs-tier="diamond"] .category-card.cuentas-entry:hover {
   border-color: transparent;
-  border-radius: 3px;
+  border-radius: 0;
 }
 
+/* En pantallas muy estrechas la banda baja a 12 px, y el chaflán con ella:
+   80 × 12/120 = 8 px. */
 @media (max-width: 380px) {
-  html[data-fs-tier="diamond"] .category-card { border-image-width: 8px; }
+  html[data-fs-tier="diamond"] .category-card {
+    border-image-width: 12px;
+    clip-path: polygon(
+      8px 0, calc(100% - 8px) 0,
+      100% 8px, 100% calc(100% - 8px),
+      calc(100% - 8px) 100%, 8px 100%,
+      0 calc(100% - 8px), 0 8px);
+  }
 }
 
 /* La gema del logotipo: el mismo brillante, con halo frío. */

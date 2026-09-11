@@ -1,79 +1,145 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
-  <!-- THE FRENCH STORE - R167. Marco Diamond.
-       Cinta de cristal tallado para border-image con slice 120: las cuatro
-       piedras de esquina se dibujan a tamano fijo y nunca se deforman; la
-       banda facetada de los lados se repite con border-image-repeat: round.
+  <!-- THE FRENCH STORE - R167. Marco Diamond: bisel de cristal.
+       border-image con slice 120. Las esquinas se dibujan a tamano fijo; los
+       lados se estiran, y por eso su sombreado va SIEMPRE perpendicular al
+       lado: un degradado perpendicular se estira sin deformarse, mientras
+       que cualquier dibujo a lo largo se emborrona.
 
-       La escala esta elegida para el tamano REAL de una tarjeta, no para que
-       el archivo se vea bien: con border-image-width 10 el factor es 10/120,
-       asi que una faceta de 120 en el dibujo mide 10 px en pantalla. Facetas
-       gruesas y pocas se leen como talla; finas y muchas se leen como feston.
+       No es un patron repetido, es una LOSA biselada con las esquinas
+       cortadas a 45 grados. Las "lineas finas" son los filos del bisel, no
+       divisiones de faceta: se probaron antes un zigzag de triangulos, unas
+       lascas inclinadas y dos hileras de facetas pequenas, y las tres se
+       leian como cinta decorativa. Dieciseis caras: cuatro lados y cuatro
+       chaflanes, cada uno partido al 38 por ciento en un escalon exterior
+       (claro, donde da la luz) y uno interior (hondo, violeta). El relieve
+       sale del sombreado, no de acumular triangulos.
 
-       Los espejos van como matrices explicitas (matrix(...)) y no como
-       scale(): en SVG el origen de transformacion de un elemento no es el
-       del lienzo, y con scale() las bandas inferior y derecha se quedaban
-       sin tallar. Cero filtros, cero blur. -->
+       Geometria: chaflan 80 y banda 80, elegidos para que el filo interior
+       del chaflan (x+y = 80 + 80*raiz(2) = 193,1) y los quiebros de la linea
+       del escalon (x = 92,6 y x = 507,4) caigan DENTRO de la caja de esquina
+       de 120. Si se pasaran, esa parte entraria en la zona estirada.
+
+       La tarjeta se recorta con el mismo octogono via clip-path en el CSS.
+       Si se cambia el chaflan aqui, hay que cambiarlo alli; el chaflan en
+       pantalla es 80 * border-image-width / 120, y scripts/test-r167 lo
+       comprueba.
+
+       Cero filtros, cero blur: poligonos, lineas y degradados. -->
   <defs>
-    <linearGradient id="hielo" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset=".26" stop-color="#b4dcf2"/>
-      <stop offset=".5" stop-color="#ffffff"/>
-      <stop offset=".72" stop-color="#dfd8f5"/>
-      <stop offset=".88" stop-color="#f6e6f0"/>
-      <stop offset="1" stop-color="#8fc0dd"/>
+    <linearGradient id="topFuera" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e4f0ff"/>
     </linearGradient>
-
-    <!-- Talla de los lados: una faceta clara y dos valles por cada 120. -->
-    <pattern id="facetaH" width="180" height="110" patternUnits="userSpaceOnUse" x="0" y="0">
-      <polygon points="0,0 90,74 180,0" fill="#ffffff" opacity=".95"/>
-      <polygon points="90,74 180,0 270,74" fill="#4a89ad" opacity=".5"/>
-      <polygon points="-90,74 0,0 90,74" fill="#4a89ad" opacity=".5"/>
-      <polygon points="0,0 90,74 44,74" fill="#ded6f7" opacity=".5"/>
-      <path d="M-90,74 L0,0 L90,74 L180,0 L270,74" fill="none" stroke="#eafaff" stroke-width="2.4" opacity=".85"/>
-      <rect x="-90" y="74" width="360" height="36" fill="#f2fbff" opacity=".72"/>
-      <rect x="-90" y="74" width="360" height="3" fill="#ffffff"/>
-    </pattern>
-    <pattern id="facetaV" width="110" height="180" patternUnits="userSpaceOnUse" x="0" y="0">
-      <polygon points="0,0 74,90 0,180" fill="#ffffff" opacity=".95"/>
-      <polygon points="74,90 0,180 74,270" fill="#4a89ad" opacity=".5"/>
-      <polygon points="74,-90 0,0 74,90" fill="#4a89ad" opacity=".5"/>
-      <polygon points="0,0 74,90 74,44" fill="#ded6f7" opacity=".5"/>
-      <path d="M74,-90 L0,0 L74,90 L0,180 L74,270" fill="none" stroke="#eafaff" stroke-width="2.4" opacity=".85"/>
-      <rect x="74" y="-90" width="36" height="360" fill="#f2fbff" opacity=".72"/>
-      <rect x="74" y="-90" width="3" height="360" fill="#ffffff"/>
-    </pattern>
-
-    <!-- Piedra de esquina: cuatro caras hacia un vertice y una mesa girada
-         encima. Es lo unico que border-image dibuja a tamano fijo, asi que
-         es donde se juega la lectura de "tallado". -->
-    <g id="piedra">
-      <polygon points="0,0 110,0 55,55" fill="#ffffff"/>
-      <polygon points="0,0 55,55 0,110" fill="#e6f5ff"/>
-      <polygon points="110,0 110,110 55,55" fill="#b9a9e8" opacity=".85"/>
-      <polygon points="0,110 110,110 55,55" fill="#3b7ea6"/>
-      <polygon points="55,20 90,55 55,90 20,55" fill="url(#hielo)"/>
-      <path d="M0,0 L55,55 M110,0 L55,55 M0,110 L55,55 M110,110 L55,55"
-            fill="none" stroke="#eafaff" stroke-width="2.6" opacity=".9"/>
-      <path d="M55,20 L90,55 L55,90 L20,55 Z" fill="none" stroke="#ffffff" stroke-width="3" opacity=".95"/>
-    </g>
+    <linearGradient id="topDentro" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9cef0"/><stop offset="1" stop-color="#7186c6"/>
+    </linearGradient>
+    <linearGradient id="izqFuera" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fdfdff"/><stop offset="1" stop-color="#e7e7ff"/>
+    </linearGradient>
+    <linearGradient id="izqDentro" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#b0b0e4"/><stop offset="1" stop-color="#7c7ec6"/>
+    </linearGradient>
+    <linearGradient id="derFuera" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#f1f4ff"/><stop offset="1" stop-color="#ccd4f5"/>
+    </linearGradient>
+    <linearGradient id="derDentro" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#8a90d6"/><stop offset="1" stop-color="#5f68b0"/>
+    </linearGradient>
+    <linearGradient id="abaFuera" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#eef3ff"/><stop offset="1" stop-color="#c5d2f1"/>
+    </linearGradient>
+    <linearGradient id="abaDentro" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#8293cc"/><stop offset="1" stop-color="#5c6bae"/>
+    </linearGradient>
+    <linearGradient id="chFuera" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e2e8ff"/>
+    </linearGradient>
+    <linearGradient id="chDentro" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b1b8e7"/><stop offset="1" stop-color="#767ec4"/>
+    </linearGradient>
+    <linearGradient id="chFueraH" x1="1" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#e9edff"/><stop offset="1" stop-color="#c4cbf0"/>
+    </linearGradient>
+    <linearGradient id="chDentroH" x1="1" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#8f97d8"/><stop offset="1" stop-color="#6d76c0"/>
+    </linearGradient>
+    <!-- Barrido prismatico. Va por encima de las caras y tine el bisel de
+         plata a violeta a rosa, que es lo que en la maqueta distingue el
+         cristal del metal. Es un degradado SUAVE, asi que se estira sin
+         artefactos, y en la junta entre esquina y lado coincide exactamente
+         porque ambos leen el mismo punto del dibujo. -->
+    <linearGradient id="prisma" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8fe3ff" stop-opacity=".5"/>
+      <stop offset=".26" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#a97dff" stop-opacity=".52"/>
+      <stop offset=".7" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset=".88" stop-color="#ff92d2" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#6fd2ff" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="lustre" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="lustreV" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#ffffff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
   </defs>
 
-  <!-- Cinta: rectangulo exterior menos hueco interior. -->
-  <path d="M0,0 H600 V400 H0 Z M110,110 V290 H490 V110 Z" fill-rule="evenodd" fill="url(#hielo)"/>
+  <!-- Escalon exterior: la cara que recibe la luz. -->
+  <polygon points="80,0 520,0 507.4,30.4 92.6,30.4" fill="url(#topFuera)"/>
+  <polygon points="0,80 30.4,92.6 30.4,307.4 0,320" fill="url(#izqFuera)"/>
+  <polygon points="600,80 600,320 569.6,307.4 569.6,92.6" fill="url(#derFuera)"/>
+  <polygon points="80,400 520,400 507.4,369.6 92.6,369.6" fill="url(#abaFuera)"/>
+  <polygon points="80,0 92.6,30.4 30.4,92.6 0,80" fill="url(#chFuera)"/>
+  <polygon points="520,0 600,80 569.6,92.6 507.4,30.4" fill="url(#chFueraH)"/>
+  <polygon points="0,320 30.4,307.4 92.6,369.6 80,400" fill="url(#chFueraH)"/>
+  <polygon points="520,400 600,320 569.6,307.4 507.4,369.6" fill="url(#chDentroH)"/>
 
-  <!-- Talla de los cuatro lados. Las bandas de abajo y de la derecha son la
-       misma pieza reflejada, para que las cuatro casen en las esquinas. -->
-  <rect x="120" y="0" width="360" height="110" fill="url(#facetaH)"/>
-  <rect x="120" y="0" width="360" height="110" fill="url(#facetaH)" transform="matrix(1,0,0,-1,0,400)"/>
-  <rect x="0" y="120" width="110" height="160" fill="url(#facetaV)"/>
-  <rect x="0" y="120" width="110" height="160" fill="url(#facetaV)" transform="matrix(-1,0,0,1,600,0)"/>
+  <!-- Escalon interior: la cara honda, donde el cristal coge color. -->
+  <polygon points="92.6,30.4 507.4,30.4 486.9,80 113.1,80" fill="url(#topDentro)"/>
+  <polygon points="30.4,92.6 80,113.1 80,286.9 30.4,307.4" fill="url(#izqDentro)"/>
+  <polygon points="569.6,92.6 569.6,307.4 520,286.9 520,113.1" fill="url(#derDentro)"/>
+  <polygon points="92.6,369.6 507.4,369.6 486.9,320 113.1,320" fill="url(#abaDentro)"/>
+  <polygon points="92.6,30.4 113.1,80 80,113.1 30.4,92.6" fill="url(#chDentro)"/>
+  <polygon points="507.4,30.4 569.6,92.6 520,113.1 486.9,80" fill="url(#chDentroH)"/>
+  <polygon points="30.4,307.4 80,286.9 113.1,320 92.6,369.6" fill="url(#chDentroH)"/>
+  <polygon points="507.4,369.6 569.6,307.4 520,286.9 486.9,320" fill="url(#chDentroH)"/>
 
-  <use href="#piedra"/>
-  <use href="#piedra" transform="matrix(-1,0,0,1,600,0)"/>
-  <use href="#piedra" transform="matrix(1,0,0,-1,0,400)"/>
-  <use href="#piedra" transform="matrix(-1,0,0,-1,600,400)"/>
+  <!-- Tinte prismatico, antes de las aristas para que los filos sigan siendo
+       blancos y limpios. Va FLOJO en el escalon exterior y FUERTE en el
+       interior: en la maqueta el canto que da a la luz es plata limpia y el
+       color vive en la parte honda del bisel. Al reves queda lavado. -->
+  <path d="M80,0 L520,0 L600,80 L600,320 L520,400 L80,400 L0,320 L0,80 Z
+           M92.6,30.4 L30.4,92.6 L30.4,307.4 L92.6,369.6 L507.4,369.6 L569.6,307.4
+           L569.6,92.6 L507.4,30.4 Z"
+        fill-rule="evenodd" fill="url(#prisma)" opacity=".34"/>
+  <path d="M92.6,30.4 L507.4,30.4 L569.6,92.6 L569.6,307.4 L507.4,369.6 L92.6,369.6
+           L30.4,307.4 L30.4,92.6 Z
+           M113.1,80 L80,113.1 L80,286.9 L113.1,320 L486.9,320 L520,286.9 L520,113.1 L486.9,80 Z"
+        fill-rule="evenodd" fill="url(#prisma)"/>
 
-  <!-- Filos: el canto exterior e interior siempre encienden. -->
-  <rect x="1.5" y="1.5" width="597" height="397" fill="none" stroke="#ffffff" stroke-width="3" opacity=".95"/>
-  <rect x="110" y="110" width="380" height="180" fill="none" stroke="#cfeaff" stroke-width="3" opacity=".85"/>
+  <!-- Las lineas finas del bisel: filo exterior, linea larga del escalon,
+       filo interior y las ocho juntas entre caras. -->
+  <g fill="none" stroke="#ffffff" stroke-linejoin="miter">
+    <path d="M80,0 L520,0 L600,80 L600,320 L520,400 L80,400 L0,320 L0,80 Z"
+          stroke-width="5" opacity=".95"/>
+    <path d="M92.6,30.4 L507.4,30.4 L569.6,92.6 L569.6,307.4 L507.4,369.6
+             L92.6,369.6 L30.4,307.4 L30.4,92.6 Z" stroke-width="3" opacity=".85"/>
+    <path d="M113.1,80 L486.9,80 L520,113.1 L520,286.9 L486.9,320 L113.1,320 L80,286.9 L80,113.1 Z"
+          stroke-width="4.5" opacity=".92"/>
+    <path d="M80,0 L113.1,80 M0,80 L80,113.1 M520,0 L486.9,80 M600,80 L520,113.1
+             M80,400 L113.1,320 M0,320 L80,286.9 M520,400 L486.9,320 M600,320 L520,286.9"
+          stroke-width="2.6" opacity=".75"/>
+  </g>
+  <!-- Linea oscura pegada al filo interior: sin ella el cristal se funde con
+       el fondo de la tarjeta y el bisel deja de tener canto. -->
+  <path d="M117,84 L483,84 L516,117 L516,283 L483,316 L117,316 L84,283 L84,117 Z"
+        fill="none" stroke="#2c3468" stroke-width="4" opacity=".7"/>
+
+  <!-- Dos brillos especulares: el punto de luz que hace que se lea como
+       cristal y no como plastico. -->
+  <rect x="150" y="7" width="300" height="11" fill="url(#lustre)" opacity=".95"/>
+  <rect x="7" y="130" width="11" height="140" fill="url(#lustreV)" opacity=".6"/>
 </svg>

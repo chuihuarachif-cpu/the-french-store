@@ -298,7 +298,7 @@ cuatro esquinas. Son tres SVG propios en `v2/tiers/`:
 | Pieza | Archivo | Montaje |
 | --- | --- | --- |
 | Marco Gold | `frame-gold.svg` | `border-image`, slice 120, `stretch`, 26 px |
-| Marco Diamond | `frame-diamond.svg` | `border-image`, slice 120, `round`, 10 px |
+| Marco Diamond | `frame-diamond.svg` | `border-image`, slice 120, `stretch`, 15 px |
 | Gema del logotipo | `gem-brillante.svg` | fondo de `.brand > span` |
 
 Por qué `border-image` y no un fondo estirado: es lo único que alarga los
@@ -321,14 +321,35 @@ Detalles que ya costaron una pasada y conviene no redescubrir:
 - En el SVG los espejos van como `matrix(...)`, no como `scale()`: el origen de
   transformación de un elemento SVG no es el del lienzo y dos de los cuatro
   lados de Diamond se quedaban sin tallar.
-- La escala de las facetas está elegida para el tamaño **real** de una tarjeta,
-  no para que el archivo se vea bonito: facetas gruesas y pocas se leen como
-  talla; finas y muchas, como festón de tarta.
+- **Diamond costó cuatro intentos.** Un zigzag de triángulos macizos se leía
+  como festón; unas lascas inclinadas sobre relleno blanco, como fichas de
+  dominó; dos hileras de facetas pequeñas, como cinta decorativa. Lo que la
+  maqueta tiene de verdad **no es un patrón repetido**: es una **losa biselada
+  con las esquinas cortadas a 45°**, y las "líneas finas" son los filos del
+  bisel, no divisiones de faceta. Son 16 caras (4 lados y 4 chaflanes, cada
+  uno partido al 38 % en escalón exterior claro e interior violeta) más un
+  barrido prismático que va **flojo fuera y fuerte dentro**: al revés queda
+  lavado. Si alguien vuelve a proponer facetas repetidas, ya se probó.
+- **El chaflán vive en dos sitios y tienen que casar**: 80 unidades del SVG y
+  el `clip-path` del CSS. En pantalla es `80 × border-image-width / 120`
+  (15 px de banda → 10 px; 12 px → 8 px). Si se separan, el fondo de la
+  tarjeta asoma por las cuatro esquinas. La prueba lo calcula y lo compara.
+- **Con `clip-path` no cabe halo hacia fuera.** El recorte se aplica *después*
+  de la sombra y del filtro, así que se come cualquier `box-shadow` exterior y
+  también `filter: drop-shadow()`. Comprobado en navegador, no deducido de la
+  especificación. La luz de Diamond viene de sombras `inset` y del propio
+  bisel; la prueba rechaza una sombra no-`inset` en una regla con `clip-path`.
 - La gema **no toca `index.html`**: el logotipo sigue diciendo 💎 y el CSS lo
   esconde con `font-size: 0` y pinta el SVG de fondo. Base conserva el emoji.
 
-Guarda: `scripts/test-r167-tier-frames.mjs` (offline). Sus ocho aserciones
-negativas están comprobadas simulando la regresión que deben atrapar.
+Guarda: `scripts/test-r167-tier-frames.mjs` (offline). **Veinte** regresiones
+simuladas y atrapadas: marco bajando a `.game-card`, hover sin apagar, marco
+colándose en Base, `stretch` degradado a `round`, chaflán del CSS fuera de
+sincronía con el del dibujo, halo exterior resucitado, cara del bisel o arista
+perdida, voluta/chispa/barra de luz de Gold borrada, hilo de oro en color
+plano, gema del logotipo quitada, filtro o imagen base64 metidos en un SVG.
+El tope de peso se mide **comprimido** (4 KB), que es lo que sirve GitHub
+Pages, con un tope en crudo aparte por si alguien incrusta un raster.
 
 Lo que pidió el propietario como "paquete de assets" (`gold_frame.png`,
 `diamond_frame.png`, `gold_logo.png`, `diamond_logo_graphic.png`) **nunca
