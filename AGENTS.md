@@ -260,7 +260,20 @@ Do not change canonical impulsively; verify Search Console and deployed behavior
 
 ## Architecture / repository discipline
 
-Current frontend is plain HTML/CSS/JavaScript with modular scripts. Do not migrate to React/Next/Vite/frameworks merely from preference. Any architectural migration requires a documented benefit, risk assessment, and approval.
+Current frontend is plain HTML/CSS/JavaScript with modular scripts. Do not migrate to React/Next/Vite/frameworks merely from preference. Any architectural migration requires a documented benefit, clear maintenance justification, risk assessment, and approval.
+
+### Quick framework/dependency check
+
+Before adding a new framework or major dependency:
+
+- [ ] Is the problem clearly defined?
+- [ ] Can the existing stack solve it safely?
+- [ ] Does it provide a meaningful UX, performance, security, or maintainability benefit?
+- [ ] Is the added bundle/runtime cost acceptable on low-end Android?
+- [ ] Does it introduce new security or maintenance risk?
+- [ ] Is the dependency actively maintained?
+- [ ] Is there a simpler alternative?
+- [ ] Is the decision documented?
 
 Before modifying code:
 
