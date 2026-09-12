@@ -291,6 +291,51 @@ When implementing:
 5. If a test encodes a genuinely obsolete rule, explain the conflict and update it with evidence.
 6. Provide rollback guidance.
 
+### Production rollback runbook
+
+If a production deployment causes a regression, prioritize restoring the last known-good application version before debugging the new release in production.
+
+**Standard Git rollback for a bad application commit:**
+
+```bash
+git checkout main
+git pull origin main
+git revert <bad-commit-sha>
+git push origin main
+```
+
+Use the exact bad deployment commit SHA, not `HEAD` by guesswork. Prefer a normal `git revert` over rewriting history or force-pushing `main`.
+
+**If the bad change was introduced by a merged PR:**
+
+1. Identify the merged PR and exact merge/squash commit SHA.
+2. Revert that commit on a dedicated rollback branch.
+3. Open a rollback PR against `main`.
+4. Run CI and the relevant smoke/regression tests.
+5. Merge the rollback PR so the normal deployment pipeline restores the previous application state.
+6. Verify the live storefront, catalog, cart, checkout, Auth, orders, and any affected operational flow.
+
+**Database/Supabase rollback:**
+
+Never blindly reverse a production migration with ad-hoc SQL. First identify the migration, dependent objects, data changes, and whether a safe down migration exists. For destructive or financial changes, stop and require explicit approval from the appropriate backend/security reviewers before executing a rollback. Prefer a forward corrective migration when reversing could destroy valid production data.
+
+**Provider/payment rollback:**
+
+Do not replay real purchases, payment callbacks, Wallet mutations, or supplier execution routes merely to restore state. Disable or gate the affected execution path if necessary, preserve evidence, reconcile affected orders/transactions, and escalate financial/provider-impacting recovery to the backend/security review path.
+
+**Rollback verification checklist:**
+
+- [ ] Production is serving the known-good version.
+- [ ] CI/deployment completed successfully.
+- [ ] No new console/network errors are present.
+- [ ] Catalog and pricing display correctly.
+- [ ] Cart and checkout load correctly without making a real payment.
+- [ ] Auth/session behavior is intact.
+- [ ] Orders and operational/admin flows are intact.
+- [ ] No provider purchase or payment route was accidentally re-enabled.
+- [ ] Any affected financial/provider state has been reconciled.
+- [ ] Incident cause and recovery are documented before resuming the feature rollout.
+
 Before merge/publication:
 
 - run current CI
