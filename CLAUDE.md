@@ -83,6 +83,34 @@ Pruebas locales que sí corren sin red:
 for f in scripts/test-*.mjs; do node "$f" || echo "FALLA $f"; done
 ```
 
+### Dos rojos del CI que NO son de la tienda (R168)
+
+Antes de perseguir un fallo, descarta estos dos. Los dos estaban rotos por
+razones de infraestructura y los dos quedaron arreglados en R168.
+
+**`smoke` (Smoke BISA Storefront) fallaba SIEMPRE.** Sus pasos de verdad —los
+que descargan `https://frenchstorebo.com/v2/` y comprueban que la tienda está
+viva— pasaban; lo que fallaba era el último paso, que hacía `git push` de un
+recibo a `main`. El repositorio exige pull request para `main`, así que el
+push se rechazaba con `GH013: Changes must be made through a pull request`.
+Ahora el recibo va a `$GITHUB_STEP_SUMMARY` y el workflow bajó a
+`contents: read`. **`.checks/bisa-web-smoke.txt` es histórico y ya no se
+actualiza**; el recibo vivo está en el resumen del job.
+
+**`exit code 124` en las capturas NO es una aserción fallida.** 124 es el
+código de `timeout`. Chrome se gastaba los 45 s registrándose contra GCM,
+sync y D-Bus antes de pintar. Se añadió `CHROME_QUIET` (seis banderas que
+apagan esa charla) a las capturas de `r150`, `r151`, `r154` y `test-web-v2`;
+`loyalty.yml` ya usaba `--disable-background-networking` desde antes. Se
+comprobó que no cambian nada de lo capturado: mismo DOM y PNG idéntico byte a
+byte con y sin ellas.
+
+`CHROME_QUIET` se define en el **mismo bloque `run`** en el que se usa. Una
+variable de shell no cruza de un paso a otro: si se define en uno y se usa en
+el siguiente llega vacía, el arreglo deja de servir y el workflow sigue
+pasando en verde. Si tocas esto, vuelve a comprobarlo recorriendo los pasos
+del YAML, no leyendo el diff.
+
 ### Trampa: `! grep` no falla nunca (R160)
 
 bash **ignora `set -e` cuando el valor de retorno se invierte con `!`**.
@@ -431,7 +459,9 @@ Todo fusionado en `main`. No queda ninguna rama en curso.
   contraseña. **Fusionado.**
 - PR #105 `claude/repo-config-analysis-203vqk` — R164 a R167: bloque de
   cuentas en la rejilla, reflejo al bajar, deslizamiento lateral y marcos
-  dibujados. **Abierto, a la espera de fusión.**
+  dibujados. **Fusionado** (`2bd25da`) y **en producción**: el workflow
+  `smoke-bisa-web` descargó `https://frenchstorebo.com/v2/` del dominio real
+  y sus comprobaciones pasaron.
 
 ## Deuda conocida
 

@@ -13,8 +13,10 @@ on:
       - '.github/workflows/smoke-bisa-web.yml'
   workflow_dispatch:
 
+# Solo lectura: desde que el recibo va al resumen del job en vez de a un
+# commit, este workflow ya no necesita permiso de escritura.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   smoke:
@@ -54,14 +56,29 @@ jobs:
           grep -q '/bisa-sip/order-qr' /tmp/bisa-checkout.js
           grep -q 'paid-order-btn' /tmp/bisa-checkout.css
 
+      # El recibo se deja en el resumen del job, NO en un commit a main.
+      #
+      # Antes este paso hacia `git commit` + `git push` a main. El repositorio
+      # exige pull request para esa rama, asi que el push era rechazado
+      # SIEMPRE con "GH013: Changes must be made through a pull request" y el
+      # check quedaba en rojo de forma permanente, aunque la comprobacion en
+      # vivo de los pasos anteriores hubiera pasado. Un check que no puede
+      # ponerse verde deja de informar: se mira una vez, se asume roto y ya no
+      # se mira mas. Las aserciones de arriba no se tocan; lo unico que cambia
+      # es donde se guarda la evidencia.
+      #
+      # El .checks/bisa-web-smoke.txt que hay en el repo es el ultimo recibo
+      # que llego a subirse, de cuando el push aun funcionaba. Se conserva como
+      # historico; ya no se actualiza.
       - name: Record successful live check
         env:
           SHA: ${{ github.sha }}
         run: |
-          mkdir -p .checks
-          printf 'BISA storefront live smoke test: PASS\nSource commit: %s\nChecked at UTC: %s\nBISA checkout is lazy-loaded through bootstrap.js.\nNo order or QR was created by this test.\n' "$SHA" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .checks/bisa-web-smoke.txt
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .checks/bisa-web-smoke.txt
-          git commit -m 'Record BISA storefront smoke test pass' || exit 0
-          git push
+          {
+            echo '## BISA storefront live smoke test: PASS'
+            echo
+            echo "- Commit comprobado: \`$SHA\`"
+            echo "- Fecha (UTC): $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo '- El checkout BISA se carga en diferido desde `bootstrap.js`.'
+            echo '- Esta prueba no creo ningun pedido ni ningun QR.'
+          } >> "$GITHUB_STEP_SUMMARY"

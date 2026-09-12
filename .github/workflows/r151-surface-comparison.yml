@@ -35,11 +35,18 @@ jobs:
           python3 -m http.server 8082 --directory /tmp/french-after > /tmp/french-after.log 2>&1 &
           mkdir -p screenshots
           CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
+          # Chrome se gasta el presupuesto de `timeout` registrandose contra
+          # servicios de Google (GCM, sync, component update) y contra D-Bus
+          # antes de pintar nada; en un runner cargado eso agota los 45 s y el
+          # paso muere con codigo 124 sin haber fallado ninguna asercion. Nada
+          # de esto hace falta para capturar 127.0.0.1. Mismo remedio que ya
+          # usaba loyalty.yml, aplicado a todas las capturas.
+          CHROME_QUIET="--no-first-run --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection"
           for side in before after; do
             port=8081; if [ "$side" = after ]; then port=8082; fi
             for view in wallet pedidos cart qr; do
               name="${side}-${QA_RANK}-${view}-360"
-              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:$port/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:$port/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
               python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
             done
           done
@@ -49,6 +56,13 @@ jobs:
         run: |
           set -euo pipefail
           CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
+          # Chrome se gasta el presupuesto de `timeout` registrandose contra
+          # servicios de Google (GCM, sync, component update) y contra D-Bus
+          # antes de pintar nada; en un runner cargado eso agota los 45 s y el
+          # paso muere con codigo 124 sin haber fallado ninguna asercion. Nada
+          # de esto hace falta para capturar 127.0.0.1. Mismo remedio que ya
+          # usaba loyalty.yml, aplicado a todas las capturas.
+          CHROME_QUIET="--no-first-run --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection"
           for width in 360 390 412 768 1366; do
           for pair in wallet:loading wallet:zero wallet:empty wallet:error wallet:transaction_error cart:empty cart:checkout_loading pedidos:loading pedidos:empty pedidos:error auth:normal topup:normal; do
             view="${pair%:*}"; state="${pair#*:}"
@@ -56,7 +70,7 @@ jobs:
               case "$pair" in cart:empty|cart:checkout_loading|pedidos:loading|pedidos:empty|pedidos:error) ;; *) continue ;; esac
             fi
             name="after-${QA_RANK}-${view}-${width}-${state}"
-            timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
             python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width" r151 r153
           done
           done
