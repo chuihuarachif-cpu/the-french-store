@@ -46,7 +46,13 @@ function enforceGoogleOnlySignupUI(){
 }
 async function init(){
   wireUI();enforceGoogleOnlySignupUI();renderCartCounters();
-  await Promise.all([loadProducts(),refreshSession()]);
-  sb.auth.onAuthStateChange(async(_event,newSession)=>{await refreshSession(newSession);if(!newSession||$('view-pedidos').classList.contains('active'))loadOrders();if(newSession)closeModal('authModal')});
+  await refreshSession();
+  await loadProducts();
+  sb.auth.onAuthStateChange(async(_event,newSession)=>{
+    await refreshSession(newSession);
+    await loadProducts();
+    if(!newSession||$('view-pedidos').classList.contains('active'))loadOrders();
+    if(newSession)closeModal('authModal');
+  });
 }
 init();
