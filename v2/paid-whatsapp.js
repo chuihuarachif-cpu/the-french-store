@@ -1,19 +1,16 @@
-/* THE FRENCH STORE — R129 one-time paid WhatsApp action.
+/* THE FRENCH STORE — one-time paid WhatsApp action.
    The customer can open the prefilled paid-order WhatsApp notice only once per order.
    The one-time claim is enforced in Supabase, not localStorage, so refresh/new browser
    cannot regenerate it. Provider names are never returned to this module; only the
    internal reference codes G / B / H are included in the customer message.
 
    Payment is never marked by this button. It is enabled only after the backend has
-   already confirmed paid_at. Provider purchases remain disabled/manual.
-
-   Compatibility: if a future sanitized automation capability is explicitly live,
-   the old automatic UI still fails closed through the existing capability contract.
+   already confirmed paid_at. Supplier fulfillment remains manual.
 */
 (() => {
   'use strict';
 
-  const VERSION = 'r129-one-time-paid-whatsapp-20260830';
+  const VERSION = 'manual-paid-whatsapp-20260913';
   const AVAILABLE_TEXT = 'Ya pagué · Avisar por WhatsApp';
   const USED_TEXT = '✓ Aviso por WhatsApp utilizado';
 
@@ -32,15 +29,10 @@
     return modalMatch ? modalMatch[0].toUpperCase() : null;
   }
 
-  function removeAutomaticNote(record) {
-    record?.querySelector?.('.auto-fulfillment-note')?.remove();
-  }
-
   function markDeliveredButton(button) {
     if (!button) return;
     const record = button.closest?.('.record');
     record?.querySelectorAll?.('.paid-status').forEach((badge) => badge.remove());
-    removeAutomaticNote(record);
 
     const stack = record?.querySelector?.('.order-status-stack');
     if (stack && !Array.from(stack.children).some((node) => /entregado/i.test(node.textContent || ''))) {
@@ -52,53 +44,22 @@
 
     button.disabled = true;
     button.textContent = '✓ Entregado';
-    button.classList.remove('paid-whatsapp-active', 'paid-order-btn', 'automatic-order-btn');
+    button.classList.remove('paid-whatsapp-active', 'paid-order-btn');
     button.classList.add('delivered-order-btn');
     button.removeAttribute('title');
     button.dataset.paidWhatsappReady = '1';
     button.dataset.paidWhatsappUsed = '1';
-    delete button.dataset.fsAutomaticOrder;
   }
 
   function markUsedButton(button) {
     if (!button) return;
     button.disabled = true;
     button.textContent = USED_TEXT;
-    button.classList.remove('paid-whatsapp-active', 'automatic-order-btn');
+    button.classList.remove('paid-whatsapp-active');
     button.classList.add('paid-order-btn');
     button.title = 'Este pedido ya utilizó su único aviso por WhatsApp.';
     button.dataset.paidWhatsappReady = '1';
     button.dataset.paidWhatsappUsed = '1';
-    delete button.dataset.fsAutomaticOrder;
-  }
-
-  function markAutomaticButton(button) {
-    if (!button) return;
-    const record = button.closest?.('.record');
-    const stack = record?.querySelector?.('.order-status-stack');
-    if (stack && !Array.from(stack.children).some((node) => /automático 24\/7/i.test(node.textContent || ''))) {
-      const badge = document.createElement('span');
-      badge.className = 'status';
-      badge.textContent = 'Automático 24/7';
-      stack.appendChild(badge);
-    }
-
-    if (record && !record.querySelector('.auto-fulfillment-note')) {
-      const note = document.createElement('div');
-      note.className = 'auto-fulfillment-note';
-      note.textContent = '⚡ Pago confirmado. Tu recarga se procesará automáticamente y se acreditará a la cuenta verificada.';
-      const actions = button.closest('.admin-actions');
-      if (actions?.parentNode) actions.parentNode.insertBefore(note, actions);
-      else record.appendChild(note);
-    }
-
-    button.disabled = true;
-    button.textContent = '⚡ Recarga automática en proceso';
-    button.classList.remove('paid-whatsapp-active');
-    button.classList.add('automatic-order-btn');
-    button.removeAttribute('title');
-    button.dataset.paidWhatsappReady = '1';
-    button.dataset.fsAutomaticOrder = '1';
   }
 
   function normalizeDeliveredRecords(root = document) {
@@ -107,24 +68,13 @@
       const delivered = Array.from(stack?.children || []).some((node) => /entregado/i.test(node.textContent || ''));
       if (!delivered) return;
       record.querySelectorAll('.paid-status').forEach((badge) => badge.remove());
-      const paidButton = record.querySelector('.paid-order-btn,.automatic-order-btn');
+      const paidButton = record.querySelector('.paid-order-btn');
       if (paidButton) markDeliveredButton(paidButton);
     });
   }
 
-  async function automaticMode(items) {
-    const ids = (items || []).map((item) => Number(item.product_id)).filter((id) => Number.isSafeInteger(id) && id > 0);
-    if (!ids.length || !window.FSAutomationCapabilities?.classifyProducts) return false;
-    try {
-      const mode = await window.FSAutomationCapabilities.classifyProducts(ids);
-      return mode?.known === true && mode?.automatic === true;
-    } catch {
-      return false;
-    }
-  }
-
   async function orderDetails(orderCode) {
-    const fallback = { status: '', paid: false, automatic: false, used: false, eligible: false };
+    const fallback = { status: '', paid: false, used: false, eligible: false };
     if (!orderCode || !session) return fallback;
 
     const { data: order, error: orderError } = await sb
@@ -140,15 +90,14 @@
     const paid = Boolean(order.paid_at) || status === 'PAID';
     if (status === 'DELIVERED') return { ...fallback, status, paid };
 
-    const [{ data: items, error: itemError }, { data: noticeStatus, error: noticeError }] = await Promise.all([
-      sb.from('order_items').select('product_id').eq('order_id', order.id).order('created_at', { ascending: true }),
-      sb.rpc('get_my_paid_whatsapp_notice_status', { p_order_code: orderCode })
-    ]);
+    const { data: noticeStatus, error: noticeError } = await sb.rpc(
+      'get_my_paid_whatsapp_notice_status',
+      { p_order_code: orderCode }
+    );
 
     return {
       status,
       paid,
-      automatic: itemError ? false : await automaticMode(items || []),
       used: noticeError ? false : noticeStatus?.used === true,
       eligible: noticeError ? paid : noticeStatus?.eligible === true
     };
@@ -222,10 +171,6 @@
         showOneTimeError('El pago todavía no está confirmado. Espera la confirmación antes de avisar por WhatsApp.');
         return;
       }
-      if (details.automatic) {
-        markAutomaticButton(button);
-        return;
-      }
       if (details.used) {
         markUsedButton(button);
         return;
@@ -256,7 +201,7 @@
       else showOneTimeError('El aviso único ya fue generado. Si WhatsApp no abrió, revisa el pedido en “Pedidos” o contacta a soporte.');
     } finally {
       delete button.dataset.paidWhatsappBusy;
-      if (!consumed && button.dataset.paidWhatsappUsed !== '1' && !button.classList.contains('delivered-order-btn') && button.dataset.fsAutomaticOrder !== '1') {
+      if (!consumed && button.dataset.paidWhatsappUsed !== '1' && !button.classList.contains('delivered-order-btn')) {
         button.disabled = false;
         button.textContent = oldText || AVAILABLE_TEXT;
       }
@@ -270,9 +215,9 @@
       markDeliveredButton(button);
       return;
     }
-    if (!/pagado/i.test(button.textContent || '') && button.dataset.fsAutomaticOrder !== '1') return;
+    if (!/pagado/i.test(button.textContent || '')) return;
     if (button.dataset.paidWhatsappReady === '1') {
-      if (button.dataset.paidWhatsappUsed === '1' || button.dataset.fsAutomaticOrder === '1') button.disabled = true;
+      if (button.dataset.paidWhatsappUsed === '1') button.disabled = true;
       else if (button.disabled && button.dataset.paidWhatsappBusy !== '1') button.disabled = false;
       return;
     }
@@ -287,10 +232,6 @@
         return;
       }
       if (!details.paid) return;
-      if (details.automatic) {
-        markAutomaticButton(button);
-        return;
-      }
       if (details.used) {
         markUsedButton(button);
         return;
