@@ -71,7 +71,8 @@
   }
 
   async function load(){
-    if(loading||!panelVisible())return;
+    const host=$('priceList');
+    if(loading||!panelVisible()||!host?.querySelector('[data-r138-stream-card]'))return;
     loading=true;
     try{
       const data=await rpc('admin_app_list_streaming_fixed_pricing');
@@ -143,7 +144,7 @@
 
     document.addEventListener('click',event=>{
       if(event.target.closest?.('[data-tab="prices"]')||event.target.closest?.('[data-refresh="prices"]'))setTimeout(load,120);
-      if(event.target.closest?.('[data-r140-open-game]')||event.target.closest?.('[data-r140-back]'))setTimeout(enhanceCards,30);
+      if(event.target.closest?.('[data-r140-open-game]')||event.target.closest?.('[data-r140-back]'))setTimeout(()=>{if(rows.size)enhanceCards();else load();},30);
     },true);
 
     observer=new MutationObserver(()=>{
