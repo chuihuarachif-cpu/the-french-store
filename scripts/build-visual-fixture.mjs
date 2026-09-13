@@ -15,7 +15,11 @@ for (const file of ['r6.js', 'r7fix.js', 'r6.css', 'r7fix.css']) {
   if (!response.ok) throw new Error(`Pinned asset unavailable: ${file}`);
   await writeFile(path.join(output, 'v2', file), await response.text());
 }
-const client = await readFile(new URL('./visual-fixtures/client.js', import.meta.url), 'utf8');
+let client = await readFile(new URL('./visual-fixtures/client.js', import.meta.url), 'utf8');
+// R164 storefront_catalog is a read-only RPC. Teach the synthetic client to
+// return its existing fake products while continuing to reject unknown writes.
+client = client.replace('const data={is_admin:false,', 'const data={storefront_catalog:products,is_admin:false,');
+if (!client.includes('storefront_catalog:products')) throw new Error('R164 fixture patch failed');
 for (const dir of ['v2', 'admin']) {
   const file = path.join(output, dir, 'index.html');
   let html = await readFile(file, 'utf8');
