@@ -3,8 +3,9 @@
   const p=new URLSearchParams(location.search),view=p.get('view')||'quotations',state=p.get('state')||'normal';
   const errors=[],blockedWrites=[],calls={},checks=[];
   const product={id:901,juego:'Juego de prueba',paquete:'Paquete QA',categoria:'Recargas por Cuenta',precio:21.99,activo:true,mantenimiento:false,maintenance_editable:true,price_editable:true,cost_editable:true,moneda:'BOB',precio_proveedor:19.99,costo_bob:19.99};
+  const streaming={id:902,juego:'Streaming QA',paquete:'1 Perfil',categoria:'Streaming',precio:28,precio_venta_fijo:28,precio_proveedor:24,moneda:'Bs',tipo_cambio:1,activo:true,price_editable:true,mantenimiento:false,maintenance_editable:false};
   const order={id:'00000000-0000-4000-8000-000000000001',order_code:'QA-001',customer_email:'qa@example.invalid',status:'PAID',payment_method:'QR',total_amount:21.99,created_at:'2026-09-05T12:00:00Z'};
-  const reads={admin_app_is_allowed:!['guest','denied'].includes(state),admin_app_dashboard:{wallet_pending:0,ach_review:0,orders_attention:1,orders_today:1},admin_app_list_products:[product],admin_app_list_account_pricing:[product],admin_app_list_orders:[order],admin_app_list_wallet_topups:[],admin_app_list_bank_payments:[],admin_app_price_history:[],admin_app_get_order_fulfillment_inputs:[{product_id:901,product_name:'Paquete QA',input_values:{user_id:'ID-FICTICIO'},validation_status:'QA'}]};
+  const reads={admin_app_is_allowed:!['guest','denied'].includes(state),admin_app_dashboard:{wallet_pending:0,ach_review:0,orders_attention:1,orders_today:1},admin_app_list_products:[product,streaming],admin_app_list_account_pricing:[product],admin_app_list_streaming_fixed_pricing:[streaming],admin_app_list_orders:[order],admin_app_list_wallet_topups:[],admin_app_list_bank_payments:[],admin_app_price_history:[],admin_app_get_order_fulfillment_inputs:[{product_id:901,product_name:'Paquete QA',input_values:{user_id:'ID-FICTICIO'},validation_status:'QA'}]};
   const sdk={rpc(name,args){calls[name]=(calls[name]||0)+1;
     if(name==='admin_app_quote_sale_price'){
       if(state==='loading')return new Promise(()=>{});
