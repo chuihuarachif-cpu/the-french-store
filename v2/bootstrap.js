@@ -107,10 +107,8 @@
   const FEATURE_LOADERS = {
     checkout: async () => {
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
-      await loadScript('./automation-capabilities.js', 'fs-automation-capabilities-js');
       await loadScript('./bisa-checkout.js', 'fs-bisa-checkout-js', '20260907-r153');
       await loadScript('./fulfillment-inputs.js', 'fs-fulfillment-inputs-js', '20260907-r153');
-      await loadScript('./automatic-order-ui.js', 'fs-automatic-order-ui-js');
       await loadScript('./paid-whatsapp.js?v=20260830-r129', 'fs-paid-whatsapp-js');
     },
     wallet: async () => {
