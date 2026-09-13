@@ -133,6 +133,8 @@
     installed=true;
     const host=$('priceList');
     if(!host)return;
+    const panelText=$('pricesPanel')?.querySelector('.panel-head p');
+    if(panelText)panelText.textContent='Recargas por Cuenta conserva su cálculo automático. En Streaming tú defines manualmente el precio de compra y el precio de venta; no se aplica margen automático al precio final.';
 
     host.addEventListener('click',event=>{
       const button=event.target.closest?.('[data-r165-stream-save]');
