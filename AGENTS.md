@@ -1,121 +1,45 @@
-# THE FRENCH STORE — Codex agent instructions
+# THE FRENCH STORE — Codex instructions
 
-## Skill routing policy
+## Routing
 
-Use repository skills automatically when the user's task clearly matches a skill's YAML `description` in `.agents/skills/*/SKILL.md`.
-
-- Do **not** require the user to type `$skill-name` or explicitly ask to use a skill.
-- If the task clearly matches one skill, load that skill's `SKILL.md` before planning or editing.
-- If multiple skills match, use the smallest set that fully covers the task.
-- Explicit skill invocation by name or `$skill-name` takes priority when the skill exists.
-- Do not keep applying a skill to unrelated later tasks just because it was used previously.
-- Read only the references/files needed for the current task; do not bulk-load every reference folder.
-- Skills are guidance for implementation, not permission to violate the architecture, security, payment, auth, pricing, or business-rule boundaries of this repository.
+Auto-load repo skills when intent matches `.agents/skills/*/SKILL.md`; user need not type `$skill-name`. Use smallest sufficient skill set. Explicit `$skill-name` overrides. Never keep unrelated skills active. Load references lazily, not whole folders.
 
 ## Always-on token economy
 
-Minimize controllable Codex token/credit waste without reducing reasoning quality, implementation completeness, verification or safety.
+Preserve strongest reasoning, correctness, safety and required verification; minimize controllable context/output waste.
 
-- Default to brief, high-signal user-facing responses. No filler, ceremonial preambles or repeated request summaries.
-- Search narrowly before reading files; prefer relevant ranges/diffs over whole-file or directory dumps.
-- Do not re-read unchanged content already verified in the current task unless state may have changed.
-- Do not load unrelated skills or reference folders.
-- Keep exact code, commands, identifiers, errors, security warnings and verification results when they matter.
-- For prior project state, consult `.agents/memory/FRENCH_STORE_STATE.md` only when it materially avoids rediscovery; do not read it reflexively for trivial isolated tasks.
-- Keep that memory bounded and pointer-based; never store secrets or conversation transcripts.
-- Do not silently downgrade the user's selected model to save credits.
-- Save tokens by reducing irrelevant context and narration, not by skipping required work.
+- Result-first, brief responses; no filler/restatement/repeated recap.
+- Search before reading; prefer exact matches, ranges, hunks, filtered logs/data.
+- Do not reread unchanged verified content unless state may have changed.
+- Every tool call must discover, verify, modify, test or compare.
+- Load only relevant skills/references; narrow tests first, broader gates only when risk/policy requires.
+- Use `.agents/memory/FRENCH_STORE_STATE.md` only when prior state saves rediscovery; keep it bounded, pointer-based, secret-free.
+- Never silently downgrade the user's model. Save tokens by shrinking irrelevant context/narration, not by skipping work.
 
-### Full token/context skill
+For long/large/repeated-debug/context-heavy work, or explicit token/credit/memory requests, load `french-token-steward`. Do not load it for tiny tasks: these compact rules are enough.
 
-Skill: `french-token-steward`
-Path: `.agents/skills/french-token-steward/SKILL.md`
+## Visual/UI routing
 
-Load the full skill automatically for long/complex tasks, large files/repos/logs, repeated debugging, extended sessions, context-heavy work, or when the user asks to save tokens/credits, be concise, use memory, avoid rereading, compress context or make Codex usage last longer.
+Use `french-visual-fx-director` for storefront/admin visual redesign, premium polish, motion, gradients/shadows/light, 2.5D/3D, animated imagery, image enhancement/upscale, immersive/product presentation, or implicit feedback such as “se ve plano/barato”. Keep visual work presentation-only and progressive-enhancement.
 
-Do not load the full Token Steward for every tiny task: the compact rules above are intentionally sufficient for routine work and avoid spending context merely to learn how to save context.
+## Marketing/growth routing
 
-## Automatic visual/UI skill
+Use `french-marketing-strategist` for ideas, commercial/customer-facing improvements, growth, positioning, promotions, offers, launches, acquisition, retention, loyalty/referrals, reseller strategy, conversion, campaigns, partnerships, messaging, or market/competitor/trend research. For current-market claims, research fresh evidence when tools exist; otherwise label assumptions. Do not invoke for pure technical maintenance.
 
-Skill: `french-visual-fx-director`
-Path: `.agents/skills/french-visual-fx-director/SKILL.md`
+If task mixes commercial strategy + interface execution, combine marketing (audience/offer/message/measurement) with visual (hierarchy/art direction/motion/performance).
 
-Automatically use this skill for requests whose intent is to improve, redesign, polish, animate, modernize, premiumize, deepen, relight, enhance, or visually transform the storefront or admin UI, even when the user does not use the words "skill", "UI", or "frontend".
+## Project boundaries
 
-Typical natural-language triggers include, but are not limited to:
+Preserve `v2/ARCHITECTURE.md`.
 
-- "mejora la interfaz"
-- "haz que se vea más premium / moderna / elegante / profesional"
-- "esto se ve plano / aburrido / simple"
-- "dale profundidad / sombras / degradados / iluminación"
-- "haz un efecto 3D / 2.5D"
-- "anima esta sección / imagen / tarjeta / hero"
-- "haz que la luz siga el mouse / dedo / movimiento"
-- "haz que este diamante / objeto gire"
-- "pon reflejos / holografía / brillo / cristal / glow"
-- "mejora esta imagen / hazla más nítida / upscale / 4K"
-- "quiero una experiencia visual más inmersiva"
-- requests to redesign a hero, card, catalog, section, transition, background, visual state, product presentation, or decorative motion
+- Supabase/backend authoritative for prices, availability, payment state, fulfillment and business rules.
+- No `service_role`, provider/API secrets or private tokens in public frontend.
+- Payment verification backend-authoritative; payment/fulfillment failure fails closed.
+- Visual/motion failure fails open and never blocks cart/checkout/auth/wallet/orders/QR/admin/fulfillment.
+- Reuse `v2/r8.js` motion policy (`off/lite/full`); mobile-first; respect reduced motion.
+- Never expose supplier costs, internal margins, reseller discount formulas or protected operations publicly.
+- Never fabricate reviews, partnerships, authorization, scarcity, customer counts, savings or guarantees.
 
-Also use it when the intent is implicit. Example: if the user says "esta parte no me convence, se siente barata" about a visible section, treat that as a visual-design task and load the skill.
+## Future skills
 
-Do **not** use the visual skill for backend-only tasks, pricing logic, Supabase business rules, payments, auth, fulfillment, reseller calculations, or data migrations unless the same task also contains a genuine visual/UI component. In mixed tasks, keep visual changes isolated from business logic.
-
-## Automatic marketing/growth skill
-
-Skill: `french-marketing-strategist`
-Path: `.agents/skills/french-marketing-strategist/SKILL.md`
-
-Automatically use this skill when the user wants ideas, commercial improvements, growth, promotion, positioning, market research, campaigns, customer acquisition, retention, loyalty, referrals, reseller strategy, offers, launches, partnerships, messaging, conversion improvements or evaluation of a customer-facing business idea.
-
-The user does not need to say "marketing" or name the skill. Typical implicit triggers include:
-
-- "dame ideas"
-- "qué más podemos hacer"
-- "cómo mejoramos esto"
-- "se me ocurrió agregar..."
-- "quiero hacer algo diferente"
-- "cómo hago para que venda más"
-- "qué sería revolucionario"
-- "cómo atraemos más clientes"
-- "cómo hacemos que vuelvan"
-- "qué promoción conviene"
-- "cómo mejoramos lo de revendedores"
-- "cómo lanzamos esto"
-- "revisa el mercado / competencia / tendencias"
-- "esta idea vale la pena?"
-- "qué le falta a esta oferta"
-
-Also use it proactively when the user proposes a new customer-facing feature, reward, loyalty mechanic, reseller benefit, bundle, promotion or service and asks for improvement or ideas. Evaluate customer value, positioning, differentiation, economics, operational risk and the smallest useful experiment rather than merely agreeing.
-
-When the request depends on the current market, the marketing skill must research fresh evidence when research tools are available. If live research is unavailable, do not pretend the market was checked; label current-market claims as hypotheses/assumptions.
-
-Do **not** invoke the marketing skill for a pure technical bug fix, refactor, deployment issue, database migration or backend maintenance request unless the user also asks for a commercial/customer recommendation.
-
-### Combining marketing + visual skills
-
-When a task genuinely has both commercial strategy and visual/interface execution, use both skills with clear responsibility:
-
-- `french-marketing-strategist`: audience, positioning, offer, message, customer psychology, conversion hypothesis and measurement.
-- `french-visual-fx-director`: visual hierarchy, interaction, motion, depth, art direction and performance-safe implementation.
-
-Do not let either skill override pricing authority, security or backend business rules.
-
-## Project safety boundaries
-
-Always preserve `v2/ARCHITECTURE.md`.
-
-- Supabase/backend remains the source of truth for prices, availability, payment state, fulfillment, and business rules.
-- Never place private secrets or service-role credentials in frontend code.
-- Optional visual effects are progressive enhancement and must fail open.
-- A visual or animation failure must never block cart, checkout, auth, wallet, orders, QR, admin, or fulfillment.
-- Reuse the existing motion/performance policy in `v2/r8.js` (`off`, `lite`, `full`) for visual work instead of creating a competing policy.
-- Keep responsive behavior mobile-first and respect `prefers-reduced-motion`.
-- Do not expose private supplier costs, internal margins, reseller discount formulas or protected operational logic in public-facing marketing/UI.
-- Do not fabricate reviews, partnerships, authorization, scarcity, customer counts, savings or guarantees.
-
-## Adding future skills
-
-When a new repository skill is added under `.agents/skills/<skill-name>/`, keep its YAML `description` specific enough for automatic discovery. If the skill is strategically important or should react to broad natural-language intent, add a short routing entry to this file describing when Codex should load it automatically.
-
-The user should normally be able to describe the goal in ordinary language. Explicit `$skill-name` invocation is a fallback/override, not the default workflow.
+Keep each YAML description specific. Add only a short root routing rule for strategically important broad-intent skills. Root `AGENTS.md` is expensive always-loaded context: keep it compact. `$skill-name` remains fallback/override, not normal workflow.
