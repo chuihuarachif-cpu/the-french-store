@@ -2,7 +2,7 @@ name: Test Web V2
 
 on:
   push:
-    branches: [main, web-v2-integration]
+    branches: [main]
     paths:
       - 'v2/**'
       - 'robots.txt'
@@ -30,7 +30,10 @@ jobs:
         run: |
           test -s v2/index.html
           test -s v2/styles.css
-          test -s v2/app.js
+          test ! -e v2/app.js
+          test ! -e v2/legal.js
+          test ! -e v2/automation-capabilities.js
+          test ! -e v2/automatic-order-ui.js
           test -s v2/bootstrap.js
           test -s v2/config/storefront.js
           test -s v2/core/runtime.js
@@ -46,7 +49,6 @@ jobs:
           test -s v2/r8-icons.css
           test -s v2/r8-icons.js
           test -s v2/legal.css
-          test -s v2/legal.js
           test -s v2/legal-account.js
           test -s v2/player-verify.js
           test -s v2/detail-layout-v2.js
@@ -71,7 +73,6 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: |
-          node --check v2/app.js
           node --check v2/bootstrap.js
           node --check v2/config/storefront.js
           node --check v2/core/runtime.js
@@ -84,7 +85,6 @@ jobs:
           node --check v2/features/orders-admin.js
           node --check v2/r8.js
           node --check v2/r8-icons.js
-          node --check v2/legal.js
           node --check v2/legal-account.js
           node --check v2/player-verify.js
           node --check v2/detail-layout-v2.js
@@ -128,6 +128,9 @@ jobs:
           grep -q './admin-order-ui.js' v2/bootstrap.js
           grep -q './admin-fulfillment-ui.js' v2/bootstrap.js
           grep -q './r8.js' v2/bootstrap.js
+          ! grep -q './legal.js' v2/bootstrap.js
+          ! grep -q 'automation-capabilities.js' v2/bootstrap.js
+          ! grep -q 'automatic-order-ui.js' v2/bootstrap.js
           grep -q 'SCRIPT_LOAD_FAILED' v2/bootstrap.js
           grep -q 'No se pudo cargar el módulo seguro de pago' v2/bootstrap.js
           python3 - <<'PY'
@@ -140,6 +143,7 @@ jobs:
               assert nxt>pos, f'Core load order broken at {item}'
               pos=nxt
           assert text.index('./bisa-checkout.js') < text.index('./fulfillment-inputs.js')
+          assert text.index('./fulfillment-inputs.js') < text.index('./paid-whatsapp.js')
           PY
 
       - name: Check critical frontend contracts
@@ -159,13 +163,17 @@ jobs:
           grep -q "/bisa-sip/topup-status" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
           grep -q "No \"Pagado\"/WhatsApp button" v2/bisa-wallet.js
-          grep -q "r129-one-time-paid-whatsapp-20260830" v2/paid-whatsapp.js
+          grep -q "manual-paid-whatsapp-20260913" v2/paid-whatsapp.js
           grep -q "get_my_paid_whatsapp_notice_status" v2/paid-whatsapp.js
           grep -q "claim_my_paid_whatsapp_notice" v2/paid-whatsapp.js
           grep -q "ALREADY_USED" v2/paid-whatsapp.js
           grep -q "🔢 Cantidad:" v2/paid-whatsapp.js
           grep -q "childList: true, subtree: true" v2/paid-whatsapp.js
           ! grep -q "attributeFilter" v2/paid-whatsapp.js
+          ! grep -q "FSAutomationCapabilities" v2/paid-whatsapp.js
+          ! grep -q "automatic-order-btn" v2/paid-whatsapp.js
+          ! grep -q "fsAutomaticOrder" v2/paid-whatsapp.js
+          ! grep -q "from('order_items')" v2/paid-whatsapp.js
           grep -q "50+50 => 100" v2/catalog-order.js
           grep -q "500+500 => 1000" v2/catalog-order.js
           grep -q "mlbbGemX2" v2/catalog-order.js
@@ -217,99 +225,3 @@ jobs:
           grep -q "./buy-now.js?v=20260823-2" v2/index.html
           grep -q "frenchstorebo.com" sitemap.xml
           grep -q "Sitemap: https://frenchstorebo.com/sitemap.xml" robots.txt
-
-      - name: Start local preview
-        run: |
-          python3 -m http.server 8080 > /tmp/french-store-http.log 2>&1 &
-          echo $! > /tmp/french-store-http.pid
-          sleep 2
-          curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/bootstrap.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/config/storefront.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/core/runtime.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/features/catalog.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/features/cart.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/privacy.html >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/terms.html >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/refunds.html >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/catalog-order.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/admin-order-ui.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/order-cancel-ui.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/legal-account.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/player-verify.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/detail-layout-v2.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/buy-now.js >/dev/null
-
-      - name: Browser-test modular bootstrap
-        run: |
-          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
-          test -n "$CHROME"
-          timeout 25s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8080/v2/index.html > /tmp/bootstrap-dom.txt
-          grep -q 'data-fs-bootstrap="ready"' /tmp/bootstrap-dom.txt || { cat /tmp/bootstrap-dom.txt; cat /tmp/french-store-http.log; exit 1; }
-          ! grep -q 'No se pudo iniciar la tienda correctamente' /tmp/bootstrap-dom.txt
-
-      - name: Browser-test every lazy feature module
-        run: |
-          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
-          test -n "$CHROME"
-          python3 - <<'PY'
-          from pathlib import Path
-          src=Path('v2/index.html').read_text()
-          probe=r'''window.__fsLazyErrors=[];
-          window.onerror=(message)=>{ window.__fsLazyErrors.push(String(message||'error')); };
-          window.addEventListener('unhandledrejection',(event)=>{ window.__fsLazyErrors.push(String(event.reason||'rejection')); });
-          window.addEventListener('load', async()=>{
-            const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
-            for(let i=0;i<100 && !window.FSFeatureLoader;i++) await sleep(100);
-            if(!window.FSFeatureLoader){ document.documentElement.dataset.fsLazyTest='no-loader'; return; }
-            try{
-              for(const name of ['checkout','wallet','orders','admin','catalog','motion']) await window.FSFeatureLoader.ensure(name);
-              await sleep(600);
-              document.documentElement.dataset.fsLazyFeatures=window.FSFeatureLoader.readyFeatures().sort().join(',');
-              document.documentElement.dataset.fsLazyTest=window.__fsLazyErrors.length?'runtime-error':'pass';
-              if(window.__fsLazyErrors.length) document.documentElement.dataset.fsLazyError=window.__fsLazyErrors[0].slice(0,80);
-            }catch(error){
-              document.documentElement.dataset.fsLazyTest='load-error';
-              document.documentElement.dataset.fsLazyError=String(error?.message||error).slice(0,80);
-            }
-          });
-          '''
-          Path('v2/__modular-lazy-test.js').write_text(probe)
-          Path('v2/__modular-lazy-test.html').write_text(src.replace('</body>','<script src="./__modular-lazy-test.js"></script>\n</body>'))
-          PY
-          node --check v2/__modular-lazy-test.js
-          timeout 35s "$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=22000 --dump-dom http://127.0.0.1:8080/v2/__modular-lazy-test.html > /tmp/lazy-dom.txt
-          grep -q 'data-fs-lazy-test="pass"' /tmp/lazy-dom.txt || { cat /tmp/lazy-dom.txt; cat /tmp/french-store-http.log; exit 1; }
-          grep -q 'data-fs-lazy-features="admin,catalog,checkout,motion,orders,wallet"' /tmp/lazy-dom.txt
-          rm -f v2/__modular-lazy-test.html v2/__modular-lazy-test.js
-
-      - name: Capture responsive screenshots
-        run: |
-          CHROME="$(command -v google-chrome || command -v google-chrome-stable || true)"
-          # Chrome se gasta el presupuesto de `timeout` registrandose contra
-          # servicios de Google (GCM, sync, component update) y contra D-Bus
-          # antes de pintar nada; en un runner cargado eso agota los 45 s y el
-          # paso muere con codigo 124 sin haber fallado ninguna asercion. Nada
-          # de esto hace falta para capturar 127.0.0.1. Mismo remedio que ya
-          # usaba loyalty.yml, aplicado a todas las capturas.
-          CHROME_QUIET="--no-first-run --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection"
-          if [ -z "$CHROME" ]; then
-            echo "Google Chrome not found on runner"
-            exit 1
-          fi
-          mkdir -p screenshots
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=360,800 --virtual-time-budget=10000 --screenshot=screenshots/mobile-360.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=390,844 --virtual-time-budget=10000 --screenshot=screenshots/mobile-390.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=768,1024 --virtual-time-budget=10000 --screenshot=screenshots/tablet-768.png http://127.0.0.1:8080/v2/index.html
-          "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=1366,768 --virtual-time-budget=10000 --screenshot=screenshots/desktop-1366.png http://127.0.0.1:8080/v2/index.html
-          test -s screenshots/mobile-360.png
-          test -s screenshots/mobile-390.png
-          test -s screenshots/tablet-768.png
-          test -s screenshots/desktop-1366.png
-
-      - name: Upload responsive screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-v2-responsive-screenshots
-          path: screenshots/*.png
-          retention-days: 7

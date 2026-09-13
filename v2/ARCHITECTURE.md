@@ -2,26 +2,27 @@
 
 ## Non-negotiable boundaries
 
-1. **Supabase/backend is the source of truth for products, prices, availability and provider/business rules.**
-2. Frontend config files may contain only public presentation/configuration data.
+1. **Supabase/backend is the source of truth for products, prices, availability and business rules.**
+2. Frontend config contains only public presentation/configuration data.
 3. Never put `service_role`, provider secrets, API secrets or private tokens in `v2/`.
 4. BISA/SIP verification and payment truth remain backend responsibilities.
-5. Gift Cards remain separate and manual unless the project explicitly changes that rule.
-6. Player ID / Zone ID / Server values are sent through the existing checkout payload and protected backend storage; they are not persisted in browser storage.
+5. Gift Cards remain separate and manual.
+6. Public Recargas por ID request only the customer input required by the current ID-only contract; credentials are never requested.
 7. Optional animation failure must never block a sale.
-8. Payment/fulfillment module failure must **fail closed** and prevent checkout from continuing in a degraded state.
+8. Payment/fulfillment module failure must fail closed.
+9. Supplier fulfillment is manual; there is no public automation-capability shim.
 
 ## Source-of-truth map
 
 | Concern | Source of truth / file |
 | --- | --- |
-| Product IDs, names, current sale prices, active status | Supabase `productos` |
-| Provider costs/routing/automation | Backend Worker + Supabase internal tables/RPCs |
+| Product IDs, names, sale prices, active status | Supabase `productos` |
+| Provider costs/routing | Backend Worker + Supabase internal tables/RPCs |
 | Public categories, icons, featured-game preference | `config/storefront.js` |
 | Shared browser state/helpers/Supabase anon client | `core/runtime.js` |
 | View navigation | `core/navigation.js` |
 | Catalog query/render base | `features/catalog.js` |
-| Cart and base server-authoritative checkout RPC | `features/cart.js` |
+| Cart and server-authoritative checkout RPC | `features/cart.js` |
 | Base Auth/session/profile | `features/auth.js` |
 | French Wallet list/base UI | `features/wallet.js` |
 | Orders/Admin base data/UI | `features/orders-admin.js` |
@@ -29,16 +30,15 @@
 | Feature loading/order/fail-closed gates | `bootstrap.js` |
 | BISA order QR/status UI | `bisa-checkout.js` + `bisa-checkout.css` |
 | BISA Wallet QR/status UI | `bisa-wallet.js` |
-| Player ID/Zone/Server checkout fields | `fulfillment-inputs.js` |
+| Checkout fulfillment inputs | `fulfillment-inputs.js` |
 | Customer order cancellation | `order-cancel-ui.js` + CSS |
 | Admin order status modal | `admin-order-ui.js` |
 | Admin private fulfillment viewer | `admin-fulfillment-ui.js` |
-| Paid-order WhatsApp helper | `paid-whatsapp.js` |
+| Paid-order manual WhatsApp helper | `paid-whatsapp.js` |
 | Package presentation ordering | `catalog-order.js` |
 | Game/catalog motion | `r8.js` + `r8.css` |
 | Official/fallback icon presentation | `r8-icons.js` + `r8-icons.css` |
-| Account confirmation/recovery UX | `auth-ease.js`, `auth-confirm.js`, `legal.js` |
-| Rollback reference only | `app.js` |
+| Account confirmation/legal acceptance | `auth-ease.js`, `auth-confirm.js`, `legal-account.js` |
 
 ## Runtime loading order
 
@@ -58,71 +58,63 @@
 10. pinned R6 compatibility patch
 11. pinned R7 compatibility patch
 12. `auth-ease.js`
-13. `legal.js`
-14. `auth-confirm.js`
+13. `auth-confirm.js`
 
-This preserves the historical patch order while allowing the old monolithic `app.js` to stay unused as a rollback reference.
+`legal-account.js` is loaded by the public shell and owns persisted legal acceptance. There is no separate checkout legal listener.
 
 ### Lazy features
 
-- **Checkout**: `bisa-checkout.css` → `bisa-checkout.js` → `fulfillment-inputs.js`.
-  - The order is intentional: fulfillment wraps the final checkout handlers.
-  - If this feature fails to load, payment does not continue.
+- **Checkout**: `bisa-checkout.css` → `bisa-checkout.js` → `fulfillment-inputs.js` → `paid-whatsapp.js`.
+  - Fulfillment wraps the final checkout handlers.
+  - If the payment feature fails to load, checkout fails closed.
 - **Wallet payment**: `bisa-checkout.css` → `bisa-wallet.js`.
-  - If it fails to load, Wallet top-up payment does not continue.
-- **Orders**: ensures Checkout first, then cancellation and paid-WhatsApp decorators.
-- **Admin**: `admin-order-ui.js` → `admin-fulfillment-ui.js` only when Admin is entered/used.
-- **Catalog ordering**: `catalog-order.js` when shop/catalog interaction occurs.
-- **Motion**: R8 CSS/JS only when catalog/featured/detail content actually exists.
+- **Orders**: ensures Checkout first, then cancellation/WhatsApp helpers.
+- **Admin**: `admin-order-ui.js` → `admin-fulfillment-ui.js` only when Admin is used.
+- **Catalog ordering**: `catalog-order.js` on catalog interaction.
+- **Motion**: R8 CSS/JS only when catalog/detail content exists.
 
-## What to edit for common requests
+## Common edit map
 
-### “Change a game logo/banner/background”
+### Game logo/banner/background
 
-Edit presentation assets/config only. Do **not** edit product prices or provider logic.
+Edit presentation assets/config only. Do not edit prices or provider logic.
 
-- Icon path: `config/storefront.js`
-- Existing local assets: `assets/apps/` and `assets/brands/`
-- Game motion/theme: visual R6/R8 layers only.
+### Catalog layout
 
-### “Change catalog layout”
+Edit `features/catalog.js` and visual presentation modules.
 
-Edit `features/catalog.js` and visual CSS/R6 presentation. Do not change Supabase pricing queries except deliberately and with tests.
+### Login UX
 
-### “Change login animation”
+Edit Auth presentation modules; do not add email/password flows.
 
-Create/edit an Auth-specific visual module and lazy-load it from `bootstrap.js`. Do not alter `features/auth.js` merely for animation.
+### QR layout
 
-### “Change QR animation/layout”
+Edit `bisa-checkout.js`/CSS presentation only. Payment confirmation remains backend-authoritative.
 
-Edit `bisa-checkout.js`/CSS presentation only. Never move payment confirmation truth from Worker/BISA into frontend JavaScript.
+### Player input UI
 
-### “Change Player ID / Zone / Server UI”
+Edit `fulfillment-inputs.js`, `player-verify.js` or `detail-layout-v2.js` while preserving the current public ID-only contract.
 
-Edit `fulfillment-inputs.js` for presentation/validation hints. Required fields themselves are backend-driven through `checkout_input_requirements`.
+### Price
 
-### “Change a price”
+Do not edit frontend JavaScript/HTML. Prices belong to Supabase/backend rules.
 
-Do **not** edit JavaScript/HTML. Prices are backend/Supabase data and provider-pricing rules.
+### Provider preference / supplier operations
 
-### “Change provider preference or automation margin”
-
-Do **not** edit frontend. This belongs to the Worker/Supabase routing/automation layer.
+Do not edit frontend. This belongs to Worker/Supabase.
 
 ## Rollback strategy
 
-- `app.js` stays in the repository during R35 and is not deleted.
-- If the modular bootstrap cannot pass browser/CI/smoke gates, `index.html` can be reverted to its previous script list without reconstructing deleted code.
-- Do not remove legacy files until the modular version has been stable in production and a later explicit cleanup revision is approved.
+Rollback through Git history by reverting the exact bad commit/PR. The repository does not carry unused runtime copies solely for rollback.
 
 ## Required gates before publish
 
-- JS syntax for every eager/lazy module.
+- JS syntax for every touched runtime module.
 - Browser bootstrap reaches `data-fs-bootstrap="ready"`.
 - No `service_role`/private secret in frontend.
 - Checkout RPC contracts remain `create_qr_order` and `create_wallet_order`.
-- Player inputs remain enforced and private.
+- Required customer inputs remain backend-driven and private.
 - Admin fulfillment remains admin-only.
 - QR MutationObserver loop test passes.
-- Responsive screenshots: 360, 390, 768 and 1366 widths.
+- Responsive checks stay mobile-first.
 - Production BISA storefront smoke passes after merge.

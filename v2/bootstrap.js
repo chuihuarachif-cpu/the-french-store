@@ -1,11 +1,11 @@
-/* THE FRENCH STORE — R36 modular bootstrap.
+/* THE FRENCH STORE — modular bootstrap.
    Loads the stable core in deterministic order and optional features only when needed.
    Safety: checkout/Wallet payment features fail closed if their module cannot be loaded.
    Loyalty is isolated and loaded only for authenticated accounts. */
 (() => {
   'use strict';
 
-  const VERSION = 'r153-cart-orders-20260907';
+  const VERSION = 'r166-dead-code-cleanup-20260913';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -77,7 +77,6 @@
     document.getElementById('refreshOrders').onclick = loadOrders;
 
     await loadScript('./auth-ease.js', 'fs-auth-ease-js');
-    await loadScript('./legal.js', 'fs-legal-js');
     await loadScript('./auth-confirm.js', 'fs-auth-confirm-js');
     await loadScript('./storefront-safety-overlays.js', 'fs-storefront-safety-overlays-js');
     // Visual tier layer (presentation only). Base ships statically in
@@ -107,11 +106,9 @@
   const FEATURE_LOADERS = {
     checkout: async () => {
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
-      await loadScript('./automation-capabilities.js', 'fs-automation-capabilities-js');
       await loadScript('./bisa-checkout.js', 'fs-bisa-checkout-js', '20260907-r153');
       await loadScript('./fulfillment-inputs.js', 'fs-fulfillment-inputs-js', '20260907-r153');
-      await loadScript('./automatic-order-ui.js', 'fs-automatic-order-ui-js');
-      await loadScript('./paid-whatsapp.js?v=20260830-r129', 'fs-paid-whatsapp-js');
+      await loadScript('./paid-whatsapp.js?v=20260913-cleanup', 'fs-paid-whatsapp-js');
     },
     wallet: async () => {
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
@@ -121,7 +118,7 @@
       await ensureFeature('checkout');
       await loadStyle('./order-cancel-ui.css', 'fs-order-cancel-css');
       await loadScript('./order-cancel-ui.js', 'fs-order-cancel-js');
-      await loadScript('./paid-whatsapp.js?v=20260830-r129', 'fs-paid-whatsapp-js');
+      await loadScript('./paid-whatsapp.js?v=20260913-cleanup', 'fs-paid-whatsapp-js');
       if (document.getElementById('view-pedidos')?.classList.contains('active') && session) loadOrders();
     },
     catalog: async () => {
