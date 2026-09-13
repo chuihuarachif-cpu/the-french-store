@@ -38,7 +38,7 @@
 | Package presentation ordering | `catalog-order.js` |
 | Game/catalog motion | `r8.js` + `r8.css` |
 | Official/fallback icon presentation | `r8-icons.js` + `r8-icons.css` |
-| Account confirmation/legal UX | `auth-ease.js`, `auth-confirm.js`, `legal.js` |
+| Account confirmation/legal acceptance | `auth-ease.js`, `auth-confirm.js`, `legal-account.js` |
 
 ## Runtime loading order
 
@@ -58,8 +58,9 @@
 10. pinned R6 compatibility patch
 11. pinned R7 compatibility patch
 12. `auth-ease.js`
-13. `legal.js`
-14. `auth-confirm.js`
+13. `auth-confirm.js`
+
+`legal-account.js` is loaded by the public shell and owns persisted legal acceptance. There is no separate checkout legal listener.
 
 ### Lazy features
 
@@ -104,7 +105,7 @@ Do not edit frontend. This belongs to Worker/Supabase.
 
 ## Rollback strategy
 
-Rollback through Git history by reverting the exact bad commit/PR. The repository no longer carries an unused monolithic `app.js` copy solely for rollback.
+Rollback through Git history by reverting the exact bad commit/PR. The repository does not carry unused runtime copies solely for rollback.
 
 ## Required gates before publish
 
