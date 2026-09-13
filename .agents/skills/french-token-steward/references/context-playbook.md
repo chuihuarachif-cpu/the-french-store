@@ -6,21 +6,34 @@ Read only for long/context-heavy work.
 
 Highest leverage usually comes from preventing irrelevant text from entering context.
 
-1. Avoid broad reads.
-2. Avoid rereads.
-3. Filter logs/data before reading.
-4. Load only the skill/reference needed.
-5. Store durable conclusions as compact pointers.
-6. Keep user-facing output terse.
+1. Define `done` before exploration so work has a stopping condition.
+2. Avoid broad reads.
+3. Avoid rereads.
+4. Filter logs/data before reading.
+5. Load only the skill/reference needed.
+6. Store durable conclusions as compact pointers.
+7. Keep user-facing output terse.
 
-Output-only brevity helps, but long agentic coding runs often spend much more context on files/tool results than on the final prose.
+Output-only brevity helps, but long agentic coding runs often spend much more context on files/tool results than on final prose.
+
+## Max-capability / minimum-context protocol
+
+Strong reasoning benefits from high-signal context, not maximum context volume.
+
+- Keep the user's strongest chosen model; optimize context around it instead of silently downgrading intelligence.
+- Default to one owning specialist. Sequential review is cheaper and clearer than loading a committee simultaneously.
+- Between specialists pass a compact capsule: `goal | decision | evidence | affected surface | invariants | unresolved risk | next test`.
+- Do not pass prior prose/reasoning when the capsule plus source pointers is sufficient.
+- Separate discovery, decision and implementation on long tasks; after a phase is settled, retain conclusions/pointers rather than raw exploration.
+- When switching to an unrelated problem, do not drag old task details into working context; rely on bounded project memory for durable state.
+- If the active environment provides context compaction or caching, use them conservatively after coherent milestones; preserve exact constraints, IDs, failures and pending tests.
 
 ## Repository exploration
 
 Start with filenames/metadata/search. Search unique identifiers before generic terms. Read relevant ranges around matches. Follow only direct dependencies required to make the decision. Once canonical implementation/source of truth is found, stop exploring stale copies unless comparison/history is explicitly needed.
 
 For code changes:
-`locate -> inspect narrow context -> edit -> narrow test -> broader gate only if warranted`.
+`locate -> inspect narrow context -> edit -> narrow test -> broader gate only if warranted`
 
 ## Logs
 
@@ -48,7 +61,10 @@ Search only when freshness/external verification matters. Use focused queries. K
 
 ## Skill economy
 
-Skill descriptions should be specific enough for routing. Core SKILL.md should stay short. Heavy examples/checklists belong in `references/` and load only when needed. Multiple skills should be loaded only for truly mixed tasks.
+Skill descriptions should be specific enough for routing. Core `SKILL.md` should stay short. Heavy examples/checklists belong in `references/` and load only when needed. Multiple skills should be loaded only for truly mixed tasks.
+
+For multi-specialist work, use staged escalation:
+`architect only if design is non-obvious -> owner -> critic only if consequential -> security only if relevant -> QA after mutation`.
 
 ## Test economy
 
