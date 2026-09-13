@@ -1,25 +1,21 @@
-/* THE FRENCH STORE — isolated storefront safety overlays.
-   Loads presentation/accidental-click guards without modifying checkout, Wallet,
-   provider execution or catalog business logic. */
+/* 💎 French Store 💎 — isolated storefront safety overlays.
+   Loads current presentation and accidental-click guards without changing
+   checkout, Wallet, payment authority or catalog business logic. */
 (() => {
   'use strict';
-
-  const VERSION = 'storefront-safety-overlays-v6-20260826-r93';
+  const VERSION = 'manual-storefront-safety-20260913';
   let orderPolishPromise = null;
 
-  function absolute(src) {
-    return new URL(src, document.baseURI).href;
-  }
+  const absolute = (src) => new URL(src, document.baseURI).href;
 
   function loadStyle(href, id) {
-    const url = absolute(href);
     const existing = id ? document.getElementById(id) : null;
     if (existing) return Promise.resolve();
     return new Promise((resolve, reject) => {
       const link = document.createElement('link');
       if (id) link.id = id;
       link.rel = 'stylesheet';
-      link.href = url;
+      link.href = absolute(href);
       link.addEventListener('load', resolve, { once: true });
       link.addEventListener('error', () => reject(new Error(`STYLE_LOAD_FAILED:${href}`)), { once: true });
       document.head.appendChild(link);
@@ -45,7 +41,7 @@
     if (orderPolishPromise) return orderPolishPromise;
     orderPolishPromise = (async () => {
       await loadStyle('./order-history-polish.css?v=20260826-r86', 'fs-order-history-polish-css');
-      await loadScript('./order-history-polish.js?v=20260826-r86', 'fs-order-history-polish-js');
+      await loadScript('./order-history-polish.js?v=20260913-manual', 'fs-order-history-polish-js');
       window.FSOrderHistoryPolish?.refresh?.();
     })().catch((error) => {
       orderPolishPromise = null;
@@ -56,8 +52,7 @@
 
   function installOrderPolishTrigger() {
     document.addEventListener('click', (event) => {
-      const target = event.target.closest?.('[data-nav="pedidos"],#refreshOrders');
-      if (target) ensureOrderPolish();
+      if (event.target.closest?.('[data-nav="pedidos"],#refreshOrders')) ensureOrderPolish();
     }, true);
     if (document.getElementById('view-pedidos')?.classList.contains('active')) ensureOrderPolish();
   }
@@ -66,21 +61,11 @@
     await loadStyle('./delivery-mode-badges.css', 'fs-delivery-mode-badges-css');
     await loadStyle('./game-maintenance.css?v=20260826-r84', 'fs-game-maintenance-css');
     await loadStyle('./maintenance-interaction-lock.css?v=20260826-r93', 'fs-maintenance-interaction-lock-css');
-    // Reuse the same id expected by bootstrap's checkout feature so the sanitized
-    // capability client is never loaded twice.
-    await loadScript('./automation-capabilities.js', 'fs-automation-capabilities-js');
-    await loadScript('./delivery-mode-badges.js', 'fs-delivery-mode-badges-js');
+    await loadScript('./delivery-mode-badges.js?v=20260913-manual', 'fs-delivery-mode-badges-js');
     await loadScript('./payment-action-guard.js', 'fs-payment-action-guard-js');
-    await loadScript('./admin-auto-delivery-guard.js', 'fs-admin-auto-delivery-guard-js');
     await loadScript('./game-maintenance.js?v=20260826-r84', 'fs-game-maintenance-js');
-    // R93: nodes already marked as maintenance are fully inert for mouse, touch
-    // and keyboard. Mixed games remain openable; only blocked offers are inert.
     await loadScript('./maintenance-interaction-lock.js?v=20260826-r93', 'fs-maintenance-interaction-lock-js');
-    // R87: intercept the legacy R6 "Volver al catálogo" before it can call
-    // history.back() and accidentally leave Tienda for Wallet/Pedidos.
     await loadScript('./catalog-back-guard.js?v=20260826-r87', 'fs-catalog-back-guard-js');
-    // R89: Supabase currently returns Google OAuth to the authorized /v2/ URL.
-    // Only when the login started in /admin/ does this bridge return to /admin/.
     await loadScript('./admin-oauth-return.js?v=20260826-r89', 'fs-admin-oauth-return-js');
     installOrderPolishTrigger();
     document.documentElement.dataset.fsSafetyOverlays = 'ready';
