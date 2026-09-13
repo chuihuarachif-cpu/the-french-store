@@ -4,20 +4,14 @@ import assert from 'node:assert/strict';
 const read = (path) => fs.readFileSync(path, 'utf8');
 const bootstrap = read('v2/bootstrap.js');
 const loader = read('v2/storefront-safety-overlays.js');
-const badges = read('v2/delivery-mode-badges.js');
 const paymentGuard = read('v2/payment-action-guard.js');
 const bisa = read('v2/bisa-checkout.js');
 const paidWhatsapp = read('v2/paid-whatsapp.js');
 const categories = read('v2/config/storefront.js');
 
 assert.match(bootstrap, /storefront-safety-overlays\.js/);
-assert.match(loader, /delivery-mode-badges\.js/);
 assert.match(loader, /payment-action-guard\.js/);
-
-// Storefront delivery presentation is manual-only and does not query provider capabilities.
-assert.match(badges, /Entrega manual/);
-assert.match(badges, /MANUAL/);
-assert.doesNotMatch(badges, /Automático 24\/7|FSAutomationCapabilities|gamerhub|provider_execution_map|service_role/i);
+assert.doesNotMatch(loader, /delivery-mode-badges|automatic-order-ui|admin-auto-delivery-guard/i);
 
 // One explicit QR verification request per order window; BISA remains authoritative.
 assert.match(paymentGuard, /QR_PREFIX/);
