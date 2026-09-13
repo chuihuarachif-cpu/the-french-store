@@ -1,0 +1,8 @@
+interface:
+  display_name: "French Visual FX Director"
+  short_description: "Premium motion, 2.5D/3D, reactive light and image restoration for ecommerce UI"
+  brand_color: "#61EFFF"
+  default_prompt: "Use $french-visual-fx-director to improve this interface with intentional depth, lighting, motion and progressive enhancement without touching business logic."
+
+policy:
+  allow_implicit_invocation: true
