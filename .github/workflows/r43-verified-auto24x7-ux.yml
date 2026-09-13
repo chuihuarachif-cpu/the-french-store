@@ -4,8 +4,6 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'v2/automation-capabilities.js'
-      - 'v2/automatic-order-ui.js'
       - 'v2/paid-whatsapp.js'
       - 'v2/player-verify.js'
       - 'v2/detail-layout-v2.js'
@@ -15,8 +13,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'v2/automation-capabilities.js'
-      - 'v2/automatic-order-ui.js'
       - 'v2/paid-whatsapp.js'
       - 'v2/player-verify.js'
       - 'v2/detail-layout-v2.js'
@@ -39,8 +35,6 @@ jobs:
       - name: JavaScript syntax
         run: |
           set -euo pipefail
-          node --check v2/automation-capabilities.js
-          node --check v2/automatic-order-ui.js
           node --check v2/paid-whatsapp.js
           node --check v2/player-verify.js
           node --check v2/detail-layout-v2.js
@@ -58,26 +52,29 @@ jobs:
           if grep -Fq '/api/player-verify' v2/player-verify.js; then exit 1; fi
           if grep -Fq 'Verificar nombre' v2/player-verify.js; then exit 1; fi
 
-      - name: Current fulfillment is manual and makes no capability request
+      - name: Manual fulfillment has no retired automation shim
         run: |
           set -euo pipefail
-          grep -Fq "version: 'manual-fulfillment-20260913'" v2/automation-capabilities.js
-          grep -Fq 'automatic: false' v2/automation-capabilities.js
-          grep -Fq 'isAutomatic: () => false' v2/automation-capabilities.js
-          if grep -Fq 'api.frenchstorebo.com' v2/automation-capabilities.js; then exit 1; fi
-          if grep -Fq 'fetch(' v2/automation-capabilities.js; then exit 1; fi
+          test ! -e v2/automation-capabilities.js
+          test ! -e v2/automatic-order-ui.js
+          if grep -Fq 'automation-capabilities.js' v2/bootstrap.js; then exit 1; fi
+          if grep -Fq 'automatic-order-ui.js' v2/bootstrap.js; then exit 1; fi
+          if grep -Fq 'FSAutomationCapabilities' v2/paid-whatsapp.js; then exit 1; fi
+          if grep -Fq "from('order_items')" v2/paid-whatsapp.js; then exit 1; fi
 
       - name: Manual paid flow remains available
         run: |
           set -euo pipefail
           grep -Fq '✅ Pagado el pedido' v2/paid-whatsapp.js
           grep -Fq 'Avisar pedido pagado por WhatsApp' v2/paid-whatsapp.js
+          grep -Fq 'get_my_paid_whatsapp_notice_status' v2/paid-whatsapp.js
+          grep -Fq 'claim_my_paid_whatsapp_notice' v2/paid-whatsapp.js
 
       - name: Customer modules cannot expose privileged backend material
         run: |
           set -euo pipefail
           if grep -Eqi 'service[_ -]?role|SUPABASE_SERVICE|api[_ -]?secret|provider_product_code|provider_sku_code|precio_proveedor|price_usd|create.?provider.?order|POST /v1/orders' \
-            v2/automation-capabilities.js v2/automatic-order-ui.js v2/paid-whatsapp.js v2/player-verify.js v2/detail-layout-v2.js; then exit 1; fi
+            v2/paid-whatsapp.js v2/player-verify.js v2/detail-layout-v2.js; then exit 1; fi
 
       - name: Checkout keeps safe decorator order
         run: |
@@ -85,8 +82,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           text=Path('v2/bootstrap.js').read_text()
-          assert text.index('./automation-capabilities.js') < text.index('./bisa-checkout.js')
           assert text.index('./bisa-checkout.js') < text.index('./fulfillment-inputs.js')
-          assert text.index('./fulfillment-inputs.js') < text.index('./automatic-order-ui.js')
+          assert text.index('./fulfillment-inputs.js') < text.index('./paid-whatsapp.js')
           PY
           node scripts/test-bootstrap-release.mjs
