@@ -42,3 +42,5 @@
   document.addEventListener('focusin',event=>{const modal=top();if(modal&&!modal.contains(event.target))(controls(modal)[0]||modal.querySelector('.modal-card')).focus();});
   sync();
 })();
+
+import('./r164-resellers.js?v=20260913-r164').catch(()=>{});

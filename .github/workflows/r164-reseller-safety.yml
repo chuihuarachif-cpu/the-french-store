@@ -1,0 +1,52 @@
+name: R164 Reseller Safety
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'admin/r164-resellers.js'
+      - 'admin/r154-dialog-focus.js'
+      - 'v2/features/catalog.js'
+      - 'v2/core/ui.js'
+      - '.github/workflows/r164-reseller-safety.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'admin/r164-resellers.js'
+      - 'admin/r154-dialog-focus.js'
+      - 'v2/features/catalog.js'
+      - 'v2/core/ui.js'
+      - '.github/workflows/r164-reseller-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check admin/r164-resellers.js
+          node --check admin/r154-dialog-focus.js
+          node --check v2/features/catalog.js
+          node --check v2/core/ui.js
+
+      - name: Check private admin contracts
+        run: |
+          set -euo pipefail
+          grep -q "admin_app_list_resellers" admin/r164-resellers.js
+          grep -q "admin_app_upsert_reseller" admin/r164-resellers.js
+          grep -q "admin_app_reseller_orders_v2" admin/r164-resellers.js
+          grep -q "r164-resellers.js" admin/r154-dialog-focus.js
+          ! grep -Eqi "service_role|SUPABASE_SERVICE_ROLE" admin/r164-resellers.js
+
+      - name: Check storefront price privacy
+        run: |
+          set -euo pipefail
+          grep -q "sb.rpc('storefront_catalog')" v2/features/catalog.js
+          grep -q "await loadProducts()" v2/core/ui.js
+          ! grep -Eqi "base_margin_share|tier2_margin_share|tier3_margin_share|current_margin_share" v2/features/catalog.js v2/core/ui.js
