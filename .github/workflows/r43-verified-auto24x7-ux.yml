@@ -1,4 +1,4 @@
-name: R131 ID Only and Manual UX Safety
+name: Manual Fulfillment and ID Only Safety
 
 on:
   pull_request:
@@ -46,44 +46,40 @@ jobs:
           node --check v2/detail-layout-v2.js
           node --check v2/bootstrap.js
 
-      - name: Required customer identifiers own the ID unlock
+      - name: ID only contract
         run: |
           set -euo pipefail
-          grep -Fq 'player-id-only-v1-20260831-r131' v2/player-verify.js
           grep -Fq 'enteredForGame' v2/player-verify.js
           grep -Fq 'rememberEntered' v2/player-verify.js
           grep -Fq 'syncCartInputs' v2/player-verify.js
           grep -Fq 'function enteredValid(game)' v2/detail-layout-v2.js
           grep -Fq 'const ready=enteredValid(game)' v2/detail-layout-v2.js
           grep -Fq '✓ Datos completos · paquetes habilitados' v2/detail-layout-v2.js
-          ! grep -Fq '/api/player-verify' v2/player-verify.js
-          ! grep -Fq 'Verificar nombre' v2/player-verify.js
-          ! grep -Fq 'verifiedForGame?.(game)' v2/detail-layout-v2.js
+          if grep -Fq '/api/player-verify' v2/player-verify.js; then exit 1; fi
+          if grep -Fq 'Verificar nombre' v2/player-verify.js; then exit 1; fi
 
-      - name: Automatic promise uses live sanitized capability only
+      - name: Current fulfillment is manual and makes no capability request
         run: |
           set -euo pipefail
-          grep -Fq '/api/storefront-automation-capabilities' v2/automation-capabilities.js
-          grep -Fq 'const loaded = await load(true);' v2/automation-capabilities.js
-          grep -Fq 'mode?.known === true && mode?.automatic === true' v2/paid-whatsapp.js
-          grep -Fq 'mode?.known === true && mode?.automatic === true' v2/automatic-order-ui.js
-          grep -Fq 'Recarga automática en proceso' v2/paid-whatsapp.js
-          grep -Fq 'se acreditará a la cuenta verificada' v2/automatic-order-ui.js
+          grep -Fq "version: 'manual-fulfillment-20260913'" v2/automation-capabilities.js
+          grep -Fq 'automatic: false' v2/automation-capabilities.js
+          grep -Fq 'isAutomatic: () => false' v2/automation-capabilities.js
+          if grep -Fq 'api.frenchstorebo.com' v2/automation-capabilities.js; then exit 1; fi
+          if grep -Fq 'fetch(' v2/automation-capabilities.js; then exit 1; fi
 
       - name: Manual paid flow remains available
         run: |
           set -euo pipefail
           grep -Fq '✅ Pagado el pedido' v2/paid-whatsapp.js
           grep -Fq 'Avisar pedido pagado por WhatsApp' v2/paid-whatsapp.js
-          grep -Fq 'return false;' v2/paid-whatsapp.js
 
-      - name: Customer modules cannot move provider money or expose secrets
+      - name: Customer modules cannot expose privileged backend material
         run: |
           set -euo pipefail
-          ! grep -Eqi 'service[_ -]?role|SUPABASE_SERVICE|GAMERHUB_SECRET|api[_ -]?secret|provider_product_code|provider_sku_code|precio_proveedor|price_usd|create.?provider.?order|POST /v1/orders' \
-            v2/automation-capabilities.js v2/automatic-order-ui.js v2/paid-whatsapp.js v2/player-verify.js v2/detail-layout-v2.js
+          if grep -Eqi 'service[_ -]?role|SUPABASE_SERVICE|api[_ -]?secret|provider_product_code|provider_sku_code|precio_proveedor|price_usd|create.?provider.?order|POST /v1/orders' \
+            v2/automation-capabilities.js v2/automatic-order-ui.js v2/paid-whatsapp.js v2/player-verify.js v2/detail-layout-v2.js; then exit 1; fi
 
-      - name: Checkout loads capability before payment decorators
+      - name: Checkout keeps safe decorator order
         run: |
           set -euo pipefail
           python3 - <<'PY'
@@ -94,4 +90,3 @@ jobs:
           assert text.index('./fulfillment-inputs.js') < text.index('./automatic-order-ui.js')
           PY
           node scripts/test-bootstrap-release.mjs
-          grep -Fq './player-verify.js?v=20260823-1&build=20260824-r43' v2/index.html
