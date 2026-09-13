@@ -1,5 +1,5 @@
 /* 💎 French Store 💎 — isolated storefront safety overlays.
-   Loads current presentation and accidental-click guards without changing
+   Loads current accidental-click and maintenance guards without changing
    checkout, Wallet, payment authority or catalog business logic. */
 (() => {
   'use strict';
@@ -58,10 +58,8 @@
   }
 
   async function boot() {
-    await loadStyle('./delivery-mode-badges.css', 'fs-delivery-mode-badges-css');
     await loadStyle('./game-maintenance.css?v=20260826-r84', 'fs-game-maintenance-css');
     await loadStyle('./maintenance-interaction-lock.css?v=20260826-r93', 'fs-maintenance-interaction-lock-css');
-    await loadScript('./delivery-mode-badges.js?v=20260913-manual', 'fs-delivery-mode-badges-js');
     await loadScript('./payment-action-guard.js', 'fs-payment-action-guard-js');
     await loadScript('./game-maintenance.js?v=20260826-r84', 'fs-game-maintenance-js');
     await loadScript('./maintenance-interaction-lock.js?v=20260826-r93', 'fs-maintenance-interaction-lock-js');
