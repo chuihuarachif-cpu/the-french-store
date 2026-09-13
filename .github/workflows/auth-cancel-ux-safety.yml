@@ -6,7 +6,6 @@ on:
     paths:
       - 'v2/auth-ease.js'
       - 'v2/auth-google.js'
-      - 'v2/legal.js'
       - 'v2/auth-confirm.js'
       - 'v2/order-cancel-ui.js'
       - 'v2/bootstrap.js'
@@ -16,7 +15,6 @@ on:
     paths:
       - 'v2/auth-ease.js'
       - 'v2/auth-google.js'
-      - 'v2/legal.js'
       - 'v2/auth-confirm.js'
       - 'v2/order-cancel-ui.js'
       - 'v2/bootstrap.js'
@@ -36,7 +34,6 @@ jobs:
         run: |
           node --check v2/auth-ease.js
           node --check v2/auth-google.js
-          node --check v2/legal.js
           node --check v2/auth-confirm.js
           node --check v2/order-cancel-ui.js
 
@@ -52,7 +49,7 @@ jobs:
           ! grep -q "authChoiceSignup" v2/auth-ease.js
           ! grep -q "authLegacySignupFallback" v2/auth-ease.js
           ! grep -q "Entrar con correo" v2/auth-google.js v2/auth-ease.js
-          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE|client_secret|provider_token" v2/auth-ease.js v2/auth-google.js v2/legal.js v2/auth-confirm.js
+          ! grep -R -E "service_role|SUPABASE_SERVICE|SUPABASE_SERVICE_ROLE|client_secret|provider_token" v2/auth-ease.js v2/auth-google.js v2/auth-confirm.js
 
       - name: No password capability anywhere in the public storefront
         run: |
@@ -65,6 +62,7 @@ jobs:
             fi
           }
           test ! -e v2/app.js
+          test ! -e v2/legal.js
           prohibido "restablecimiento de contraseña"    grep -rq "sb.auth.resetPasswordForEmail" v2/
           prohibido "definir una contraseña nueva"      grep -rq "sb.auth.updateUser({ password" v2/
           prohibido "validación de enlaces de correo"   grep -rq "sb.auth.verifyOtp" v2/
@@ -79,11 +77,11 @@ jobs:
         run: |
           set -euo pipefail
           grep -q "./auth-ease.js" v2/bootstrap.js
-          grep -q "./legal.js" v2/bootstrap.js
+          ! grep -q "./legal.js" v2/bootstrap.js
           python3 - <<'PY'
           from pathlib import Path
           s=Path('v2/bootstrap.js').read_text()
-          assert s.index('./features/auth.js') < s.index('./auth-ease.js') < s.index('./legal.js') < s.index('./auth-confirm.js')
+          assert s.index('./features/auth.js') < s.index('./auth-ease.js') < s.index('./auth-confirm.js')
           a=Path('v2/auth-ease.js').read_text()
           assert 'showChoice' in a
           assert 'hideLegacyPublicAuth' in a
