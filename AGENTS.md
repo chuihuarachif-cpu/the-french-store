@@ -28,6 +28,10 @@ Use `french-marketing-strategist` for ideas, commercial/customer-facing improvem
 
 If task mixes commercial strategy + interface execution, combine marketing (audience/offer/message/measurement) with visual (hierarchy/art direction/motion/performance).
 
+## Security routing
+
+Use `french-security-guardian` for authorized security reviews of The French Store: threat modeling, attack-surface mapping, auth/session/access-control checks, Supabase/RLS/RPC review, Cloudflare Worker/WAF/rate-limit hardening, secrets, admin, checkout/payment integrity, abuse prevention, security regressions and incident readiness. Also use it for requests such as “revisa la seguridad”, “busca vulnerabilidades”, “intenta saltarte esta protección en mi página” or “haz más largo el camino para un atacante”. Test only assets owned or explicitly authorized by the user; stop at third-party trust boundaries. Security fixes must be authoritative/server-side where applicable and must not weaken payment, auth, data or secret boundaries.
+
 ## Project boundaries
 
 Preserve `v2/ARCHITECTURE.md`.
