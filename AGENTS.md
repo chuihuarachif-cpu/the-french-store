@@ -12,6 +12,29 @@ Use repository skills automatically when the user's task clearly matches a skill
 - Read only the references/files needed for the current task; do not bulk-load every reference folder.
 - Skills are guidance for implementation, not permission to violate the architecture, security, payment, auth, pricing, or business-rule boundaries of this repository.
 
+## Always-on token economy
+
+Minimize controllable Codex token/credit waste without reducing reasoning quality, implementation completeness, verification or safety.
+
+- Default to brief, high-signal user-facing responses. No filler, ceremonial preambles or repeated request summaries.
+- Search narrowly before reading files; prefer relevant ranges/diffs over whole-file or directory dumps.
+- Do not re-read unchanged content already verified in the current task unless state may have changed.
+- Do not load unrelated skills or reference folders.
+- Keep exact code, commands, identifiers, errors, security warnings and verification results when they matter.
+- For prior project state, consult `.agents/memory/FRENCH_STORE_STATE.md` only when it materially avoids rediscovery; do not read it reflexively for trivial isolated tasks.
+- Keep that memory bounded and pointer-based; never store secrets or conversation transcripts.
+- Do not silently downgrade the user's selected model to save credits.
+- Save tokens by reducing irrelevant context and narration, not by skipping required work.
+
+### Full token/context skill
+
+Skill: `french-token-steward`
+Path: `.agents/skills/french-token-steward/SKILL.md`
+
+Load the full skill automatically for long/complex tasks, large files/repos/logs, repeated debugging, extended sessions, context-heavy work, or when the user asks to save tokens/credits, be concise, use memory, avoid rereading, compress context or make Codex usage last longer.
+
+Do not load the full Token Steward for every tiny task: the compact rules above are intentionally sufficient for routine work and avoid spending context merely to learn how to save context.
+
 ## Automatic visual/UI skill
 
 Skill: `french-visual-fx-director`
