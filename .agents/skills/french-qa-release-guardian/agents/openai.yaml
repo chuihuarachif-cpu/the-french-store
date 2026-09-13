@@ -1,0 +1,3 @@
+display_name: French QA Release Guardian
+short_description: Risk-based testing and release verification with minimal context waste.
+default_prompt: Start from the diff, infer blast radius, run the narrowest meaningful tests first, broaden only by risk, and report only verdict, failures and material gaps.
