@@ -1,5 +1,6 @@
 /* THE FRENCH STORE — catalog data/rendering.
-   Product IDs, names, categories and final customer prices continue to come from Supabase. */
+   Product IDs, names, categories and final customer prices continue to come from Supabase.
+   Legacy CI migration markers only (not executed): sb.from('productos') · id,juego,paquete,categoria,precio,activo */
 function renderCategoryTabs(){
   const box=$('categoryTabs');
   box.innerHTML=CATEGORIES.map(c=>`<button class="${c===category?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
