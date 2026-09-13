@@ -1,5 +1,5 @@
 /* THE FRENCH STORE — catalog data/rendering.
-   Product IDs, names, categories and prices continue to come from Supabase. */
+   Product IDs, names, categories and final customer prices continue to come from Supabase. */
 function renderCategoryTabs(){
   const box=$('categoryTabs');
   box.innerHTML=CATEGORIES.map(c=>`<button class="${c===category?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
@@ -36,9 +36,11 @@ function renderCatalog(){
   bindAddButtons($('catalogList'));
 }
 async function loadProducts(){
-  const{data,error}=await sb.from('productos').select('id,juego,paquete,categoria,precio,activo,mantenimiento,mantenimiento_mensaje,mantenimiento_actualizado_en').eq('activo',true).order('juego').order('precio');
+  // storefront_catalog returns only the final price that this session is allowed to see.
+  // It never exposes provider cost, store margin, reseller tier or reseller percentage.
+  const{data,error}=await sb.rpc('storefront_catalog');
   if(error){$('catalogList').innerHTML=`<div class="notice error">No se pudo cargar el catálogo: ${esc(error.message)}</div>`;return}
-  inventory=data||[];
+  inventory=(data||[]).sort((a,b)=>String(a.juego||'').localeCompare(String(b.juego||''),'es',{sensitivity:'base'})||Number(a.precio)-Number(b.precio));
   renderCategoryTabs();renderCatalog();renderFeatured();renderCart();
   document.dispatchEvent(new CustomEvent('fs:catalog-updated'));
 }
