@@ -1,5 +1,5 @@
 /* Static Admin shell only. Private API responses never enter Cache Storage. */
-const CACHE='fs-admin-r165-20260913';
+const CACHE='fs-admin-r154-20260907';
 const SHELL=['/admin/','/admin/index.html','/admin/manifest.webmanifest','/v2/assets/brand/icon-192.png','/v2/assets/brand/icon-512.png'];
 const STATIC=new Set(['app.css','app.js','r89-auth-fix.js','r93-maintenance-admin.css','r142-maintenance-main-grid.css','r142-maintenance-main-grid.js','r139-quotations.css','r139-quotations.js','r136-granular-maintenance.js','r137-price-overrides.js','r138-account-cost-editor.js','r154-accessibility.css','r154-dialog-focus.js','r164-resellers.js','r165-streaming-fixed-prices.js','maintenance.html','maintenance.css','maintenance.js','manifest.webmanifest'].map(name=>'/admin/'+name));
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting()));});
