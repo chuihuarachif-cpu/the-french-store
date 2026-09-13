@@ -1,0 +1,56 @@
+# THE FRENCH STORE — Codex agent instructions
+
+## Skill routing policy
+
+Use repository skills automatically when the user's task clearly matches a skill's YAML `description` in `.agents/skills/*/SKILL.md`.
+
+- Do **not** require the user to type `$skill-name` or explicitly ask to use a skill.
+- If the task clearly matches one skill, load that skill's `SKILL.md` before planning or editing.
+- If multiple skills match, use the smallest set that fully covers the task.
+- Explicit skill invocation by name or `$skill-name` takes priority when the skill exists.
+- Do not keep applying a skill to unrelated later tasks just because it was used previously.
+- Read only the references/files needed for the current task; do not bulk-load every reference folder.
+- Skills are guidance for implementation, not permission to violate the architecture, security, payment, auth, pricing, or business-rule boundaries of this repository.
+
+## Automatic visual/UI skill
+
+Skill: `french-visual-fx-director`
+Path: `.agents/skills/french-visual-fx-director/SKILL.md`
+
+Automatically use this skill for requests whose intent is to improve, redesign, polish, animate, modernize, premiumize, deepen, relight, enhance, or visually transform the storefront or admin UI, even when the user does not use the words "skill", "UI", or "frontend".
+
+Typical natural-language triggers include, but are not limited to:
+
+- "mejora la interfaz"
+- "haz que se vea más premium / moderna / elegante / profesional"
+- "esto se ve plano / aburrido / simple"
+- "dale profundidad / sombras / degradados / iluminación"
+- "haz un efecto 3D / 2.5D"
+- "anima esta sección / imagen / tarjeta / hero"
+- "haz que la luz siga el mouse / dedo / movimiento"
+- "haz que este diamante / objeto gire"
+- "pon reflejos / holografía / brillo / cristal / glow"
+- "mejora esta imagen / hazla más nítida / upscale / 4K"
+- "quiero una experiencia visual más inmersiva"
+- requests to redesign a hero, card, catalog, section, transition, background, visual state, product presentation, or decorative motion
+
+Also use it when the intent is implicit. Example: if the user says "esta parte no me convence, se siente barata" about a visible section, treat that as a visual-design task and load the skill.
+
+Do **not** use the visual skill for backend-only tasks, pricing logic, Supabase business rules, payments, auth, fulfillment, reseller calculations, or data migrations unless the same task also contains a genuine visual/UI component. In mixed tasks, keep visual changes isolated from business logic.
+
+## Project safety boundaries
+
+Always preserve `v2/ARCHITECTURE.md`.
+
+- Supabase/backend remains the source of truth for prices, availability, payment state, fulfillment, and business rules.
+- Never place private secrets or service-role credentials in frontend code.
+- Optional visual effects are progressive enhancement and must fail open.
+- A visual or animation failure must never block cart, checkout, auth, wallet, orders, QR, admin, or fulfillment.
+- Reuse the existing motion/performance policy in `v2/r8.js` (`off`, `lite`, `full`) for visual work instead of creating a competing policy.
+- Keep responsive behavior mobile-first and respect `prefers-reduced-motion`.
+
+## Adding future skills
+
+When a new repository skill is added under `.agents/skills/<skill-name>/`, keep its YAML `description` specific enough for automatic discovery. If the skill is strategically important or should react to broad natural-language intent, add a short routing entry to this file describing when Codex should load it automatically.
+
+The user should normally be able to describe the goal in ordinary language. Explicit `$skill-name` invocation is a fallback/override, not the default workflow.
