@@ -1,14 +1,13 @@
-name: R48 Delivery Mode and Payment Action Safety
+name: R48 Manual Delivery and Payment Action Safety
 
 on:
   pull_request:
     paths:
       - 'v2/bootstrap.js'
       - 'v2/storefront-safety-overlays.js'
-      - 'v2/delivery-mode-badges.js'
-      - 'v2/delivery-mode-badges.css'
       - 'v2/payment-action-guard.js'
-      - 'v2/admin-auto-delivery-guard.js'
+      - 'v2/bisa-checkout.js'
+      - 'v2/paid-whatsapp.js'
       - 'scripts/test-r48-delivery-payment-safety.mjs'
       - '.github/workflows/r48-delivery-payment-safety.yml'
   push:
@@ -16,10 +15,9 @@ on:
     paths:
       - 'v2/bootstrap.js'
       - 'v2/storefront-safety-overlays.js'
-      - 'v2/delivery-mode-badges.js'
-      - 'v2/delivery-mode-badges.css'
       - 'v2/payment-action-guard.js'
-      - 'v2/admin-auto-delivery-guard.js'
+      - 'v2/bisa-checkout.js'
+      - 'v2/paid-whatsapp.js'
       - 'scripts/test-r48-delivery-payment-safety.mjs'
       - '.github/workflows/r48-delivery-payment-safety.yml'
 
@@ -35,17 +33,17 @@ jobs:
         run: |
           set -euo pipefail
           node --check v2/storefront-safety-overlays.js
-          node --check v2/delivery-mode-badges.js
           node --check v2/payment-action-guard.js
-          node --check v2/admin-auto-delivery-guard.js
+          node --check v2/bisa-checkout.js
+          node --check v2/paid-whatsapp.js
           node --check v2/bootstrap.js
-      - name: R48 contracts
+      - name: Current manual-delivery contracts
         run: node scripts/test-r48-delivery-payment-safety.mjs
-      - name: No privileged secrets in new frontend modules
+      - name: No privileged secrets in public payment helpers
         run: |
           set -euo pipefail
           ! grep -Eiq 'SUPABASE_SERVICE_ROLE|service_role|CPX_APP_SECURITY_HASH|AYET_PUBLISHER_API_KEY|GAMERHUB_API_KEY|BISA_SIP_PROD_PASSWORD' \
             v2/storefront-safety-overlays.js \
-            v2/delivery-mode-badges.js \
             v2/payment-action-guard.js \
-            v2/admin-auto-delivery-guard.js
+            v2/bisa-checkout.js \
+            v2/paid-whatsapp.js
