@@ -38,6 +38,46 @@ Also use it when the intent is implicit. Example: if the user says "esta parte n
 
 Do **not** use the visual skill for backend-only tasks, pricing logic, Supabase business rules, payments, auth, fulfillment, reseller calculations, or data migrations unless the same task also contains a genuine visual/UI component. In mixed tasks, keep visual changes isolated from business logic.
 
+## Automatic marketing/growth skill
+
+Skill: `french-marketing-strategist`
+Path: `.agents/skills/french-marketing-strategist/SKILL.md`
+
+Automatically use this skill when the user wants ideas, commercial improvements, growth, promotion, positioning, market research, campaigns, customer acquisition, retention, loyalty, referrals, reseller strategy, offers, launches, partnerships, messaging, conversion improvements or evaluation of a customer-facing business idea.
+
+The user does not need to say "marketing" or name the skill. Typical implicit triggers include:
+
+- "dame ideas"
+- "qué más podemos hacer"
+- "cómo mejoramos esto"
+- "se me ocurrió agregar..."
+- "quiero hacer algo diferente"
+- "cómo hago para que venda más"
+- "qué sería revolucionario"
+- "cómo atraemos más clientes"
+- "cómo hacemos que vuelvan"
+- "qué promoción conviene"
+- "cómo mejoramos lo de revendedores"
+- "cómo lanzamos esto"
+- "revisa el mercado / competencia / tendencias"
+- "esta idea vale la pena?"
+- "qué le falta a esta oferta"
+
+Also use it proactively when the user proposes a new customer-facing feature, reward, loyalty mechanic, reseller benefit, bundle, promotion or service and asks for improvement or ideas. Evaluate customer value, positioning, differentiation, economics, operational risk and the smallest useful experiment rather than merely agreeing.
+
+When the request depends on the current market, the marketing skill must research fresh evidence when research tools are available. If live research is unavailable, do not pretend the market was checked; label current-market claims as hypotheses/assumptions.
+
+Do **not** invoke the marketing skill for a pure technical bug fix, refactor, deployment issue, database migration or backend maintenance request unless the user also asks for a commercial/customer recommendation.
+
+### Combining marketing + visual skills
+
+When a task genuinely has both commercial strategy and visual/interface execution, use both skills with clear responsibility:
+
+- `french-marketing-strategist`: audience, positioning, offer, message, customer psychology, conversion hypothesis and measurement.
+- `french-visual-fx-director`: visual hierarchy, interaction, motion, depth, art direction and performance-safe implementation.
+
+Do not let either skill override pricing authority, security or backend business rules.
+
 ## Project safety boundaries
 
 Always preserve `v2/ARCHITECTURE.md`.
@@ -48,6 +88,8 @@ Always preserve `v2/ARCHITECTURE.md`.
 - A visual or animation failure must never block cart, checkout, auth, wallet, orders, QR, admin, or fulfillment.
 - Reuse the existing motion/performance policy in `v2/r8.js` (`off`, `lite`, `full`) for visual work instead of creating a competing policy.
 - Keep responsive behavior mobile-first and respect `prefers-reduced-motion`.
+- Do not expose private supplier costs, internal margins, reseller discount formulas or protected operational logic in public-facing marketing/UI.
+- Do not fabricate reviews, partnerships, authorization, scarcity, customer counts, savings or guarantees.
 
 ## Adding future skills
 
