@@ -1,0 +1,39 @@
+name: R165 Streaming Fixed Prices
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'admin/r165-streaming-fixed-prices.js'
+      - 'admin/r154-dialog-focus.js'
+      - 'admin/sw.js'
+      - '.github/workflows/r165-streaming-fixed-prices.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript
+        run: |
+          node --check admin/r165-streaming-fixed-prices.js
+          node --check admin/r154-dialog-focus.js
+          node --check admin/sw.js
+      - name: Check fixed-price contracts
+        run: |
+          set -euo pipefail
+          grep -q "admin_app_list_streaming_fixed_pricing" admin/r165-streaming-fixed-prices.js
+          grep -q "admin_app_set_streaming_fixed_pricing" admin/r165-streaming-fixed-prices.js
+          grep -q "Precio de compra (Bs)" admin/r165-streaming-fixed-prices.js
+          grep -q "Precio de venta (Bs)" admin/r165-streaming-fixed-prices.js
+          grep -q "no se aplicará margen automático" admin/r165-streaming-fixed-prices.js
+          grep -q "r165-streaming-fixed-prices.js" admin/r154-dialog-focus.js
+          grep -q "r165-streaming-fixed-prices.js" admin/sw.js
+          ! grep -q "store_competitive_margin_from_cost" admin/r165-streaming-fixed-prices.js
