@@ -10,5 +10,8 @@ Purpose: compact durable pointers only. Not a conversation log. Keep <= 1,000 wo
 [skill-visual] UI/premium/motion/2.5D/image enhancement work routes to `french-visual-fx-director` | source:.agents/skills/french-visual-fx-director/SKILL.md | verified:2026-09-13
 [skill-marketing] Ideas/growth/market/offers/retention/reseller/customer-facing strategy routes to `french-marketing-strategist` | source:.agents/skills/french-marketing-strategist/SKILL.md | verified:2026-09-13
 [skill-security] Authorized security review/hardening of owned French Store assets routes to `french-security-guardian` | source:.agents/skills/french-security-guardian/SKILL.md,AGENTS.md | verified:2026-09-13
-[skill-routing] Root `AGENTS.md` is the canonical auto-routing policy; `$skill-name` is fallback/override, not required | source:AGENTS.md | verified:2026-09-13
-[token-policy] Always-on token economy lives in root `AGENTS.md`; full `french-token-steward` loads only for long/large/token-sensitive tasks | source:AGENTS.md,.agents/skills/french-token-steward/SKILL.md | verified:2026-09-13
+[skill-architect] New/cross-cutting product and technical design routes to `french-product-architect` | source:.agents/skills/french-product-architect/SKILL.md | verified:2026-09-13
+[skill-critic] High-impact/expensive/ambiguous decisions can route to `french-adversarial-critic` for a compact independent challenge | source:.agents/skills/french-adversarial-critic/SKILL.md | verified:2026-09-13
+[skill-qa] Meaningful code/config changes and release verification route to `french-qa-release-guardian` using diff-first risk-based testing | source:.agents/skills/french-qa-release-guardian/SKILL.md | verified:2026-09-13
+[skill-routing] Root `AGENTS.md` is the canonical auto-routing policy; default one owning specialist, staged escalation only when useful; `$skill-name` is fallback/override | source:AGENTS.md | verified:2026-09-13
+[token-policy] Always-on token economy lives in root `AGENTS.md`; full `french-token-steward` loads only for long/large/token-sensitive tasks; compact handoffs between specialists | source:AGENTS.md,.agents/skills/french-token-steward/SKILL.md | verified:2026-09-13
