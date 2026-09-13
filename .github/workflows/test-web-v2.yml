@@ -31,6 +31,7 @@ jobs:
           test -s v2/index.html
           test -s v2/styles.css
           test ! -e v2/app.js
+          test ! -e v2/legal.js
           test ! -e v2/automation-capabilities.js
           test ! -e v2/automatic-order-ui.js
           test -s v2/bootstrap.js
@@ -48,7 +49,6 @@ jobs:
           test -s v2/r8-icons.css
           test -s v2/r8-icons.js
           test -s v2/legal.css
-          test -s v2/legal.js
           test -s v2/legal-account.js
           test -s v2/player-verify.js
           test -s v2/detail-layout-v2.js
@@ -85,7 +85,6 @@ jobs:
           node --check v2/features/orders-admin.js
           node --check v2/r8.js
           node --check v2/r8-icons.js
-          node --check v2/legal.js
           node --check v2/legal-account.js
           node --check v2/player-verify.js
           node --check v2/detail-layout-v2.js
@@ -129,6 +128,7 @@ jobs:
           grep -q './admin-order-ui.js' v2/bootstrap.js
           grep -q './admin-fulfillment-ui.js' v2/bootstrap.js
           grep -q './r8.js' v2/bootstrap.js
+          ! grep -q './legal.js' v2/bootstrap.js
           ! grep -q 'automation-capabilities.js' v2/bootstrap.js
           ! grep -q 'automatic-order-ui.js' v2/bootstrap.js
           grep -q 'SCRIPT_LOAD_FAILED' v2/bootstrap.js
