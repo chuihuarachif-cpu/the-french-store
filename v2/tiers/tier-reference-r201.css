@@ -4,7 +4,7 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]>img,
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans"]>img,
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{
-    content:url('../assets/brand/clash-of-clans-r185.webp')!important;
+    content:url('../assets/apps/clash-of-clans.webp')!important;
     width:100%!important;height:82px!important;
     object-fit:cover!important;
     object-position:50% 38%!important;
