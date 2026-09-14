@@ -1,52 +1,44 @@
 /* THE FRENCH STORE — R207 pixel-reference convergence.
    Presentation only. Applies exclusively to backend-resolved Gold/Diamond. */
 @media(max-width:620px){
-  /* HOME — match the exact supplied Clash tile regardless of backend label suffix. */
+  /* HOME — exact supplied Clash tile, immune to legacy image transforms/crops. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img{
     content:url('../assets/brand/premium-feature-clash-r207.webp')!important;
-    width:100%!important;height:82px!important;padding:0!important;
-    object-fit:cover!important;object-position:center!important;background:#080b0e!important;
+    display:block!important;width:100%!important;height:82px!important;max-width:none!important;
+    padding:0!important;margin:0!important;transform:none!important;scale:1!important;
+    object-fit:contain!important;object-position:center!important;background:#080b0e!important;
+    filter:none!important;
   }
 
-  /* Reference rank tab has a small inward cut at its left edge. */
+  /* Reference rank tab has the small inward cut visible in the supplied capture. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge{
     min-height:27px!important;height:27px!important;padding:4px 10px 4px 14px!important;
     border-radius:0 11px 0 9px!important;
     clip-path:polygon(9px 0,100% 0,100% 100%,0 100%,6px 50%)!important;
     font-size:9.2px!important;gap:5px!important;
   }
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge .fs-premium-rank-icon{
-    font-size:12px!important;
-  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge .fs-premium-rank-icon{font-size:12px!important}
 
-  /* PROFILE — supplied reference has the same outer top, but its account card
-     starts 16px lower. Move only the internal composition; compensate the
-     generated modules below so Preferred Name / Rank Pass keep their exact Y. */
+  /* PROFILE — align the site-only capture to the supplied phone reference
+     (the reference includes ~25px of Android status chrome above the site). */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel{
-    margin-top:-15px!important;padding-top:23px!important;overflow:hidden!important;
+    margin-top:-15px!important;padding-top:17px!important;overflow:hidden!important;
   }
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel::before{
-    height:200px!important;
-  }
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel>h2{
-    margin-bottom:12px!important;
-  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel::before{height:192px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel>h2{margin-bottom:12px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
-    height:110px!important;min-height:110px!important;max-height:110px!important;
-    overflow:visible!important;
-    background:
-      radial-gradient(178px 135px at 91% 18%,rgba(18,115,230,.19),transparent 70%),
-      linear-gradient(96deg,#070a0d 0%,#05080b 58%,#06111e 100%)!important;
+    height:110px!important;min-height:110px!important;max-height:110px!important;overflow:visible!important;
+    background:radial-gradient(178px 135px at 91% 18%,rgba(18,115,230,.19),transparent 70%),linear-gradient(96deg,#070a0d 0%,#05080b 58%,#06111e 100%)!important;
   }
   html[data-fs-tier="diamond"] #view-perfil .profile-card{
-    background:
-      radial-gradient(182px 138px at 91% 18%,rgba(28,158,255,.28),transparent 69%),
-      linear-gradient(96deg,#06101a 0%,#04080d 57%,#041526 100%)!important;
+    background:radial-gradient(182px 138px at 91% 18%,rgba(28,158,255,.28),transparent 69%),linear-gradient(96deg,#06101a 0%,#04080d 57%,#041526 100%)!important;
   }
+  /* Clean hood artwork reconstructed from the supplied profile reference.
+     No badge/rank text is baked into the bitmap; live account state stays on top. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card::after{
     content:''!important;display:block!important;position:absolute!important;z-index:2!important;
-    inset:auto!important;right:-1px!important;top:-59px!important;width:178px!important;height:152px!important;
-    background:url('../assets/brand/premium-profile-mascot-r207.webp') center/178px 152px no-repeat!important;
+    inset:auto!important;right:-1px!important;top:-59px!important;width:178px!important;height:142px!important;
+    background:url('../assets/brand/premium-profile-mascot-r208.webp') center/178px 142px no-repeat!important;
     border:0!important;border-radius:0!important;box-shadow:none!important;
     clip-path:none!important;mask:none!important;-webkit-mask:none!important;
     opacity:1!important;filter:none!important;pointer-events:none!important;
@@ -56,38 +48,31 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileName,
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileEmail,
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-badge,
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-rank{
-    z-index:8!important;
-  }
-  /* Badge overlaps the account-card top line in the reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-rank{z-index:8!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-badge{
-    top:0!important;right:10px!important;min-width:94px!important;width:auto!important;
-    height:32px!important;min-height:32px!important;padding:3px 10px!important;font-size:11px!important;
+    top:0!important;right:10px!important;min-width:94px!important;width:auto!important;height:32px!important;min-height:32px!important;padding:3px 10px!important;font-size:11px!important;
   }
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.avatar{
-    left:14px!important;top:14px!important;width:55px!important;height:55px!important;
-  }
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>div:nth-child(2){
-    left:82px!important;top:18px!important;
-  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.avatar{left:14px!important;top:14px!important;width:55px!important;height:55px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>div:nth-child(2){left:82px!important;top:18px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-rank{
     left:13px!important;right:13px!important;bottom:5px!important;height:27px!important;min-height:27px!important;
   }
 
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{
-    margin-top:9px!important;
-  }
+  /* The generated account modules were ~15px below the reference in R207. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{margin-top:9px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard,
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{
-    top:15px!important;
-  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{top:0!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard .primary-btn{
-    border-radius:12px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    height:34px!important;min-height:34px!important;max-height:34px!important;flex:0 0 34px!important;
+    padding:0 12px!important;border-radius:12px!important;line-height:1!important;
   }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard small{display:block!important;visibility:visible!important}
 
-  /* Rank-pass gem: supplied card uses a larger gem than R206. */
+  /* Rank Pass: match artwork placement in the supplied Gold profile capture. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold::before{right:-25px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
-    right:-1px!important;top:14px!important;width:72px!important;height:94px!important;
+    right:-9px!important;top:7px!important;width:72px!important;height:94px!important;
     background:url('../assets/brand/premium-pass-diamond-r206.webp') center/72px 94px no-repeat!important;
   }
 }
