@@ -1,12 +1,8 @@
-/* THE FRENCH STORE — R186 premium release loader.
-   Presentation only. Gold/Diamond are selected by tier-gate from the existing
-   backend-authoritative active pass. This loader only attaches visual assets;
-   it never grants membership or reads/writes commerce/payment/order data. */
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r186-20260914';
-  const RELEASE = '20260914-r186-reference-match';
+  const VERSION = 'premium-release-r187-20260914';
+  const RELEASE = '20260914-r187-reference-match';
   const root = document.documentElement;
   let active = '';
 
