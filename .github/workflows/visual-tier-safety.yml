@@ -1,15 +1,17 @@
-name: Visual Tier Safety
+name: Unified Storefront Visual Safety
 
 on:
   pull_request:
     paths:
       - 'v2/tiers/**'
+      - 'v2/rank-pass-premium.css'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
   push:
     branches: [main]
     paths:
       - 'v2/tiers/**'
+      - 'v2/rank-pass-premium.css'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
 
@@ -21,30 +23,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Obsidian Prism visual contract
+      - name: Unified Noir & Gold visual contract
         run: node scripts/test-r167-tier-frames.mjs
-
-      - name: Tier loader syntax and release cache key
+      - name: Base-only loader syntax and release key
         run: |
           node --check v2/tiers/tier-gate.js
-          grep -q '20260914-obsidian-prism' v2/tiers/tier-gate.js
-
+          grep -q '20260913-unified-noir-gold' v2/tiers/tier-gate.js
+          ! test -e v2/tiers/tier-gold.css
+          ! test -e v2/tiers/tier-diamond.css
+          ! test -e v2/tiers/tier-depth.js
+          ! test -e v2/tiers/tier-shine.js
       - name: CSS structural and secret safety
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          files = [
-              Path('v2/tiers/tier-base.css'),
-              Path('v2/tiers/tier-gold.css'),
-              Path('v2/tiers/tier-diamond.css'),
-          ]
-          forbidden = ['service_role', 'GAMERHUB_API_KEY', 'GAMERHUB_API_SECRET', 'OPENAI_API_KEY', 'GEMINI_API_KEY']
+          files = [Path('v2/tiers/tier-base.css'), Path('v2/rank-pass-premium.css')]
+          forbidden = ['service_role','GAMERHUB_API_KEY','GAMERHUB_API_SECRET','OPENAI_API_KEY','GEMINI_API_KEY']
           for path in files:
               text = path.read_text(encoding='utf-8')
               assert text.count('{') == text.count('}'), f'Unbalanced CSS braces in {path}'
               found = [token for token in forbidden if token in text]
               assert not found, f'Forbidden secret-domain tokens in {path}: {found}'
               assert len(text.encode('utf-8')) < 60000, f'{path} grew beyond the mobile presentation budget'
-          print('Tier CSS structure and secret checks OK')
+          print('Unified storefront CSS structure and secret checks OK')
           PY
