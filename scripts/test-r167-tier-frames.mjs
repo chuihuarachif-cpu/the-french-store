@@ -1,45 +1,46 @@
-/* Legacy filename kept so existing CI can call it.
-   R168 visual contract: Obsidian Prism replaces the retired R167 ornamental frames. */
+/* Legacy filename kept for existing CI.
+   R170 contract: one Noir & Gold storefront; Gold/Diamond are membership products only. */
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const read = path => fs.readFileSync(path, 'utf8');
 const base = read('v2/tiers/tier-base.css');
-const gold = read('v2/tiers/tier-gold.css');
-const diamond = read('v2/tiers/tier-diamond.css');
-const all = `${base}\n${gold}\n${diamond}`;
+const gate = read('v2/tiers/tier-gate.js');
+const premium = read('v2/rank-pass-premium.css');
 let checks = 0;
 const ok = (condition, message) => { assert.ok(condition, message); checks += 1; };
 
-// The Claude-era ornamental system must not return.
-for (const asset of ['frame-gold.svg', 'frame-diamond.svg', 'gem-brillante.svg']) {
-  ok(!fs.existsSync(`v2/tiers/${asset}`), `${asset} must stay retired`);
-  ok(!all.includes(asset), `${asset} must not be referenced by tier CSS`);
-}
-ok(!/border-image-source\s*:/i.test(all), 'tier UI must not use ornamental border-image sources');
-ok(!/border-image\s*:\s*(?!none)/i.test(all), 'tier UI may only use border-image to explicitly neutralize legacy framing');
-ok(!/content\s*:\s*["']★\s*(?:GOLD|DIAMOND)/i.test(all), 'large rank seals must stay removed');
+for (const retired of [
+  'v2/tiers/tier-gold.css',
+  'v2/tiers/tier-diamond.css',
+  'v2/tiers/tier-depth.js',
+  'v2/tiers/tier-shine.js',
+  'v2/tiers/frame-gold.svg',
+  'v2/tiers/frame-diamond.svg',
+  'v2/tiers/gem-brillante.svg'
+]) ok(!fs.existsSync(retired), `${retired} must stay retired`);
 
-// Base owns the new coherent design system and remains mobile-first/accessibility-safe.
-ok(base.includes('--fs-surface') && base.includes('--fs-cyan'), 'Base must define the Obsidian Prism design tokens');
-ok(base.includes('.hero-gem::before') && base.includes('clip-path:polygon'), 'hero must keep the CSS jewel focal object');
-ok(base.includes('data-r8-motion="full"'), 'motion must reuse the existing R8 capability policy');
+ok(gate.includes("Object.freeze(['base'])"), 'visual gate must expose Base only');
+ok(gate.includes('20260913-unified-noir-gold'), 'visual gate release key must be current');
+ok(!gate.includes('tier-${level}.css'), 'visual gate must never dynamically load paid-rank CSS');
+ok(!gate.includes('get_my_loyalty_summary'), 'visual gate must not query loyalty to select a skin');
+ok(!gate.includes('data-tier="gold"') && !gate.includes('data-tier="diamond"'), 'owner tier preview must be gone');
+
+ok(base.includes('--fs-gold:#e6bc63'), 'Base must define the unified gold token');
+ok(base.includes("background:url('../assets/brand/icon-192.png')"), 'header must use the real brand asset');
+ok(base.includes("background-image:url('../assets/brand/icon-512.png')"), 'hero focal mark must use the real brand asset');
 ok(base.includes('@media(max-width:620px)'), 'mobile breakpoint must remain explicit');
 ok(base.includes('prefers-reduced-motion:reduce'), 'reduced-motion fallback is required');
 ok(base.includes(':focus-visible'), 'keyboard focus treatment is required');
+ok(base.includes('.bottom-nav') && base.includes('.modal-card') && base.includes('.balance-card'), 'unified visual system must cover core storefront surfaces');
 
-// Gold stays warm and premium without turning the whole interface yellow.
-ok(gold.includes('content:"GOLD"') && gold.includes('background:linear-gradient(145deg,rgba(27,26,21'), 'Gold must use a restrained signature over dark surfaces');
-ok(gold.includes('border-image:none!important'), 'Gold must explicitly neutralize legacy frame behavior');
+ok(premium.includes('GOLD · x1.5 rewards'), 'Gold reward multiplier label is required');
+ok(premium.includes('DIAMOND · x2 rewards'), 'Diamond reward multiplier label is required');
+ok(!premium.includes('html[data-fs-membership="gold"]'), 'Gold must not reskin the global storefront');
+ok(!premium.includes('html[data-fs-membership="diamond"]'), 'Diamond must not reskin the global storefront');
 
-// Diamond keeps progressive 2.5D depth and degrades cleanly on phones/reduced motion.
-ok(diamond.includes('var(--rx,0)') && diamond.includes('var(--ry,0)'), 'Diamond must reuse tier-depth pointer variables');
-ok(diamond.includes('@media(hover:none),(pointer:coarse)'), 'Diamond must disable tilt for coarse pointers');
-ok(diamond.includes('prefers-reduced-motion:reduce'), 'Diamond must provide a reduced-motion fallback');
-ok(diamond.includes('border-image:none!important'), 'Diamond must explicitly neutralize legacy frame behavior');
+ok(!/border-image-source\s*:/i.test(base), 'ornamental border-image sources must stay retired');
+ok(!/mix-blend-mode\s*:/i.test(base), 'avoid expensive blend-mode effects in storefront chrome');
+ok(Buffer.byteLength(base) < 60000, 'Base CSS must stay within the mobile presentation budget');
 
-// Decorative layers must never intercept checkout/catalog interaction.
-ok(!/::(?:before|after)[^{]*\{[^}]*pointer-events\s*:\s*auto/is.test(all), 'decorative pseudo-elements must not capture pointer input');
-ok(!/mix-blend-mode\s*:/i.test(all), 'avoid expensive blend-mode effects in tier chrome');
-
-console.log(`Obsidian Prism visual contract: ${checks}/${checks} checks passed.`);
+console.log(`Unified Noir & Gold visual contract: ${checks}/${checks} checks passed.`);
