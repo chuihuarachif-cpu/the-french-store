@@ -1,4 +1,4 @@
-name: R164 Reseller Safety
+name: R166 Reseller Rank Safety
 
 on:
   push:
@@ -39,14 +39,18 @@ jobs:
         run: |
           set -euo pipefail
           grep -q "admin_app_list_resellers" admin/r164-resellers.js
-          grep -q "admin_app_upsert_reseller" admin/r164-resellers.js
+          grep -q "admin_app_add_reseller" admin/r164-resellers.js
+          grep -q "admin_app_set_reseller_active" admin/r164-resellers.js
           grep -q "admin_app_reseller_orders_v2" admin/r164-resellers.js
-          grep -q "r164-resellers.js" admin/r154-dialog-focus.js
+          grep -q "reseller_number" admin/r164-resellers.js
+          grep -q "rank_name" admin/r164-resellers.js
+          grep -q "r164-resellers.js?v=20260913-r166" admin/r154-dialog-focus.js
           ! grep -Eqi "service_role|SUPABASE_SERVICE_ROLE" admin/r164-resellers.js
+          ! grep -Eq "resellerBaseShare|resellerTier2Spend|resellerTier2Share|resellerTier3Spend|resellerTier3Share" admin/r164-resellers.js
 
       - name: Check storefront price privacy
         run: |
           set -euo pipefail
           grep -q "sb.rpc('storefront_catalog')" v2/features/catalog.js
           grep -q "await loadProducts()" v2/core/ui.js
-          ! grep -Eqi "base_margin_share|tier2_margin_share|tier3_margin_share|current_margin_share" v2/features/catalog.js v2/core/ui.js
+          ! grep -Eqi "base_margin_share|tier2_margin_share|tier3_margin_share|current_margin_share|rank_level|rank_name|reseller_number" v2/features/catalog.js v2/core/ui.js
