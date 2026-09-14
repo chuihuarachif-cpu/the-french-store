@@ -1,17 +1,18 @@
-/* THE FRENCH STORE — R177 premium reference decorator.
+/* THE FRENCH STORE — R180 premium reference decorator.
    Presentation only. It derives labels from the already-resolved cosmetic tier
    and from already-rendered order status text. It never grants membership,
    changes prices, writes Supabase data, or touches payment/fulfillment logic. */
 (() => {
   'use strict';
 
-  const VERSION = 'tier-reference-r177-20260914';
+  const VERSION = 'tier-reference-r180-20260914';
   const root = document.documentElement;
   let observer = null;
   let queued = false;
 
   const PAID = new Set(['gold', 'diamond']);
   const tier = () => String(root.dataset.fsTier || 'base').toLowerCase();
+  const key = (value) => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 
   function copyFor(level) {
     return level === 'diamond'
@@ -76,6 +77,32 @@
     }
   }
 
+  function orderNodes(host, selector, datasetName, priorities) {
+    if (!host || !PAID.has(tier())) return;
+    const nodes = [...host.querySelectorAll(selector)];
+    if (nodes.length < 2) return;
+    const priority = new Map(priorities.map((name, index) => [key(name), index]));
+    const ranked = nodes.map((node, index) => ({
+      node,
+      index,
+      rank: priority.has(key(node.dataset?.[datasetName])) ? priority.get(key(node.dataset?.[datasetName])) : priorities.length + index
+    })).sort((a, b) => a.rank - b.rank || a.index - b.index).map(item => item.node);
+    const changed = ranked.some((node, index) => nodes[index] !== node);
+    if (!changed) return;
+    const fragment = document.createDocumentFragment();
+    ranked.forEach(node => fragment.appendChild(node));
+    host.appendChild(fragment);
+  }
+
+  function orderPremiumLists() {
+    orderNodes(document.getElementById('featuredList'), '.r6-feature-card[data-r6-feature]', 'r6Feature', [
+      'Free Fire', 'Mobile Legends: Bang Bang', 'Clash Of Clans', 'Wuthering Waves'
+    ]);
+    orderNodes(document.getElementById('catalogList'), '.r6-game-card[data-r6-game]', 'r6Game', [
+      'Arena Breakout', 'Asphalt Legends', 'Blood Strike', 'Delta Force'
+    ]);
+  }
+
   function removeDecorations() {
     const nodes = document.querySelectorAll('.fs-premium-rank-badge,.fs-premium-profile-badge,.fs-premium-profile-rank,.fs-premium-delivered-bar');
     nodes.forEach(el => el.remove());
@@ -96,6 +123,7 @@
     ensureBadge(document.querySelector('#view-pedidos > .panel'));
     ensureProfileRank();
     decorateDeliveredOrders();
+    orderPremiumLists();
     if (root.dataset.fsPremiumReference !== VERSION) root.dataset.fsPremiumReference = VERSION;
   }
 
