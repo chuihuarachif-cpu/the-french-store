@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r198-20260914';
-  const RELEASE = '20260914-r198-reference-match';
+  const VERSION = 'premium-release-r199-20260914';
+  const RELEASE = '20260914-r199-reference-match';
   const root = document.documentElement;
   let active = '';
 
@@ -50,6 +50,14 @@
       document.head.appendChild(fidelity);
     } else {
       window.FSPremiumR185?.refresh?.();
+    }
+
+    if (!document.getElementById('fs-premium-reference-r199-socials-js')) {
+      const socials = document.createElement('script');
+      socials.id = 'fs-premium-reference-r199-socials-js';
+      socials.src = `./tiers/tier-reference-r199-socials.js?v=${RELEASE}`;
+      socials.defer = true;
+      document.head.appendChild(socials);
     }
   }
 
