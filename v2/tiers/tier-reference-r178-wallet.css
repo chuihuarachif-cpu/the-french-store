@@ -1,4 +1,4 @@
-/* THE FRENCH STORE — R178 WALLET fidelity. Presentation only. */
+/* THE FRENCH STORE — R180 WALLET fidelity. Presentation only. */
 @media(max-width:620px){
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel{border:0!important;background:none!important;box-shadow:none!important;padding:0!important;overflow:visible!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel::before{display:none!important}
@@ -6,10 +6,10 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .panel-head h2{font-size:25px!important;margin:3px 0 0!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .panel-head>div::after{content:'Gestiona tu wallet de forma rápida y segura.';display:block;margin-top:3px;color:#d9d0c3;font-size:10px}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .panel-head .icon-btn{width:42px!important;height:42px!important;margin-top:5px!important}
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card{min-height:116px!important;margin:0 0 8px!important;padding:15px 132px 14px 16px!important;border-radius:0 0 16px 16px!important}
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card::after{content:'💰';position:absolute;right:20px;top:24px;width:88px;height:74px;display:grid;place-items:center;font-size:56px;filter:sepia(.55) saturate(1.8) drop-shadow(0 0 12px rgba(244,195,82,.28))}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card{position:relative!important;min-height:116px!important;margin:0 0 8px!important;padding:15px 145px 14px 16px!important;border-radius:0 0 16px 16px!important;overflow:hidden!important;background:radial-gradient(155px 120px at 88% 50%,rgba(234,179,58,.16),transparent 72%),linear-gradient(145deg,#090c10,#070a0d)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card::after{content:''!important;position:absolute!important;right:8px!important;top:4px!important;width:142px!important;height:108px!important;display:block!important;background:url('../assets/brand/premium-wallet-r180.webp') center/contain no-repeat!important;filter:drop-shadow(0 7px 15px rgba(0,0,0,.45)) drop-shadow(0 0 11px rgba(246,190,69,.2))!important;pointer-events:none!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card>span{font-size:12px!important;color:#e1d7c6!important}
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card strong{display:block!important;margin:3px 0!important;font-size:34px!important;line-height:1!important;color:#f7d27e!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card strong{display:block!important;margin:3px 0!important;font-family:'Orbitron','Exo 2',system-ui,sans-serif!important;font-size:34px!important;line-height:1!important;color:#f7d27e!important;text-shadow:0 0 14px rgba(237,184,75,.18)!important;white-space:nowrap!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card small{font-size:10px!important;color:#e1d6c5!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .topup-box{padding:12px!important;border-radius:13px!important;margin:0 0 8px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .topup-box label{font-size:12px!important;font-weight:800!important}
