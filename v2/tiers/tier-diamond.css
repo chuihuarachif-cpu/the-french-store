@@ -1,153 +1,268 @@
-/* THE FRENCH STORE — OBSIDIAN PRISM / DIAMOND
-   Top visual tier: deeper space, restrained refraction and real 2.5D response.
-   No ornamental frames or rank seals; commerce hierarchy remains dominant. */
+/* THE FRENCH STORE — R171 NOIR AUREUM MEMBERSHIP UI
+   Gold and Diamond intentionally share ONE visual experience.
+   Base remains untouched because every rule below is scoped to a paid fs-tier.
+   Commerce/auth/pricing/payment behavior is not changed here. */
 
-html[data-fs-tier="diamond"]{
-  --t-accent:#bff7ff;
-  --t-accent-deep:#43cfe6;
-  --t-ring:rgba(191,247,255,.78);
-  --t-glow:rgba(109,224,244,.18);
-  --t-edge:rgba(168,236,247,.38);
-  --fs-edge:rgba(154,228,241,.17);
-  --fs-edge-strong:rgba(188,243,252,.36);
-  --t-perspective:1050px;
-  --t-prism:linear-gradient(115deg,rgba(151,236,247,.62),rgba(153,184,255,.36) 30%,rgba(203,173,255,.28) 48%,rgba(103,224,238,.44) 72%,rgba(228,253,255,.62));
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){
+  --fs-premium-bg:#050505;
+  --fs-premium-surface:#0c0d10;
+  --fs-premium-surface-2:#131418;
+  --fs-premium-gold:#e7bb63;
+  --fs-premium-gold-bright:#ffe0a0;
+  --fs-premium-gold-soft:#b98731;
+  --fs-premium-edge:rgba(231,187,99,.52);
+  --fs-premium-glow:rgba(231,187,99,.18);
+  --t-accent:var(--fs-premium-gold)!important;
+  --t-accent-deep:#9a6819!important;
+  --t-ring:rgba(255,218,142,.9)!important;
+  --t-glow:rgba(231,187,99,.18)!important;
+  --t-edge:rgba(231,187,99,.48)!important;
+  color-scheme:dark;
 }
 
-html[data-fs-tier="diamond"] body{
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]),
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{
+  background:#050505!important;
+  color:#fff8e9!important;
+}
+
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{
+  background-image:
+    radial-gradient(780px 430px at 12% -8%,rgba(210,151,42,.12),transparent 64%),
+    radial-gradient(680px 440px at 94% 12%,rgba(255,211,116,.08),transparent 62%),
+    linear-gradient(180deg,#090a0c 0%,#030405 48%,#090a0c 100%)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body::before{
+  opacity:.34!important;
+  background-image:
+    linear-gradient(rgba(231,187,99,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(231,187,99,.025) 1px,transparent 1px)!important;
+  background-size:46px 46px!important;
+}
+
+/* Compatibility marker retained for the legacy visual contract. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-membership-visual-signature{
+  background:linear-gradient(145deg,rgba(27,26,21,.98),rgba(7,7,8,.98));
+}
+
+/* Chrome */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+  background:linear-gradient(180deg,rgba(8,8,9,.97),rgba(4,5,6,.92))!important;
+  border-bottom:1px solid rgba(231,187,99,.5)!important;
+  box-shadow:0 8px 30px rgba(0,0,0,.48),0 1px 0 rgba(255,225,162,.06) inset!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::before{
+  border-radius:5px!important;
+  background:linear-gradient(145deg,#fff0bd 0 12%,#f2c66c 14% 36%,#9d6818 37% 61%,#fff1bf 62% 74%,#bd8327 75% 100%)!important;
+  box-shadow:0 0 0 1px rgba(255,225,155,.44),0 0 22px rgba(231,187,99,.28),inset 2px 2px 3px rgba(255,255,255,.32)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{
+  color:#f8d994!important;
+  text-shadow:0 0 16px rgba(231,187,99,.2)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.ghost-btn,.cart-btn,.icon-btn,.cart-inline){
+  border-color:rgba(231,187,99,.52)!important;
+  background:linear-gradient(180deg,rgba(22,21,18,.96),rgba(8,9,11,.98))!important;
+  color:#f8d994!important;
+  box-shadow:0 0 0 1px rgba(255,230,174,.025),inset 0 1px 0 rgba(255,236,193,.07)!important;
+}
+
+/* Hero: black + gold, with the owner's supplied FRENCH STORE logo on the right. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{
+  min-height:430px!important;
+  border:1px solid rgba(242,198,109,.76)!important;
+  border-radius:30px!important;
   background:
-    radial-gradient(960px 560px at 10% -14%,rgba(55,193,220,.20),transparent 63%),
-    radial-gradient(780px 540px at 92% 6%,rgba(110,112,222,.12),transparent 66%),
-    linear-gradient(180deg,#030b12 0%,#010509 50%,#040b12 100%);
+    radial-gradient(560px 380px at 78% 46%,rgba(203,143,33,.17),transparent 64%),
+    radial-gradient(430px 300px at 76% 20%,rgba(255,224,158,.07),transparent 70%),
+    linear-gradient(135deg,rgba(17,18,21,.99),rgba(5,6,8,.99) 54%,rgba(12,12,12,.99))!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,225,159,.035) inset,0 0 36px rgba(204,145,39,.07)!important;
 }
-html[data-fs-tier="diamond"] body::before{opacity:.42;background-size:48px 48px}
-
-html[data-fs-tier="diamond"] .brand::before{
-  background:linear-gradient(145deg,#f5ffff 0 8%,#a9f7ff 10% 28%,#6a8fe2 29% 45%,#d8c8ff 46% 58%,#54d7e8 59% 78%,#ddfdff 80% 100%);
-  box-shadow:0 0 0 1px rgba(220,252,255,.36),0 0 24px rgba(101,221,239,.2),inset 2px 2px 3px rgba(255,255,255,.4);
-}
-html[data-fs-tier="diamond"] .brand b{color:#f4fcff}
-html[data-fs-tier="diamond"] .topbar{border-bottom-color:rgba(167,237,248,.18);background:linear-gradient(180deg,rgba(4,15,24,.91),rgba(3,10,17,.78))}
-
-html[data-fs-tier="diamond"] .hero-copy>.eyebrow::after{
-  content:"DIAMOND";display:inline-flex;align-items:center;height:19px;padding:0 7px;margin-left:2px;border-radius:999px;
-  border:1px solid rgba(187,244,253,.28);background:linear-gradient(115deg,rgba(71,158,177,.2),rgba(118,91,176,.13));
-  color:#c9f7ff;font:800 8px 'Orbitron',sans-serif;letter-spacing:.11em;
-}
-
-html[data-fs-tier="diamond"] .hero{
-  border-color:rgba(175,239,249,.23);
-  background:
-    radial-gradient(560px 390px at 80% 48%,rgba(66,205,229,.20),transparent 64%),
-    radial-gradient(460px 340px at 66% 4%,rgba(130,115,232,.10),transparent 70%),
-    linear-gradient(135deg,rgba(7,27,40,.99),rgba(3,10,17,.995) 58%,rgba(8,27,39,.99));
-  box-shadow:0 30px 74px rgba(0,0,0,.46),inset 0 1px 0 rgba(226,253,255,.06),inset 0 -1px 0 rgba(98,201,223,.04);
-}
-html[data-fs-tier="diamond"] .hero::before{
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::before{
   content:""!important;
+  position:absolute!important;inset:0!important;pointer-events:none!important;z-index:-1!important;
   background:
-    linear-gradient(120deg,transparent 0 55%,rgba(186,246,255,.05) 55.2% 55.6%,transparent 56%),
-    radial-gradient(circle at 80% 48%,transparent 0 29%,rgba(178,239,249,.075) 29.3% 29.6%,transparent 30%),
-    radial-gradient(circle at 80% 48%,transparent 0 40%,rgba(164,177,246,.035) 40.2% 40.5%,transparent 41%);
+    linear-gradient(122deg,transparent 0 55%,rgba(245,199,102,.045) 55.2% 55.65%,transparent 56%),
+    radial-gradient(circle at 79% 48%,transparent 0 27%,rgba(234,188,91,.075) 27.4% 27.8%,transparent 28.2%)!important;
 }
-html[data-fs-tier="diamond"] .hero::after{
-  background:linear-gradient(105deg,transparent 31%,rgba(163,240,250,.045) 44%,rgba(241,255,255,.20) 49%,rgba(197,177,255,.075) 52%,rgba(105,219,238,.04) 56%,transparent 68%);
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::after{
+  content:""!important;position:absolute!important;inset:-28% -16%!important;pointer-events:none!important;z-index:1!important;
+  background:linear-gradient(112deg,transparent 38%,rgba(255,224,154,.02) 43%,rgba(255,239,205,.15) 49%,rgba(229,180,77,.055) 52%,transparent 60%)!important;
+  transform:translate3d(-30%,0,0)!important;opacity:.7!important;
+  animation:fsPremiumGoldSweep 8.5s ease-in-out infinite!important;
 }
-html[data-r8-motion="full"][data-fs-tier="diamond"] .hero::after{animation:fsDiamondHeroSweep 9.2s cubic-bezier(.65,0,.35,1) infinite alternate}
-@keyframes fsDiamondHeroSweep{from{transform:translate3d(35%,0,0) rotate(10deg)}to{transform:translate3d(-13%,0,0) rotate(10deg)}}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-copy{z-index:3!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .eyebrow{
+  color:#d9c39b!important;text-shadow:0 0 12px rgba(231,187,99,.13)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero h1{
+  color:#fff3d2!important;
+  background:linear-gradient(112deg,#fff7e5 0 28%,#f3ca78 62%,#fff1c4 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  text-shadow:none!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero p{color:#d4c9b7!important}
 
-html[data-fs-tier="diamond"] .eyebrow{color:#98e8f4}
-@supports ((-webkit-background-clip:text) or (background-clip:text)){
-  html[data-fs-tier="diamond"] .hero h1{
-    background:linear-gradient(110deg,#fff 0 35%,#d6fbff 55%,#c5d9ff 73%,#f1eaff 88%,#b6f5fc 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{
+  width:clamp(210px,28vw,330px)!important;
+  aspect-ratio:1!important;
+  display:block!important;
+  justify-self:center!important;
+  border-radius:50%!important;
+  font-size:0!important;
+  background:url('../assets/brand/membership-premium-logo.webp') center/contain no-repeat!important;
+  filter:drop-shadow(0 24px 42px rgba(0,0,0,.5)) drop-shadow(0 0 26px rgba(231,187,99,.14))!important;
+  transform:translateZ(0)!important;
+  animation:fsPremiumLogoFloat 6s ease-in-out infinite!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem::before{content:none!important;display:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem::after{
+  content:""!important;position:absolute!important;display:block!important;width:78%!important;height:20%!important;left:11%!important;bottom:2%!important;
+  border-radius:50%!important;background:radial-gradient(ellipse,rgba(231,187,99,.23),rgba(185,126,25,.07) 44%,transparent 72%)!important;
+  filter:blur(12px)!important;opacity:.7!important;
 }
 
-html[data-fs-tier="diamond"] .primary-btn{
-  background:linear-gradient(135deg,#efffff,#a9f5fc 34%,#59d8e8 65%,#62a8d8);border-color:rgba(236,255,255,.82);color:#031f27;
-  box-shadow:0 12px 32px rgba(88,206,228,.22),inset 0 1px 0 rgba(255,255,255,.82);
+/* Buttons */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .primary-btn{
+  border-color:#ffdda0!important;
+  background:linear-gradient(180deg,#ffe7ad 0%,#efc36b 48%,#bd7f22 100%)!important;
+  color:#181006!important;
+  box-shadow:0 10px 28px rgba(214,153,45,.22),inset 0 1px 0 rgba(255,255,255,.78),0 0 18px rgba(232,184,87,.09)!important;
 }
-html[data-fs-tier="diamond"] .secondary-btn{border-color:rgba(166,235,247,.22);background:linear-gradient(180deg,rgba(16,41,56,.82),rgba(7,21,32,.94));color:#e3fbff}
-html[data-fs-tier="diamond"] .category-tabs button.active{background:linear-gradient(120deg,rgba(40,113,132,.38),rgba(82,83,142,.22));border-color:rgba(185,243,252,.32);color:#e1fbff}
-
-/* CSS jewel gets more facets and a calmer spectral edge. */
-html[data-fs-tier="diamond"] .hero-gem::before{
-  background:
-    linear-gradient(150deg,rgba(255,255,255,.9) 0 7%,transparent 8% 100%),
-    linear-gradient(35deg,transparent 0 47%,rgba(255,255,255,.18) 48% 50%,transparent 51% 100%),
-    conic-gradient(from 12deg,#0d3548,#9df8ff,#647fe1,#e0cfff,#4fd9e8,#efffff,#286f9c,#b8efff,#0d3548);
-  box-shadow:0 34px 80px rgba(0,0,0,.54),0 0 58px rgba(89,218,238,.22),inset 0 0 0 1px rgba(255,255,255,.08);
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .secondary-btn{
+  border-color:rgba(231,187,99,.5)!important;
+  background:linear-gradient(180deg,rgba(24,23,20,.95),rgba(8,9,11,.98))!important;
+  color:#f9d998!important;
 }
-html[data-fs-tier="diamond"] .hero-gem::after{background:radial-gradient(ellipse,rgba(103,224,244,.32),rgba(92,120,220,.10) 43%,transparent 72%)}
-html[data-r8-motion="full"][data-fs-tier="diamond"] .hero-gem::before{animation:fsDiamondJewel 7.8s ease-in-out infinite}
-@keyframes fsDiamondJewel{0%,100%{transform:translateY(0) rotateX(9deg) rotateY(-16deg) rotateZ(2deg)}50%{transform:translateY(-12px) rotateX(3deg) rotateY(14deg) rotateZ(-2deg)}}
 
-/* 2.5D depth uses the existing tier-depth.js variables. It is intentionally subtle. */
-html[data-fs-tier="diamond"] .category-grid,html[data-fs-tier="diamond"] .game-grid,html[data-fs-tier="diamond"] .game-list{perspective:var(--t-perspective);perspective-origin:50% 42%}
-html[data-fs-tier="diamond"] .category-card{
+/* Categories */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-grid{perspective:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card{
+  --card-accent:#e7bb63!important;
   border-image:none!important;clip-path:none!important;
-  border-color:rgba(166,234,246,.17)!important;
-  background:linear-gradient(145deg,rgba(10,28,41,.98),rgba(5,16,25,.995))!important;
-  box-shadow:0 15px 40px rgba(0,0,0,.3),inset 0 1px 0 rgba(226,253,255,.045);
-  transform-style:preserve-3d;
-  transform:rotateX(calc(var(--rx,0) * .42deg)) rotateY(calc(var(--ry,0) * .42deg)) translateZ(0);
+  border:1px solid rgba(231,187,99,.5)!important;
+  background:
+    linear-gradient(130deg,rgba(255,223,153,.025),transparent 37%),
+    linear-gradient(145deg,rgba(20,21,24,.98),rgba(7,8,10,.99))!important;
+  color:#fff8ea!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,231,179,.055)!important;
+  transform:none!important;
 }
-html[data-fs-tier="diamond"] .category-card::before{
-  content:""!important;width:2px!important;inset:0 auto 0 0!important;border-radius:0!important;
-  background:linear-gradient(180deg,transparent,#9df4ff 28%,#a9bcff 54%,#d1bfff 69%,transparent)!important;opacity:.78!important;
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card::before{
+  background:linear-gradient(180deg,transparent,#f0c76d 30% 70%,transparent)!important;
+  box-shadow:0 0 12px rgba(231,187,99,.24)!important;
 }
-html[data-fs-tier="diamond"] .category-card::after{
-  content:"";z-index:-1;width:190px;height:190px;right:-96px;top:-104px;border-radius:50%;
-  background:radial-gradient(circle,rgba(111,225,243,.15),rgba(130,127,232,.055) 38%,transparent 70%);opacity:.92;
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card::after{
+  background:radial-gradient(circle,rgba(231,187,99,.14),transparent 68%)!important;
 }
-html[data-fs-tier="diamond"] .category-card>span{
-  background:linear-gradient(145deg,rgba(61,145,164,.20),rgba(63,60,124,.12) 52%,rgba(6,17,26,.94));
-  border-color:rgba(185,242,251,.25);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 20px rgba(0,0,0,.12);
-  transform:translateZ(8px);
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>span{
+  color:#f5cf7d!important;
+  background:linear-gradient(145deg,rgba(231,187,99,.13),rgba(231,187,99,.035))!important;
+  border-color:rgba(231,187,99,.22)!important;
+  filter:grayscale(.2) sepia(.55) saturate(1.3) brightness(1.08)!important;
 }
-html[data-fs-tier="diamond"] .category-card>span::before{color:#c8f8ff}
-html[data-fs-tier="diamond"] .category-card>b{color:#f5fcff!important;transform:translateZ(5px)}
-html[data-fs-tier="diamond"] .category-card>small{transform:translateZ(3px)}
-html[data-fs-tier="diamond"] .category-card.cuentas-entry .cuentas-entry-cta{color:#b9f2f8}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card b{color:#fae0a6!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card small{color:#c9c0b2!important}
 
-html[data-fs-tier="diamond"] .panel,
-html[data-fs-tier="diamond"] .game-card,
-html[data-fs-tier="diamond"] .balance-card,
-html[data-fs-tier="diamond"] .profile-card,
-html[data-fs-tier="diamond"] .topup-box,
-html[data-fs-tier="diamond"] .record,
-html[data-fs-tier="diamond"] .modal-card{border-color:rgba(157,229,242,.17);box-shadow:0 20px 54px rgba(0,0,0,.28),inset 0 1px 0 rgba(226,253,255,.035)}
-html[data-fs-tier="diamond"] .game-card{transform-style:preserve-3d;transform:rotateX(calc(var(--rx,0) * .34deg)) rotateY(calc(var(--ry,0) * .34deg)) translateZ(0)}
-html[data-fs-tier="diamond"] .game-logo{border-color:rgba(170,238,249,.23);transition:transform 240ms var(--t-ease-out),box-shadow 240ms ease}
-html[data-fs-tier="diamond"] .package-row{border-color:rgba(151,224,238,.14)}
-html[data-fs-tier="diamond"] .package-price,html[data-fs-tier="diamond"] .cart-total strong,html[data-fs-tier="diamond"] .balance-card strong{color:#d7faff}
-html[data-fs-tier="diamond"] .avatar{background:linear-gradient(145deg,#174352,#18233d);color:#d8fbff;box-shadow:inset 0 0 0 1px rgba(191,247,255,.24),0 8px 20px rgba(0,0,0,.24)}
+/* Panels, catalog, wallet, orders, profile, admin and dialogs */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .panel:not(.admin-panel),
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .profile-panel,
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .admin-panel,
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .modal-card{
+  border-color:rgba(231,187,99,.38)!important;
+  background:linear-gradient(155deg,rgba(35,28,15,.24),transparent 42%),linear-gradient(180deg,#101114,#07080a)!important;
+  box-shadow:0 18px 46px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,233,188,.045)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.balance-card,.record,.topup-box){
+  border-color:rgba(231,187,99,.38)!important;
+  background:linear-gradient(135deg,rgba(96,67,20,.16),transparent 56%),#0c0d10!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .balance-card strong{color:#f3cf82!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .profile-card{
+  border-color:rgba(231,187,99,.52)!important;
+  background:linear-gradient(135deg,rgba(94,65,19,.18),transparent 50%),#0c0d10!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,235,192,.05)!important;
+}
+html[data-fs-tier="gold"] .profile-card::after{content:"GOLD"!important;color:rgba(244,207,130,.25)!important}
+html[data-fs-tier="diamond"] .profile-card::after{content:"DIAMOND"!important;color:rgba(244,207,130,.25)!important}
 
-html[data-fs-tier="diamond"] .bottom-nav{border-color:rgba(165,235,247,.16);background:linear-gradient(180deg,rgba(7,24,35,.95),rgba(3,12,20,.985));box-shadow:0 -18px 52px rgba(0,0,0,.4),inset 0 1px 0 rgba(225,253,255,.035)}
-html[data-fs-tier="diamond"] .bottom-nav button.active{background:linear-gradient(120deg,rgba(38,111,130,.30),rgba(79,75,138,.18));color:#d8fbff}
-html[data-fs-tier="diamond"] .bottom-nav button.active::after{background:linear-gradient(90deg,#71e8f3,#b6ccff,#d9c7ff);box-shadow:0 0 14px rgba(113,232,243,.34)}
+/* Product/game surfaces */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.r6-game-card,.r6-feature-card,.game-card,.r6-package-card){
+  border-color:rgba(231,187,99,.38)!important;
+  background-color:#0d0e11!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,234,187,.045)!important;
+  transform:none!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.r6-game-card,.r6-feature-card,.game-card,.r6-package-card):hover{
+  border-color:rgba(255,216,132,.72)!important;
+  box-shadow:0 16px 36px rgba(0,0,0,.4),0 0 24px rgba(231,187,99,.09)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.game-grid,.game-list,.category-grid){perspective:none!important}
 
-/* Existing scroll signal moves only the ambient highlight: no bright sweep across copy. */
-html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="diamond"] .category-card::after{
-  transform:translate3d(0,calc(var(--fs-shine,0) * 16%),0);transition:transform .08s linear;
+/* Membership/Rewards content stays functional but adopts the same palette. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.fs-rank-intro,.fs-launch-goal,.fs-rewards-reserve,.fs-active-pass,.fs-pass-card,.fs-rank-upgrade-card,.fs-rank-max-card,.fs-rewarded-ads-panel,.fs-post-purchase-reward-card){
+  border-color:rgba(231,187,99,.42)!important;
+  background:linear-gradient(145deg,rgba(49,35,10,.48),rgba(9,10,12,.96))!important;
+  box-shadow:inset 0 1px 0 rgba(255,234,185,.045),0 12px 30px rgba(0,0,0,.24)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.fs-reward-balance,.fs-redeem-box,.fs-rank-countdown){
+  border-color:rgba(231,187,99,.32)!important;background:#0d0e11!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.fs-reward-balance strong,.fs-rank-countdown strong,.fs-active-pass b){color:#f4d084!important}
+
+/* Bottom navigation */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{
+  border:1px solid rgba(231,187,99,.38)!important;
+  border-bottom:0!important;
+  background:linear-gradient(180deg,rgba(16,17,19,.94),rgba(7,8,10,.98))!important;
+  box-shadow:0 -10px 34px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,236,194,.055)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button{color:#c9b88f!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button.active{
+  color:#ffe09b!important;
+  background:linear-gradient(145deg,rgba(92,63,18,.48),rgba(17,16,14,.88))!important;
+  border-color:rgba(243,200,113,.62)!important;
+  box-shadow:inset 0 1px 0 rgba(255,239,202,.08),0 0 20px rgba(231,187,99,.08)!important;
+  text-shadow:0 0 10px rgba(231,187,99,.15)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp{
+  border:2px solid #efc66d!important;
+  box-shadow:0 10px 32px rgba(0,0,0,.45),0 0 24px rgba(231,187,99,.18)!important;
 }
 
-@media(hover:hover) and (pointer:fine){
-  html[data-fs-tier="diamond"] .category-card,html[data-fs-tier="diamond"] .game-card{will-change:transform}
-  html[data-fs-tier="diamond"] .category-card:hover{border-color:rgba(190,245,253,.34)!important;box-shadow:0 25px 56px rgba(0,0,0,.39),0 0 30px rgba(93,214,235,.065)}
-  html[data-fs-tier="diamond"] .category-card:hover>span{transform:translateZ(16px) scale(1.025)}
-  html[data-fs-tier="diamond"] .game-card:hover{border-color:rgba(178,239,249,.28);box-shadow:0 23px 52px rgba(0,0,0,.36)}
-  html[data-fs-tier="diamond"] .game-card:hover .game-logo{transform:translateZ(12px) scale(1.025);box-shadow:0 12px 26px rgba(0,0,0,.34)}
-  html[data-fs-tier="diamond"] .primary-btn:hover{box-shadow:0 17px 40px rgba(88,206,228,.28),inset 0 1px 0 rgba(255,255,255,.86)}
+/* Same motion contract for BOTH paid memberships. */
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card,
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.r6-game-card,.r6-feature-card){
+  --legacy-rx:var(--rx,0);--legacy-ry:var(--ry,0);
 }
+@keyframes fsPremiumGoldSweep{
+  0%,18%{transform:translate3d(-46%,0,0);opacity:0}
+  34%{opacity:.74}
+  64%{transform:translate3d(42%,0,0);opacity:.58}
+  78%,100%{transform:translate3d(42%,0,0);opacity:0}
+}
+@keyframes fsPremiumLogoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
+@media(max-width:700px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{
+    min-height:auto!important;grid-template-columns:1fr!important;padding:26px 20px 22px!important;gap:18px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{
+    width:min(210px,58vw)!important;order:-1!important;margin:-6px auto -12px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero h1{font-size:clamp(32px,9vw,46px)!important}
+}
+@media(max-width:430px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{border-radius:23px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions{display:grid!important;grid-template-columns:1fr!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions button{width:100%!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card{min-height:112px!important}
+}
 @media(hover:none),(pointer:coarse){
-  html[data-fs-tier="diamond"] .category-card,html[data-fs-tier="diamond"] .game-card{transform:none;transform-style:flat;will-change:auto}
-  html[data-fs-tier="diamond"] .category-card>span,html[data-fs-tier="diamond"] .category-card>b,html[data-fs-tier="diamond"] .category-card>small{transform:none}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.r6-game-card,.r6-feature-card){transform:none!important}
 }
 @media(prefers-reduced-motion:reduce){
-  html[data-fs-tier="diamond"] .hero::after,html[data-fs-tier="diamond"] .hero-gem::before{animation:none!important}
-  html[data-fs-tier="diamond"] .category-card,html[data-fs-tier="diamond"] .game-card{transform:none!important;will-change:auto!important}
-  html[data-fs-shine="1"][data-fs-tier="diamond"] .category-card::after{transform:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{animation:none!important}
 }
