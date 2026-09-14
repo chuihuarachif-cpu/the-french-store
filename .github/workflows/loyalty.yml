@@ -34,7 +34,7 @@ jobs:
           grep -Fq './loyalty.css' v2/bootstrap.js
           grep -Fq './loyalty.js' v2/bootstrap.js
           grep -Fq 'installLoyaltyAuthGate' v2/bootstrap.js
-          grep -Fq 'fs-pass-gold' v2/loyalty.css
+          grep -Fq 'fs-pass-card' v2/loyalty.css
           grep -Fq 'fs-pass-diamond' v2/loyalty.css
           ! grep -Fq 'html[data-fs-membership=' v2/loyalty.css
           grep -Fq 'fs-rank-intro' v2/loyalty.css
