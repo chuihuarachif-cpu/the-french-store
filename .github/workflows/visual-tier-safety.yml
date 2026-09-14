@@ -25,6 +25,11 @@ jobs:
       - name: Obsidian Prism visual contract
         run: node scripts/test-r167-tier-frames.mjs
 
+      - name: Tier loader syntax and release cache key
+        run: |
+          node --check v2/tiers/tier-gate.js
+          grep -q '20260914-obsidian-prism' v2/tiers/tier-gate.js
+
       - name: CSS structural and secret safety
         run: |
           python3 - <<'PY'
