@@ -1,12 +1,8 @@
-/* THE FRENCH STORE — R182 premium release loader.
-   Presentation only. Gold/Diamond are selected by tier-gate from the existing
-   backend-authoritative active pass. This loader only attaches visual assets;
-   it never grants membership or reads/writes commerce/payment/order data. */
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r182-20260914';
-  const RELEASE = '20260914-r182-fidelity';
+  const VERSION = 'premium-release-r187-20260914';
+  const RELEASE = '20260914-r187-reference-match';
   const root = document.documentElement;
   let active = '';
 
@@ -23,6 +19,9 @@
       reference.rel = 'stylesheet';
       reference.href = `./tiers/tier-reference-r178.css?v=${RELEASE}`;
       document.head.appendChild(reference);
+    } else {
+      const href = `./tiers/tier-reference-r178.css?v=${RELEASE}`;
+      if (reference.getAttribute('href') !== href) reference.href = href;
     }
 
     if (!document.getElementById('fs-premium-reference-r177-js')) {
@@ -42,6 +41,16 @@
       art.defer = true;
       document.head.appendChild(art);
     }
+
+    if (!document.getElementById('fs-premium-reference-r185-js')) {
+      const fidelity = document.createElement('script');
+      fidelity.id = 'fs-premium-reference-r185-js';
+      fidelity.src = `./tiers/tier-reference-r185.js?v=${RELEASE}`;
+      fidelity.defer = true;
+      document.head.appendChild(fidelity);
+    } else {
+      window.FSPremiumR185?.refresh?.();
+    }
   }
 
   function apply() {
@@ -50,6 +59,7 @@
       active = '';
       root.removeAttribute('data-fs-premium-release');
       window.FSPremiumReference?.refresh?.();
+      window.FSPremiumR185?.refresh?.();
       return;
     }
 

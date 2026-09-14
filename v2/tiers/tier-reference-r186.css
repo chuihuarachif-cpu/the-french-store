@@ -1,0 +1,102 @@
+/* THE FRENCH STORE — R186 visual convergence pass.
+   Presentation only; loaded exclusively after a backend-authoritative Gold/Diamond tier resolves. */
+@media(max-width:620px){
+  /* The approved hero shows the complete mascot/wordmark rather than a crop. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .fs-premium-hero-art{
+    right:-2px!important;top:24px!important;width:160px!important;height:188px!important;
+    object-fit:contain!important;object-position:center top!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions :is(.primary-btn,.secondary-btn){font-size:12.5px!important}
+
+  /* Reference icons are clean metallic silhouettes, not OS emoji tiles. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>span{
+    width:36px!important;height:36px!important;border:0!important;border-radius:0!important;
+    background:none!important;box-shadow:none!important;filter:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>span::before{
+    width:31px!important;height:31px!important;
+    background:linear-gradient(145deg,#fff5c9 0%,#f0c568 44%,#c98b27 72%,#ffe49b 100%)!important;
+    filter:drop-shadow(0 0 6px rgba(255,202,82,.42))!important;
+  }
+
+  /* PROFILE — force the compact reference geometry and paint the mascot as a
+     deterministic background, avoiding any async image-decoration race. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel::before{height:206px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
+    box-sizing:border-box!important;display:block!important;
+    width:auto!important;height:132px!important;min-height:132px!important;max-height:132px!important;
+    margin:0 9px!important;padding:0!important;overflow:hidden!important;
+    background:
+      url('../assets/brand/french-store-mascot.webp') right -6px top -5px/158px auto no-repeat,
+      radial-gradient(175px 138px at 91% 31%,rgba(18,126,243,.31),transparent 69%),
+      linear-gradient(96deg,#070a0d 0%,#05080b 58%,#06111e 100%)!important;
+  }
+  html[data-fs-tier="diamond"] #view-perfil .profile-card{
+    background:
+      url('../assets/brand/french-store-mascot.webp') right -6px top -5px/158px auto no-repeat,
+      radial-gradient(180px 145px at 91% 31%,rgba(19,158,255,.43),transparent 68%),
+      linear-gradient(96deg,#06101a 0%,#04080d 57%,#041526 100%)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-profile-art{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.avatar{
+    position:absolute!important;left:15px!important;top:20px!important;
+    width:56px!important;height:56px!important;font-size:18px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>div:nth-child(2){
+    position:absolute!important;left:84px!important;top:23px!important;width:160px!important;max-width:160px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>div:nth-child(2)>b{
+    display:block!important;font-size:16px!important;line-height:1.06!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileEmail{
+    display:block!important;margin-top:3px!important;max-width:170px!important;
+    font-size:10.5px!important;line-height:1.15!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .fs-premium-profile-badge{
+    position:absolute!important;z-index:5!important;top:17px!important;right:12px!important;
+    min-width:90px!important;min-height:31px!important;padding:5px 10px!important;font-size:11.5px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .fs-premium-profile-rank{
+    position:absolute!important;z-index:5!important;left:15px!important;right:15px!important;bottom:8px!important;
+    min-height:30px!important;height:30px!important;padding:0 10px!important;font-size:9.5px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{margin-top:9px!important;padding:10px 12px!important}
+
+  /* PASS cards match the approved Gold/blue split without changing plan truth. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{padding:10px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head h3{
+    font-size:15.5px!important;line-height:1.08!important;white-space:nowrap!important;letter-spacing:-.025em!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head>div::after{font-size:8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card{
+    height:158px!important;min-height:158px!important;padding:9px 8px 39px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card::before{
+    right:-4px!important;top:30px!important;width:88px!important;height:96px!important;opacity:.68!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
+    right:-4px!important;top:25px!important;width:94px!important;height:100px!important;opacity:.84!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-title{max-width:108px!important;gap:4px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-title>span{
+    width:26px!important;height:26px!important;flex-basis:26px!important;font-size:20px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-title b{font-size:0!important;line-height:1!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-title small{font-size:0!important;line-height:1!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold .fs-pass-title b::after{content:'GOLD PASS';font-size:10.5px!important;color:#fff0bd!important;white-space:nowrap!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold .fs-pass-title small::after{content:'x1.5 Rewards';display:block;margin-top:3px;font-size:7.5px!important;color:#ead59d!important;white-space:nowrap!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond .fs-pass-title b::after{content:'DIAMOND PASS';font-size:10.5px!important;color:#e9faff!important;white-space:nowrap!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond .fs-pass-title small::after{content:'x2 Rewards';display:block;margin-top:3px;font-size:7.5px!important;color:#aee9ff!important;white-space:nowrap!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card ul{
+    position:relative!important;z-index:3!important;max-width:111px!important;margin:7px 0 0!important;padding:0!important;list-style:none!important;font-size:0!important;line-height:0!important;overflow:visible!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card ul>li{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card ul::after{
+    display:block!important;white-space:pre-line!important;font:600 7.2px/1.55 'Exo 2',system-ui,sans-serif!important;color:#eee5d3!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold ul::after{content:'✓  Más recompensas\A✓  Ofertas exclusivas\A✓  Soporte prioritario'}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond ul::after{content:'✓  Máximas recompensas\A✓  Acceso anticipado\A✓  Beneficios exclusivos\A✓  Soporte VIP';color:#d9f6ff!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card button{
+    left:7px!important;right:7px!important;bottom:7px!important;width:calc(100% - 14px)!important;height:29px!important;min-height:29px!important;font-size:7.8px!important;
+  }
+}
