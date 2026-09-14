@@ -1,0 +1,16 @@
+/* THE FRENCH STORE — R178 screenshot-review polish. Presentation only. */
+@media(max-width:620px){
+  /* The approved premium captures are app-like: legal/social footer stays out of the paid mobile shell. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer{display:none!important}
+
+  /* Paid profile reference prioritizes the two pass cards instead of the long upgrade explainer. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsRankExtras{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-rewards-divider,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head:nth-of-type(2),
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-rewards-reserve{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-cercle-section{margin:0!important;padding:0!important;border:0!important;background:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-fine{display:none!important}
+
+  /* Match the bright reference readability; premium content must not inherit stale reveal opacity. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(#view-wallet,#view-pedidos,#view-perfil) :is(.panel,.panel-head,.record,.profile-card,.topup-box,.balance-card){opacity:1!important;filter:none!important}
+}
