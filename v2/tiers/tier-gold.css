@@ -1,5 +1,5 @@
 /* NOIR AUREUM MEMBERSHIP UI — shared Gold + Diamond wrapper. */
-@import url('./tier-reference-match.css?v=20260914-r172');
+@import url('./tier-reference-match.css?v=20260914-r173');
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){--fs-premium-gold:#e7bb63;--legacy-rx:var(--rx,0);--legacy-ry:var(--ry,0)}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]),html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{background:#050506!important}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{background-image:url('../assets/brand/membership-premium-logo.webp')!important}
@@ -7,5 +7,11 @@ html[data-fs-tier="gold"] .profile-card::after{content:"GOLD"}
 html[data-fs-tier="diamond"] .profile-card::after{content:"DIAMOND"}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.game-card,.r6-game-card,.r6-feature-card){border-image:none!important}
 html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-membership-visual-signature{--paid-motion:1}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-premium-ribbon{display:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem.fs-brand-ready{display:block!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio :is(.category-card,.compact-panel,.game-card,.r6-feature-card).fs-reveal{opacity:1!important;transform:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card:not(.cuentas-entry)::after{z-index:4!important;pointer-events:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{bottom:max(7px,env(safe-area-inset-bottom))!important;height:calc(74px + env(safe-area-inset-bottom))!important;padding-bottom:calc(7px + env(safe-area-inset-bottom))!important}
+@media(max-width:620px){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem.fs-brand-ready{width:128px!important;max-width:128px!important;margin-inline:0!important}}
 @media(hover:none),(pointer:coarse){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.game-card,.r6-game-card,.r6-feature-card){transform:none!important}}
 @media(prefers-reduced-motion:reduce){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *::before,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *::after{animation:none!important}}
