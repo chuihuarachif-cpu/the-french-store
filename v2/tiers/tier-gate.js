@@ -15,7 +15,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'tier-gate-v2-20260911';
+  const VERSION = 'tier-gate-v3-20260914-obsidian-prism';
 
   /* Base ships statically on <html data-fs-tier="base"> in index.html, so it
      paints with no flash and this module only ever upgrades from there. */
@@ -53,7 +53,7 @@
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.id = `fs-tier-${level}-css`;
-    link.href = `./tiers/tier-${level}.css?v=20260911-r160`;
+    link.href = `./tiers/tier-${level}.css?v=20260914-obsidian-prism`;
     const promise = new Promise((resolve) => {
       link.addEventListener('load', () => resolve(true), { once: true });
       link.addEventListener('error', () => resolve(false), { once: true });
