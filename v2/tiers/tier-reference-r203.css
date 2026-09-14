@@ -6,7 +6,7 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{
     content:normal!important;
     width:100%!important;height:82px!important;
-    object-fit:cover!important;object-position:center!important;
+    object-fit:contain!important;object-position:center!important;
     padding:0!important;background:#080b0e!important;
   }
 }
