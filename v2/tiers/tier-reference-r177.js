@@ -22,14 +22,16 @@
   function ensureBadge(host) {
     if (!host || !PAID.has(tier())) return;
     const c = copyFor(tier());
+    const markup = `<span class="fs-premium-rank-icon" aria-hidden="true">${c.icon}</span><span>${c.name} · ${c.reward}</span>`;
     let badge = host.querySelector(':scope > .fs-premium-rank-badge');
     if (!badge) {
       badge = document.createElement('div');
       badge.className = 'fs-premium-rank-badge';
-      badge.setAttribute('aria-label', `${c.name}, ${c.reward}`);
       host.appendChild(badge);
     }
-    badge.innerHTML = `<span class="fs-premium-rank-icon" aria-hidden="true">${c.icon}</span><span>${c.name} · ${c.reward}</span>`;
+    const aria = `${c.name}, ${c.reward}`;
+    if (badge.getAttribute('aria-label') !== aria) badge.setAttribute('aria-label', aria);
+    if (badge.innerHTML !== markup) badge.innerHTML = markup;
   }
 
   function ensureProfileRank() {
@@ -43,7 +45,8 @@
       badge.className = 'fs-premium-profile-badge';
       card.appendChild(badge);
     }
-    badge.textContent = `${c.icon} ${c.name}`;
+    const badgeText = `${c.icon} ${c.name}`;
+    if (badge.textContent !== badgeText) badge.textContent = badgeText;
 
     let rank = card.querySelector(':scope > .fs-premium-profile-rank');
     if (!rank) {
@@ -51,7 +54,8 @@
       rank.className = 'fs-premium-profile-rank';
       card.appendChild(rank);
     }
-    rank.innerHTML = `<span>${c.icon} ${c.name === 'GOLD' ? 'Gold Rank' : 'Diamond Rank'}</span><span>${c.reward}</span>`;
+    const rankMarkup = `<span>${c.icon} ${c.name === 'GOLD' ? 'Gold Rank' : 'Diamond Rank'}</span><span>${c.reward}</span>`;
+    if (rank.innerHTML !== rankMarkup) rank.innerHTML = rankMarkup;
   }
 
   function decorateDeliveredOrders() {
@@ -60,12 +64,12 @@
     for (const record of list.querySelectorAll('.record')) {
       const label = record.querySelector('.status')?.textContent?.trim().toLowerCase();
       const delivered = label === 'entregado';
-      let bar = record.querySelector(':scope > .fs-premium-delivered-bar');
+      const bar = record.querySelector(':scope > .fs-premium-delivered-bar');
       if (delivered && !bar) {
-        bar = document.createElement('div');
-        bar.className = 'fs-premium-delivered-bar';
-        bar.textContent = '✓ Entregado';
-        record.appendChild(bar);
+        const next = document.createElement('div');
+        next.className = 'fs-premium-delivered-bar';
+        next.textContent = '✓ Entregado';
+        record.appendChild(next);
       } else if (!delivered && bar) {
         bar.remove();
       }
@@ -73,8 +77,9 @@
   }
 
   function removeDecorations() {
-    document.querySelectorAll('.fs-premium-rank-badge,.fs-premium-profile-badge,.fs-premium-profile-rank,.fs-premium-delivered-bar').forEach(el => el.remove());
-    delete root.dataset.fsPremiumReference;
+    const nodes = document.querySelectorAll('.fs-premium-rank-badge,.fs-premium-profile-badge,.fs-premium-profile-rank,.fs-premium-delivered-bar');
+    nodes.forEach(el => el.remove());
+    if (root.hasAttribute('data-fs-premium-reference')) root.removeAttribute('data-fs-premium-reference');
   }
 
   function decorate() {
@@ -91,7 +96,7 @@
     ensureBadge(document.querySelector('#view-pedidos > .panel'));
     ensureProfileRank();
     decorateDeliveredOrders();
-    root.dataset.fsPremiumReference = VERSION;
+    if (root.dataset.fsPremiumReference !== VERSION) root.dataset.fsPremiumReference = VERSION;
   }
 
   function queue() {
@@ -105,7 +110,7 @@
     observer = new MutationObserver(queue);
     observer.observe(root, { attributes: true, attributeFilter: ['data-fs-tier'] });
     const main = document.getElementById('mainContent');
-    if (main) observer.observe(main, { childList: true, subtree: true, characterData: true });
+    if (main) observer.observe(main, { childList: true, subtree: true });
     document.addEventListener('fs-tier-resolved', queue);
     document.addEventListener('fs:catalog-updated', queue);
   }
