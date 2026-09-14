@@ -1,4 +1,4 @@
-/* THE FRENCH STORE — R178 screenshot-review polish. Presentation only. */
+/* THE FRENCH STORE — R179 screenshot-review polish. Presentation only. */
 @media(max-width:620px){
   /* The approved premium captures are app-like: legal/social footer stays out of the paid mobile shell. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer{display:none!important}
@@ -11,6 +11,40 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-cercle-section{margin:0!important;padding:0!important;border:0!important;background:none!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-fine{display:none!important}
 
-  /* Match the bright reference readability; premium content must not inherit stale reveal opacity. */
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(#view-wallet,#view-pedidos,#view-perfil) :is(.panel,.panel-head,.record,.profile-card,.topup-box,.balance-card){opacity:1!important;filter:none!important}
+  /* Static premium mobile captures must never get stuck mid reveal. This also removes unnecessary paint work. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-reveal,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-reveal.fs-visible,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .view.active{
+    opacity:1!important;filter:none!important;transform:none!important;transition:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(#view-inicio,#view-tienda,#view-wallet,#view-pedidos,#view-perfil) :is(.panel,.compact-panel,.panel-head,.record,.profile-card,.topup-box,.balance-card,.category-card,.r6-game-card,.r6-feature-card){opacity:1!important;filter:none!important}
+
+  /* tier-base intentionally ghosts the jewel on phones; paid references instead use the full mascot. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem.fs-brand-ready{
+    position:relative!important;right:auto!important;top:auto!important;opacity:1!important;z-index:2!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem::before,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem::after{display:none!important;content:none!important}
+
+  /* Compress the paid home to the proportions of the 390px reference viewport. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{min-height:198px!important;height:198px!important;padding:28px 10px 8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero h1{font-size:20px!important;margin:4px 0 5px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero p{font-size:9.2px!important;line-height:1.28!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions{gap:5px!important;margin-top:7px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions :is(.primary-btn,.secondary-btn){height:32px!important;min-height:32px!important;font-size:10.5px!important;padding:4px 9px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem.fs-brand-ready{width:142px!important;height:166px!important;background-size:auto 166px!important;margin:1px -13px -1px -10px!important}
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card{height:51px!important;min-height:51px!important;padding:6px 7px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>span{width:31px!important;height:31px!important;font-size:18px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>b{font-size:9.8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card small{font-size:7.6px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card.cuentas-entry{height:44px!important;min-height:44px!important;padding:4px 8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card.cuentas-entry>span{width:31px!important;height:31px!important;font-size:18px!important}
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel{min-height:158px!important;height:158px!important;padding:9px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel h2{font-size:17px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .r6-feature-card{height:109px!important;grid-template-rows:75px minmax(0,1fr)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .r6-feature-card img{height:75px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .r6-feature-card b{font-size:8.6px!important}
 }
