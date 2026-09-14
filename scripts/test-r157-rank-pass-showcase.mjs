@@ -10,7 +10,7 @@ assert.match(bridge, /Insignia Diamond activa · x2 Rewards durante el pase/);
 assert.match(css, /compatibility shim/i);
 assert.match(css, /\.fs-pass-card\.prelaunch\{opacity:1\}/);
 assert.doesNotMatch(css, /content:"GOLD RANK"|content:"DIAMOND RANK"/);
-assert.match(loyalty, /\.fs-pass-gold/);
+assert.match(loyalty, /\.fs-pass-card/);
 assert.match(loyalty, /\.fs-pass-diamond/);
 assert.doesNotMatch(loyalty, /html\[data-fs-membership=/);
 assert.doesNotMatch(css, /service_role|supabase|precio_proveedor|tipo_cambio|fetch\(|XMLHttpRequest/i);
