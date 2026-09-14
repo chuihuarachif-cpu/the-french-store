@@ -3,12 +3,20 @@ name: Visual Tier Safety
 on:
   pull_request:
     paths:
+      - 'v2/index.html'
+      - 'v2/bootstrap.js'
+      - 'v2/rank-pass-premium.css'
+      - 'v2/cuentas-venta.css'
       - 'v2/tiers/**'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
   push:
     branches: [main]
     paths:
+      - 'v2/index.html'
+      - 'v2/bootstrap.js'
+      - 'v2/rank-pass-premium.css'
+      - 'v2/cuentas-venta.css'
       - 'v2/tiers/**'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
@@ -22,13 +30,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Obsidian Prism visual contract
+      - name: Obsidian Atelier visual contract
         run: node scripts/test-r167-tier-frames.mjs
 
-      - name: Tier loader syntax and release cache key
+      - name: Visual loaders and release cache keys
         run: |
+          node --check v2/bootstrap.js
           node --check v2/tiers/tier-gate.js
-          grep -q '20260914-obsidian-prism' v2/tiers/tier-gate.js
+          node scripts/test-bootstrap-release.mjs
+          grep -q '20260914-r169' v2/tiers/tier-gate.js
+          grep -q 'tiers/tier-base.css?v=20260914-r169' v2/index.html
+          grep -q 'rank-pass-premium.css?v=20260914-r169' v2/index.html
+          grep -q "tier-gate.js', 'fs-tier-gate-js', '20260914-r169'" v2/bootstrap.js
+
+      - name: Mobile ownership and stale-theme isolation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          base = Path('v2/tiers/tier-base.css').read_text(encoding='utf-8')
+          rank = Path('v2/rank-pass-premium.css').read_text(encoding='utf-8')
+          index = Path('v2/index.html').read_text(encoding='utf-8')
+          assert '@media(max-width:620px)' in base
+          assert 'min-height:100px' in base, 'mobile category cards must stay compact'
+          assert 'fs-tier-dock[data-collapsed="true"]' in base, 'owner preview must collapse on mobile'
+          for selector in ['.hero{', '.category-card{', '.bottom-nav{']:
+              assert f'data-fs-membership="gold"] {selector}' not in rank
+              assert f'data-fs-membership="diamond"] {selector}' not in rank
+          assert '<span>💎</span><b>FRENCH STORE</b><span>💎</span>' not in index
+          assert '<div class="hero-gem" aria-hidden="true">💎</div>' not in index
+          print('Mobile ownership and stale-theme isolation OK')
+          PY
 
       - name: CSS structural and secret safety
         run: |
@@ -38,6 +69,7 @@ jobs:
               Path('v2/tiers/tier-base.css'),
               Path('v2/tiers/tier-gold.css'),
               Path('v2/tiers/tier-diamond.css'),
+              Path('v2/rank-pass-premium.css'),
           ]
           forbidden = ['service_role', 'GAMERHUB_API_KEY', 'GAMERHUB_API_SECRET', 'OPENAI_API_KEY', 'GEMINI_API_KEY']
           for path in files:
