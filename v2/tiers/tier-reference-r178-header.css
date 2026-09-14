@@ -1,0 +1,18 @@
+/* THE FRENCH STORE — R180 HEADER fidelity. Presentation only. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{height:58px!important;padding:6px 10px!important;gap:7px!important;background:linear-gradient(180deg,#05090c,#030609)!important;border-bottom:1px solid rgba(237,190,96,.55)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{position:relative!important;flex:1 1 auto!important;min-width:0!important;height:46px!important;padding:0!important;gap:0!important;justify-content:flex-start!important;background:url('../assets/brand/premium-header-r180.webp') left center/210px 33px no-repeat!important;filter:drop-shadow(0 0 5px rgba(238,190,91,.08))!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::before{display:none!important;content:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand span,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{opacity:0!important;pointer-events:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b::after{content:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions{gap:6px!important;flex:0 0 auto!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions #fsLoyaltyChip{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;border-radius:12px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn::before{font-size:13px!important;inset:5px 8px 19px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn::after{left:11px!important;right:11px!important;bottom:5px!important;height:18px!important;font-size:10px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .cart-btn{min-width:58px!important;width:58px!important;height:44px!important;min-height:44px!important;padding:0 8px!important;border-radius:12px!important;font-size:17px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) main{width:100%!important;padding:0 8px calc(72px + env(safe-area-inset-bottom))!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .view{max-width:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge{min-height:29px!important;padding:5px 10px 5px 12px!important;border-radius:0 15px 0 15px!important;font-size:10px!important;gap:5px!important;letter-spacing:0!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-icon{font-size:13px!important}
+}

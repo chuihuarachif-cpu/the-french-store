@@ -1,12 +1,12 @@
-/* THE FRENCH STORE — R177 premium release loader.
+/* THE FRENCH STORE — R182 premium release loader.
    Presentation only. Gold/Diamond are selected by tier-gate from the existing
    backend-authoritative active pass. This loader only attaches visual assets;
    it never grants membership or reads/writes commerce/payment/order data. */
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r177-20260914';
-  const RELEASE = '20260914-r177-reference-ui';
+  const VERSION = 'premium-release-r182-20260914';
+  const RELEASE = '20260914-r182-fidelity';
   const root = document.documentElement;
   let active = '';
 
@@ -16,12 +16,12 @@
   }
 
   function ensureReferenceAssets() {
-    let reference = document.getElementById('fs-premium-reference-r177-css');
+    let reference = document.getElementById('fs-premium-reference-r178-css');
     if (!reference) {
       reference = document.createElement('link');
-      reference.id = 'fs-premium-reference-r177-css';
+      reference.id = 'fs-premium-reference-r178-css';
       reference.rel = 'stylesheet';
-      reference.href = `./tiers/tier-reference-r177.css?v=${RELEASE}`;
+      reference.href = `./tiers/tier-reference-r178.css?v=${RELEASE}`;
       document.head.appendChild(reference);
     }
 
@@ -33,6 +33,14 @@
       document.head.appendChild(script);
     } else {
       window.FSPremiumReference?.refresh?.();
+    }
+
+    if (!document.getElementById('fs-premium-reference-r182-art-js')) {
+      const art = document.createElement('script');
+      art.id = 'fs-premium-reference-r182-art-js';
+      art.src = `./tiers/tier-reference-r182-art.js?v=${RELEASE}`;
+      art.defer = true;
+      document.head.appendChild(art);
     }
   }
 
@@ -55,8 +63,6 @@
     }
     if (link.getAttribute('href') !== href) link.href = href;
 
-    /* Reference CSS is appended after tier CSS so it intentionally wins the
-       cascade without changing Base or the underlying business components. */
     ensureReferenceAssets();
     active = level;
     root.dataset.fsPremiumRelease = VERSION;
@@ -70,7 +76,6 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply, { once: true });
   else apply();
 
-  // tier-gate resolves asynchronously after auth/rank bootstrap.
   setTimeout(apply, 250);
   setTimeout(apply, 1000);
   setTimeout(apply, 2500);
