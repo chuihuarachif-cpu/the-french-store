@@ -1,0 +1,33 @@
+/* R181 premium mobile convergence: HOME + STORE. Presentation only. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){--r178-edge:rgba(255,205,96,.96)}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.hero,.panel,.compact-panel,.balance-card,.topup-box,.profile-card,.record,.r6-game-card,.r6-feature-card){box-shadow:0 9px 24px rgba(0,0,0,.48),0 0 14px rgba(255,196,73,.18),inset 0 1px 0 rgba(255,245,214,.1)!important}
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero{overflow:hidden!important;background:radial-gradient(185px 190px at 88% 37%,rgba(14,117,235,.32),transparent 67%),linear-gradient(128deg,#0b1016,#03070b 56%,#07101a)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-copy{position:relative!important;z-index:2!important;max-width:228px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-gem,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-gem.fs-brand-ready{display:block!important;align-self:center!important;justify-self:end!important;position:relative!important;width:148px!important;max-width:42vw!important;height:178px!important;margin:3px -10px -2px -5px!important;overflow:hidden!important;font-size:0!important;opacity:1!important;background:url('../assets/brand/french-store-mascot.webp') center top/154px auto no-repeat!important;filter:brightness(1.18) saturate(1.14) drop-shadow(0 10px 20px rgba(0,0,0,.54)) drop-shadow(0 0 15px rgba(42,150,255,.34))!important}
+  html[data-fs-tier="diamond"] #view-inicio .hero-gem,html[data-fs-tier="diamond"] #view-inicio .hero-gem.fs-brand-ready{filter:brightness(1.22) saturate(1.24) drop-shadow(0 10px 22px rgba(0,0,0,.56)) drop-shadow(0 0 21px rgba(56,197,255,.48))!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-gem::before,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-gem::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-gem .fs-hero-mascot{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card.cuentas-entry small{font-size:0!important;max-height:none!important;overflow:visible!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card.cuentas-entry small::after{content:'Cuentas de juegos verificadas';font-size:8px;line-height:1.12;color:#d8d0c2}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Free Fire"]{order:1}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Mobile Legends: Bang Bang"]{order:2}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"],html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]{order:3}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Wuthering Waves"]{order:4}
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading{min-height:124px!important;padding:31px 118px 12px 15px!important;align-items:flex-start!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading h2{margin:7px 0 5px!important;font-size:27px!important;line-height:1!important;white-space:nowrap!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading p{font-size:13px!important;line-height:1.15!important;color:#ded4c5!important;white-space:nowrap!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .cart-inline{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;position:absolute!important;left:auto!important;right:11px!important;top:66px!important;bottom:auto!important;width:auto!important;max-width:none!important;min-width:108px!important;min-height:40px!important;height:40px!important;padding:0 12px!important;margin:0!important;white-space:nowrap!important;flex:none!important;border-radius:999px!important;border:1.35px solid rgba(255,204,96,.9)!important;box-shadow:0 0 13px rgba(244,188,70,.16),inset 0 1px 0 rgba(255,244,205,.08)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .category-tabs{grid-auto-columns:minmax(148px,1fr)!important;gap:7px!important;padding:8px 9px 9px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .category-tabs button{min-height:44px!important;font-size:11px!important;border-radius:11px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #categoryTabs button[data-cat="Recargas por ID"]{order:1}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #categoryTabs button[data-cat="Recargas por Cuenta"]{order:2}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #categoryTabs button[data-cat="Gift Cards"]{order:3}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #categoryTabs button[data-cat="Streaming"]{order:4}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card{border-color:rgba(255,204,96,.92)!important;box-shadow:0 8px 20px rgba(0,0,0,.48),0 0 14px rgba(248,188,65,.18),inset 0 1px 0 rgba(255,242,196,.08)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-foot{border-top-color:rgba(255,204,96,.48)!important}
+}
