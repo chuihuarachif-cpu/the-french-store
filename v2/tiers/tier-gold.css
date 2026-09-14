@@ -1,121 +1,46 @@
-/* THE FRENCH STORE — OBSIDIAN PRISM / GOLD
-   Gold is the same product language as Base with a warmer, denser material.
-   No filigree frames, casino badges or stretched ornamental assets. */
+/* THE FRENCH STORE — R169 / OBSIDIAN ATELIER / GOLD
+   Gold is warmth, density and precision over the same dark product language.
+   No filigree frames, casino ornaments or yellow page fills. */
 
 html[data-fs-tier="gold"]{
-  --t-accent:#edcf8a;
-  --t-accent-deep:#b8832f;
-  --t-ring:rgba(237,207,138,.76);
-  --t-glow:rgba(219,171,78,.16);
-  --t-edge:rgba(226,188,109,.34);
-  --fs-edge:rgba(225,188,110,.16);
-  --fs-edge-strong:rgba(238,205,135,.34);
-  --fs-gold:#edcf8a;
+  --t-accent:#e9cb86;--t-ring:rgba(233,203,134,.78);--t-glow:rgba(216,170,80,.15);
+  --fs-edge:rgba(224,188,112,.15);--fs-edge-strong:rgba(236,204,137,.33);--fs-gold:#e9cb86;
 }
-
 html[data-fs-tier="gold"] body{
-  background:
-    radial-gradient(900px 520px at 12% -12%,rgba(202,151,57,.16),transparent 62%),
-    radial-gradient(760px 520px at 92% 8%,rgba(74,139,193,.09),transparent 66%),
-    linear-gradient(180deg,#0b0b09 0%,#030609 48%,#090a0b 100%);
+  background:radial-gradient(900px 520px at 12% -12%,rgba(197,148,58,.15),transparent 63%),radial-gradient(760px 500px at 92% 7%,rgba(60,129,181,.07),transparent 67%),linear-gradient(180deg,#0a0a08 0%,#030608 50%,#090a0a 100%);
 }
-
-/* Brand: a small forged-gold jewel, not an ornate logo treatment. */
-html[data-fs-tier="gold"] .brand::before{
-  background:linear-gradient(145deg,#fff3c9 0 10%,#e8c36e 12% 37%,#8b5d1c 38% 60%,#f5daa0 61% 75%,#b57b29 76% 100%);
-  box-shadow:0 0 0 1px rgba(255,235,186,.28),0 0 22px rgba(222,173,76,.14),inset 2px 2px 3px rgba(255,255,255,.28);
-}
+html[data-fs-tier="gold"] .topbar{border-bottom-color:rgba(226,190,115,.14)}
+html[data-fs-tier="gold"] .brand::before{background:linear-gradient(145deg,#fff3c9 0 10%,#e8c36e 12% 37%,#8b5d1c 38% 60%,#f5daa0 61% 75%,#b57b29 76% 100%);box-shadow:0 0 0 1px rgba(255,235,186,.27),0 0 20px rgba(222,173,76,.13),inset 2px 2px 3px rgba(255,255,255,.26)}
 html[data-fs-tier="gold"] .brand b{color:#f9f1df}
-html[data-fs-tier="gold"] .topbar{border-bottom-color:rgba(225,188,110,.16)}
-
-/* A small pass signature lives next to the existing eyebrow; it never competes with the headline. */
-html[data-fs-tier="gold"] .hero-copy>.eyebrow::after{
-  content:"GOLD";display:inline-flex;align-items:center;height:19px;padding:0 7px;margin-left:2px;border-radius:999px;
-  border:1px solid rgba(237,207,138,.28);background:rgba(97,69,21,.24);color:#e9ca86;font:800 8px 'Orbitron',sans-serif;letter-spacing:.11em;
-}
-
+html[data-fs-tier="gold"] .eyebrow{color:#d8bb79}
+html[data-fs-tier="gold"] .hero-copy>.eyebrow::after{content:"GOLD";display:inline-flex;align-items:center;height:18px;padding:0 7px;margin-left:2px;border-radius:999px;border:1px solid rgba(237,207,138,.26);background:rgba(97,69,21,.2);color:#e9ca86;font:800 8px 'Orbitron',sans-serif;letter-spacing:.1em}
 html[data-fs-tier="gold"] .hero{
-  border-color:rgba(226,188,109,.22);
-  background:
-    radial-gradient(520px 360px at 79% 48%,rgba(215,168,75,.15),transparent 64%),
-    radial-gradient(420px 320px at 67% 12%,rgba(72,151,198,.06),transparent 70%),
-    linear-gradient(135deg,rgba(27,23,14,.98),rgba(7,11,15,.99) 58%,rgba(21,19,12,.98));
-  box-shadow:0 26px 66px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,241,207,.055);
+  border-color:rgba(226,188,109,.2);
+  background:radial-gradient(520px 360px at 80% 48%,rgba(211,166,76,.14),transparent 65%),radial-gradient(420px 320px at 67% 10%,rgba(69,138,188,.05),transparent 70%),linear-gradient(135deg,rgba(26,23,15,.985),rgba(7,11,15,.995) 58%,rgba(20,18,12,.985));
+  box-shadow:0 26px 66px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,241,207,.05);
 }
-html[data-fs-tier="gold"] .hero::before{
-  content:""!important;
-  background:
-    linear-gradient(120deg,transparent 0 56%,rgba(238,207,139,.045) 56.2% 56.7%,transparent 57%),
-    radial-gradient(circle at 79% 48%,transparent 0 30%,rgba(235,204,132,.065) 30.3% 30.6%,transparent 31%);
-}
-html[data-fs-tier="gold"] .hero::after{
-  background:linear-gradient(105deg,transparent 34%,rgba(241,211,147,.05) 47%,rgba(255,245,220,.18) 50%,rgba(219,176,90,.05) 54%,transparent 66%);
-}
-html[data-r8-motion="full"][data-fs-tier="gold"] .hero::after{animation:fsTierGoldSheen 10.5s cubic-bezier(.65,0,.35,1) infinite alternate}
-@keyframes fsTierGoldSheen{from{transform:translate3d(34%,0,0) rotate(10deg)}to{transform:translate3d(-10%,0,0) rotate(10deg)}}
+html[data-fs-tier="gold"] .hero::before{content:""!important;background:linear-gradient(120deg,transparent 0 58%,rgba(238,207,139,.04) 58.2% 58.7%,transparent 59%),radial-gradient(circle at 80% 48%,transparent 0 30%,rgba(235,204,132,.06) 30.3% 30.6%,transparent 31%)}
+html[data-fs-tier="gold"] .hero::after{background:linear-gradient(105deg,transparent 34%,rgba(241,211,147,.045) 47%,rgba(255,245,220,.16) 50%,rgba(219,176,90,.045) 54%,transparent 66%)}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){html[data-fs-tier="gold"] .hero h1{background:linear-gradient(112deg,#fffdf8 0 38%,#f2dfb3 63%,#c5a45d 100%);-webkit-background-clip:text;background-clip:text;color:transparent}}
+html[data-fs-tier="gold"] .primary-btn{background:linear-gradient(135deg,#fff1c8,#e7c36f 44%,#b8802c);border-color:rgba(255,238,195,.75);color:#251903;box-shadow:0 11px 30px rgba(189,132,43,.18),inset 0 1px 0 rgba(255,255,255,.62)}
+html[data-fs-tier="gold"] .secondary-btn{border-color:rgba(225,188,110,.19);background:linear-gradient(180deg,rgba(40,34,22,.76),rgba(14,17,18,.95));color:#f4ead6}
+html[data-fs-tier="gold"] .category-tabs button.active{background:rgba(117,83,28,.29);border-color:rgba(236,203,133,.29);color:#f1deb8}
 
-html[data-fs-tier="gold"] .eyebrow{color:#d9bc7a}
-@supports ((-webkit-background-clip:text) or (background-clip:text)){
-  html[data-fs-tier="gold"] .hero h1{
-    background:linear-gradient(112deg,#fffdf8 0 38%,#f2dfb3 62%,#c5a45d 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-}
-
-html[data-fs-tier="gold"] .primary-btn{
-  background:linear-gradient(135deg,#fff1c8,#e7c36f 44%,#b8802c);border-color:rgba(255,238,195,.76);color:#261903;
-  box-shadow:0 11px 30px rgba(189,132,43,.18),inset 0 1px 0 rgba(255,255,255,.62);
-}
-html[data-fs-tier="gold"] .secondary-btn{border-color:rgba(225,188,110,.2);background:linear-gradient(180deg,rgba(41,34,21,.75),rgba(15,18,19,.94));color:#f4ead6}
-html[data-fs-tier="gold"] .category-tabs button.active{background:rgba(117,83,28,.30);border-color:rgba(236,203,133,.3);color:#f1deb8}
-html[data-fs-tier="gold"] .bottom-nav{border-color:rgba(225,188,110,.14);background:linear-gradient(180deg,rgba(24,21,15,.94),rgba(6,10,13,.98))}
-html[data-fs-tier="gold"] .bottom-nav button.active{background:rgba(118,83,27,.23);color:#f0d79d}
-html[data-fs-tier="gold"] .bottom-nav button.active::after{background:#e9c977;box-shadow:0 0 12px rgba(233,201,119,.28)}
-
-/* Dark cards stay dark. Gold is an edge/light material, never a yellow fill. */
-html[data-fs-tier="gold"] .category-card{
-  border-image:none!important;clip-path:none!important;
-  border-color:rgba(225,188,110,.16)!important;
-  background:linear-gradient(145deg,rgba(27,26,21,.97),rgba(8,14,18,.99))!important;
-  box-shadow:0 13px 36px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,240,205,.035);
-}
-html[data-fs-tier="gold"] .category-card::before{
-  content:""!important;background:linear-gradient(180deg,transparent,#e3bd6d 30% 70%,transparent)!important;opacity:.7!important;
-}
-html[data-fs-tier="gold"] .category-card::after{
-  content:"";background:radial-gradient(circle,rgba(226,184,99,.12),transparent 69%);opacity:.85;
-}
-html[data-fs-tier="gold"] .category-card>span{
-  color:#e8c87f;background:linear-gradient(145deg,rgba(90,67,29,.28),rgba(11,17,20,.9));border-color:rgba(232,200,127,.24);
-}
+/* Required dark card signature; warm light only traces the material. */
+html[data-fs-tier="gold"] .category-card{border-image:none!important;clip-path:none!important;border-color:rgba(225,188,110,.15)!important;background:linear-gradient(145deg,rgba(27,26,21,.97),rgba(8,14,18,.99))!important;box-shadow:0 13px 35px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,240,205,.035)}
+html[data-fs-tier="gold"] .category-card::before{content:""!important;background:linear-gradient(180deg,transparent,#dfb96d 32% 68%,transparent)!important;opacity:.68!important}
+html[data-fs-tier="gold"] .category-card::after{content:"";background:radial-gradient(circle,rgba(226,184,99,.11),transparent 69%);opacity:.82}
+html[data-fs-tier="gold"] .category-card>span{color:#e8c87f;background:linear-gradient(145deg,rgba(90,67,29,.27),rgba(11,17,20,.91));border-color:rgba(232,200,127,.22)}
 html[data-fs-tier="gold"] .category-card>span::before{color:#ebcf8f}
 html[data-fs-tier="gold"] .category-card>b{color:#f7f0e1!important}
 html[data-fs-tier="gold"] .category-card.cuentas-entry .cuentas-entry-cta{color:#e3c37d}
-
-html[data-fs-tier="gold"] .panel,
-html[data-fs-tier="gold"] .game-card,
-html[data-fs-tier="gold"] .balance-card,
-html[data-fs-tier="gold"] .profile-card,
-html[data-fs-tier="gold"] .topup-box,
-html[data-fs-tier="gold"] .record,
-html[data-fs-tier="gold"] .modal-card{border-color:rgba(221,184,105,.15);box-shadow:0 18px 48px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,240,207,.025)}
-html[data-fs-tier="gold"] .package-row{border-color:rgba(218,181,105,.13)}
+html[data-fs-tier="gold"] .panel,html[data-fs-tier="gold"] .game-card,html[data-fs-tier="gold"] .balance-card,html[data-fs-tier="gold"] .profile-card,html[data-fs-tier="gold"] .topup-box,html[data-fs-tier="gold"] .record,html[data-fs-tier="gold"] .modal-card{border-color:rgba(221,184,105,.14);box-shadow:0 18px 48px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,240,207,.024)}
 html[data-fs-tier="gold"] .package-price,html[data-fs-tier="gold"] .cart-total strong,html[data-fs-tier="gold"] .balance-card strong{color:#e9cc8d}
-html[data-fs-tier="gold"] .game-logo{border-color:rgba(225,190,117,.18)}
 html[data-fs-tier="gold"] .avatar{background:linear-gradient(145deg,#3d311c,#171711);color:#edcf8a;box-shadow:inset 0 0 0 1px rgba(237,207,138,.22)}
-
-/* Existing O(1) scroll signal becomes a restrained pool of light rather than a white streak. */
-html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="gold"] .category-card::after{
-  transform:translate3d(0,calc(var(--fs-shine,0) * 14%),0);transition:transform .08s linear;
-}
-
-@media(hover:hover) and (pointer:fine){
-  html[data-fs-tier="gold"] .primary-btn:hover{box-shadow:0 15px 36px rgba(189,132,43,.24),inset 0 1px 0 rgba(255,255,255,.68)}
-  html[data-fs-tier="gold"] .category-card:hover{border-color:rgba(236,203,133,.31)!important;box-shadow:0 22px 48px rgba(0,0,0,.34),0 0 26px rgba(211,165,73,.055)}
-  html[data-fs-tier="gold"] .game-card:hover{border-color:rgba(229,194,123,.24)}
-}
-
-@media(prefers-reduced-motion:reduce){
-  html[data-fs-tier="gold"] .hero::after{animation:none!important}
-  html[data-fs-shine="1"][data-fs-tier="gold"] .category-card::after{transform:none!important}
-}
+html[data-fs-tier="gold"] .bottom-nav{border-color:rgba(225,188,110,.13);background:linear-gradient(180deg,rgba(23,21,16,.96),rgba(6,10,13,.99))}
+html[data-fs-tier="gold"] .bottom-nav button.active{background:linear-gradient(180deg,rgba(117,83,28,.27),rgba(78,55,19,.18));color:#f0d79d}
+html[data-fs-tier="gold"] .bottom-nav button.active::after{background:#e9c977;box-shadow:0 0 12px rgba(233,201,119,.27)}
+html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="gold"] .category-card::after{transform:translate3d(0,calc(var(--fs-shine,0) * 12%),0);transition:transform .08s linear}
+@media(hover:hover) and (pointer:fine){html[data-fs-tier="gold"] .category-card:hover{border-color:rgba(236,203,133,.3)!important;box-shadow:0 21px 46px rgba(0,0,0,.34),0 0 24px rgba(211,165,73,.05)}}
+@media(max-width:620px){html[data-fs-tier="gold"] .hero{background:radial-gradient(280px 200px at 98% 8%,rgba(211,166,76,.09),transparent 70%),linear-gradient(145deg,rgba(26,23,15,.99),rgba(7,11,15,.998))}}
+@media(prefers-reduced-motion:reduce){html[data-fs-tier="gold"] .hero::after{animation:none!important}html[data-fs-shine="1"][data-fs-tier="gold"] .category-card::after{transform:none!important}}
