@@ -1,0 +1,14 @@
+/* THE FRENCH STORE — R201 final Clash artwork convergence.
+   Presentation only. Gold/Diamond mobile reference override. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{
+    content:url('../assets/brand/clash-of-clans-r185.webp')!important;
+    width:100%!important;height:82px!important;
+    object-fit:cover!important;
+    object-position:50% 38%!important;
+    padding:0!important;
+    background:#080b0e!important;
+  }
+}
