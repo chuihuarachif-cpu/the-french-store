@@ -1,7 +1,11 @@
+/* NOIR AUREUM MEMBERSHIP UI — shared Gold + Diamond wrapper. */
 @import url('./tier-reference-match.css?v=20260914-r172');
-/* Compatibility markers retained for the visual safety contract. */
-html[data-fs-tier="gold"] .fs-membership-visual-signature{background:linear-gradient(145deg,rgba(27,26,21,.98),rgba(7,7,8,.98));--legacy-rx:var(--rx,0);--legacy-ry:var(--ry,0)}
-html[data-fs-tier="gold"] .profile-card::after{content:"GOLD";position:absolute;right:12px;bottom:8px;color:rgba(244,207,130,.25);letter-spacing:.18em;font-size:.58rem;pointer-events:none}
-html[data-fs-tier="gold"] :is(.category-card,.game-card,.r6-game-card,.r6-feature-card){border-image:none!important}
-@media(hover:none),(pointer:coarse){html[data-fs-tier="gold"] :is(.category-card,.game-card,.r6-game-card,.r6-feature-card){transform:none!important}}
-@media(prefers-reduced-motion:reduce){html[data-fs-tier="gold"] *,html[data-fs-tier="gold"] *::before,html[data-fs-tier="gold"] *::after{animation:none!important}}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){--fs-premium-gold:#e7bb63;--legacy-rx:var(--rx,0);--legacy-ry:var(--ry,0)}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]),html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{background:#050506!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{background-image:url('../assets/brand/membership-premium-logo.webp')!important}
+html[data-fs-tier="gold"] .profile-card::after{content:"GOLD"}
+html[data-fs-tier="diamond"] .profile-card::after{content:"DIAMOND"}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.game-card,.r6-game-card,.r6-feature-card){border-image:none!important}
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-membership-visual-signature{--paid-motion:1}
+@media(hover:none),(pointer:coarse){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.game-card,.r6-game-card,.r6-feature-card){transform:none!important}}
+@media(prefers-reduced-motion:reduce){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *::before,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *::after{animation:none!important}}
