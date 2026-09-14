@@ -1,11 +1,1 @@
-/* THE FRENCH STORE — R200 final featured-art lock. Presentation only. */
-@media(max-width:620px){
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]>img,
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans"]>img,
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{
-    content:url('../assets/brand/premium-feature-clash-ref-r200.svg')!important;
-    width:100%!important;height:82px!important;padding:0!important;
-    object-fit:fill!important;object-position:center!important;
-    background:#08090b!important;
-  }
-}
+/* THE FRENCH STORE — R200 superseded by the verified R201 artwork override. */
