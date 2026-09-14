@@ -1,0 +1,46 @@
+/* THE FRENCH STORE — R178 HEADER fidelity. Presentation only. */
+@media(max-width:620px){
+  /* ===== HEADER ===== */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+    height:58px!important;padding:6px 10px!important;gap:7px!important;
+    background:linear-gradient(180deg,#05090c,#030609)!important;
+    border-bottom:1px solid rgba(237,190,96,.55)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{
+    position:relative!important;flex:1 1 auto!important;min-width:0!important;height:46px!important;
+    padding:0 0 10px!important;gap:5px!important;justify-content:flex-start!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand span{
+    font-size:25px!important;line-height:1!important;filter:drop-shadow(0 0 6px rgba(75,181,255,.7)) saturate(1.35)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{
+    position:relative!important;font-size:16px!important;letter-spacing:.025em!important;line-height:1!important;
+    color:#f2ce7b!important;white-space:nowrap!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b::after{
+    content:'TU MUNDO DIGITAL, AQUÍ';position:absolute;left:1px;top:18px;white-space:nowrap;
+    font:600 6px/1.1 'Exo 2',system-ui,sans-serif;letter-spacing:.27em;color:#b7b2a9;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions{gap:6px!important;flex:0 0 auto!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions #fsLoyaltyChip{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn{
+    width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;border-radius:12px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn::before{font-size:13px!important;inset:5px 8px 19px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn::after{left:11px!important;right:11px!important;bottom:5px!important;height:18px!important;font-size:10px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .cart-btn{
+    min-width:58px!important;width:58px!important;height:44px!important;min-height:44px!important;padding:0 8px!important;border-radius:12px!important;font-size:17px!important;
+  }
+
+  /* ===== PAGE FRAME ===== */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) main{
+    width:100%!important;padding:0 8px calc(72px + env(safe-area-inset-bottom))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .view{max-width:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge{
+    min-height:29px!important;padding:5px 10px 5px 12px!important;border-radius:0 15px 0 15px!important;
+    font-size:10px!important;gap:5px!important;letter-spacing:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-icon{font-size:13px!important}
+
+}

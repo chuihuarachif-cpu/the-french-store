@@ -1,0 +1,27 @@
+/* THE FRENCH STORE — R178 reference fidelity layer.
+   Mobile-first visual parity with the approved Gold/Diamond reference screens.
+   Presentation only: no commerce/auth/payment/wallet/order authority changes. */
+@import url('./tier-reference-r177.css?v=20260914-r178-base');
+
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){
+  --r178-gold:#f0c66f;--r178-gold-hi:#ffe9a9;--r178-edge:rgba(243,194,91,.88);
+  --r178-ink:#030507;--r178-panel:#080b0f;--r178-muted:#d7cfbf;
+}
+
+/* Shared chrome: thinner, brighter and denser like the supplied phone captures. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.panel,.compact-panel,.balance-card,.topup-box,.profile-card,.record,.r6-game-card,.r6-feature-card){
+  border:1.35px solid var(--r178-edge)!important;
+  background:
+    linear-gradient(120deg,transparent 0 58%,rgba(255,215,126,.035) 58.25% 58.8%,transparent 59.05%),
+    radial-gradient(150px 100px at 100% 100%,rgba(239,184,72,.075),transparent 70%),
+    linear-gradient(145deg,#0c1014,#050709 78%)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.45),0 0 10px rgba(244,192,82,.12),inset 0 1px 0 rgba(255,241,203,.07)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.panel,.compact-panel,.balance-card,.topup-box,.profile-card,.record,.r6-game-card,.r6-feature-card)::after{
+  pointer-events:none;
+}
+
+
+@media(prefers-reduced-motion:reduce){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.hero,.r6-game-card,.r6-feature-card,.bottom-nav button){transition:none!important;animation:none!important}
+}

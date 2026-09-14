@@ -1,0 +1,23 @@
+/* THE FRENCH STORE — R178 STORE fidelity. Presentation only. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda>.catalog-panel{border:0!important;background:none!important;box-shadow:none!important;padding:0!important;overflow:visible!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda>.catalog-panel::before{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .catalog-heading{position:relative!important;min-height:95px!important;margin:5px 0 0!important;padding:31px 12px 8px!important;border:1.35px solid var(--r178-edge)!important;border-bottom:0!important;border-radius:16px 16px 0 0!important;background:linear-gradient(145deg,#0d1115,#050709)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .catalog-heading h2{font-size:24px!important;line-height:1!important;margin:4px 0!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .catalog-heading p{font-size:12px!important;margin:0!important;color:#d9d1c3!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .cart-inline{position:absolute!important;right:10px!important;bottom:10px!important;min-height:40px!important;padding:0 12px!important;border-radius:999px!important;border:1.35px solid rgba(241,192,88,.75)!important;background:#0a0d10!important;color:#fff0cf!important;font-size:12px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-tabs{display:grid!important;grid-auto-flow:column!important;grid-auto-columns:minmax(125px,1fr)!important;gap:5px!important;overflow-x:auto!important;margin:0 0 8px!important;padding:7px 8px 8px!important;border:1.35px solid var(--r178-edge)!important;border-top:0!important;border-radius:0 0 16px 16px!important;background:linear-gradient(145deg,#0d1115,#050709)!important;scrollbar-width:none}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-tabs::-webkit-scrollbar{display:none}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-tabs button{min-height:39px!important;padding:6px 9px!important;border-radius:10px!important;border:1.1px solid rgba(224,178,82,.38)!important;background:#0a0d10!important;color:#f5e6c4!important;font-size:10px!important;font-weight:800!important;white-space:nowrap!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-tabs button.active{background:linear-gradient(180deg,#ffe6a3,#eab85b)!important;color:#171006!important;border-color:#ffe39b!important;box-shadow:0 0 14px rgba(241,189,83,.2)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList.r6-game-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card{border-radius:11px!important;padding:0!important;overflow:hidden!important;background:#070a0d!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-art{height:132px!important;background:#05070a!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-art img{object-fit:cover!important;transform:scale(1.02)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body{gap:3px!important;padding:8px 9px 9px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-genre{font:700 7.5px 'Exo 2',sans-serif!important;letter-spacing:.12em!important;color:#f3cc75!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body strong{font:800 13px/1.05 'Exo 2',sans-serif!important;color:#fff1d1!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body small{font-size:9px!important;color:#d1c9ba!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-foot{margin-top:5px!important;padding-top:6px!important;border-top:1px solid rgba(237,188,87,.28)!important;font-size:10px!important;color:#f6d588!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-foot i{font-size:18px!important;color:#f6d588!important}
+}

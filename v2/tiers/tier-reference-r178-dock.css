@@ -1,0 +1,10 @@
+/* THE FRENCH STORE — R178 DOCK fidelity. Presentation only. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{left:8px!important;right:8px!important;bottom:max(6px,env(safe-area-inset-bottom))!important;height:62px!important;padding:5px!important;border-radius:19px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button{height:50px!important;border-radius:14px!important;font-size:8px!important;gap:1px!important;color:#e0c98f!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button span{font-size:18px!important;line-height:1!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button.active{border:1px solid rgba(242,194,91,.65)!important;background:radial-gradient(circle at 50% 35%,rgba(243,194,88,.16),rgba(12,13,15,.95) 67%)!important;box-shadow:0 0 14px rgba(240,187,77,.11),inset 0 1px 0 rgba(255,238,197,.08)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp{width:52px!important;height:52px!important;right:10px!important;bottom:calc(65px + env(safe-area-inset-bottom))!important;border:2px solid #f7d880!important;background:linear-gradient(180deg,#27df6f,#08a94a)!important;color:white!important;font-size:0!important;box-shadow:0 5px 18px rgba(0,0,0,.45),0 0 10px rgba(238,190,79,.28)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp::before{content:'☎';display:grid;place-items:center;width:31px;height:31px;border:2px solid #fff;border-radius:50%;font-size:17px;line-height:1;color:#fff;transform:rotate(-12deg)}
+  html[data-r8-motion="lite"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.hero,.r6-game-card,.r6-feature-card){box-shadow:none!important}
+}
