@@ -1,12 +1,12 @@
-/* THE FRENCH STORE — R178 premium release loader.
+/* THE FRENCH STORE — R182 premium release loader.
    Presentation only. Gold/Diamond are selected by tier-gate from the existing
    backend-authoritative active pass. This loader only attaches visual assets;
    it never grants membership or reads/writes commerce/payment/order data. */
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r178-20260914';
-  const RELEASE = '20260914-r178-fidelity';
+  const VERSION = 'premium-release-r182-20260914';
+  const RELEASE = '20260914-r182-fidelity';
   const root = document.documentElement;
   let active = '';
 
@@ -25,8 +25,6 @@
       document.head.appendChild(reference);
     }
 
-    /* The R177 decorator remains intentionally reusable: it only adds cosmetic
-       paid-rank/status hooks. R178 owns layout and artwork through CSS. */
     if (!document.getElementById('fs-premium-reference-r177-js')) {
       const script = document.createElement('script');
       script.id = 'fs-premium-reference-r177-js';
@@ -35,6 +33,14 @@
       document.head.appendChild(script);
     } else {
       window.FSPremiumReference?.refresh?.();
+    }
+
+    if (!document.getElementById('fs-premium-reference-r182-art-js')) {
+      const art = document.createElement('script');
+      art.id = 'fs-premium-reference-r182-art-js';
+      art.src = `./tiers/tier-reference-r182-art.js?v=${RELEASE}`;
+      art.defer = true;
+      document.head.appendChild(art);
     }
   }
 
@@ -70,7 +76,6 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply, { once: true });
   else apply();
 
-  // tier-gate resolves asynchronously after auth/rank bootstrap.
   setTimeout(apply, 250);
   setTimeout(apply, 1000);
   setTimeout(apply, 2500);
