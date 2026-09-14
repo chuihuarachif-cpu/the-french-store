@@ -14,12 +14,12 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio #cuentasEntry>.cuentas-entry-cta{font-size:0!important;position:absolute!important;right:12px!important;top:50%!important;transform:translateY(-50%)!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio #cuentasEntry>.cuentas-entry-cta::after{content:'›';font:700 24px/1 'Exo 2',sans-serif;color:#f5d27b}
 
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Free Fire"]>img{content:url('../assets/brand/premium-feature-free-fire-r190.webp')!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Free Fire"]>img{content:url('../assets/brand/premium-feature-free-fire-r189.webp')!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Mobile Legends: Bang Bang"]>img,
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Mobile Legends"]>img{content:url('../assets/brand/premium-feature-mobile-legends-r190.webp')!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Mobile Legends"]>img{content:url('../assets/brand/premium-feature-mobile-legends-r189.webp')!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]>img,
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{content:url('../assets/brand/premium-feature-clash-of-clans-r190.webp')!important}
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Wuthering Waves"]>img{content:url('../assets/brand/premium-feature-wuthering-waves-r190.webp')!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{content:url('../assets/brand/premium-feature-clash-of-clans-r189.webp')!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Wuthering Waves"]>img{content:url('../assets/brand/premium-feature-wuthering-waves-r189.webp')!important}
 
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .panel-head{height:91px!important;min-height:91px!important;padding:30px 11px 8px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card{height:126px!important;min-height:126px!important;padding:15px 145px 14px 16px!important}
