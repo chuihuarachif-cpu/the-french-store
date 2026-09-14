@@ -1,0 +1,282 @@
+/* R172 — Premium reference-match layer.
+   Loaded only after Gold/Diamond rank resolution. Base never loads this file.
+   The goal is the supplied mobile reference: obsidian canvas, warm metallic
+   borders, compact two-column home, cinematic hero and strong gold chrome. */
+
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){
+  --ref-gold:#e8bd67;
+  --ref-gold-2:#ffd98b;
+  --ref-gold-3:#a96f1c;
+  --ref-ink:#040608;
+  --ref-panel:#090c10;
+  --ref-edge:rgba(238,190,93,.78);
+  --ref-soft:rgba(238,190,93,.17);
+  --ref-text:#fff3d4;
+  --ref-muted:#d2cab9;
+}
+
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{
+  background:
+    radial-gradient(78vw 38vw at 50% -8%,rgba(238,187,77,.09),transparent 72%),
+    radial-gradient(46vw 42vw at 95% 24%,rgba(46,97,146,.08),transparent 74%),
+    linear-gradient(180deg,#05080b 0%,#020406 42%,#070a0d 100%)!important;
+  color:var(--ref-text)!important;
+  font-family:'Exo 2',system-ui,sans-serif!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body::before{
+  opacity:.22!important;
+  background-image:
+    linear-gradient(116deg,transparent 0 47%,rgba(255,215,133,.028) 47.2% 47.5%,transparent 47.7%),
+    linear-gradient(64deg,transparent 0 62%,rgba(255,215,133,.02) 62.2% 62.45%,transparent 62.7%)!important;
+  background-size:230px 230px,310px 310px!important;
+}
+
+/* Header: larger gold logo wordmark and two square actions, matching reference. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+  height:74px!important;
+  padding:10px max(14px,calc((100% - 1120px)/2))!important;
+  background:linear-gradient(180deg,rgba(5,8,11,.99),rgba(4,7,10,.96))!important;
+  border-bottom:1px solid rgba(236,188,91,.58)!important;
+  box-shadow:0 9px 24px rgba(0,0,0,.48),0 1px 12px rgba(229,177,69,.08)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{
+  gap:11px!important;padding:5px 0!important;min-width:0!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::before{
+  width:25px!important;height:25px!important;border-radius:5px!important;
+  background:linear-gradient(145deg,#fff4c8 0 11%,#f2c66e 12% 36%,#976014 37% 60%,#fff0b7 61% 75%,#b8791e 76%)!important;
+  box-shadow:0 0 0 1px rgba(255,225,156,.6),0 0 16px rgba(239,190,91,.32),inset 2px 2px 3px rgba(255,255,255,.4)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{
+  font-family:'Exo 2',system-ui,sans-serif!important;font-size:20px!important;font-weight:800!important;letter-spacing:.045em!important;
+  color:#f4d590!important;text-shadow:0 0 15px rgba(241,195,101,.17)!important;white-space:nowrap!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions{gap:9px!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.ghost-btn,.cart-btn){
+  width:54px!important;height:48px!important;min-height:48px!important;padding:0!important;border-radius:15px!important;
+  border:1.5px solid rgba(242,199,111,.72)!important;
+  background:linear-gradient(180deg,rgba(15,16,18,.98),rgba(6,8,10,.99))!important;
+  color:#f7d98d!important;box-shadow:inset 0 1px 0 rgba(255,238,201,.08),0 0 14px rgba(227,171,61,.05)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn{
+  font-size:0!important;position:relative!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn::before{
+  content:"●";font-size:20px;line-height:1;color:#f3cd79;text-shadow:0 0 8px rgba(245,196,94,.3);
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn::after{
+  content:"";position:absolute;width:22px;height:10px;left:15px;bottom:9px;border-radius:14px 14px 8px 8px;background:#e9bf67;opacity:.96;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .cart-btn{font-size:19px!important;gap:4px!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .cart-btn #cartCount{font-size:13px!important}
+
+/* The old rank ribbon is intentionally not part of the supplied premium home. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-premium-ribbon{
+  position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;clip-path:inset(50%)!important;
+}
+
+/* Home becomes one deliberate layout: hero, 2x2 categories, featured, then accounts. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio.active{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;align-items:stretch!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{grid-column:1/-1!important;order:1!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid{display:contents!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.category-card{order:2!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel{grid-column:1/-1!important;order:3!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.cuentas-entry{grid-column:1/-1!important;order:4!important;margin-top:2px!important}
+
+/* Cinematic hero: logo stays on the right even on phones, like the reference. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{
+  grid-template-columns:minmax(0,1.35fr) minmax(118px,.65fr)!important;
+  gap:8px!important;align-items:center!important;
+  min-height:360px!important;margin:12px 0 2px!important;padding:26px 18px 22px!important;
+  border:1.5px solid rgba(246,199,103,.88)!important;border-radius:25px!important;
+  background:
+    radial-gradient(240px 320px at 87% 42%,rgba(56,115,181,.17),transparent 65%),
+    radial-gradient(280px 250px at 90% 82%,rgba(239,188,83,.12),transparent 67%),
+    linear-gradient(130deg,rgba(14,19,25,.99),rgba(4,7,11,.995) 54%,rgba(10,12,15,.99))!important;
+  box-shadow:0 18px 45px rgba(0,0,0,.6),0 0 0 1px rgba(255,232,181,.04) inset,0 0 18px rgba(239,188,83,.12)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::before{
+  z-index:0!important;
+  background:
+    linear-gradient(122deg,transparent 0 53%,rgba(248,203,106,.055) 53.2% 53.7%,transparent 54%),
+    linear-gradient(55deg,transparent 0 67%,rgba(248,203,106,.038) 67.2% 67.55%,transparent 67.8%),
+    radial-gradient(circle at 82% 49%,transparent 0 31%,rgba(239,193,98,.08) 31.4% 31.8%,transparent 32.1%)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-copy{z-index:3!important;align-self:center!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero .eyebrow{
+  font-family:'Exo 2',system-ui,sans-serif!important;font-size:9px!important;font-weight:650!important;letter-spacing:.23em!important;color:#cfc6b6!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero .eyebrow::before{width:0!important;display:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero h1{
+  max-width:100%!important;margin:9px 0 9px!important;
+  font-family:'Exo 2',system-ui,sans-serif!important;font-size:34px!important;line-height:.99!important;font-weight:800!important;letter-spacing:-.035em!important;
+  color:#f8d890!important;background:linear-gradient(180deg,#fff2c8 0%,#f0c66e 72%,#d9a84c 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero p{
+  max-width:96%!important;margin:0!important;font-size:13px!important;line-height:1.42!important;color:#e1d9ca!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions{
+  display:grid!important;grid-template-columns:1fr!important;gap:8px!important;margin-top:16px!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions :is(.primary-btn,.secondary-btn){
+  width:100%!important;min-height:48px!important;border-radius:999px!important;padding:10px 16px!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:14px!important;font-weight:800!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions .primary-btn{
+  background:linear-gradient(180deg,#ffe9b2 0%,#efc46d 52%,#bc7e22 100%)!important;border:1.5px solid #ffe2a2!important;color:#171005!important;box-shadow:0 0 18px rgba(244,195,94,.24),inset 0 1px 0 rgba(255,255,255,.8)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions .primary-btn::before{content:"▦";margin-right:9px;font-size:16px}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions .secondary-btn{
+  background:linear-gradient(180deg,rgba(16,18,20,.98),rgba(6,8,11,.99))!important;border:1.3px solid rgba(239,190,92,.68)!important;color:#fff0cf!important;box-shadow:inset 0 1px 0 rgba(255,232,183,.05)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions .secondary-btn::before{content:"◉";margin-right:9px;color:#f4cd77;font-size:15px}
+
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{
+  position:relative!important;right:auto!important;top:auto!important;order:0!important;align-self:center!important;justify-self:end!important;
+  width:175px!important;max-width:44vw!important;margin:0 -20px 0 -18px!important;opacity:1!important;aspect-ratio:1!important;
+  background:url('../assets/brand/membership-premium-logo.webp') center/contain no-repeat!important;
+  filter:brightness(1.24) contrast(1.08) saturate(1.25) drop-shadow(0 15px 28px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(82,175,255,.18))!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem::after{
+  bottom:-3%!important;width:86%!important;left:7%!important;background:radial-gradient(ellipse,rgba(239,190,92,.22),rgba(54,118,180,.08) 44%,transparent 72%)!important;
+}
+
+/* Category tiles: 2 x 2, short and wide, with luminous icon blocks. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card{
+  min-height:92px!important;padding:13px 12px!important;border-radius:15px!important;
+  grid-template-columns:42px minmax(0,1fr)!important;grid-template-areas:'icon title' 'icon sub'!important;column-gap:10px!important;row-gap:2px!important;
+  border:1.35px solid rgba(234,184,82,.72)!important;
+  background:
+    radial-gradient(110px 80px at 100% 100%,rgba(240,190,90,.07),transparent 72%),
+    linear-gradient(145deg,rgba(15,19,23,.99),rgba(5,8,11,.995))!important;
+  box-shadow:0 8px 19px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,235,190,.045),0 0 12px rgba(234,184,82,.06)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card::before{
+  inset:auto 12% -1px 12%!important;width:auto!important;height:1px!important;background:linear-gradient(90deg,transparent,#ffe09a 48%,transparent)!important;box-shadow:0 0 8px rgba(247,198,96,.46)!important;opacity:.8!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>span{
+  width:42px!important;height:42px!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(255,223,151,.16),rgba(128,83,13,.06))!important;border:1px solid rgba(236,190,97,.18)!important;box-shadow:0 0 14px rgba(238,191,93,.08)!important;color:#f5cf7d!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>b{
+  align-self:end!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:13px!important;line-height:1.08!important;font-weight:800!important;color:#f5d283!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>small{
+  align-self:start!important;font-size:10.5px!important;line-height:1.25!important;color:#d2cabd!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card:not(.cuentas-entry)::after{
+  content:"›"!important;position:absolute!important;width:auto!important;height:auto!important;right:8px!important;top:50%!important;transform:translateY(-50%)!important;border-radius:0!important;background:none!important;color:#f7cf77!important;font-size:28px!important;line-height:1!important;opacity:.9!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card.cuentas-entry{
+  min-height:70px!important;padding:14px 16px!important;
+}
+
+/* Featured panel mirrors the large framed card in the supplied design. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .compact-panel{
+  margin:2px 0 0!important;padding:15px 14px 14px!important;border:1.4px solid rgba(235,186,84,.8)!important;border-radius:20px!important;
+  background:linear-gradient(155deg,rgba(16,20,24,.99),rgba(5,8,11,.995))!important;
+  box-shadow:0 11px 28px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,235,191,.045),0 0 15px rgba(235,186,84,.06)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .compact-panel .panel-head{margin-bottom:8px!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .compact-panel .eyebrow{font-family:'Exo 2',system-ui,sans-serif!important;font-size:9px!important;letter-spacing:.2em!important;color:#c7bdad!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .compact-panel h2{
+  margin:2px 0 0!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:22px!important;line-height:1!important;font-weight:800!important;color:#f4ce7b!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList{
+  display:grid!important;grid-template-columns:1fr!important;gap:8px!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-card{
+  min-height:116px!important;margin:0!important;padding:10px!important;border:1.2px solid rgba(232,184,82,.66)!important;border-radius:16px!important;
+  background:
+    linear-gradient(118deg,rgba(255,211,120,.035),transparent 34%),
+    radial-gradient(170px 120px at 100% 50%,rgba(235,186,84,.08),transparent 70%),
+    #0a0d11!important;
+  box-shadow:inset 0 1px 0 rgba(255,235,191,.035),0 8px 18px rgba(0,0,0,.28)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-card:nth-child(n+2){display:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-card-head{height:100%!important;align-items:center!important;gap:11px!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-logo{
+  width:94px!important;height:94px!important;min-width:94px!important;border-radius:14px!important;border:1px solid rgba(235,186,84,.6)!important;object-fit:cover!important;background:#111!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-info{min-width:0!important;align-self:center!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-info b{
+  display:block!important;font-size:16px!important;line-height:1.1!important;color:#fff0cf!important;font-family:'Exo 2',system-ui,sans-serif!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-info small{display:block!important;margin-top:5px!important;font-size:11px!important;color:#bdb5a8!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .plus-btn{
+  width:34px!important;height:34px!important;border:0!important;background:transparent!important;color:#f5ce78!important;font-size:0!important;box-shadow:none!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .plus-btn::after{content:"›";font-size:32px;line-height:1}
+
+/* All remaining paid surfaces inherit the same black/gold material. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.panel:not(.compact-panel),.profile-panel,.admin-panel,.modal-card,.balance-card,.record,.topup-box,.profile-card,.game-card,.r6-game-card,.r6-feature-card,.r6-package-card){
+  border-color:rgba(231,183,82,.46)!important;background-color:#0a0d10!important;color:#fff2d6!important;
+}
+
+/* Bottom navigation: tall rounded floating dock like the reference image. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{
+  left:8px!important;right:8px!important;bottom:7px!important;width:auto!important;height:74px!important;padding:7px 6px!important;border-radius:24px!important;
+  border:1.4px solid rgba(235,188,91,.58)!important;background:linear-gradient(180deg,rgba(17,19,22,.97),rgba(7,9,11,.99))!important;
+  box-shadow:0 13px 35px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,238,201,.06),0 0 15px rgba(235,188,91,.06)!important;backdrop-filter:blur(18px)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button{
+  min-width:0!important;height:58px!important;border-radius:17px!important;color:#d8c495!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:10px!important;gap:3px!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button.active{
+  border:1px solid rgba(247,204,113,.76)!important;background:radial-gradient(circle at 50% 20%,rgba(236,187,83,.22),rgba(31,25,14,.75) 58%,rgba(14,14,13,.9))!important;
+  color:#ffe09a!important;box-shadow:0 0 12px rgba(239,190,91,.14),inset 0 1px 0 rgba(255,239,204,.08)!important;
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp{
+  width:54px!important;height:54px!important;right:14px!important;bottom:87px!important;border:2px solid #f0c368!important;box-shadow:0 6px 22px rgba(0,0,0,.5),0 0 14px rgba(239,190,91,.22)!important;
+}
+
+/* Controlled metallic glints. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.hero,.category-card,.compact-panel)::selection{background:#d8a94d;color:#0a0702}
+@keyframes fsRefSweep{0%,26%{transform:translate3d(-48%,0,0);opacity:0}39%{opacity:.6}61%{transform:translate3d(45%,0,0);opacity:.42}75%,100%{transform:translate3d(45%,0,0);opacity:0}}
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::after{
+  animation:fsRefSweep 8s ease-in-out infinite!important;
+}
+
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{height:64px!important;padding-inline:10px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{font-size:15px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::before{width:20px!important;height:20px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.ghost-btn,.cart-btn){width:47px!important;height:44px!important;min-height:44px!important;border-radius:14px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn::after{left:13px!important;bottom:8px!important;width:20px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{
+    grid-template-columns:minmax(0,1.42fr) minmax(108px,.58fr)!important;min-height:338px!important;margin:10px 0 2px!important;padding:22px 14px 18px!important;border-radius:22px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero h1{font-size:29px!important;line-height:1.01!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero p{font-size:11.5px!important;line-height:1.38!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero .eyebrow{font-size:7.8px!important;letter-spacing:.19em!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions{margin-top:13px!important;gap:7px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions :is(.primary-btn,.secondary-btn){min-height:43px!important;font-size:12.5px!important;padding:8px 12px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{width:154px!important;max-width:none!important;margin:0 -27px 0 -28px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card{min-height:88px!important;padding:11px 9px!important;grid-template-columns:38px minmax(0,1fr)!important;column-gap:8px!important;border-radius:14px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>span{width:38px!important;height:38px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>b{font-size:11.2px!important;padding-right:8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>small{font-size:9.4px!important;padding-right:7px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .compact-panel{padding:13px 11px 12px!important;border-radius:18px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .compact-panel h2{font-size:20px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-card{min-height:104px!important;padding:8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-logo{width:82px!important;height:82px!important;min-width:82px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-info b{font-size:14px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .game-info small{font-size:10px!important}
+}
+
+@media(max-width:370px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{font-size:13px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions{gap:6px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.ghost-btn,.cart-btn){width:44px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{grid-template-columns:minmax(0,1.5fr) minmax(94px,.5fr)!important;padding-inline:12px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero h1{font-size:27px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{width:138px!important;margin-right:-30px!important}
+}
+
+@media(hover:none),(pointer:coarse){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.game-card){transform:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::after{animation:none!important}
+}
