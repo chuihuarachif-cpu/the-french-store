@@ -1,12 +1,12 @@
-/* THE FRENCH STORE — R177 premium release loader.
+/* THE FRENCH STORE — R178 premium release loader.
    Presentation only. Gold/Diamond are selected by tier-gate from the existing
    backend-authoritative active pass. This loader only attaches visual assets;
    it never grants membership or reads/writes commerce/payment/order data. */
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r177-20260914';
-  const RELEASE = '20260914-r177-reference-ui';
+  const VERSION = 'premium-release-r178-20260914';
+  const RELEASE = '20260914-r178-fidelity';
   const root = document.documentElement;
   let active = '';
 
@@ -16,15 +16,17 @@
   }
 
   function ensureReferenceAssets() {
-    let reference = document.getElementById('fs-premium-reference-r177-css');
+    let reference = document.getElementById('fs-premium-reference-r178-css');
     if (!reference) {
       reference = document.createElement('link');
-      reference.id = 'fs-premium-reference-r177-css';
+      reference.id = 'fs-premium-reference-r178-css';
       reference.rel = 'stylesheet';
-      reference.href = `./tiers/tier-reference-r177.css?v=${RELEASE}`;
+      reference.href = `./tiers/tier-reference-r178.css?v=${RELEASE}`;
       document.head.appendChild(reference);
     }
 
+    /* The R177 decorator remains intentionally reusable: it only adds cosmetic
+       paid-rank/status hooks. R178 owns layout and artwork through CSS. */
     if (!document.getElementById('fs-premium-reference-r177-js')) {
       const script = document.createElement('script');
       script.id = 'fs-premium-reference-r177-js';
@@ -55,8 +57,6 @@
     }
     if (link.getAttribute('href') !== href) link.href = href;
 
-    /* Reference CSS is appended after tier CSS so it intentionally wins the
-       cascade without changing Base or the underlying business components. */
     ensureReferenceAssets();
     active = level;
     root.dataset.fsPremiumRelease = VERSION;
