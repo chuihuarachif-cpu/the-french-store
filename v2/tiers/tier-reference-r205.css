@@ -1,7 +1,7 @@
 /* THE FRENCH STORE — R205 exact premium Profile/Pass artwork.
    Presentation only. Gold/Diamond mobile reference convergence. */
 @media(max-width:620px){
-  /* Use the repaired, exact hooded mascot crop instead of the fallback hero/wordmark art. */
+  /* Repaired exact hooded mascot crop from the supplied Profile reference. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
     overflow:hidden!important;
     background:
@@ -16,7 +16,7 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card::after{
     content:''!important;display:block!important;position:absolute!important;z-index:1!important;
     inset:auto!important;right:-8px!important;top:-5px!important;width:196px!important;height:118px!important;
-    background:url('../assets/brand/premium-profile-mascot-r189.webp') center top/308px 118px no-repeat!important;
+    background:url('../assets/brand/premium-profile-mascot-r205.webp') center top/356px 118px no-repeat!important;
     border:0!important;border-radius:0!important;box-shadow:none!important;
     clip-path:none!important;mask:none!important;-webkit-mask:none!important;
     opacity:1!important;pointer-events:none!important;
@@ -33,7 +33,7 @@
     z-index:6!important;
   }
 
-  /* Exact repaired rank-pass crops from the approved references. */
+  /* Exact rank-pass crops. Gold was already valid; Diamond now uses a complete WebP. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold::before{
     content:''!important;display:block!important;position:absolute!important;z-index:1!important;
     inset:auto!important;right:-4px!important;top:24px!important;width:88px!important;height:116px!important;
@@ -45,7 +45,7 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
     content:''!important;display:block!important;position:absolute!important;z-index:1!important;
     inset:auto!important;right:-6px!important;top:18px!important;width:102px!important;height:124px!important;
-    background:url('../assets/brand/premium-pass-diamond-r189.webp') center/contain no-repeat!important;
+    background:url('../assets/brand/premium-pass-diamond-r205.webp') center/contain no-repeat!important;
     clip-path:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
     opacity:1!important;transform:none!important;filter:drop-shadow(0 0 10px rgba(56,190,255,.34))!important;
     pointer-events:none!important;
