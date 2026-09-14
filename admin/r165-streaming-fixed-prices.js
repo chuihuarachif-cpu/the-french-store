@@ -1,6 +1,6 @@
-/* THE FRENCH STORE — R165 manual fixed pricing for Streaming.
+/* THE FRENCH STORE — R166 manual fixed pricing for Streaming.
    In Streaming, purchase cost and final sale price are both chosen by Admin.
-   No automatic margin formula is applied to the sale price. */
+   Purchase cost may remain unconfigured; sale price never uses an automatic margin formula. */
 (() => {
   'use strict';
 
@@ -11,6 +11,8 @@
   const $=id=>document.getElementById(id);
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
   const money=value=>`Bs ${Number(value||0).toLocaleString('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+  const purchaseConfigured=product=>product?.precio_proveedor!==null&&product?.precio_proveedor!==undefined&&product?.precio_proveedor!=='';
+  const purchaseText=value=>value===null||value===undefined?'Sin configurar':money(value);
   const rows=new Map();
   let loading=false;
   let installed=false;
@@ -35,7 +37,8 @@
 
   function cardHtml(product){
     const id=Number(product.id);
-    const purchase=Number(product.precio_proveedor||0);
+    const hasPurchase=purchaseConfigured(product);
+    const purchase=hasPurchase?Number(product.precio_proveedor):null;
     const sale=Number(product.precio_venta_fijo??product.precio??0);
     return `
       <div class="card-top">
@@ -48,10 +51,10 @@
         <span class="badge ok">FIJO MANUAL Bs</span>
       </div>
       <div class="form-grid">
-        <label><span>Precio de compra (Bs)</span><input type="number" min="0" max="10000" step="0.01" inputmode="decimal" value="${purchase.toFixed(2)}" data-r165-purchase="${id}"></label>
+        <label><span>Precio de compra (Bs)</span><input type="number" min="0" max="10000" step="0.01" inputmode="decimal" value="${hasPurchase?purchase.toFixed(2):''}" placeholder="Sin configurar" data-r165-purchase="${id}"></label>
         <label><span>Precio de venta (Bs)</span><input type="number" min="0.50" max="5000" step="0.01" inputmode="decimal" value="${sale.toFixed(2)}" data-r165-sale="${id}"></label>
       </div>
-      <div class="meta"><span>Compra actual: <b>${money(purchase)}</b></span><span>Venta actual: <b>${money(sale)}</b></span></div>
+      <div class="meta"><span>Compra actual: <b>${esc(purchaseText(purchase))}</b></span><span>Venta actual: <b>${money(sale)}</b></span></div>
       <div class="card-actions"><button class="primary full" type="button" data-r165-stream-save="${id}">Guardar compra y venta</button></div>`;
   }
 
@@ -89,16 +92,18 @@
     const id=Number(button.dataset.r165StreamSave);
     const product=rows.get(id);
     const card=button.closest('[data-r138-stream-card]');
-    const purchase=Number(card?.querySelector(`[data-r165-purchase="${id}"]`)?.value);
+    const purchaseRaw=String(card?.querySelector(`[data-r165-purchase="${id}"]`)?.value??'').trim();
+    const purchase=purchaseRaw===''?null:Number(purchaseRaw);
     const sale=Number(card?.querySelector(`[data-r165-sale="${id}"]`)?.value);
-    if(!product||!Number.isFinite(purchase)||purchase<0||purchase>10000){notify('Escribe un precio de compra válido entre Bs 0 y Bs 10.000.');return;}
+    if(!product||(purchase!==null&&(!Number.isFinite(purchase)||purchase<0||purchase>10000))){notify('Escribe un precio de compra válido o déjalo vacío si aún no está configurado.');return;}
     if(!Number.isFinite(sale)||sale<0.50||sale>5000){notify('Escribe un precio de venta válido entre Bs 0,50 y Bs 5.000.');return;}
 
-    const oldPurchase=Number(product.precio_proveedor||0);
+    const oldPurchase=purchaseConfigured(product)?Number(product.precio_proveedor):null;
     const oldSale=Number(product.precio_venta_fijo??product.precio??0);
-    if(Math.abs(oldPurchase-purchase)<0.001&&Math.abs(oldSale-sale)<0.001){notify('No cambiaste ni el precio de compra ni el de venta.');return;}
+    const samePurchase=(oldPurchase===null&&purchase===null)||(oldPurchase!==null&&purchase!==null&&Math.abs(oldPurchase-purchase)<0.001);
+    if(samePurchase&&Math.abs(oldSale-sale)<0.001){notify('No cambiaste ni el precio de compra ni el de venta.');return;}
 
-    if(!window.confirm(`¿Guardar precios de “${product.juego} — ${product.paquete}”?\n\nCompra: ${money(oldPurchase)} → ${money(purchase)}\nVenta: ${money(oldSale)} → ${money(sale)}\n\nEl precio de venta quedará exactamente como lo escribiste; no se aplicará margen automático.`))return;
+    if(!window.confirm(`¿Guardar precios de “${product.juego} — ${product.paquete}”?\n\nCompra: ${purchaseText(oldPurchase)} → ${purchaseText(purchase)}\nVenta: ${money(oldSale)} → ${money(sale)}\n\nEl precio de venta quedará exactamente como lo escribiste; no se aplicará margen automático.`))return;
 
     const oldText=button.textContent;
     button.disabled=true;
@@ -106,13 +111,13 @@
     try{
       const data=await rpc('admin_app_set_streaming_fixed_pricing',{
         p_product_id:id,
-        p_purchase_price:Number(purchase.toFixed(2)),
+        p_purchase_price:purchase===null?null:Number(purchase.toFixed(2)),
         p_sale_price:Number(sale.toFixed(2))
       });
       if(!data?.ok)throw new Error('UPDATE_FAILED');
-      rows.set(id,{...product,precio_proveedor:Number(data.new_purchase_price),precio_venta_fijo:Number(data.new_sale_price),precio:Number(data.new_sale_price)});
+      rows.set(id,{...product,precio_proveedor:data.new_purchase_price==null?null:Number(data.new_purchase_price),precio_venta_fijo:Number(data.new_sale_price),precio:Number(data.new_sale_price)});
       if(card)card.innerHTML=cardHtml(rows.get(id));
-      notify(`${product.juego}: compra ${money(data.new_purchase_price)} · venta ${money(data.new_sale_price)}.`);
+      notify(`${product.juego}: compra ${purchaseText(data.new_purchase_price)} · venta ${money(data.new_sale_price)}.`);
     }catch(error){
       const messages={
         ADMIN_APP_FORBIDDEN:'Acceso administrativo rechazado.',
@@ -134,7 +139,7 @@
     const host=$('priceList');
     if(!host)return;
     const panelText=$('pricesPanel')?.querySelector('.panel-head p');
-    if(panelText)panelText.textContent='Recargas por Cuenta conserva su cálculo automático. En Streaming tú defines manualmente el precio de compra y el precio de venta; no se aplica margen automático al precio final.';
+    if(panelText)panelText.textContent='Recargas por Cuenta conserva su cálculo automático. En Streaming tú defines manualmente el precio de compra y el precio de venta; si todavía no tienes costo, puedes dejar compra sin configurar.';
 
     host.addEventListener('click',event=>{
       const button=event.target.closest?.('[data-r165-stream-save]');
