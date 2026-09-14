@@ -1,11 +1,10 @@
-/* THE FRENCH STORE — R178 HEADER fidelity. Presentation only. */
+/* THE FRENCH STORE — R180 HEADER fidelity. Presentation only. */
 @media(max-width:620px){
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{height:58px!important;padding:6px 10px!important;gap:7px!important;background:linear-gradient(180deg,#05090c,#030609)!important;border-bottom:1px solid rgba(237,190,96,.55)!important}
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{position:relative!important;flex:1 1 auto!important;min-width:0!important;height:46px!important;padding:0 0 10px!important;gap:5px!important;justify-content:flex-start!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{position:relative!important;flex:1 1 auto!important;min-width:0!important;height:46px!important;padding:0!important;gap:0!important;justify-content:flex-start!important;background:url('../assets/brand/premium-header-r180.webp') left center/210px 33px no-repeat!important;filter:drop-shadow(0 0 5px rgba(238,190,91,.08))!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::before{display:none!important;content:none!important}
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand span{font-size:25px!important;line-height:1!important;filter:drop-shadow(0 0 6px rgba(75,181,255,.7)) saturate(1.35)!important}
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{position:relative!important;font-size:16px!important;letter-spacing:.025em!important;line-height:1!important;color:#f2ce7b!important;white-space:nowrap!important}
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b::after{content:'TU MUNDO DIGITAL, AQUÍ';position:absolute;left:1px;top:18px;white-space:nowrap;font:600 6px/1.1 'Exo 2',system-ui,sans-serif;letter-spacing:.27em;color:#b7b2a9}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand span,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{opacity:0!important;pointer-events:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b::after{content:none!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions{gap:6px!important;flex:0 0 auto!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions #fsLoyaltyChip{display:none!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;border-radius:12px!important}
