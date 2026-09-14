@@ -74,7 +74,7 @@ jobs:
           grep -q "view-inicio'.*view-tienda'.*view-perfil" v2/rewarded-ads-ui.js
           grep -q "qrState?.classList.contains('paid')" v2/rewarded-ads-ui.js
           grep -q "result.classList.contains('success')" v2/rewarded-ads-ui.js
-          grep -q '@media (prefers-reduced-motion:reduce)' v2/rewarded-ads.css
+          grep -Eq '@media ?\(prefers-reduced-motion:reduce\)' v2/rewarded-ads.css
 
       - name: Confirm Rewarded Ads remains loyalty-only lazy load
         run: |
