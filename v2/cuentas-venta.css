@@ -1,21 +1,12 @@
-/* THE FRENCH STORE — R163 sección "Cuentas en Venta".
-   Solo presentación. No toca precios de catálogo, checkout, Wallet ni proveedores.
-   Va a lo ancho, debajo de las 4 categorías, para mantener la simetría. */
+/* THE FRENCH STORE — R169 sección "Cuentas en Venta".
+   Solo presentación. No toca precios de catálogo, checkout, Wallet ni proveedores. */
 
-/* Bloque de entrada: vive dentro de la rejilla de categorías y ocupa las dos
-   columnas, debajo de Streaming y Gift Cards, para mantener la simetría. */
+/* La entrada forma parte del sistema de categorías. La geometría la gobierna
+   tier-base.css para que no exista una segunda capa de layout compitiendo. */
 .category-card.cuentas-entry {
   grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
   position: relative;
   overflow: hidden;
-  border-color: rgba(120, 200, 255, .34);
-  background:
-    radial-gradient(130% 120% at 100% 0%, rgba(56, 215, 255, .13), transparent 62%),
-    linear-gradient(180deg, rgba(13, 32, 51, .95), rgba(7, 19, 32, .97));
 }
 .category-card.cuentas-entry small { max-width: 62ch; }
 .category-card.cuentas-entry small b { color: #d5ecf9; font-weight: 700; }
