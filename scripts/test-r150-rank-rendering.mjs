@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
-// Exercise production controllers, their observer and Auth callbacks together.
+// Membership state still refreshes safely, but no longer selects a storefront skin.
 const observers=[], timers=[], auth=[], listeners=new Map(), pendingReads=[];
 let now=0, calls=0, hold=false;
 let pass={theme:'diamond',code:'DIAMANT_BLEU',ends_at:'2030-01-01T00:00:00Z'};
@@ -57,14 +57,12 @@ before=calls;
 await Promise.all(Array.from({length:12},()=>context.FSLoyalty.refresh()));
 assert.equal(calls-before,2,'Concurrent loyalty refresh must share a fresh read pair');
 
-// A completed read updates decoration directly, even with an unchanged attribute.
 pass={theme:'gold',code:'ECLAT_OR',ends_at:'2030-02-01T00:00:00Z'};
 await context.FSLoyalty.refresh();assert.equal(root.dataset.fsMembership,'gold');
 pass={theme:'diamond',code:'DIAMANT_BLEU',ends_at:'2030-03-01T00:00:00Z'};
 await context.FSLoyalty.refresh();assert.equal(root.dataset.fsMembership,'diamond');
 pass=null;await context.FSLoyalty.refresh();assert.equal(root.dataset.fsMembership,undefined);
 
-// Finish A's old reads after B has rendered: they must not restore A's rank.
 pass={theme:'diamond',code:'DIAMANT_BLEU',ends_at:'2030-01-01T00:00:00Z'};
 hold=true;const oldPremium=context.FSRankPremium.refresh(),oldLoyalty=context.FSLoyalty.refresh();
 changeUser('account-b');hold=false;
@@ -77,24 +75,18 @@ pendingReads.splice(0).forEach(resolve=>resolve());await loggingOut;
 assert.equal(root.dataset.fsMembership,undefined,'A late response restored a signed-out rank');
 hold=false;changeUser('account-c');await advance(1000);assert.equal(root.dataset.fsMembership,'gold');
 pass={...pass,ends_at:'2000-01-01T00:00:00Z'};
-await context.FSLoyalty.refresh();assert.equal(root.dataset.fsMembership,undefined,'Expired decoration remained active');
+await context.FSLoyalty.refresh();assert.equal(root.dataset.fsMembership,undefined,'Expired membership decoration remained active');
 before=calls;await advance(10000);assert.equal(calls,before,'A new polling loop was introduced');
-console.log('R150: bounded reads, visual-only observer, fresh upgrade/expiry, concurrency and Auth races PASS');
+console.log('R170: bounded reads, membership status, fresh upgrade/expiry, concurrency and Auth races PASS');
 
-// Translation uses the pseudo-element width. Preserve the original endpoints.
+// Visual contract changed in R170: membership is a subtle status label only.
 const css=await readFile('v2/rank-pass-premium.css','utf8');
-for(const [name,start,end,width,skew] of [['fsRankRibbonGlint',-28,112,22,-16],['fsDiamondHeroSweep',-35,118,28,-12]]){
-  const keyframes=css.split('@keyframes '+name+'{')[1]?.split('\n')[0];
-  assert.ok(keyframes,name+' missing');
-  assert.equal(/(?:^|[;{])\s*(left|top|width|height|filter|box-shadow)\s*:/.test(keyframes),false);
-  const travel=[...keyframes.matchAll(/translateX\(([\d.]+)%\) skewX\((-?[\d.]+)deg\)/g)].at(-1);
-  assert.ok(travel,name+' lost its translated skew');
-  assert.ok(Math.abs(start+width*Number(travel[1])/100-end)<0.001,name+' has incorrect travel/clipping');
-  assert.equal(Number(travel[2]),skew);
-  assert.match(css,new RegExp('animation:'+name+' [\\d.]+s ease-out 1[;}]'));
-}
-assert.equal(css.includes('will-change'),false,'Rank effects must not pin layers permanently');
-assert.ok(css.includes('html[data-r8-motion="full"]'));
-assert.ok(css.includes('html:not([data-r8-motion="full"])'));
+assert.ok(css.includes('GOLD · x1.5 rewards'));
+assert.ok(css.includes('DIAMOND · x2 rewards'));
+assert.equal(css.includes('html[data-fs-membership="gold"]'),false,'Gold must not reskin the storefront');
+assert.equal(css.includes('html[data-fs-membership="diamond"]'),false,'Diamond must not reskin the storefront');
+assert.equal(css.includes('@keyframes fsRankRibbonGlint'),false,'legacy rank sweep must stay retired');
+assert.equal(css.includes('@keyframes fsDiamondHeroSweep'),false,'legacy Diamond hero sweep must stay retired');
+assert.equal(css.includes('will-change'),false,'Rank status must not pin compositor layers');
 assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'));
-console.log('R150: finite transform/opacity sweeps preserve skew, endpoints and progressive motion PASS');
+console.log('R170: membership status-only presentation contract PASS');
