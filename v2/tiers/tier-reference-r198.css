@@ -1,0 +1,75 @@
+/* THE FRENCH STORE — R198 mobile reference convergence.
+   Presentation only; Base and commercial state remain untouched. */
+@media(max-width:620px){
+  /* HEADER — reference chrome is ~45px after the Android status bar. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+    height:45px!important;min-height:45px!important;padding:3px 8px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{
+    height:39px!important;min-height:39px!important;background-size:205px 32px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .cart-btn{
+    height:38px!important;min-height:38px!important;
+  }
+
+  /* Primary screens sit immediately below the premium header in the approved captures. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda>.catalog-panel,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel{
+    margin-top:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero{
+    margin-top:2px!important;
+  }
+
+  /* HOME — restore the approved Clash of Clans crop (barbarian + wordmark). */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{
+    content:url('../assets/brand/premium-feature-clash-of-clans-r189.webp')!important;
+    object-fit:cover!important;object-position:center!important;
+  }
+
+  /* PROFILE — R197 established the correct sizes; visually translate the two
+     generated account modules without disturbing their document flow. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{
+    position:relative!important;top:16px!important;
+  }
+
+  /* Guaranteed faceted Diamond art. This does not depend on OS emoji or async media. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
+    content:''!important;display:block!important;position:absolute!important;z-index:1!important;
+    right:12px!important;top:36px!important;width:72px!important;height:78px!important;
+    clip-path:polygon(50% 0,88% 20%,100% 42%,76% 76%,50% 100%,24% 76%,0 42%,12% 20%)!important;
+    background:
+      linear-gradient(145deg,rgba(255,255,255,.92) 0 7%,transparent 8% 100%),
+      conic-gradient(from 24deg at 50% 40%,#e7fcff,#4bdcff,#0b69db,#9df2ff,#1aaee9,#1b5fd5,#c9f8ff,#5edcff,#e7fcff)!important;
+    opacity:.96!important;filter:drop-shadow(0 0 5px rgba(135,235,255,.95)) drop-shadow(0 0 14px rgba(21,151,255,.54))!important;
+    border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::after{
+    content:''!important;display:block!important;position:absolute!important;z-index:2!important;pointer-events:none!important;
+    right:12px!important;top:36px!important;width:72px!important;height:78px!important;
+    clip-path:polygon(50% 0,88% 20%,100% 42%,76% 76%,50% 100%,24% 76%,0 42%,12% 20%)!important;
+    background:
+      linear-gradient(63deg,transparent 48%,rgba(230,252,255,.72) 49%,rgba(230,252,255,.72) 51%,transparent 52%),
+      linear-gradient(117deg,transparent 48%,rgba(195,244,255,.56) 49%,rgba(195,244,255,.56) 51%,transparent 52%),
+      linear-gradient(180deg,transparent 39%,rgba(234,253,255,.52) 40%,transparent 42%)!important;
+    opacity:.76!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond .fs-pass-title,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond ul,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond button{
+    position:relative!important;z-index:4!important;
+  }
+
+  /* Keep optional points opportunities below the premium social hub so the
+     approved first screen stays clean while the feature remains available. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsRewardedAdsPanel{
+    margin-top:260px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body:has(#view-perfil.active)>.site-legal-footer .official-socials{
+    top:720px!important;
+  }
+}

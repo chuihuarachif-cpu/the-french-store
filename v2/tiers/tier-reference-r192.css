@@ -1,0 +1,77 @@
+/* THE FRENCH STORE — R192 final mobile premium fidelity pass. Presentation only. */
+@media(max-width:620px){
+  /* Header: match the compact paid-mobile reference chrome. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+    height:48px!important;min-height:48px!important;padding:4px 9px!important;gap:6px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{
+    height:40px!important;min-height:40px!important;background-size:205px 32px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .ghost-btn{
+    width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;border-radius:11px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .cart-btn{
+    width:56px!important;min-width:56px!important;height:40px!important;min-height:40px!important;border-radius:11px!important;
+  }
+
+  /* Wallet / Orders: remove the extra vertical bulk introduced in R190. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .panel-head{
+    height:82px!important;min-height:82px!important;padding:22px 11px 7px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card{
+    height:108px!important;min-height:108px!important;padding:13px 140px 12px 15px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .panel-head{
+    height:105px!important;min-height:105px!important;padding:22px 12px 10px!important;
+  }
+
+  /* Profile: deterministic hooded art using the already-proven hero asset. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
+    position:relative!important;overflow:hidden!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-art{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card::after{
+    content:''!important;display:block!important;position:absolute!important;z-index:1!important;
+    inset:auto!important;right:-4px!important;top:-8px!important;width:184px!important;height:120px!important;
+    background:url('../assets/brand/premium-hero-r183.webp') center top/184px auto no-repeat!important;
+    border:0!important;border-radius:0!important;box-shadow:none!important;mask:none!important;-webkit-mask:none!important;
+    clip-path:inset(0 0 0 0)!important;opacity:.96!important;pointer-events:none!important;
+    filter:brightness(1.08) saturate(1.12) drop-shadow(0 0 16px rgba(41,151,255,.34))!important;
+  }
+  html[data-fs-tier="diamond"] #view-perfil .profile-card::after{
+    filter:brightness(1.13) saturate(1.22) drop-shadow(0 0 20px rgba(45,184,255,.46))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-badge{
+    min-width:86px!important;height:33px!important;min-height:33px!important;padding:4px 9px!important;font-size:11px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-rank{
+    height:30px!important;min-height:30px!important;font-size:9.2px!important;
+  }
+
+  /* Rank Pass: reference-scale titles, benefits and central artwork. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{margin-top:7px!important;padding:9px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head{margin-bottom:5px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head h3{
+    font-size:17px!important;line-height:1.05!important;letter-spacing:-.02em!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card{
+    height:145px!important;min-height:145px!important;max-height:145px!important;padding:8px 7px 36px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-title{max-width:114px!important;gap:4px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold .fs-pass-title b::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond .fs-pass-title b::after{font-size:11.5px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold .fs-pass-title small::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond .fs-pass-title small::after{font-size:8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card ul::after{
+    font-size:7.7px!important;line-height:1.48!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold::before{
+    right:-4px!important;top:16px!important;width:98px!important;height:116px!important;opacity:.96!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
+    right:-3px!important;top:13px!important;width:104px!important;height:118px!important;opacity:.98!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card button{
+    height:29px!important;min-height:29px!important;max-height:29px!important;font-size:7.7px!important;
+  }
+}

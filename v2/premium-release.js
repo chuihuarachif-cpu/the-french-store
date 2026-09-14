@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r187-20260914';
-  const RELEASE = '20260914-r187-reference-match';
+  const VERSION = 'premium-release-r204-20260914';
+  const RELEASE = '20260914-r204-reference-match';
   const root = document.documentElement;
   let active = '';
 
@@ -22,6 +22,18 @@
     } else {
       const href = `./tiers/tier-reference-r178.css?v=${RELEASE}`;
       if (reference.getAttribute('href') !== href) reference.href = href;
+    }
+
+    let finalReference = document.getElementById('fs-premium-reference-r204-css');
+    if (!finalReference) {
+      finalReference = document.createElement('link');
+      finalReference.id = 'fs-premium-reference-r204-css';
+      finalReference.rel = 'stylesheet';
+      finalReference.href = `./tiers/tier-reference-r204.css?v=${RELEASE}`;
+      document.head.appendChild(finalReference);
+    } else {
+      const href = `./tiers/tier-reference-r204.css?v=${RELEASE}`;
+      if (finalReference.getAttribute('href') !== href) finalReference.href = href;
     }
 
     if (!document.getElementById('fs-premium-reference-r177-js')) {
@@ -50,6 +62,14 @@
       document.head.appendChild(fidelity);
     } else {
       window.FSPremiumR185?.refresh?.();
+    }
+
+    if (!document.getElementById('fs-premium-reference-r199-socials-js')) {
+      const socials = document.createElement('script');
+      socials.id = 'fs-premium-reference-r199-socials-js';
+      socials.src = `./tiers/tier-reference-r199-socials.js?v=${RELEASE}`;
+      socials.defer = true;
+      document.head.appendChild(socials);
     }
   }
 

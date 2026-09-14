@@ -1,0 +1,12 @@
+/* THE FRENCH STORE — R203 deterministic final Clash artwork.
+   Presentation only. Gold/Diamond mobile reference override. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{
+    content:normal!important;
+    width:100%!important;height:82px!important;
+    object-fit:contain!important;object-position:center!important;
+    padding:0!important;background:#080b0e!important;
+  }
+}

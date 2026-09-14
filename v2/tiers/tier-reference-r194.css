@@ -1,0 +1,29 @@
+/* THE FRENCH STORE — R194 final reference cleanup. Presentation only. */
+@media(max-width:620px){
+  /* Profile mascot: crop the source borders completely and keep the hood on the far-right like the approved capture. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card::after{
+    right:-8px!important;top:-5px!important;width:152px!important;height:114px!important;
+    background-image:url('../assets/brand/premium-profile-mascot-r189.webp')!important;
+    background-repeat:no-repeat!important;
+    background-position:center -3px!important;
+    background-size:186px 118px!important;
+    opacity:.98!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileName{font-size:16px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileEmail{font-size:10px!important}
+
+  /* The repository already contains the correct Clash of Clans key art; prefer it over the earlier temporary crop. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{
+    content:url('../assets/apps/clash-of-clans.webp')!important;object-fit:cover!important;object-position:center!important;
+  }
+
+  /* Reference pass cards reserve the right half for artwork. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card ul{max-width:104px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold::before{
+    right:-8px!important;top:18px!important;width:102px!important;height:116px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
+    right:-8px!important;top:15px!important;width:106px!important;height:118px!important;
+  }
+}

@@ -1,0 +1,100 @@
+/* THE FRENCH STORE — R197 final reference geometry + official socials.
+   Presentation only. Scoped exclusively to backend-resolved Gold/Diamond. */
+@media(max-width:620px){
+  /* PROFILE: keep the correctly aligned top card, then restore the vertical
+     breathing room visible in the approved reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{
+    margin-top:21px!important;
+  }
+
+  /* Rank Pass reference: title/subtitle clear of the cards, ~141px card body. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head{
+    margin-bottom:-8px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card{
+    height:141px!important;min-height:141px!important;max-height:141px!important;
+    padding:8px 7px 35px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold::before{
+    right:-8px!important;top:12px!important;width:106px!important;height:120px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond{
+    background:radial-gradient(105px 118px at 88% 28%,rgba(38,177,255,.27),transparent 70%),linear-gradient(145deg,#071829,#080a0d)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
+    display:block!important;content:url('../assets/brand/premium-pass-diamond-r189.webp')!important;
+    position:absolute!important;z-index:1!important;right:-7px!important;top:8px!important;
+    width:108px!important;height:122px!important;opacity:.96!important;pointer-events:none!important;
+    object-fit:cover!important;object-position:center!important;background:none!important;
+    border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;
+    clip-path:inset(0)!important;filter:drop-shadow(0 0 10px rgba(49,193,255,.24))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card button{
+    height:29px!important;min-height:29px!important;max-height:29px!important;bottom:6px!important;
+  }
+
+  /* OFFICIAL SOCIALS — these are the existing verified TikTok / YouTube /
+     Facebook links, now presented in the same paid black-gold / diamond skin. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer{
+    border:1.35px solid rgba(238,191,87,.68)!important;border-radius:15px!important;
+    background:linear-gradient(145deg,#0a0c0f,#05070a)!important;
+    box-shadow:0 0 12px rgba(230,176,55,.09),inset 0 1px 0 rgba(255,237,190,.05)!important;
+    color:#bdb3a2!important;
+  }
+  html[data-fs-tier="diamond"] .site-legal-footer{
+    border-color:rgba(70,190,255,.74)!important;
+    background:radial-gradient(230px 160px at 92% 12%,rgba(23,152,255,.16),transparent 70%),linear-gradient(145deg,#06111d,#04070b)!important;
+    box-shadow:0 0 16px rgba(31,169,255,.12),inset 0 1px 0 rgba(220,249,255,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .legal-brand b{
+    color:#f7d77f!important;text-shadow:0 0 10px rgba(239,187,65,.18)!important;
+  }
+  html[data-fs-tier="diamond"] .site-legal-footer .legal-brand b{color:#bceeff!important;text-shadow:0 0 12px rgba(53,192,255,.25)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .official-socials{
+    padding:12px!important;gap:10px!important;border:1px solid rgba(236,190,88,.48)!important;border-radius:13px!important;
+    background:radial-gradient(160px 100px at 91% 8%,rgba(239,182,54,.11),transparent 72%),linear-gradient(145deg,#12100b,#07090c)!important;
+    box-shadow:inset 0 1px 0 rgba(255,240,196,.05),0 7px 20px rgba(0,0,0,.20)!important;
+  }
+  html[data-fs-tier="diamond"] .site-legal-footer .official-socials{
+    border-color:rgba(75,192,255,.52)!important;
+    background:radial-gradient(180px 115px at 92% 7%,rgba(26,164,255,.21),transparent 70%),linear-gradient(145deg,#071725,#06090d)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .social-kicker{color:#efc96c!important}
+  html[data-fs-tier="diamond"] .site-legal-footer .social-kicker{color:#78d8ff!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .official-socials-copy strong{color:#fff0c8!important}
+  html[data-fs-tier="diamond"] .site-legal-footer .official-socials-copy strong{color:#e8faff!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .official-socials-copy small{color:#b6ad9d!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .social-links{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .social-link{
+    --social-accent:#f0c967!important;grid-template-columns:27px minmax(0,1fr)!important;gap:6px!important;
+    min-height:50px!important;padding:7px!important;border:1px solid rgba(238,194,94,.40)!important;border-radius:10px!important;
+    background:linear-gradient(180deg,rgba(32,25,11,.86),rgba(8,9,11,.96))!important;color:#f7e8be!important;
+    box-shadow:inset 0 1px 0 rgba(255,241,199,.05),0 0 9px rgba(231,178,57,.05)!important;
+  }
+  html[data-fs-tier="diamond"] .site-legal-footer .social-link{
+    --social-accent:#78ddff!important;border-color:rgba(80,196,255,.42)!important;
+    background:linear-gradient(180deg,rgba(8,34,55,.88),rgba(6,9,13,.97))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .social-icon{
+    width:27px!important;height:27px!important;border-radius:8px!important;color:var(--social-accent)!important;
+    border-color:color-mix(in srgb,var(--social-accent) 44%,transparent)!important;
+    background:color-mix(in srgb,var(--social-accent) 10%,transparent)!important;
+    box-shadow:0 0 9px color-mix(in srgb,var(--social-accent) 10%,transparent)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .social-icon svg{width:15px!important;height:15px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .social-label b{color:#f9e9bd!important;font-size:8.5px!important}
+  html[data-fs-tier="diamond"] .site-legal-footer .social-label b{color:#e9faff!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .social-label small{color:#aaa191!important;font-size:6.5px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer .social-arrow{display:none!important}
+
+  /* On Perfil, pull the real official social block into a discoverable position
+     just below the approved first-screen composition. It remains the same links,
+     not a duplicate or hard-coded replacement. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body:has(#view-perfil.active)>.site-legal-footer .official-socials{
+    position:absolute!important;z-index:12!important;left:8px!important;right:8px!important;top:720px!important;
+    width:auto!important;margin:0!important;box-sizing:border-box!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body:has(#view-perfil.active)>.site-legal-footer{
+    min-height:205px!important;
+  }
+}
