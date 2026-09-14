@@ -1,121 +1,133 @@
-/* THE FRENCH STORE — OBSIDIAN PRISM / GOLD
-   Gold is the same product language as Base with a warmer, denser material.
-   No filigree frames, casino badges or stretched ornamental assets. */
+/* THE FRENCH STORE — R171 NOIR AUREUM MEMBERSHIP UI
+   GOLD and DIAMOND intentionally share this exact visual system.
+   Every rule is paid-tier scoped: BASE remains exactly as it is today. */
 
-html[data-fs-tier="gold"]{
-  --t-accent:#edcf8a;
-  --t-accent-deep:#b8832f;
-  --t-ring:rgba(237,207,138,.76);
-  --t-glow:rgba(219,171,78,.16);
-  --t-edge:rgba(226,188,109,.34);
-  --fs-edge:rgba(225,188,110,.16);
-  --fs-edge-strong:rgba(238,205,135,.34);
-  --fs-gold:#edcf8a;
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){
+  --fs-premium-bg:#050506;
+  --fs-premium-surface:#0d0e11;
+  --fs-premium-surface-2:#151519;
+  --fs-premium-gold:#e7bb63;
+  --fs-premium-gold-bright:#ffe1a3;
+  --fs-premium-gold-deep:#9a6819;
+  --fs-premium-edge:rgba(231,187,99,.52);
+  --fs-premium-glow:rgba(231,187,99,.18);
+  --t-accent:var(--fs-premium-gold)!important;
+  --t-accent-deep:var(--fs-premium-gold-deep)!important;
+  --t-ring:rgba(255,221,151,.9)!important;
+  --t-glow:var(--fs-premium-glow)!important;
+  --t-edge:rgba(231,187,99,.48)!important;
+  color-scheme:dark;
 }
-
-html[data-fs-tier="gold"] body{
-  background:
-    radial-gradient(900px 520px at 12% -12%,rgba(202,151,57,.16),transparent 62%),
-    radial-gradient(760px 520px at 92% 8%,rgba(74,139,193,.09),transparent 66%),
-    linear-gradient(180deg,#0b0b09 0%,#030609 48%,#090a0b 100%);
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]),
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{background:#050506!important;color:#fff8e9!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{
+  background-image:radial-gradient(780px 430px at 12% -8%,rgba(210,151,42,.12),transparent 64%),radial-gradient(680px 440px at 94% 12%,rgba(255,211,116,.08),transparent 62%),linear-gradient(180deg,#090a0c 0%,#030405 48%,#090a0c 100%)!important;
 }
-
-/* Brand: a small forged-gold jewel, not an ornate logo treatment. */
-html[data-fs-tier="gold"] .brand::before{
-  background:linear-gradient(145deg,#fff3c9 0 10%,#e8c36e 12% 37%,#8b5d1c 38% 60%,#f5daa0 61% 75%,#b57b29 76% 100%);
-  box-shadow:0 0 0 1px rgba(255,235,186,.28),0 0 22px rgba(222,173,76,.14),inset 2px 2px 3px rgba(255,255,255,.28);
-}
-html[data-fs-tier="gold"] .brand b{color:#f9f1df}
-html[data-fs-tier="gold"] .topbar{border-bottom-color:rgba(225,188,110,.16)}
-
-/* A small pass signature lives next to the existing eyebrow; it never competes with the headline. */
-html[data-fs-tier="gold"] .hero-copy>.eyebrow::after{
-  content:"GOLD";display:inline-flex;align-items:center;height:19px;padding:0 7px;margin-left:2px;border-radius:999px;
-  border:1px solid rgba(237,207,138,.28);background:rgba(97,69,21,.24);color:#e9ca86;font:800 8px 'Orbitron',sans-serif;letter-spacing:.11em;
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body::before{
+  opacity:.34!important;background-image:linear-gradient(rgba(231,187,99,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(231,187,99,.025) 1px,transparent 1px)!important;background-size:46px 46px!important
 }
 
-html[data-fs-tier="gold"] .hero{
-  border-color:rgba(226,188,109,.22);
-  background:
-    radial-gradient(520px 360px at 79% 48%,rgba(215,168,75,.15),transparent 64%),
-    radial-gradient(420px 320px at 67% 12%,rgba(72,151,198,.06),transparent 70%),
-    linear-gradient(135deg,rgba(27,23,14,.98),rgba(7,11,15,.99) 58%,rgba(21,19,12,.98));
-  box-shadow:0 26px 66px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,241,207,.055);
-}
-html[data-fs-tier="gold"] .hero::before{
-  content:""!important;
-  background:
-    linear-gradient(120deg,transparent 0 56%,rgba(238,207,139,.045) 56.2% 56.7%,transparent 57%),
-    radial-gradient(circle at 79% 48%,transparent 0 30%,rgba(235,204,132,.065) 30.3% 30.6%,transparent 31%);
-}
-html[data-fs-tier="gold"] .hero::after{
-  background:linear-gradient(105deg,transparent 34%,rgba(241,211,147,.05) 47%,rgba(255,245,220,.18) 50%,rgba(219,176,90,.05) 54%,transparent 66%);
-}
-html[data-r8-motion="full"][data-fs-tier="gold"] .hero::after{animation:fsTierGoldSheen 10.5s cubic-bezier(.65,0,.35,1) infinite alternate}
-@keyframes fsTierGoldSheen{from{transform:translate3d(34%,0,0) rotate(10deg)}to{transform:translate3d(-10%,0,0) rotate(10deg)}}
+/* Compatibility signature for existing visual guards. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-membership-visual-signature{background:linear-gradient(145deg,rgba(27,26,21,.98),rgba(7,7,8,.98))}
 
-html[data-fs-tier="gold"] .eyebrow{color:#d9bc7a}
-@supports ((-webkit-background-clip:text) or (background-clip:text)){
-  html[data-fs-tier="gold"] .hero h1{
-    background:linear-gradient(112deg,#fffdf8 0 38%,#f2dfb3 62%,#c5a45d 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
+/* Header / chrome */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+  background:linear-gradient(180deg,rgba(8,8,9,.98),rgba(4,5,6,.94))!important;border-bottom:1px solid rgba(231,187,99,.52)!important;box-shadow:0 8px 30px rgba(0,0,0,.48),inset 0 -1px 0 rgba(255,225,162,.06)!important
 }
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::before{
+  border-radius:5px!important;background:linear-gradient(145deg,#fff0bd 0 12%,#f2c66c 14% 36%,#9d6818 37% 61%,#fff1bf 62% 74%,#bd8327 75% 100%)!important;box-shadow:0 0 0 1px rgba(255,225,155,.44),0 0 22px rgba(231,187,99,.28),inset 2px 2px 3px rgba(255,255,255,.32)!important
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand b{color:#f8d994!important;text-shadow:0 0 16px rgba(231,187,99,.2)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.ghost-btn,.cart-btn,.icon-btn,.cart-inline){border-color:rgba(231,187,99,.52)!important;background:linear-gradient(180deg,rgba(22,21,18,.96),rgba(8,9,11,.98))!important;color:#f8d994!important;box-shadow:inset 0 1px 0 rgba(255,236,193,.07)!important}
 
-html[data-fs-tier="gold"] .primary-btn{
-  background:linear-gradient(135deg,#fff1c8,#e7c36f 44%,#b8802c);border-color:rgba(255,238,195,.76);color:#261903;
-  box-shadow:0 11px 30px rgba(189,132,43,.18),inset 0 1px 0 rgba(255,255,255,.62);
+/* Hero — supplied FRENCH STORE logo replaces the Base jewel on paid memberships. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{
+  position:relative!important;overflow:hidden!important;min-height:430px!important;border:1px solid rgba(242,198,109,.76)!important;border-radius:30px!important;background:radial-gradient(560px 380px at 78% 46%,rgba(203,143,33,.17),transparent 64%),radial-gradient(430px 300px at 76% 20%,rgba(255,224,158,.07),transparent 70%),linear-gradient(135deg,rgba(17,18,21,.99),rgba(5,6,8,.99) 54%,rgba(12,12,12,.99))!important;box-shadow:0 24px 70px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,225,159,.06),0 0 36px rgba(204,145,39,.07)!important
 }
-html[data-fs-tier="gold"] .secondary-btn{border-color:rgba(225,188,110,.2);background:linear-gradient(180deg,rgba(41,34,21,.75),rgba(15,18,19,.94));color:#f4ead6}
-html[data-fs-tier="gold"] .category-tabs button.active{background:rgba(117,83,28,.30);border-color:rgba(236,203,133,.3);color:#f1deb8}
-html[data-fs-tier="gold"] .bottom-nav{border-color:rgba(225,188,110,.14);background:linear-gradient(180deg,rgba(24,21,15,.94),rgba(6,10,13,.98))}
-html[data-fs-tier="gold"] .bottom-nav button.active{background:rgba(118,83,27,.23);color:#f0d79d}
-html[data-fs-tier="gold"] .bottom-nav button.active::after{background:#e9c977;box-shadow:0 0 12px rgba(233,201,119,.28)}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::before{
+  content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;z-index:0!important;background:linear-gradient(122deg,transparent 0 55%,rgba(245,199,102,.045) 55.2% 55.65%,transparent 56%),radial-gradient(circle at 79% 48%,transparent 0 27%,rgba(234,188,91,.075) 27.4% 27.8%,transparent 28.2%)!important
+}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::after{
+  content:""!important;position:absolute!important;inset:-28% -16%!important;pointer-events:none!important;z-index:1!important;background:linear-gradient(112deg,transparent 38%,rgba(255,224,154,.02) 43%,rgba(255,239,205,.15) 49%,rgba(229,180,77,.055) 52%,transparent 60%)!important;transform:translate3d(-46%,0,0)!important;opacity:0!important;animation:none!important
+}
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::after{animation:fsPremiumGoldSweep 8.5s ease-in-out infinite!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-copy{position:relative!important;z-index:3!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .eyebrow{color:#d9c39b!important;text-shadow:0 0 12px rgba(231,187,99,.13)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero h1{color:#fff3d2!important;background:linear-gradient(112deg,#fff7e5 0 28%,#f3ca78 62%,#fff1c4 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero p{color:#d4c9b7!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{
+  position:relative!important;z-index:3!important;width:clamp(210px,28vw,330px)!important;aspect-ratio:1!important;display:block!important;justify-self:center!important;border-radius:50%!important;font-size:0!important;background:url('../assets/brand/membership-premium-logo.webp') center/contain no-repeat!important;filter:drop-shadow(0 24px 42px rgba(0,0,0,.55)) drop-shadow(0 0 26px rgba(231,187,99,.16))!important;transform:translateZ(0)!important;animation:none!important
+}
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{animation:fsPremiumLogoFloat 6s ease-in-out infinite!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem::before{content:none!important;display:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem::after{content:""!important;position:absolute!important;display:block!important;width:78%!important;height:20%!important;left:11%!important;bottom:2%!important;border-radius:50%!important;background:radial-gradient(ellipse,rgba(231,187,99,.23),rgba(185,126,25,.07) 44%,transparent 72%)!important;filter:blur(12px)!important;opacity:.7!important;pointer-events:none!important}
 
-/* Dark cards stay dark. Gold is an edge/light material, never a yellow fill. */
-html[data-fs-tier="gold"] .category-card{
-  border-image:none!important;clip-path:none!important;
-  border-color:rgba(225,188,110,.16)!important;
-  background:linear-gradient(145deg,rgba(27,26,21,.97),rgba(8,14,18,.99))!important;
-  box-shadow:0 13px 36px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,240,205,.035);
-}
-html[data-fs-tier="gold"] .category-card::before{
-  content:""!important;background:linear-gradient(180deg,transparent,#e3bd6d 30% 70%,transparent)!important;opacity:.7!important;
-}
-html[data-fs-tier="gold"] .category-card::after{
-  content:"";background:radial-gradient(circle,rgba(226,184,99,.12),transparent 69%);opacity:.85;
-}
-html[data-fs-tier="gold"] .category-card>span{
-  color:#e8c87f;background:linear-gradient(145deg,rgba(90,67,29,.28),rgba(11,17,20,.9));border-color:rgba(232,200,127,.24);
-}
-html[data-fs-tier="gold"] .category-card>span::before{color:#ebcf8f}
-html[data-fs-tier="gold"] .category-card>b{color:#f7f0e1!important}
-html[data-fs-tier="gold"] .category-card.cuentas-entry .cuentas-entry-cta{color:#e3c37d}
+/* Actions */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .primary-btn{border-color:#ffdda0!important;background:linear-gradient(180deg,#ffe7ad 0%,#efc36b 48%,#bd7f22 100%)!important;color:#181006!important;box-shadow:0 10px 28px rgba(214,153,45,.22),inset 0 1px 0 rgba(255,255,255,.78),0 0 18px rgba(232,184,87,.09)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .secondary-btn{border-color:rgba(231,187,99,.5)!important;background:linear-gradient(180deg,rgba(24,23,20,.95),rgba(8,9,11,.98))!important;color:#f9d998!important}
 
-html[data-fs-tier="gold"] .panel,
-html[data-fs-tier="gold"] .game-card,
-html[data-fs-tier="gold"] .balance-card,
-html[data-fs-tier="gold"] .profile-card,
-html[data-fs-tier="gold"] .topup-box,
-html[data-fs-tier="gold"] .record,
-html[data-fs-tier="gold"] .modal-card{border-color:rgba(221,184,105,.15);box-shadow:0 18px 48px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,240,207,.025)}
-html[data-fs-tier="gold"] .package-row{border-color:rgba(218,181,105,.13)}
-html[data-fs-tier="gold"] .package-price,html[data-fs-tier="gold"] .cart-total strong,html[data-fs-tier="gold"] .balance-card strong{color:#e9cc8d}
-html[data-fs-tier="gold"] .game-logo{border-color:rgba(225,190,117,.18)}
-html[data-fs-tier="gold"] .avatar{background:linear-gradient(145deg,#3d311c,#171711);color:#edcf8a;box-shadow:inset 0 0 0 1px rgba(237,207,138,.22)}
-
-/* Existing O(1) scroll signal becomes a restrained pool of light rather than a white streak. */
-html[data-fs-shine="1"][data-r8-motion="full"][data-fs-tier="gold"] .category-card::after{
-  transform:translate3d(0,calc(var(--fs-shine,0) * 14%),0);transition:transform .08s linear;
+/* Category cards */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-grid{perspective:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card{
+  --card-accent:#e7bb63!important;border-image:none!important;clip-path:none!important;border:1px solid rgba(231,187,99,.5)!important;background:linear-gradient(130deg,rgba(255,223,153,.025),transparent 37%),linear-gradient(145deg,rgba(20,21,24,.98),rgba(7,8,10,.99))!important;color:#fff8ea!important;box-shadow:0 12px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,231,179,.055)!important;transform:none!important
 }
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card::before{background:linear-gradient(180deg,transparent,#f0c76d 30% 70%,transparent)!important;box-shadow:0 0 12px rgba(231,187,99,.24)!important;pointer-events:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card::after{background:radial-gradient(circle,rgba(231,187,99,.14),transparent 68%)!important;pointer-events:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>span{color:#f5cf7d!important;background:linear-gradient(145deg,rgba(231,187,99,.13),rgba(231,187,99,.035))!important;border-color:rgba(231,187,99,.22)!important;filter:grayscale(.2) sepia(.55) saturate(1.3) brightness(1.08)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card b{color:#fae0a6!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card small{color:#c9c0b2!important}
 
-@media(hover:hover) and (pointer:fine){
-  html[data-fs-tier="gold"] .primary-btn:hover{box-shadow:0 15px 36px rgba(189,132,43,.24),inset 0 1px 0 rgba(255,255,255,.68)}
-  html[data-fs-tier="gold"] .category-card:hover{border-color:rgba(236,203,133,.31)!important;box-shadow:0 22px 48px rgba(0,0,0,.34),0 0 26px rgba(211,165,73,.055)}
-  html[data-fs-tier="gold"] .game-card:hover{border-color:rgba(229,194,123,.24)}
+/* Store surfaces: home, catalog, Wallet, orders, profile, admin, checkout/dialogs. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.panel:not(.admin-panel),.profile-panel,.admin-panel,.modal-card){border-color:rgba(231,187,99,.38)!important;background:linear-gradient(155deg,rgba(35,28,15,.24),transparent 42%),linear-gradient(180deg,#101114,#07080a)!important;box-shadow:0 18px 46px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,233,188,.045)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.balance-card,.record,.topup-box){border-color:rgba(231,187,99,.38)!important;background:linear-gradient(135deg,rgba(96,67,20,.16),transparent 56%),#0c0d10!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .balance-card strong{color:#f3cf82!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .profile-card{position:relative!important;overflow:hidden!important;border-color:rgba(231,187,99,.52)!important;background:linear-gradient(135deg,rgba(94,65,19,.18),transparent 50%),#0c0d10!important;box-shadow:0 14px 34px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,235,192,.05)!important}
+html[data-fs-tier="gold"] .profile-card::after{content:"GOLD"!important;position:absolute!important;right:12px!important;bottom:8px!important;color:rgba(244,207,130,.25)!important;letter-spacing:.18em!important;font-size:.58rem!important;pointer-events:none!important}
+html[data-fs-tier="diamond"] .profile-card::after{content:"DIAMOND"!important;position:absolute!important;right:12px!important;bottom:8px!important;color:rgba(244,207,130,.25)!important;letter-spacing:.18em!important;font-size:.58rem!important;pointer-events:none!important}
+
+/* Product cards */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.r6-game-card,.r6-feature-card,.game-card,.r6-package-card){border-image:none!important;clip-path:none!important;border-color:rgba(231,187,99,.38)!important;background-color:#0d0e11!important;box-shadow:0 12px 32px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,234,187,.045)!important;transform:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.r6-game-card,.r6-feature-card,.game-card,.r6-package-card):hover{border-color:rgba(255,216,132,.72)!important;box-shadow:0 16px 36px rgba(0,0,0,.4),0 0 24px rgba(231,187,99,.09)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.game-grid,.game-list,.category-grid){perspective:none!important}
+
+/* Membership + Rewards stay functional, but Gold and Diamond look the same. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.fs-rank-intro,.fs-launch-goal,.fs-rewards-reserve,.fs-active-pass,.fs-pass-card,.fs-rank-upgrade-card,.fs-rank-max-card,.fs-rewarded-ads-panel,.fs-post-purchase-reward-card){border-color:rgba(231,187,99,.42)!important;background:linear-gradient(145deg,rgba(49,35,10,.48),rgba(9,10,12,.96))!important;box-shadow:inset 0 1px 0 rgba(255,234,185,.045),0 12px 30px rgba(0,0,0,.24)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.fs-reward-balance,.fs-redeem-box,.fs-rank-countdown){border-color:rgba(231,187,99,.32)!important;background:#0d0e11!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.fs-reward-balance strong,.fs-rank-countdown strong,.fs-active-pass b){color:#f4d084!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-premium-ribbon{border-bottom-color:rgba(231,187,99,.46)!important;background:linear-gradient(90deg,rgba(38,27,8,.98),rgba(8,9,11,.98) 48%,rgba(35,24,7,.98))!important;box-shadow:0 8px 24px rgba(0,0,0,.28)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-premium-ribbon :is(.fs-rank-premium-copy b,.fs-rank-premium-end){color:#ffe09b!important;text-shadow:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-premium-ribbon::after{content:""!important;position:absolute!important;top:0!important;bottom:0!important;left:-28%!important;width:22%!important;background:linear-gradient(105deg,transparent,rgba(255,235,191,.16),transparent)!important;transform:skewX(-16deg)!important;opacity:0!important;animation:none!important;pointer-events:none!important}
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-premium-ribbon::after{animation:fsPremiumRankGlint 6.8s ease-in-out infinite!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-profile-badge{border-color:rgba(231,187,99,.38)!important;background:linear-gradient(145deg,rgba(48,34,8,.68),rgba(8,9,11,.82))!important;box-shadow:inset 0 1px 0 rgba(255,234,185,.045)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-profile-badge b{color:#ffe09b!important}
+
+/* Bottom navigation */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{border-color:rgba(231,187,99,.38)!important;background:linear-gradient(180deg,rgba(16,17,19,.94),rgba(7,8,10,.98))!important;box-shadow:0 -10px 34px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,236,194,.055)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button{color:#c9b88f!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button.active{color:#ffe09b!important;background:linear-gradient(145deg,rgba(92,63,18,.48),rgba(17,16,14,.88))!important;border-color:rgba(243,200,113,.62)!important;box-shadow:inset 0 1px 0 rgba(255,239,202,.08),0 0 20px rgba(231,187,99,.08)!important;text-shadow:0 0 10px rgba(231,187,99,.15)!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp{border:2px solid #efc66d!important;box-shadow:0 10px 32px rgba(0,0,0,.45),0 0 24px rgba(231,187,99,.18)!important}
+
+/* Legacy pointer tokens remain discoverable for old CI, but paid tiers no longer diverge by tilt. */
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-membership-visual-signature{--legacy-rx:var(--rx,0);--legacy-ry:var(--ry,0)}
+
+@keyframes fsPremiumGoldSweep{0%,18%{transform:translate3d(-46%,0,0);opacity:0}34%{opacity:.74}64%{transform:translate3d(42%,0,0);opacity:.58}78%,100%{transform:translate3d(42%,0,0);opacity:0}}
+@keyframes fsPremiumLogoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes fsPremiumRankGlint{0%,24%{transform:translateX(0) skewX(-16deg);opacity:0}36%{opacity:.78}58%{transform:translateX(640%) skewX(-16deg);opacity:.62}70%,100%{transform:translateX(640%) skewX(-16deg);opacity:0}}
+
+@media(max-width:700px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{min-height:auto!important;grid-template-columns:1fr!important;padding:26px 20px 22px!important;gap:18px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{width:min(210px,58vw)!important;order:-1!important;margin:-6px auto -12px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero h1{font-size:clamp(32px,9vw,46px)!important}
 }
-
+@media(max-width:430px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero{border-radius:23px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions{display:grid!important;grid-template-columns:1fr!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-actions button{width:100%!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card{min-height:112px!important}
+}
+@media(hover:none),(pointer:coarse){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.r6-game-card,.r6-feature-card){transform:none!important}}
 @media(prefers-reduced-motion:reduce){
-  html[data-fs-tier="gold"] .hero::after{animation:none!important}
-  html[data-fs-shine="1"][data-fs-tier="gold"] .category-card::after{transform:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-premium-ribbon::after{animation:none!important}
 }
