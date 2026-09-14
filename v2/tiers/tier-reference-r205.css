@@ -1,0 +1,18 @@
+/* THE FRENCH STORE — R205 lossless Clash artwork lock.
+   Presentation only. Gold/Diamond mobile reference override. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash Of Clans"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature="Clash of Clans (Sin Bonus)"]>img{
+    content:normal!important;
+    width:100%!important;
+    height:82px!important;
+    padding:0!important;
+    object-fit:cover!important;
+    object-position:center!important;
+    filter:none!important;
+    opacity:1!important;
+    transform:none!important;
+    background:#080b0e!important;
+  }
+}
