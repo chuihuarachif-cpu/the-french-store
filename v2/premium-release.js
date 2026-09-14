@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r207-20260914';
-  const RELEASE = '20260914-r207-pixel-reference';
+  const VERSION = 'premium-release-r208-20260914';
+  const RELEASE = '20260914-r208-reference-match';
   const root = document.documentElement;
   let active = '';
 
@@ -24,15 +24,15 @@
       if (reference.getAttribute('href') !== href) reference.href = href;
     }
 
-    let finalReference = document.getElementById('fs-premium-reference-r207-css');
+    let finalReference = document.getElementById('fs-premium-reference-r208-css');
     if (!finalReference) {
       finalReference = document.createElement('link');
-      finalReference.id = 'fs-premium-reference-r207-css';
+      finalReference.id = 'fs-premium-reference-r208-css';
       finalReference.rel = 'stylesheet';
-      finalReference.href = `./tiers/tier-reference-r207.css?v=${RELEASE}`;
+      finalReference.href = `./tiers/tier-reference-r208.css?v=${RELEASE}`;
       document.head.appendChild(finalReference);
     } else {
-      const href = `./tiers/tier-reference-r207.css?v=${RELEASE}`;
+      const href = `./tiers/tier-reference-r208.css?v=${RELEASE}`;
       if (finalReference.getAttribute('href') !== href) finalReference.href = href;
     }
 
