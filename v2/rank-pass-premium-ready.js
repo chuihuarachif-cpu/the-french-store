@@ -1,28 +1,38 @@
-/* THE FRENCH STORE — Rank premium readiness bridge.
-   Presentation-only resilience for the async modular bootstrap. It waits for the
-   authenticated loyalty feature without changing Auth, Wallet, BISA or Rewards data. */
+/* THE FRENCH STORE — R170 Rank readiness bridge.
+   Compatibility only: keeps the existing membership controller refreshed and
+   removes retired "separate theme" wording from customer-facing copy. */
 (() => {
   'use strict';
-  const VERSION = 'rank-premium-ready-v2-r157-20260907';
-  const SHOWCASE_REVISION = '20260907-r157';
+  const VERSION = 'rank-premium-ready-v3-r170-20260913';
   let attempts = 0;
   let timer = null;
   let observer = null;
 
-  function ensureShowcaseStyle() {
-    if (document.getElementById('fs-rank-pass-showcase-css')) return;
-    // Controller unit fixtures intentionally provide no DOM head/createElement.
-    // The style loader is optional presentation wiring and must fail closed there.
-    if (!document.head || typeof document.createElement !== 'function') return;
-    const link = document.createElement('link');
-    link.id = 'fs-rank-pass-showcase-css';
-    link.rel = 'stylesheet';
-    link.href = `./rank-pass-showcase.css?v=${SHOWCASE_REVISION}`;
-    document.head.appendChild(link);
+  const REPLACEMENTS = Object.freeze([
+    ['Tema Diamond Rank e insignia premium desde ahora', 'Insignia Diamond activa · x2 Rewards durante el pase'],
+    ['Tema Gold Rank e insignia dorada desde ahora', 'Insignia Gold activa · x1.5 Rewards durante el pase'],
+    ['Tema Diamond visible desde la activación', 'Diamond · x2 Rewards mientras esté vigente'],
+    ['Tema Gold visible desde la activación', 'Gold · x1.5 Rewards mientras esté vigente'],
+    ['Tema exclusivo inmediato', 'Beneficio activo al instante'],
+    ['Activa de inmediato un estilo exclusivo en tu cuenta', 'Activa de inmediato los beneficios de tu pase en tu cuenta']
+  ]);
+
+  function normalizeCopy(root = document.body) {
+    if (!root || typeof document.createTreeWalker !== 'function') return;
+    const showText = globalThis.NodeFilter?.SHOW_TEXT ?? 4;
+    const walker = document.createTreeWalker(root, showText);
+    let node;
+    while ((node = walker.nextNode())) {
+      const value = node.nodeValue || '';
+      let next = value;
+      for (const [from, to] of REPLACEMENTS) next = next.replaceAll(from, to);
+      if (next !== value) node.nodeValue = next;
+    }
   }
 
   function refresh() {
     try { window.FSRankPremium?.refresh?.(); } catch {}
+    normalizeCopy();
   }
 
   function poll() {
@@ -37,21 +47,14 @@
   }
 
   function install() {
-    ensureShowcaseStyle();
     poll();
-    observer = new MutationObserver((mutations) => {
-      if (mutations.some((m) => m.attributeName === 'data-fs-membership' || m.attributeName === 'data-fs-loyalty-ready')) {
-        // Membership attributes are rendered output. Repaint from the accepted
-        // state without turning a visual mutation into another backend read.
-        window.FSRankPremium?.render?.();
-      }
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-fs-membership','data-fs-loyalty-ready'] });
-
-    // The premium controller owns profile/auth refreshes. Do not duplicate them.
+    if (typeof MutationObserver === 'function' && document.body) {
+      observer = new MutationObserver(() => normalizeCopy());
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
   }
 
-  window.FSRankPremiumReady = Object.freeze({ version: VERSION, refresh });
+  window.FSRankPremiumReady = Object.freeze({ version: VERSION, refresh, normalizeCopy });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });
   else install();
 })();
