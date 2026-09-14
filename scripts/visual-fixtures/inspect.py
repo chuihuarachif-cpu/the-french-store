@@ -48,8 +48,10 @@ if data['scenario'] in ('lite','reduced'):
     assert data['motion'] in ('lite','off'), 'Progressive motion was ignored'
     assert data['heroAnimation']=='none' and data['ribbonAnimation']=='none', 'Decorative sweep runs in lightweight mode'
 elif data['rank']=='diamond':
-    assert data['heroAnimation']=='fsDiamondHeroSweep', 'Diamond hero sweep was removed'
-    assert data['ribbonAnimation']=='fsRankRibbonGlint', 'Diamond ribbon glint was removed'
+    # Historical fixtures use the old blue Diamond sweep; R171 current fixtures use
+    # the exact same Noir & Gold sweep as Gold. Both are valid in before/after comparisons.
+    assert data['heroAnimation'] in ('fsDiamondHeroSweep','fsPremiumGoldSweep'), 'Paid hero motion contract was lost'
+    assert data['ribbonAnimation'] in ('fsRankRibbonGlint','fsPremiumRankGlint'), 'Paid ribbon motion contract was lost'
 
 if len(sys.argv)>5 and sys.argv[5]=='r153' and data['view']=='pedidos':
     expected={'error':'error','empty':'empty','loading':'loading'}.get(data['scenario'],'ready')
