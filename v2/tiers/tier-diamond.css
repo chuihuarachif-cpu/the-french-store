@@ -1,5 +1,5 @@
 /* NOIR AUREUM MEMBERSHIP UI — shared Gold + Diamond wrapper. */
-@import url('./tier-reference-match.css?v=20260914-r173');
+@import url('./tier-reference-match.css?v=20260914-r174');
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){--fs-premium-gold:#e7bb63;--legacy-rx:var(--rx,0);--legacy-ry:var(--ry,0)}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]),html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{background:#050506!important}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem{background-image:url('../assets/brand/membership-premium-logo.webp')!important}
@@ -7,11 +7,25 @@ html[data-fs-tier="gold"] .profile-card::after{content:"GOLD"}
 html[data-fs-tier="diamond"] .profile-card::after{content:"DIAMOND"}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.game-card,.r6-game-card,.r6-feature-card){border-image:none!important}
 html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-membership-visual-signature{--paid-motion:1}
+
+/* Mobile/reference correctness: no invisible ribbon focus stop, no late reveal holes. */
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-rank-premium-ribbon{display:none!important}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem.fs-brand-ready{display:block!important}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio :is(.category-card,.compact-panel,.game-card,.r6-feature-card).fs-reveal{opacity:1!important;transform:none!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .category-grid>*{animation:none!important;opacity:1!important}
 html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card:not(.cuentas-entry)::after{z-index:4!important;pointer-events:none!important}
-html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{bottom:max(7px,env(safe-area-inset-bottom))!important;height:calc(74px + env(safe-area-inset-bottom))!important;padding-bottom:calc(7px + env(safe-area-inset-bottom))!important}
+
+/* The reference has one strong highlighted product, not a tall mini-catalog. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>:is(.game-card,.r6-feature-card):nth-child(n+2){display:none!important}
+
+/* The base dock is centered with translateX; premium uses an inset floating dock. */
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{left:8px!important;right:8px!important;width:auto!important;transform:none!important;bottom:max(7px,env(safe-area-inset-bottom))!important;height:calc(74px + env(safe-area-inset-bottom))!important;padding-bottom:calc(7px + env(safe-area-inset-bottom))!important}
+html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp{bottom:calc(88px + env(safe-area-inset-bottom))!important}
+
+/* Keep the established Diamond motion contract while retaining the R172 sweep. */
+@keyframes fsPremiumGoldSweep{0%,26%{transform:translate3d(-48%,0,0);opacity:0}39%{opacity:.6}61%{transform:translate3d(45%,0,0);opacity:.42}75%,100%{transform:translate3d(45%,0,0);opacity:0}}
+html[data-r8-motion="full"]:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero::after{animation:fsPremiumGoldSweep 8s ease-in-out infinite!important}
+
 @media(max-width:620px){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .hero-gem.fs-brand-ready{width:128px!important;max-width:128px!important;margin-inline:0!important}}
 @media(hover:none),(pointer:coarse){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.category-card,.game-card,.r6-game-card,.r6-feature-card){transform:none!important}}
 @media(prefers-reduced-motion:reduce){html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *::before,html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) *::after{animation:none!important}}
