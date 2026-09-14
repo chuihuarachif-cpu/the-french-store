@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r203-20260914';
-  const RELEASE = '20260914-r203-reference-match';
+  const VERSION = 'premium-release-r204-20260914';
+  const RELEASE = '20260914-r204-reference-match';
   const root = document.documentElement;
   let active = '';
 
@@ -24,15 +24,15 @@
       if (reference.getAttribute('href') !== href) reference.href = href;
     }
 
-    let finalReference = document.getElementById('fs-premium-reference-r203-css');
+    let finalReference = document.getElementById('fs-premium-reference-r204-css');
     if (!finalReference) {
       finalReference = document.createElement('link');
-      finalReference.id = 'fs-premium-reference-r203-css';
+      finalReference.id = 'fs-premium-reference-r204-css';
       finalReference.rel = 'stylesheet';
-      finalReference.href = `./tiers/tier-reference-r203.css?v=${RELEASE}`;
+      finalReference.href = `./tiers/tier-reference-r204.css?v=${RELEASE}`;
       document.head.appendChild(finalReference);
     } else {
-      const href = `./tiers/tier-reference-r203.css?v=${RELEASE}`;
+      const href = `./tiers/tier-reference-r204.css?v=${RELEASE}`;
       if (finalReference.getAttribute('href') !== href) finalReference.href = href;
     }
 
@@ -70,16 +70,6 @@
       socials.src = `./tiers/tier-reference-r199-socials.js?v=${RELEASE}`;
       socials.defer = true;
       document.head.appendChild(socials);
-    }
-
-    if (!document.getElementById('fs-premium-reference-r203-js')) {
-      const exactArt = document.createElement('script');
-      exactArt.id = 'fs-premium-reference-r203-js';
-      exactArt.src = `./tiers/tier-reference-r203.js?v=${RELEASE}`;
-      exactArt.defer = true;
-      document.head.appendChild(exactArt);
-    } else {
-      window.FSPremiumR203?.refresh?.();
     }
   }
 
