@@ -1,0 +1,50 @@
+/* THE FRENCH STORE — R219 corrective fidelity layer after R218 browser review. */
+@media(max-width:620px){
+  /* Keep both reference hero CTAs visible without changing their actions. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    min-height:252px!important;
+    padding-bottom:17px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions{
+    display:grid!important;grid-template-columns:1fr!important;gap:7px!important;margin-top:10px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions>.secondary-btn{
+    display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important;
+    min-height:43px!important;height:43px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions>.primary-btn{
+    min-height:43px!important;height:43px!important;
+  }
+
+  /* R218's generic padding must not consume the left icon lane in order cards. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-main,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-meta{
+    margin-left:48px!important;min-width:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-code{
+    font-size:14px!important;line-height:1.08!important;white-space:nowrap!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-date{
+    font-size:10.5px!important;line-height:1.2!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-meta strong{font-size:13px!important}
+
+  /* The reference Rank Pass header has no standalone refresh control. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .icon-btn{
+    display:none!important;visibility:hidden!important;
+  }
+
+  /* Preserve readable Premium pass titles without overlap with legacy pseudo labels. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-r215-pass-clean .fs-pass-title b,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-r215-pass-clean .fs-pass-title small{
+    position:relative!important;z-index:5!important;
+  }
+
+  /* Slightly stronger corner glints on the fixed dock, matching the supplied frame. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{
+    background:
+      radial-gradient(55px 16px at 4% 100%,rgba(255,211,109,.08),transparent 80%),
+      radial-gradient(55px 16px at 96% 100%,rgba(255,211,109,.08),transparent 80%),
+      linear-gradient(180deg,rgba(13,16,19,.98),rgba(5,7,10,.995))!important;
+  }
+}
