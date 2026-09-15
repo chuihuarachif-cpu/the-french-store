@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r210-20260914';
-  const RELEASE = '20260914-r210-reference-match';
+  const VERSION = 'premium-release-r211-20260914';
+  const RELEASE = '20260914-r211-reference-match';
   const root = document.documentElement;
   let active = '';
 
@@ -34,6 +34,18 @@
     } else {
       const href = `./tiers/tier-reference-r210.css?v=${RELEASE}`;
       if (finalReference.getAttribute('href') !== href) finalReference.href = href;
+    }
+
+    let clashReference = document.getElementById('fs-premium-reference-r211-css');
+    if (!clashReference) {
+      clashReference = document.createElement('link');
+      clashReference.id = 'fs-premium-reference-r211-css';
+      clashReference.rel = 'stylesheet';
+      clashReference.href = `./tiers/tier-reference-r211.css?v=${RELEASE}`;
+      document.head.appendChild(clashReference);
+    } else {
+      const href = `./tiers/tier-reference-r211.css?v=${RELEASE}`;
+      if (clashReference.getAttribute('href') !== href) clashReference.href = href;
     }
 
     if (!document.getElementById('fs-premium-reference-r177-js')) {
