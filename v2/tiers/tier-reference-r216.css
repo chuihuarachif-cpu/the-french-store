@@ -1,0 +1,124 @@
+/* THE FRENCH STORE — R216 corrections after real-browser inspection.
+   Premium presentation only. */
+@media(max-width:620px){
+  /* R215 inherits a two-column grid from older premium CSS. The reference art is
+     absolutely positioned, so keep the copy at a deliberate 54% width instead
+     of splitting an already padded content box a second time. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    display:block!important;
+    grid-template-columns:none!important;
+    min-height:246px!important;
+    padding:31px 46% 17px 17px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-copy{
+    width:100%!important;max-width:none!important;min-width:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{
+    max-width:none!important;overflow:visible!important;white-space:normal!important;
+    font-size:22px!important;line-height:1.02!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero p{
+    max-width:none!important;font-size:9.4px!important;line-height:1.3!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions{
+    margin-top:9px!important;gap:6px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions button{
+    display:flex!important;visibility:visible!important;opacity:1!important;
+    align-items:center!important;justify-content:center!important;
+    height:32px!important;min-height:32px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .fs-premium-hero-art{
+    right:-7px!important;top:18px!important;width:182px!important;height:218px!important;
+    object-fit:contain!important;object-position:center top!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-gem{
+    display:none!important;
+  }
+
+  /* The featured Clash tile is a quick link, not a maintenance status surface.
+     Maintenance remains enforced inside the product flow itself. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"] .fs-maintenance-badge,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="clash"] .fs-maintenance-badge{
+    display:none!important;visibility:hidden!important;opacity:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"] .fs-r215-feature-note,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="clash"] .fs-r215-feature-note{
+    display:inline-flex!important;visibility:visible!important;opacity:1!important;
+    width:max-content!important;max-width:100%!important;height:auto!important;min-height:0!important;
+    margin:2px 0 0!important;padding:1px 5px!important;border-radius:999px!important;
+    background:#3b3211!important;color:#e5ca72!important;font-size:6.8px!important;line-height:1.25!important;
+  }
+
+  /* Older reference layers create PASS labels with pseudo-elements. Until the
+     R215 JS normalizes the card, keep those fallbacks stable. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card::after{
+    content:none!important;display:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-title b{
+    font-size:0!important;line-height:1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-title small{
+    font-size:0!important;line-height:1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold .fs-pass-title b::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond .fs-pass-title b::after{
+    font-size:13px!important;line-height:1.05!important;font-weight:850!important;letter-spacing:-.015em!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold .fs-pass-title small::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond .fs-pass-title small::after{
+    font-size:8.5px!important;line-height:1.15!important;margin-top:3px!important;
+  }
+
+  /* Once JS marks the card clean, use only the actual title nodes and suppress
+     every old pseudo-label. This prevents Gold Rank/GOLD PASS collisions. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card.fs-r215-pass-clean::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-r215-pass-clean .fs-pass-title b::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-r215-pass-clean .fs-pass-title small::after{
+    content:none!important;display:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-r215-pass-clean .fs-pass-title b{
+    display:block!important;font-size:13px!important;line-height:1.05!important;font-weight:850!important;letter-spacing:-.015em!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-r215-pass-clean .fs-pass-title small{
+    display:block!important;margin-top:3px!important;font-size:8.5px!important;line-height:1.15!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-title{
+    max-width:120px!important;gap:5px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card ul{
+    max-width:118px!important;
+  }
+
+  /* The supplied paid-tier profile ends with Rank Pass. Rewarded-ad diagnostics
+     are not part of this premium view and remain available to Base/admin flows. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #fsRewardedAdsPanel{
+    display:none!important;
+  }
+
+  /* Guarantee one clean floating WhatsApp circle even if a legacy button effect
+     stylesheet adds decorative pseudo-elements. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #floatingWhatsapp{
+    display:grid!important;place-items:center!important;overflow:hidden!important;isolation:isolate!important;
+    padding:0!important;font-size:0!important;line-height:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #floatingWhatsapp::before,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #floatingWhatsapp::after{
+    content:none!important;display:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #floatingWhatsapp svg{
+    display:block!important;position:relative!important;inset:auto!important;transform:none!important;
+    width:33px!important;height:33px!important;min-width:33px!important;min-height:33px!important;
+    margin:0!important;padding:0!important;fill:#fff!important;filter:none!important;
+  }
+}
+
+@media(max-width:370px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    min-height:238px!important;padding-right:45%!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .fs-premium-hero-art{
+    width:168px!important;height:209px!important;top:18px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{font-size:20.5px!important}
+}

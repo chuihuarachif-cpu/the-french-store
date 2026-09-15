@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r213-20260915';
-  const RELEASE = '20260915-r213-owner-polish';
+  const VERSION = 'premium-release-r222-20260915';
+  const RELEASE = '20260915-r222-reference-final';
   const root = document.documentElement;
   let active = '';
 
@@ -72,6 +72,18 @@
       if (finalPolish.getAttribute('href') !== href) finalPolish.href = href;
     }
 
+    let fidelityReference = document.getElementById('fs-premium-reference-r215-css');
+    if (!fidelityReference) {
+      fidelityReference = document.createElement('link');
+      fidelityReference.id = 'fs-premium-reference-r215-css';
+      fidelityReference.rel = 'stylesheet';
+      fidelityReference.href = `./tiers/tier-reference-r215.css?v=${RELEASE}`;
+      document.head.appendChild(fidelityReference);
+    } else {
+      const href = `./tiers/tier-reference-r215.css?v=${RELEASE}`;
+      if (fidelityReference.getAttribute('href') !== href) fidelityReference.href = href;
+    }
+
     if (!document.getElementById('fs-premium-reference-r211-js')) {
       const clash = document.createElement('script');
       clash.id = 'fs-premium-reference-r211-js';
@@ -125,6 +137,16 @@
     } else {
       window.FSPremiumR212?.refresh?.();
     }
+
+    if (!document.getElementById('fs-premium-reference-r215-js')) {
+      const fidelity = document.createElement('script');
+      fidelity.id = 'fs-premium-reference-r215-js';
+      fidelity.src = `./tiers/tier-reference-r215.js?v=${RELEASE}`;
+      fidelity.defer = true;
+      document.head.appendChild(fidelity);
+    } else {
+      window.FSPremiumR215?.refresh?.();
+    }
   }
 
   function apply() {
@@ -135,6 +157,7 @@
       window.FSPremiumReference?.refresh?.();
       window.FSPremiumR185?.refresh?.();
       window.FSPremiumR212?.refresh?.();
+      window.FSPremiumR215?.refresh?.();
       return;
     }
 

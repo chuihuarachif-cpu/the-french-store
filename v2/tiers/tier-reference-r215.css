@@ -1,0 +1,478 @@
+/* THE FRENCH STORE — R215 high-fidelity mobile finish.
+   Visual-only Gold/Diamond pass tuned against the latest owner references.
+   No commerce, auth, Wallet, price, fulfillment or Supabase logic. */
+
+@media(max-width:620px){
+  html[data-fs-tier="gold"]{
+    --fs-r215-edge:#e4ad3d;
+    --fs-r215-hot:#fff0a6;
+    --fs-r215-text:#fff3c7;
+    --fs-r215-glow:rgba(239,180,61,.28);
+    --fs-r215-ambient:rgba(255,205,80,.14);
+  }
+  html[data-fs-tier="diamond"]{
+    --fs-r215-edge:#e8ba55;
+    --fs-r215-hot:#fff2b5;
+    --fs-r215-text:#fff7da;
+    --fs-r215-glow:rgba(238,186,73,.25);
+    --fs-r215-ambient:rgba(52,180,255,.20);
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{
+    background:
+      radial-gradient(560px 290px at 88% 0,rgba(19,108,157,.10),transparent 68%),
+      linear-gradient(#020508,#020507)!important;
+    color:#eef3f7!important;
+    font-family:'Exo 2',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) main{
+    padding-bottom:92px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(h1,h2,h3,b,strong,.panel-head h2){
+    text-rendering:optimizeLegibility!important;
+  }
+
+  /* Header — larger wordmark, thin gold divider and premium action buttons. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+    min-height:55px!important;height:55px!important;padding:5px 8px!important;
+    border-bottom:1px solid rgba(232,184,77,.50)!important;
+    background:linear-gradient(180deg,#030507 0%,#020406 100%)!important;
+    box-shadow:0 7px 24px rgba(0,0,0,.52),0 1px 12px var(--fs-r215-ambient)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar .brand{
+    width:min(66vw,270px)!important;min-width:205px!important;height:47px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar .brand::before{
+    filter:brightness(1.10) contrast(1.06) saturate(1.06)
+      drop-shadow(0 0 5px rgba(255,213,105,.20))
+      drop-shadow(0 0 8px rgba(62,169,255,.18))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .top-actions{
+    gap:7px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(.top-actions .ghost-btn,.top-actions .cart-btn){
+    width:47px!important;height:44px!important;min-width:47px!important;min-height:44px!important;
+    padding:0!important;border:1.4px solid rgba(239,191,83,.84)!important;border-radius:13px!important;
+    background:linear-gradient(145deg,rgba(10,15,20,.98),rgba(4,8,11,.98))!important;
+    box-shadow:0 0 11px rgba(235,180,61,.12),inset 0 1px 0 rgba(255,239,190,.08)!important;
+  }
+
+  /* Shared surface treatment: reference uses thin luminous edges with isolated hot spots. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(
+    #view-inicio>.hero,
+    #view-inicio>.compact-panel,
+    #view-tienda>.catalog-panel,
+    #view-wallet>.panel,
+    #view-pedidos>.panel,
+    #view-perfil>.profile-panel,
+    #fsPreferredNameCard,
+    #fsLoyaltyPanel
+  ){
+    border:1.45px solid rgba(231,181,72,.88)!important;
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.42),
+      0 0 13px rgba(235,179,55,.15),
+      inset 0 1px 0 rgba(255,244,203,.10),
+      inset 0 -1px 0 rgba(207,142,31,.10)!important;
+  }
+  html[data-fs-tier="diamond"] :is(
+    #view-inicio>.hero,
+    #view-tienda>.catalog-panel,
+    #view-wallet>.panel,
+    #view-pedidos>.panel,
+    #view-perfil>.profile-panel,
+    #fsLoyaltyPanel
+  ){
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.44),
+      0 0 12px rgba(236,182,63,.13),
+      0 0 22px rgba(42,170,255,.07),
+      inset 0 1px 0 rgba(255,247,215,.10)!important;
+  }
+
+  /* Rank ribbon — attached upper-right, like the references. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge{
+    top:-1px!important;right:-1px!important;min-height:27px!important;height:27px!important;
+    padding:0 12px 0 17px!important;border:1.4px solid rgba(239,190,77,.92)!important;
+    border-radius:0 14px 0 17px!important;background:linear-gradient(180deg,rgba(27,20,8,.98),rgba(9,10,11,.98))!important;
+    color:#ffe69b!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:10px!important;font-weight:700!important;
+    box-shadow:0 0 14px rgba(235,177,50,.22),inset 0 1px 0 rgba(255,242,181,.15)!important;
+    letter-spacing:.01em!important;
+  }
+  html[data-fs-tier="diamond"] .fs-premium-rank-badge{
+    border-color:rgba(93,198,255,.95)!important;color:#e6f8ff!important;
+    background:linear-gradient(180deg,rgba(7,37,59,.98),rgba(5,14,23,.99))!important;
+    box-shadow:0 0 15px rgba(45,174,255,.30),inset 0 1px 0 rgba(220,250,255,.20)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-icon{
+    font-size:13px!important;filter:drop-shadow(0 0 5px currentColor)!important;
+  }
+
+  /* HOME */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio.active{
+    gap:8px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    min-height:195px!important;padding:31px 47% 18px 17px!important;border-radius:17px!important;overflow:hidden!important;
+    background-color:#05090d!important;
+    background-image:
+      radial-gradient(240px 180px at 96% 38%,var(--fs-r215-ambient),transparent 72%),
+      radial-gradient(3px 3px at 2% 12%,rgba(255,246,198,.96),transparent 60%),
+      radial-gradient(2px 2px at 72% 100%,rgba(255,224,133,.88),transparent 65%),
+      linear-gradient(145deg,rgba(8,14,19,.98),rgba(2,6,9,.99))!important;
+    box-shadow:0 14px 34px rgba(0,0,0,.46),0 0 15px var(--fs-r215-glow),inset 0 0 25px rgba(225,165,46,.045)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-copy{
+    max-width:100%!important;position:relative!important;z-index:3!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero .eyebrow{
+    font-size:7.7px!important;line-height:1.2!important;letter-spacing:.25em!important;color:#d7dce0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{
+    margin:8px 0 6px!important;font-size:22px!important;line-height:1.03!important;letter-spacing:-.025em!important;
+    color:#fff0bd!important;text-shadow:0 1px 0 rgba(0,0,0,.6),0 0 9px rgba(236,183,73,.10)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero p{
+    margin:0 0 9px!important;font-size:9.3px!important;line-height:1.30!important;color:#e5e9ec!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions{
+    display:grid!important;grid-template-columns:1fr!important;gap:7px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions button{
+    min-height:31px!important;height:31px!important;border-radius:999px!important;padding:0 12px!important;font-size:11px!important;font-weight:750!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions .primary-btn{
+    border:1px solid #fff0b2!important;background:linear-gradient(180deg,#ffe79c,#d99528)!important;color:#17120a!important;
+    box-shadow:0 0 11px rgba(255,209,101,.42),inset 0 1px 1px rgba(255,255,255,.52)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions .secondary-btn{
+    border:1.2px solid rgba(226,171,58,.85)!important;background:rgba(3,7,10,.78)!important;color:#f3f5f6!important;
+    box-shadow:inset 0 1px 0 rgba(255,235,177,.06)!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid{
+    gap:7px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.category-card{
+    min-height:57px!important;height:57px!important;padding:7px 10px!important;border:1.25px solid rgba(229,177,62,.86)!important;border-radius:12px!important;
+    background:
+      radial-gradient(58px 18px at 30% 100%,rgba(255,214,110,.11),transparent 78%),
+      radial-gradient(2px 2px at 55% 0,rgba(255,241,183,.92),transparent 70%),
+      linear-gradient(145deg,#090d10,#05090c)!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.28),0 0 8px rgba(224,165,39,.10),inset 0 1px 0 rgba(255,243,193,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.category-card>span{
+    font-size:29px!important;line-height:1!important;filter:drop-shadow(0 0 7px rgba(244,193,79,.30))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.category-card b{
+    font-size:12.2px!important;line-height:1.08!important;color:#ffe39b!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.category-card small{
+    font-size:8.8px!important;line-height:1.15!important;color:#cbd1d5!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.cuentas-entry{
+    grid-column:1/-1!important;min-height:52px!important;height:52px!important;padding:7px 11px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.cuentas-entry b{
+    color:#f4f5f6!important;font-size:12.5px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.cuentas-entry small{
+    font-size:8.8px!important;line-height:1.15!important;
+  }
+
+  /* Featured reference: exactly four slim official-art cards in one row. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel{
+    padding:10px 12px 11px!important;border-radius:17px!important;
+    background:
+      radial-gradient(2px 2px at 1% 58%,rgba(255,245,200,.95),transparent 65%),
+      radial-gradient(2px 2px at 52% 100%,rgba(255,223,122,.86),transparent 65%),
+      linear-gradient(145deg,#080d10,#05090c)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel .panel-head{
+    min-height:40px!important;margin-bottom:7px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel .panel-head .eyebrow{
+    font-size:7px!important;letter-spacing:.25em!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel .panel-head h2{
+    margin-top:2px!important;font-size:19px!important;line-height:1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList{
+    display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important;width:100%!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card.fs-r212-featured{
+    width:100%!important;min-width:0!important;height:145px!important;min-height:145px!important;max-height:145px!important;
+    display:grid!important;grid-template-rows:105px 40px!important;border:1.15px solid rgba(227,176,62,.88)!important;border-radius:10px!important;overflow:hidden!important;
+    background:linear-gradient(180deg,#0a0e11,#06090b)!important;
+    box-shadow:0 7px 15px rgba(0,0,0,.35),0 0 7px rgba(228,167,40,.11),inset 0 1px 0 rgba(255,242,188,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card:not(.fs-r212-featured){display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card>img{
+    display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:1!important;
+    grid-column:1!important;grid-row:1!important;width:100%!important;height:105px!important;min-height:105px!important;
+    object-fit:cover!important;object-position:center!important;border-radius:9px 9px 0 0!important;filter:none!important;content:normal!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .fs-premium-clash-art,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .fs-artwork-fallback--feature{
+    display:none!important;visibility:hidden!important;opacity:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card>span:not(.fs-artwork-fallback--feature){
+    position:relative!important;z-index:2!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;
+    grid-column:1!important;grid-row:2!important;min-width:0!important;min-height:40px!important;padding:4px 5px!important;background:rgba(4,7,9,.95)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card b{
+    width:100%!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;
+    font-size:9px!important;line-height:1.05!important;letter-spacing:0!important;color:#f2f3f4!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .fs-r215-feature-note{
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;margin-top:2px!important;padding:1px 5px!important;
+    border-radius:999px!important;background:#3b3211!important;color:#e5ca72!important;font-size:6.8px!important;line-height:1.25!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .fs-maintenance-badge{display:none!important}
+
+  /* Socials stay directly after Featured, but compact enough to naturally fall below the first fold. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel{
+    margin-top:2px!important;padding:11px!important;border-color:rgba(227,177,65,.62)!important;background:linear-gradient(145deg,#071016,#05090d)!important;
+    box-shadow:0 9px 22px rgba(0,0,0,.36),0 0 9px var(--fs-r215-ambient)!important;
+  }
+
+  /* STORE — the reference uses one horizontally scrollable row, not compact wrapped tabs. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-panel{
+    border-radius:17px!important;background:
+      radial-gradient(2px 2px at 3% 46%,rgba(255,244,195,.95),transparent 65%),
+      linear-gradient(145deg,#070b0e,#040709)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading{
+    min-height:126px!important;padding:31px 102px 11px 16px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading h2{
+    font-size:25px!important;line-height:1.02!important;color:#ffe4a0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading p{
+    font-size:12px!important;line-height:1.25!important;color:#bfc7cc!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda #categoryTabs.category-tabs{
+    display:flex!important;flex-wrap:nowrap!important;grid-template-columns:none!important;grid-template-rows:none!important;grid-auto-flow:initial!important;
+    overflow-x:auto!important;overflow-y:hidden!important;gap:8px!important;padding:8px 10px 10px!important;scrollbar-width:none!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda #categoryTabs.category-tabs::-webkit-scrollbar{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda #categoryTabs.category-tabs>button{
+    flex:0 0 146px!important;width:146px!important;min-width:146px!important;max-width:146px!important;min-height:46px!important;
+    padding:8px 11px!important;border:1.2px solid rgba(223,170,57,.70)!important;border-radius:12px!important;
+    white-space:normal!important;text-align:center!important;font-size:11px!important;line-height:1.15!important;
+    background:linear-gradient(145deg,#0a0e11,#06090b)!important;color:#eceff1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda #categoryTabs.category-tabs>button.active{
+    border-color:#fff0ae!important;background:linear-gradient(180deg,#ffe696,#d99b32)!important;color:#18120a!important;
+    box-shadow:0 0 13px rgba(247,196,76,.35),inset 0 1px 0 rgba(255,255,255,.45)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList.r6-game-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card{
+    min-width:0!important;border:1.35px solid rgba(229,176,61,.86)!important;border-radius:14px!important;overflow:hidden!important;
+    background:linear-gradient(180deg,#0a0e11,#05080a)!important;
+    box-shadow:0 10px 22px rgba(0,0,0,.36),0 0 10px rgba(225,164,39,.10),inset 0 1px 0 rgba(255,239,181,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card img{
+    width:100%!important;aspect-ratio:1.15/1!important;height:auto!important;object-fit:cover!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body{
+    padding:9px 10px 10px!important;gap:4px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body strong{
+    font-size:13px!important;line-height:1.12!important;color:#f1f3f4!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body small{
+    font-size:9.5px!important;line-height:1.2!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-genre{
+    color:#e0b957!important;font-size:7.7px!important;letter-spacing:.08em!important;
+  }
+
+  /* WALLET */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel{
+    padding:15px 11px 12px!important;border-radius:17px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel>.panel-head{
+    min-height:78px!important;padding:20px 58px 8px 10px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel>.panel-head h2{
+    font-size:28px!important;line-height:1!important;color:#ffe9b2!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card{
+    min-height:128px!important;padding:19px 43% 16px 20px!important;border:1.3px solid rgba(231,181,72,.88)!important;border-radius:15px!important;
+    box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 11px rgba(230,175,56,.13),inset 0 1px 0 rgba(255,241,190,.08)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card>span{font-size:14px!important;color:#dfe4e7!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card>strong{font-size:34px!important;line-height:1!important;color:#ffe59a!important;text-shadow:0 0 9px rgba(241,185,64,.14)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card>small{font-size:10px!important;color:#d4d9dd!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .topup-box{
+    margin-top:9px!important;padding:13px!important;border:1.3px solid rgba(229,177,65,.85)!important;border-radius:15px!important;
+    background:linear-gradient(145deg,#090d10,#05090c)!important;box-shadow:0 8px 20px rgba(0,0,0,.30),0 0 9px rgba(225,166,42,.10)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .topup-box label{font-size:13px!important;font-weight:700!important;color:#eef1f2!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .topup-box .input-row{grid-template-columns:1fr!important;gap:9px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .topup-box input{height:47px!important;border-radius:11px!important;font-size:14px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .topup-box .primary-btn{height:48px!important;border-radius:999px!important;font-size:15px!important;font-weight:800!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .split-grid{
+    grid-template-columns:1fr!important;gap:9px!important;margin-top:9px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .split-grid>div{
+    padding:11px!important;border:1.3px solid rgba(229,176,64,.83)!important;border-radius:15px!important;background:linear-gradient(145deg,#080d10,#05090b)!important;
+    box-shadow:0 8px 20px rgba(0,0,0,.31),0 0 8px rgba(225,166,43,.09)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .split-grid>div>h3{font-size:17px!important;line-height:1!important;color:#f3f4f5!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet :is(#topupHistory,#walletHistory)>.record{
+    border:1px solid rgba(224,171,56,.73)!important;border-radius:11px!important;background:linear-gradient(145deg,#0a0f12,#060a0c)!important;
+    box-shadow:inset 0 1px 0 rgba(255,236,172,.04)!important;
+  }
+
+  /* ORDERS — thicker card volume and localized glints like the reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel{
+    padding:14px 10px 12px!important;border-radius:17px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel>.panel-head{
+    min-height:104px!important;padding:22px 62px 12px 14px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel>.panel-head h2{
+    font-size:28px!important;line-height:1.02!important;color:#ffebba!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel>.panel-head p,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel>.panel-head small{
+    font-size:10px!important;line-height:1.25!important;color:#cbd2d6!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList{
+    gap:8px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList>.record{
+    min-height:90px!important;padding:12px 12px 12px 62px!important;border:1.35px solid rgba(229,177,62,.88)!important;border-radius:14px!important;
+    background:
+      radial-gradient(2px 2px at 64% 100%,rgba(255,235,167,.91),transparent 65%),
+      radial-gradient(72px 30px at 100% 100%,rgba(220,157,36,.07),transparent 75%),
+      linear-gradient(145deg,#0a0f12,#06090b)!important;
+    box-shadow:0 9px 20px rgba(0,0,0,.34),0 0 9px rgba(224,164,38,.11),inset 0 1px 0 rgba(255,239,180,.05)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList>.record strong,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList>.record b{font-size:15px!important;line-height:1.15!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList>.record :is(small,.meta){font-size:10px!important;line-height:1.25!important;color:#bec7cd!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList>.record .status{
+    padding:4px 9px!important;border-radius:999px!important;font-size:8.5px!important;font-weight:750!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList>.record .fs-premium-delivered-bar{
+    min-height:37px!important;margin:10px 0 0!important;border:1.2px solid rgba(50,240,143,.90)!important;border-radius:10px!important;
+    background:linear-gradient(180deg,rgba(18,126,71,.86),rgba(8,78,45,.88))!important;box-shadow:0 0 12px rgba(35,229,126,.18),inset 0 1px 0 rgba(190,255,220,.13)!important;
+    font-size:14px!important;font-weight:800!important;
+  }
+
+  /* PROFILE — stacked preferred-name action and taller Rank Pass cards. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel{
+    padding:14px 11px 12px!important;border-radius:17px!important;overflow:hidden!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel>h2{
+    font-size:27px!important;line-height:1!important;color:#ffe9ad!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
+    min-height:125px!important;padding:18px 13px!important;border:1.25px solid rgba(231,180,70,.88)!important;border-radius:15px!important;
+    box-shadow:0 9px 23px rgba(0,0,0,.32),0 0 10px rgba(228,170,43,.10),inset 0 1px 0 rgba(255,241,187,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card .avatar{
+    width:58px!important;height:58px!important;font-size:19px!important;border-width:1.2px!important;box-shadow:0 0 13px rgba(237,184,67,.16)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card #profileName{font-size:17px!important;line-height:1.12!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card #profileEmail{font-size:10px!important;line-height:1.2!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .fs-premium-profile-badge{
+    min-width:92px!important;height:33px!important;padding:0 12px!important;border-radius:12px!important;font-size:12px!important;box-shadow:0 0 12px rgba(235,177,53,.17)!important;
+  }
+  html[data-fs-tier="diamond"] #view-perfil .fs-premium-profile-badge{box-shadow:0 0 14px rgba(50,181,255,.23)!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .fs-premium-profile-rank{
+    min-height:34px!important;padding:0 11px!important;border-radius:999px!important;font-size:9.5px!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{
+    margin-top:9px!important;padding:14px!important;border-radius:15px!important;background:linear-gradient(145deg,#090d10,#05090c)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard>label{
+    margin-bottom:9px!important;font-size:16px!important;line-height:1.18!important;font-weight:800!important;color:#ffe6a4!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard .input-row{
+    display:grid!important;grid-template-columns:1fr!important;gap:9px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard input{
+    width:100%!important;height:48px!important;padding:0 13px!important;border-radius:11px!important;font-size:15px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard button{
+    width:100%!important;height:47px!important;min-height:47px!important;border-radius:999px!important;font-size:16px!important;font-weight:800!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameHint{
+    margin-top:7px!important;font-size:10px!important;line-height:1.25!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{
+    margin-top:9px!important;padding:13px 11px 12px!important;border-radius:17px!important;
+    background:
+      radial-gradient(2px 2px at 3% 8%,rgba(255,239,171,.90),transparent 65%),
+      linear-gradient(145deg,#090d10,#05090c)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head h3{
+    font-size:20px!important;line-height:1.02!important;color:#ffecb7!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head p,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head small{
+    font-size:9.5px!important;line-height:1.25!important;color:#c6cdd2!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-grid{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card{
+    height:182px!important;min-height:182px!important;max-height:182px!important;padding:11px 8px 42px!important;border-width:1.3px!important;border-radius:13px!important;
+    box-shadow:0 9px 20px rgba(0,0,0,.35),0 0 10px rgba(226,166,38,.10),inset 0 1px 0 rgba(255,242,187,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card .fs-pass-title b{font-size:15px!important;line-height:1.05!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card ul{
+    max-width:115px!important;margin-top:8px!important;gap:4px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card li{
+    font-size:8.8px!important;line-height:1.15!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card button{
+    left:8px!important;right:8px!important;bottom:8px!important;height:31px!important;min-height:31px!important;border-radius:999px!important;font-size:10.5px!important;font-weight:800!important;
+  }
+
+  /* Dock / WhatsApp — stronger glass depth, exact circular WhatsApp silhouette. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{
+    left:8px!important;right:8px!important;bottom:7px!important;height:64px!important;padding:5px 6px!important;
+    border:1.35px solid rgba(229,177,63,.82)!important;border-radius:18px!important;
+    background:linear-gradient(180deg,rgba(8,12,15,.96),rgba(3,6,8,.98))!important;
+    box-shadow:0 12px 28px rgba(0,0,0,.48),0 0 11px rgba(225,164,39,.10),inset 0 1px 0 rgba(255,240,185,.05)!important;
+    backdrop-filter:blur(12px)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button{
+    border:1px solid transparent!important;border-radius:13px!important;font-size:9px!important;color:#e8dcae!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button>span{font-size:20px!important;line-height:1!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button.active{
+    border-color:rgba(239,190,78,.82)!important;background:linear-gradient(180deg,rgba(27,22,12,.76),rgba(7,9,10,.90))!important;
+    box-shadow:0 0 11px rgba(240,184,54,.25),inset 0 1px 0 rgba(255,246,199,.09)!important;color:#fff0b6!important;
+  }
+  html[data-fs-tier="diamond"] .bottom-nav button.active{
+    border-color:rgba(91,198,255,.82)!important;box-shadow:0 0 11px rgba(50,180,255,.25),inset 0 1px 0 rgba(230,251,255,.10)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp{
+    width:57px!important;height:57px!important;right:14px!important;bottom:74px!important;border:2px solid #ffefaa!important;
+    border-radius:50%!important;background:linear-gradient(180deg,#29df70,#0ab64e)!important;color:#fff!important;
+    box-shadow:0 9px 22px rgba(0,0,0,.48),0 0 0 2px rgba(255,211,97,.15),0 0 15px rgba(34,215,101,.34)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp svg{width:34px!important;height:34px!important;fill:currentColor!important}
+}
+
+@media(max-width:370px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList{gap:4px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card.fs-r212-featured{height:137px!important;min-height:137px!important;max-height:137px!important;grid-template-rows:99px 38px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card>img{height:99px!important;min-height:99px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card b{font-size:8.3px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card{height:176px!important;min-height:176px!important;max-height:176px!important}
+}

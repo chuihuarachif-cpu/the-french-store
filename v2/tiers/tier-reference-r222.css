@@ -1,0 +1,19 @@
+/* THE FRENCH STORE — R222 final generic order-card alignment. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record{
+    box-sizing:border-box!important;
+    padding-left:64px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record>.notice,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record>button,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record>.primary-btn,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record>.secondary-btn,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record>.danger-btn{
+    margin-left:-49px!important;
+    width:calc(100% + 49px)!important;
+    max-width:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record :is(.r6-order-main,.r6-order-meta){
+    margin-left:0!important;padding-left:0!important;
+  }
+}

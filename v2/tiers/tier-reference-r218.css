@@ -1,0 +1,287 @@
+/* THE FRENCH STORE — R218 final reference-fidelity polish.
+   Gold/Diamond presentation only. Tuned against the owner mobile references.
+   No pricing, auth, Wallet, fulfillment or Supabase logic is changed. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]){
+    --r218-gold:#f0c15d;
+    --r218-gold-hi:#ffe49a;
+    --r218-gold-soft:rgba(240,193,93,.23);
+    --r218-panel:#070a0d;
+    --r218-cream:#fff1c9;
+  }
+
+  /* GLOBAL CHROME — thin luminous metal border, localized glow and deep obsidian. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(
+    #view-inicio>.hero,
+    .category-card,
+    #view-inicio>.compact-panel,
+    #view-tienda>.catalog-panel,
+    #view-wallet>.panel,
+    #view-pedidos>.panel,
+    #view-perfil>.profile-panel,
+    #fsPreferredNameCard,
+    #fsLoyaltyPanel,
+    #view-pedidos .record,
+    #view-wallet .topup-box,
+    #view-wallet .split-grid>div,
+    #view-wallet .record,
+    .official-socials
+  ){
+    border-color:rgba(242,194,91,.88)!important;
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.42),
+      0 0 0 1px rgba(255,229,166,.05) inset,
+      0 0 11px rgba(240,190,78,.12),
+      inset 0 1px 0 rgba(255,238,199,.08)!important;
+    background-color:var(--r218-panel)!important;
+  }
+
+  /* Header/logo: visually embedded instead of a hard rectangular cutout. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+    border-bottom-color:rgba(242,195,94,.72)!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.55),0 1px 14px rgba(237,185,69,.13)!important;
+    background:
+      linear-gradient(90deg,rgba(0,0,0,.98),rgba(4,9,13,.96) 52%,rgba(0,0,0,.99))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{
+    position:relative!important;
+    filter:drop-shadow(0 0 5px rgba(255,212,116,.13))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::after{
+    content:''!important;display:block!important;position:absolute!important;z-index:-1!important;
+    inset:-4px -10px!important;pointer-events:none!important;
+    background:linear-gradient(90deg,transparent,rgba(7,11,15,.84) 14%,rgba(7,11,15,.92) 84%,transparent)!important;
+    filter:blur(7px)!important;
+  }
+
+  /* HERO — same gold edge treatment and local corner flares as supplied reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    border-width:1.45px!important;
+    border-radius:20px!important;
+    background:
+      radial-gradient(120px 95px at 2% 98%,rgba(255,198,74,.11),transparent 72%),
+      radial-gradient(155px 150px at 98% 6%,rgba(75,167,255,.19),transparent 72%),
+      linear-gradient(132deg,rgba(12,17,22,.995),rgba(3,7,10,.998) 56%,rgba(6,13,18,.996))!important;
+    box-shadow:
+      0 16px 38px rgba(0,0,0,.58),
+      0 0 0 1px rgba(255,234,186,.05) inset,
+      0 0 15px rgba(242,191,78,.16),
+      inset 0 0 30px rgba(255,205,93,.035)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero::after{
+    content:''!important;display:block!important;position:absolute!important;inset:-2px!important;z-index:5!important;pointer-events:none!important;border-radius:21px!important;
+    background:
+      radial-gradient(18px 6px at 6% 0%,rgba(255,235,170,.94),transparent 72%),
+      radial-gradient(24px 7px at 98% 4%,rgba(255,226,143,.88),transparent 74%),
+      radial-gradient(22px 6px at 2% 95%,rgba(255,224,135,.82),transparent 74%),
+      radial-gradient(26px 7px at 92% 100%,rgba(255,218,116,.82),transparent 74%)!important;
+    mix-blend-mode:screen!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{
+    color:#f7d98e!important;
+    background:linear-gradient(180deg,#fff5d1 0%,#f4ce78 54%,#d99d35 100%)!important;
+    -webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;
+    text-shadow:0 0 18px rgba(245,194,83,.08)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero p{color:#eee5d6!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions .primary-btn{
+    border:1.4px solid #ffe09b!important;
+    background:linear-gradient(180deg,#fff1c8 0%,#f5cd79 40%,#e6ad45 73%,#b86e16 100%)!important;
+    box-shadow:0 0 16px rgba(244,194,77,.27),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(116,67,10,.25)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions .secondary-btn{
+    border:1.35px solid rgba(245,198,101,.86)!important;
+    background:linear-gradient(180deg,rgba(13,16,19,.99),rgba(4,7,10,.995))!important;
+    box-shadow:0 0 12px rgba(241,190,77,.10),inset 0 1px 0 rgba(255,239,202,.06)!important;
+  }
+
+  /* Category blocks: brighter corners and metallic icon halo. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card{
+    border-width:1.25px!important;
+    background:
+      radial-gradient(70px 34px at 12% 100%,rgba(255,205,91,.09),transparent 75%),
+      radial-gradient(85px 42px at 96% 100%,rgba(255,198,66,.08),transparent 75%),
+      linear-gradient(145deg,#0c1014,#05080b 72%)!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.34),0 0 10px rgba(240,189,76,.10),inset 0 1px 0 rgba(255,239,202,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>span{
+    filter:drop-shadow(0 0 7px rgba(255,205,89,.48))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>b{color:#ffe29a!important;font-weight:800!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .category-card>small{color:#ddd4c4!important;line-height:1.18!important}
+
+  /* FEATURED — compact 4-up official artwork with luminous frame like reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel{
+    padding:11px!important;border-width:1.4px!important;border-radius:17px!important;
+    background:
+      radial-gradient(130px 55px at 12% 100%,rgba(255,206,84,.07),transparent 78%),
+      radial-gradient(100px 50px at 96% 100%,rgba(255,197,59,.07),transparent 80%),
+      linear-gradient(145deg,#0b0f13,#05080b)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .r6-feature-card.fs-r215-official{
+    border:1.2px solid rgba(241,193,88,.88)!important;
+    border-radius:10px!important;
+    background:linear-gradient(180deg,#0b0e11,#05070a)!important;
+    box-shadow:0 0 9px rgba(238,184,64,.11),inset 0 1px 0 rgba(255,238,198,.055)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .r6-feature-card.fs-r215-official>img{
+    filter:saturate(1.08) contrast(1.03) brightness(.98)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .r6-feature-card.fs-r215-official b{
+    font-weight:800!important;color:#fff1cb!important;line-height:1.06!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList .fs-r215-feature-note{
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;width:max-content!important;
+    margin-top:3px!important;padding:1px 7px!important;border-radius:999px!important;
+    border:1px solid rgba(218,173,59,.30)!important;background:rgba(91,67,6,.46)!important;color:#e8c65c!important;font-size:7px!important;
+  }
+
+  /* STORE — keep the two-column reference grid while preventing typography collisions. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-panel{
+    border-width:1.4px!important;border-radius:18px!important;
+    background:linear-gradient(145deg,#0b0f13,#04070a 72%)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .r6-game-card{
+    border:1.25px solid rgba(239,190,84,.88)!important;border-radius:15px!important;
+    background:linear-gradient(180deg,#0d1115,#05080b)!important;
+    box-shadow:0 8px 20px rgba(0,0,0,.40),0 0 10px rgba(238,185,67,.09),inset 0 1px 0 rgba(255,236,190,.05)!important;
+    overflow:hidden!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .r6-game-card-body{
+    padding:9px 10px 10px!important;min-width:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .r6-game-card-body strong{
+    font-size:13px!important;line-height:1.08!important;letter-spacing:-.01em!important;overflow-wrap:anywhere!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .r6-game-card-body small{line-height:1.18!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .category-tabs{
+    gap:8px!important;padding-bottom:5px!important;scrollbar-width:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .category-tabs button{
+    flex:0 0 auto!important;min-width:145px!important;white-space:normal!important;line-height:1.05!important;
+  }
+
+  /* WALLET — reference depth, without any extra Rewards surface. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel{
+    border-width:1.4px!important;border-radius:18px!important;
+    background:
+      radial-gradient(135px 110px at 92% 14%,rgba(238,184,56,.09),transparent 72%),
+      linear-gradient(145deg,#0a0e12,#05080b)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card{
+    border:1.25px solid rgba(240,192,86,.84)!important;border-radius:17px!important;
+    background:
+      radial-gradient(105px 70px at 82% 52%,rgba(255,201,75,.12),transparent 72%),
+      linear-gradient(135deg,#101317,#05080b 72%)!important;
+    box-shadow:0 0 13px rgba(239,187,72,.11),inset 0 1px 0 rgba(255,236,188,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet #walletBalance{
+    text-shadow:0 0 15px rgba(243,192,75,.19)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .topup-box{
+    background:linear-gradient(145deg,#0b0f12,#05080a)!important;
+  }
+
+  /* ORDERS — larger cards, stronger hierarchy and depth like supplied reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel{
+    border-width:1.4px!important;border-radius:18px!important;
+    background:
+      radial-gradient(125px 85px at 88% 12%,rgba(244,189,67,.07),transparent 75%),
+      linear-gradient(145deg,#0a0e12,#04070a)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record{
+    min-height:103px!important;padding:15px 15px!important;border-width:1.25px!important;border-radius:16px!important;
+    background:
+      linear-gradient(120deg,rgba(20,24,28,.97),rgba(6,9,12,.99) 72%),
+      radial-gradient(70px 36px at 50% 100%,rgba(244,193,81,.06),transparent 75%)!important;
+    box-shadow:0 8px 20px rgba(0,0,0,.36),0 0 10px rgba(240,189,73,.10),inset 0 1px 0 rgba(255,235,191,.055)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-code{
+    font-size:16px!important;line-height:1.08!important;color:#fff0c7!important;font-weight:850!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-date{
+    font-size:11px!important;color:#ded4c4!important;line-height:1.25!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-meta strong{
+    font-size:14px!important;color:#f4d993!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .notice.success,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order .primary-btn{
+    box-shadow:0 0 16px rgba(40,227,126,.18),inset 0 1px 0 rgba(205,255,224,.14)!important;
+  }
+
+  /* PROFILE — same dense luxury, but with readable type and connected sections. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel{
+    border-width:1.4px!important;border-radius:18px!important;
+    background:
+      radial-gradient(170px 120px at 86% 13%,rgba(25,118,226,.15),transparent 72%),
+      linear-gradient(145deg,#0b0f13,#04070a)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel>h2{
+    font-size:25px!important;line-height:1!important;color:#ffe4a1!important;margin-bottom:12px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
+    border-width:1.3px!important;border-color:rgba(241,193,87,.90)!important;
+    box-shadow:0 0 13px rgba(240,188,72,.11),inset 0 1px 0 rgba(255,238,195,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>div:nth-child(2)>b{
+    font-size:17px!important;font-weight:850!important;color:#fff1c9!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileEmail{
+    font-size:11px!important;color:#ddd5cb!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{
+    padding:14px!important;border-width:1.3px!important;border-radius:17px!important;
+    background:
+      radial-gradient(85px 42px at 92% 100%,rgba(241,188,68,.07),transparent 75%),
+      linear-gradient(145deg,#0b0f13,#05080b)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard label{
+    font-size:15px!important;line-height:1.12!important;font-weight:850!important;color:#ffe5aa!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard input{
+    min-height:46px!important;height:46px!important;font-size:13px!important;border-radius:13px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard .primary-btn{
+    min-height:45px!important;height:45px!important;font-size:13px!important;border-radius:999px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard small{
+    margin-top:5px!important;font-size:9px!important;line-height:1.2!important;color:#9ea9b1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{
+    border-width:1.35px!important;border-radius:17px!important;
+    background:
+      radial-gradient(120px 70px at 13% 100%,rgba(244,191,71,.08),transparent 78%),
+      linear-gradient(145deg,#0b0f13,#04070a)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head h3{
+    color:#fff0c4!important;text-shadow:0 0 12px rgba(240,188,72,.08)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card{
+    border-width:1.25px!important;box-shadow:0 8px 18px rgba(0,0,0,.34),0 0 10px rgba(240,189,74,.09),inset 0 1px 0 rgba(255,239,202,.06)!important;
+  }
+  html[data-fs-tier="diamond"] #fsLoyaltyPanel .fs-pass-diamond{
+    box-shadow:0 8px 20px rgba(0,0,0,.34),0 0 18px rgba(72,213,255,.23),inset 0 1px 0 rgba(220,253,255,.12)!important;
+  }
+
+  /* NAV / WHATSAPP — reference chrome. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav{
+    border:1.35px solid rgba(241,193,86,.84)!important;
+    background:linear-gradient(180deg,rgba(13,16,19,.98),rgba(5,7,10,.995))!important;
+    box-shadow:0 10px 28px rgba(0,0,0,.58),0 0 12px rgba(239,188,75,.10),inset 0 1px 0 rgba(255,238,199,.06)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .bottom-nav button.active{
+    box-shadow:0 0 13px rgba(239,188,72,.12),inset 0 0 12px rgba(242,190,71,.05)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #floatingWhatsapp{
+    border:2px solid #f3c663!important;
+    box-shadow:0 9px 24px rgba(0,0,0,.5),0 0 18px rgba(247,200,85,.28),inset 0 1px 0 rgba(255,255,255,.25)!important;
+    background:linear-gradient(145deg,#2edc70,#05b94f)!important;
+  }
+}
+
+@media(max-width:370px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record{min-height:97px!important;padding:13px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel>h2{font-size:23px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard label{font-size:14px!important}
+}

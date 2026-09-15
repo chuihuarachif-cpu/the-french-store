@@ -1,11 +1,10 @@
-/* THE FRENCH STORE — R211 deterministic premium Clash artwork.
-   Presentation-only. Gold/Diamond storefront decoration; no business logic. */
+/* THE FRENCH STORE — official Clash of Clans premium artwork helper.
+   Presentation-only. Uses the canonical app artwork and never draws a substitute. */
 (() => {
   'use strict';
 
   const root = document.documentElement;
   let queued = false;
-
   const paid = () => /^(gold|diamond)$/i.test(String(root.dataset.fsTier || ''));
 
   function decorate() {
@@ -15,15 +14,21 @@
     const card = document.querySelector('#featuredList [data-r6-feature*="Clash"]');
     if (!card) return;
 
-    let art = card.querySelector(':scope > .fs-premium-clash-art');
-    if (!art) {
-      art = document.createElement('div');
-      art.className = 'fs-premium-clash-art';
-      art.setAttribute('aria-hidden', 'true');
+    card.querySelector(':scope > .fs-premium-clash-art')?.remove();
+    card.querySelector(':scope > .fs-artwork-fallback--feature')?.remove();
+
+    let image = [...card.children].find((node) => node.tagName === 'IMG');
+    if (!image) {
+      image = document.createElement('img');
       const first = card.firstElementChild;
-      if (first) card.insertBefore(art, first);
-      else card.appendChild(art);
+      if (first) card.insertBefore(image, first);
+      else card.appendChild(image);
     }
+    image.dataset.fsOfficialArtwork = '1';
+    image.src = './assets/apps/clash-of-clans.webp';
+    image.alt = 'Clash of Clans';
+    image.loading = 'eager';
+    image.decoding = 'async';
   }
 
   function queue() {
