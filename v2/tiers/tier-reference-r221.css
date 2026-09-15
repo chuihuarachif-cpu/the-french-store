@@ -1,3 +1,4 @@
+@import url('./tier-reference-r222.css?v=20260915-r222-order-generic');
 /* THE FRENCH STORE — R221 order-card icon-lane correction. */
 @media(max-width:620px){
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order{
