@@ -98,6 +98,24 @@
     });
   }
 
+  function decoratePassTitles() {
+    if (!paid()) return;
+    const panel = document.getElementById('fsLoyaltyPanel');
+    if (!panel) return;
+    [
+      ['.fs-pass-gold','GOLD PASS','x1.5 Rewards'],
+      ['.fs-pass-diamond','DIAMOND PASS','x2 Rewards']
+    ].forEach(([selector,titleText,subtitleText]) => {
+      const card = panel.querySelector(selector);
+      if (!card) return;
+      card.classList.add('fs-r215-pass-clean');
+      const title = card.querySelector('.fs-pass-title b');
+      const subtitle = card.querySelector('.fs-pass-title small');
+      if (title && title.textContent !== titleText) title.textContent = titleText;
+      if (subtitle && subtitle.textContent !== subtitleText) subtitle.textContent = subtitleText;
+    });
+  }
+
   function restoreWhatsappGlyph() {
     if (!paid()) return;
     const button = document.getElementById('floatingWhatsapp');
@@ -112,6 +130,7 @@
     ensureCorrectionStyles();
     if (!paid()) return;
     decorateFeatured();
+    decoratePassTitles();
     restoreWhatsappGlyph();
     root.dataset.fsPremiumFidelity = 'r216';
   }
@@ -129,6 +148,7 @@
     new MutationObserver(queue).observe(root,{attributes:true,attributeFilter:['data-fs-tier']});
     document.addEventListener('fs-tier-resolved',queue);
     document.addEventListener('fs:catalog-updated',queue);
+    document.addEventListener('fs:loyalty-updated',queue);
     setTimeout(queue,250);
     setTimeout(queue,900);
     setTimeout(queue,1800);
