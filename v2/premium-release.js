@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r211-final-20260914';
-  const RELEASE = '20260914-r211-final-reference-match';
+  const VERSION = 'premium-release-r213-20260915';
+  const RELEASE = '20260915-r213-owner-polish';
   const root = document.documentElement;
   let active = '';
 
@@ -48,6 +48,30 @@
       if (clashReference.getAttribute('href') !== href) clashReference.href = href;
     }
 
+    let polishReference = document.getElementById('fs-premium-reference-r212-css');
+    if (!polishReference) {
+      polishReference = document.createElement('link');
+      polishReference.id = 'fs-premium-reference-r212-css';
+      polishReference.rel = 'stylesheet';
+      polishReference.href = `./tiers/tier-reference-r212.css?v=${RELEASE}`;
+      document.head.appendChild(polishReference);
+    } else {
+      const href = `./tiers/tier-reference-r212.css?v=${RELEASE}`;
+      if (polishReference.getAttribute('href') !== href) polishReference.href = href;
+    }
+
+    let finalPolish = document.getElementById('fs-premium-reference-r213-css');
+    if (!finalPolish) {
+      finalPolish = document.createElement('link');
+      finalPolish.id = 'fs-premium-reference-r213-css';
+      finalPolish.rel = 'stylesheet';
+      finalPolish.href = `./tiers/tier-reference-r213.css?v=${RELEASE}`;
+      document.head.appendChild(finalPolish);
+    } else {
+      const href = `./tiers/tier-reference-r213.css?v=${RELEASE}`;
+      if (finalPolish.getAttribute('href') !== href) finalPolish.href = href;
+    }
+
     if (!document.getElementById('fs-premium-reference-r211-js')) {
       const clash = document.createElement('script');
       clash.id = 'fs-premium-reference-r211-js';
@@ -91,6 +115,16 @@
       socials.defer = true;
       document.head.appendChild(socials);
     }
+
+    if (!document.getElementById('fs-premium-reference-r212-js')) {
+      const polish = document.createElement('script');
+      polish.id = 'fs-premium-reference-r212-js';
+      polish.src = `./tiers/tier-reference-r212.js?v=${RELEASE}`;
+      polish.defer = true;
+      document.head.appendChild(polish);
+    } else {
+      window.FSPremiumR212?.refresh?.();
+    }
   }
 
   function apply() {
@@ -100,6 +134,7 @@
       root.removeAttribute('data-fs-premium-release');
       window.FSPremiumReference?.refresh?.();
       window.FSPremiumR185?.refresh?.();
+      window.FSPremiumR212?.refresh?.();
       return;
     }
 
