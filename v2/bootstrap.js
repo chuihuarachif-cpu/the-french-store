@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r166-dead-code-cleanup-20260913';
+  const VERSION = 'r214-muted-cache-20260915';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -81,13 +81,12 @@
     await loadScript('./storefront-safety-overlays.js', 'fs-storefront-safety-overlays-js');
     // Visual tier layer (presentation only). Base ships statically in
     // index.html; the gate only upgrades to Gold/Diamond by real rank and
-    // falls back to Base on any failure. Sound is limited to a short, quiet
-    // click on tap and on entering a section — the payment and QR surfaces
-    // stay silent. Never gates checkout, Wallet or QR.
+    // falls back to Base on any failure. All storefront sounds are disabled.
+    // Never gates checkout, Wallet or QR.
     // Nombre preferido del cliente en Perfil. Presentación pura: usa el nombre
     // que Google ya entrega y permite cambiarlo; no escribe en Supabase.
     await loadScript('./profile-name.js', 'fs-profile-name-js', '20260911-r160');
-    await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260911-r160');
+    await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260915-r214-muted');
     await loadScript('./tiers/tier-welcome.js', 'fs-tier-welcome-js', '20260911-r160');
     await loadScript('./tiers/tier-gate.js', 'fs-tier-gate-js', '20260911-r160');
     // R163: vitrina "Cuentas en Venta", debajo de las 4 categorías públicas.
