@@ -4,7 +4,6 @@
   'use strict';
 
   const root = document.documentElement;
-  const ART = './assets/brand/premium-feature-clash-r211.svg';
   let queued = false;
 
   const paid = () => /^(gold|diamond)$/i.test(String(root.dataset.fsTier || ''));
@@ -16,23 +15,15 @@
     const card = document.querySelector('#featuredList [data-r6-feature*="Clash"]');
     if (!card) return;
 
-    card.querySelectorAll(':scope > .fs-artwork-fallback--feature').forEach(node => node.remove());
-
-    let img = card.querySelector(':scope > img');
-    if (!img) {
-      img = document.createElement('img');
+    let art = card.querySelector(':scope > .fs-premium-clash-art');
+    if (!art) {
+      art = document.createElement('div');
+      art.className = 'fs-premium-clash-art';
+      art.setAttribute('aria-hidden', 'true');
       const first = card.firstElementChild;
-      if (first) card.insertBefore(img, first);
-      else card.appendChild(img);
+      if (first) card.insertBefore(art, first);
+      else card.appendChild(art);
     }
-
-    img.dataset.fsPremiumClash = 'r211';
-    img.alt = 'Clash Of Clans';
-    img.decoding = 'async';
-    img.loading = 'eager';
-    img.removeAttribute('data-fs-artwork-fallback');
-    img.removeAttribute('data-fs-artwork-retry');
-    if (!String(img.getAttribute('src') || '').includes('premium-feature-clash-r211.svg')) img.src = ART;
   }
 
   function queue() {
