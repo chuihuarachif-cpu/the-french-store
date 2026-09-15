@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r215-20260915';
-  const RELEASE = '20260915-r215-reference-fidelity';
+  const VERSION = 'premium-release-r217-20260915';
+  const RELEASE = '20260915-r217-reference-final';
   const root = document.documentElement;
   let active = '';
 
