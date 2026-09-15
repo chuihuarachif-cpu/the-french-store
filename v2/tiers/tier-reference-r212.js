@@ -32,7 +32,10 @@
     const host = document.getElementById('featuredList');
     if (!host || !paid()) return;
     const cards = [...host.querySelectorAll('.r6-feature-card[data-r6-feature]')];
-    cards.forEach(card => card.classList.remove('fs-r212-featured'));
+    cards.forEach((card) => {
+      card.classList.remove('fs-r212-featured');
+      card.style.removeProperty('--fs-r212-order');
+    });
 
     const byKey = new Map(cards.map(card => [key(card.dataset.r6Feature), card]));
     const wanted = [
@@ -46,9 +49,9 @@
       const card = aliases.map(alias => byKey.get(alias)).find(Boolean);
       if (card && !selected.includes(card)) selected.push(card);
     }
-    selected.forEach((card) => {
+    selected.forEach((card, index) => {
       card.classList.add('fs-r212-featured');
-      host.appendChild(card);
+      card.style.setProperty('--fs-r212-order', String(index + 1));
     });
   }
 
