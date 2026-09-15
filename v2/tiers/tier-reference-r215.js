@@ -21,7 +21,8 @@
     [
       ['fs-premium-reference-r216-css','./tiers/tier-reference-r216.css?v=20260915-r216-browser-correction'],
       ['fs-premium-reference-r217-css','./tiers/tier-reference-r217.css?v=20260915-r217-reference-match'],
-      ['fs-premium-reference-r218-css','./tiers/tier-reference-r218.css?v=20260915-r218-final-fidelity']
+      ['fs-premium-reference-r218-css','./tiers/tier-reference-r218.css?v=20260915-r218-final-fidelity'],
+      ['fs-premium-reference-r219-css','./tiers/tier-reference-r219.css?v=20260915-r219-corrective-fidelity']
     ].forEach(([id, href]) => {
       let link = document.getElementById(id);
       if (!link) {
@@ -136,7 +137,7 @@
     decorateFeatured();
     decoratePassTitles();
     restoreWhatsappGlyph();
-    root.dataset.fsPremiumFidelity = 'r218';
+    root.dataset.fsPremiumFidelity = 'r219';
   }
 
   function queue() {
