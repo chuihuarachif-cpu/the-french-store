@@ -1,0 +1,68 @@
+/* THE FRENCH STORE — R220 final corrective alignment pass. */
+@media(max-width:620px){
+  /* Hero: give the text lane the same usable width as the supplied reference so both CTAs fit. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    min-height:246px!important;
+    padding:27px 40.5% 13px 16px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{
+    font-size:21px!important;line-height:1.01!important;margin:7px 0 6px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero p{
+    font-size:8.9px!important;line-height:1.24!important;margin:0 0 6px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions{
+    margin-top:6px!important;gap:6px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions>.primary-btn,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions>.secondary-btn{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    visibility:visible!important;opacity:1!important;height:37px!important;min-height:37px!important;
+    padding:6px 12px!important;font-size:10.7px!important;line-height:1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .fs-premium-hero-art{
+    right:-5px!important;top:16px!important;width:168px!important;height:195px!important;
+  }
+
+  /* Orders: reserve the icon lane only for heading/meta text; action bars keep full width. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-main,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-meta{
+    margin-left:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-main>div:first-child,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-meta{
+    padding-left:48px!important;box-sizing:border-box!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-main>div:first-child{
+    min-width:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-code{
+    display:block!important;font-size:13.5px!important;line-height:1.08!important;white-space:nowrap!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .r6-order-date{
+    display:block!important;margin-top:2px!important;font-size:9.8px!important;line-height:1.18!important;
+  }
+
+  /* Keep the reference-like luminous green completion treatment. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .notice.success{
+    border-color:rgba(70,234,139,.88)!important;
+    background:linear-gradient(180deg,rgba(11,116,65,.96),rgba(4,74,42,.98))!important;
+    box-shadow:0 0 18px rgba(45,229,126,.20),inset 0 1px 0 rgba(211,255,228,.13)!important;
+  }
+
+  /* Wallet card gets the brighter gold diagonal seen in the reference without extra UI. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card{
+    background:
+      linear-gradient(126deg,transparent 0 65%,rgba(255,208,91,.075) 65.3% 66.2%,transparent 66.5%),
+      radial-gradient(115px 76px at 82% 52%,rgba(255,205,82,.14),transparent 72%),
+      linear-gradient(135deg,#101317,#05080b 72%)!important;
+  }
+}
+
+@media(max-width:370px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    min-height:240px!important;padding-right:39%!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{font-size:19.8px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .fs-premium-hero-art{width:155px!important;height:187px!important}
+}
