@@ -43,16 +43,12 @@
       return;
     }
 
-    const profile = document.querySelector('#view-perfil .profile-panel');
-    if (!profile) return;
+    const home = document.getElementById('view-inicio');
+    const featured = home?.querySelector(':scope > .compact-panel');
+    if (!home || !featured) return;
     if (!panel) panel = buildPanel();
 
-    const loyalty = document.getElementById('fsLoyaltyPanel');
-    if (loyalty && loyalty.parentElement === profile) {
-      if (loyalty.nextElementSibling !== panel) loyalty.insertAdjacentElement('afterend', panel);
-    } else if (panel.parentElement !== profile) {
-      profile.appendChild(panel);
-    }
+    if (featured.nextElementSibling !== panel) featured.insertAdjacentElement('afterend', panel);
   }
 
   new MutationObserver(mount).observe(root, { attributes: true, attributeFilter: ['data-fs-tier'] });
