@@ -1,20 +1,24 @@
 /* THE FRENCH STORE — R211 deterministic Clash featured artwork.
-   Presentation-only; Gold/Diamond mobile. Uses its own grid cell so legacy IMG
-   content replacement and fallback logic cannot crop or replace the premium art. */
+   Presentation-only; Gold/Diamond mobile. Uses an isolated absolute art layer so
+   legacy IMG replacement/fallback rules cannot crop the premium artwork. */
 @media(max-width:620px){
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]{
+    position:relative!important;
     overflow:hidden!important;
   }
 
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>.fs-premium-clash-art{
+    position:absolute!important;
+    z-index:1!important;
     display:block!important;
-    grid-column:1 / -1!important;
-    grid-row:1!important;
-    width:100%!important;
+    left:0!important;
+    right:0!important;
+    top:0!important;
+    width:auto!important;
     height:75px!important;
     min-width:0!important;
     min-height:75px!important;
-    max-width:100%!important;
+    max-width:none!important;
     max-height:75px!important;
     margin:0!important;
     padding:0!important;
@@ -25,14 +29,53 @@
     pointer-events:none!important;
   }
 
-  /* The legacy image/fallback remains in the DOM for resilience semantics, but
-     no longer participates visually in the paid mobile card. */
+  /* Preserve row geometry while hiding every legacy artwork implementation. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img,
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>.fs-artwork-fallback--feature{
-    display:none!important;
+    display:block!important;
+    grid-column:1 / -1!important;
+    grid-row:1!important;
+    width:100%!important;
+    height:75px!important;
+    margin:0!important;
+    padding:0!important;
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
   }
 
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>span:not(.fs-artwork-fallback--feature){
+    position:relative!important;
+    z-index:2!important;
     grid-row:2!important;
+  }
+
+  /* Maintenance remains visible without obscuring the artwork or title. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"] .fs-maintenance-badge{
+    position:absolute!important;
+    z-index:4!important;
+    top:4px!important;
+    right:4px!important;
+    width:17px!important;
+    height:17px!important;
+    min-width:17px!important;
+    max-width:17px!important;
+    margin:0!important;
+    padding:0!important;
+    display:grid!important;
+    place-items:center!important;
+    overflow:hidden!important;
+    border:1px solid rgba(244,196,90,.65)!important;
+    border-radius:999px!important;
+    background:rgba(5,8,11,.86)!important;
+    color:transparent!important;
+    font-size:0!important;
+    line-height:1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"] .fs-maintenance-badge::after{
+    content:'🛠'!important;
+    color:#f4c45a!important;
+    font-size:8px!important;
+    line-height:1!important;
   }
 }
