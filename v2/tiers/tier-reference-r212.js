@@ -34,7 +34,7 @@
     const cards = [...host.querySelectorAll('.r6-feature-card[data-r6-feature]')];
     cards.forEach((card) => {
       card.classList.remove('fs-r212-featured');
-      card.style.removeProperty('--fs-r212-order');
+      card.style.removeProperty('order');
     });
 
     const byKey = new Map(cards.map(card => [key(card.dataset.r6Feature), card]));
@@ -51,7 +51,7 @@
     }
     selected.forEach((card, index) => {
       card.classList.add('fs-r212-featured');
-      card.style.setProperty('--fs-r212-order', String(index + 1));
+      card.style.setProperty('order', String(index + 1), 'important');
     });
   }
 
