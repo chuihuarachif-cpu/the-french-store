@@ -4,13 +4,28 @@
   'use strict';
 
   const root = document.documentElement;
-  const VERSION = 'tier-reference-r212-20260915';
+  const VERSION = 'tier-reference-r214-20260915';
   const PAID = new Set(['gold', 'diamond']);
   let queued = false;
 
   const tier = () => String(root.dataset.fsTier || 'base').toLowerCase();
   const paid = () => PAID.has(tier());
   const key = (value) => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+
+  function ensureFinalStyle() {
+    if (!paid()) return;
+    let link = document.getElementById('fs-premium-reference-r214-css');
+    const href = './tiers/tier-reference-r214.css?v=20260915-r214-header';
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'fs-premium-reference-r214-css';
+      link.rel = 'stylesheet';
+      link.href = href;
+      document.head.appendChild(link);
+    } else if (link.getAttribute('href') !== href) {
+      link.href = href;
+    }
+  }
 
   function silenceEverything() {
     try { localStorage.setItem('fs.tier.muted', '1'); } catch {}
@@ -57,6 +72,7 @@
 
   function decorate() {
     queued = false;
+    ensureFinalStyle();
     silenceEverything();
     decorateWhatsapp();
     if (!paid()) return;
