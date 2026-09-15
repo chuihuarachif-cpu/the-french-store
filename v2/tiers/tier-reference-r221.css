@@ -1,0 +1,19 @@
+/* THE FRENCH STORE — R221 order-card icon-lane correction. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order{
+    box-sizing:border-box!important;
+    padding-left:62px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order .r6-order-main,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order .r6-order-meta,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order .r6-order-main>div:first-child{
+    margin-left:0!important;padding-left:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order>.notice,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order>button,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order>.primary-btn,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order>.secondary-btn,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos .record.r6-order>.danger-btn{
+    margin-left:-47px!important;width:calc(100% + 47px)!important;max-width:none!important;
+  }
+}
