@@ -1,13 +1,12 @@
 /* THE FRENCH STORE — R211 deterministic Clash featured artwork.
-   Presentation-only; Gold/Diamond mobile. The companion R211 JS ensures a
-   real decodable IMG exists even if R124 previously replaced the legacy art. */
+   Presentation-only; Gold/Diamond mobile. Uses its own grid cell so legacy IMG
+   content replacement and fallback logic cannot crop or replace the premium art. */
 @media(max-width:620px){
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]{
     overflow:hidden!important;
   }
 
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img[data-fs-premium-clash="r211"]{
-    content:normal!important;
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>.fs-premium-clash-art{
     display:block!important;
     grid-column:1 / -1!important;
     grid-row:1!important;
@@ -21,12 +20,19 @@
     padding:0!important;
     border:0!important;
     border-radius:8px 8px 0 0!important;
-    object-fit:cover!important;
-    object-position:center!important;
-    background:#080b0e!important;
-    filter:none!important;
-    transform:none!important;
-    opacity:1!important;
-    visibility:visible!important;
+    background:#080b0e url('../assets/brand/premium-feature-clash-r211.svg') center/cover no-repeat!important;
+    box-shadow:inset 0 -1px 0 rgba(231,183,82,.30)!important;
+    pointer-events:none!important;
+  }
+
+  /* The legacy image/fallback remains in the DOM for resilience semantics, but
+     no longer participates visually in the paid mobile card. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>.fs-artwork-fallback--feature{
+    display:none!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>span:not(.fs-artwork-fallback--feature){
+    grid-row:2!important;
   }
 }
