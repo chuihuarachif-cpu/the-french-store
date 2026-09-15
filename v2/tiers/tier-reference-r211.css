@@ -1,0 +1,42 @@
+/* THE FRENCH STORE — R211 deterministic Clash featured artwork.
+   Presentation-only; Gold/Diamond mobile. Handles both the live IMG and R124's
+   resilient fallback SPAN, so a missing legacy app bitmap cannot cover the art. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img{
+    content:url('../assets/brand/premium-feature-clash-r211.svg')!important;
+    display:block!important;
+    width:100%!important;
+    height:82px!important;
+    min-height:82px!important;
+    max-height:82px!important;
+    flex:0 0 82px!important;
+    margin:0!important;
+    padding:0!important;
+    border-radius:0!important;
+    object-fit:cover!important;
+    object-position:center!important;
+    background:#080b0e!important;
+    filter:none!important;
+    transform:none!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>.fs-artwork-fallback--feature{
+    display:block!important;
+    width:100%!important;
+    height:82px!important;
+    min-height:82px!important;
+    max-height:82px!important;
+    flex:0 0 82px!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:#080b0e url('../assets/brand/premium-feature-clash-r211.svg') center/cover no-repeat!important;
+    box-shadow:none!important;
+    color:transparent!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>.fs-artwork-fallback--feature .fs-artwork-fallback-icon{
+    display:none!important;
+  }
+}
