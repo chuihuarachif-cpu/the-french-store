@@ -24,7 +24,8 @@
       ['fs-premium-reference-r218-css','./tiers/tier-reference-r218.css?v=20260915-r218-final-fidelity'],
       ['fs-premium-reference-r219-css','./tiers/tier-reference-r219.css?v=20260915-r219-corrective-fidelity'],
       ['fs-premium-reference-r220-css','./tiers/tier-reference-r220.css?v=20260915-r220-final-alignment'],
-      ['fs-premium-reference-r221-css','./tiers/tier-reference-r221.css?v=20260915-r221-order-lane']
+      ['fs-premium-reference-r221-css','./tiers/tier-reference-r221.css?v=20260915-r221-order-lane'],
+      ['fs-premium-reference-r223-css','./tiers/tier-reference-r223.css?v=20260915-r223-reference-locked']
     ].forEach(([id, href]) => {
       let link = document.getElementById(id);
       if (!link) {
@@ -139,7 +140,7 @@
     decorateFeatured();
     decoratePassTitles();
     restoreWhatsappGlyph();
-    root.dataset.fsPremiumFidelity = 'r221';
+    root.dataset.fsPremiumFidelity = 'r223';
   }
 
   function queue() {
