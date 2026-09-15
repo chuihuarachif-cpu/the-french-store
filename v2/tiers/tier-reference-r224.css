@@ -4,6 +4,7 @@
   /* HOME: reference title is two lines, not three; artwork still starts at the same x lane. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
     padding-right:35.5%!important;
+    height:224px!important;min-height:224px!important;max-height:224px!important;
   }
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-copy{
     max-width:100%!important;
@@ -29,6 +30,11 @@
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel>.fs-premium-rank-badge{
     position:absolute!important;top:-1px!important;right:-1px!important;left:auto!important;bottom:auto!important;
     z-index:12!important;margin:0!important;transform:none!important;
+  }
+  /* R212 explicitly hid Wallet's ribbon; the supplied final Wallet reference shows it. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel>.fs-premium-rank-badge{
+    display:flex!important;visibility:visible!important;opacity:1!important;
+    align-items:center!important;justify-content:center!important;
   }
 
   /* TIENDA: reference cards are roughly 1:1.08 portrait blocks, with a shorter
@@ -80,7 +86,7 @@
 }
 
 @media(max-width:370px){
-  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{padding-right:35%!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{padding-right:35%!important;height:218px!important;min-height:218px!important;max-height:218px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{font-size:19.3px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard>label{font-size:12.7px!important}
 }
