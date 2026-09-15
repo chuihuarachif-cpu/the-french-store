@@ -3,7 +3,7 @@
 @media(max-width:620px){
   /* HOME — exact supplied Clash tile, immune to legacy image transforms/crops. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img{
-    content:url('../assets/brand/premium-feature-clash-r207.webp')!important;
+    content:url('../assets/brand/premium-feature-clash-final-r204.webp')!important;
     display:block!important;width:100%!important;height:82px!important;max-width:none!important;
     padding:0!important;margin:0!important;transform:none!important;scale:1!important;
     object-fit:contain!important;object-position:center!important;background:#080b0e!important;
@@ -58,7 +58,6 @@
     left:13px!important;right:13px!important;bottom:5px!important;height:27px!important;min-height:27px!important;
   }
 
-  /* The generated account modules were ~15px below the reference in R207. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{margin-top:9px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard,
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{top:0!important}
@@ -69,10 +68,14 @@
   }
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard small{display:block!important;visibility:visible!important}
 
-  /* Rank Pass: match artwork placement in the supplied Gold profile capture. */
+  /* Rank Pass artwork alignment. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold::before{right:-25px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
     right:-9px!important;top:7px!important;width:72px!important;height:94px!important;
     background:url('../assets/brand/premium-pass-diamond-r206.webp') center/72px 94px no-repeat!important;
   }
+
+  /* Keep the requested premium social hub integrated, but below the approved
+     390x693 first-screen reference. It remains immediately available on scroll. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel{margin-top:120px!important}
 }
