@@ -1,0 +1,31 @@
+/* THE FRENCH STORE — R226 premium home ordering/social guarantee.
+   Visual-only follow-up to R225. */
+@media(max-width:620px){
+  /* category-grid is display:contents in the premium stack, so its children
+     participate directly in #view-inicio ordering. Keep Venta de Cuentas
+     BEFORE destacados exactly like the approved reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    order:1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.category-card:not(.cuentas-entry){
+    order:2!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.cuentas-entry{
+    order:3!important;grid-column:1/-1!important;width:100%!important;margin:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel{
+    order:4!important;grid-column:1/-1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel{
+    order:5!important;grid-column:1/-1!important;width:100%!important;box-sizing:border-box!important;
+    display:block!important;visibility:visible!important;opacity:1!important;
+  }
+
+  /* Keep all four featured cards locked even after repeated tier switching. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList[data-fs-r225-ready="1"]{
+    display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-flow:row!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList[data-fs-r225-ready="1"]>.fs-r225-featured{
+    display:grid!important;width:100%!important;min-width:0!important;max-width:none!important;
+  }
+}
