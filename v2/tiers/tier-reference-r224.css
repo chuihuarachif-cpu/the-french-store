@@ -1,0 +1,92 @@
+/* THE FRENCH STORE — R224 final screenshot corrections after R223 browser review.
+   Visual-only follow-up against the supplied Gold / Diamond references. */
+@media(max-width:620px){
+  /* HOME: reference title is two lines, not three; artwork still starts at the same x lane. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{
+    padding-right:35.5%!important;
+    height:224px!important;min-height:224px!important;max-height:224px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-copy{
+    max-width:100%!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{
+    font-size:21.2px!important;line-height:1.01!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.category-card b{
+    font-size:10.9px!important;white-space:nowrap!important;
+  }
+
+  /* R199 injects a premium clone with an ID selector in older CSS. Hide that exact
+     first-paint-only block so Home ends at Productos destacados like the reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.official-socials{
+    display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;
+    margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;
+  }
+
+  /* Rank ribbon must stay attached to the top-right edge after de-containerizing. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda>.catalog-panel>.fs-premium-rank-badge,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel>.fs-premium-rank-badge,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-pedidos>.panel>.fs-premium-rank-badge{
+    position:absolute!important;top:-1px!important;right:-1px!important;left:auto!important;bottom:auto!important;
+    z-index:12!important;margin:0!important;transform:none!important;
+  }
+  /* R212 explicitly hid Wallet's ribbon; the supplied final Wallet reference shows it. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel>.fs-premium-rank-badge{
+    display:flex!important;visibility:visible!important;opacity:1!important;
+    align-items:center!important;justify-content:center!important;
+  }
+
+  /* TIENDA: reference cards are roughly 1:1.08 portrait blocks, with a shorter
+     information body than R223. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card{
+    height:208px!important;min-height:208px!important;max-height:208px!important;
+    display:grid!important;grid-template-rows:126px 82px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card img{
+    width:100%!important;height:126px!important;min-height:126px!important;max-height:126px!important;
+    aspect-ratio:auto!important;object-fit:cover!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body{
+    height:82px!important;min-height:82px!important;max-height:82px!important;padding:7px 9px 7px!important;
+    overflow:hidden!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body strong{
+    font-size:12.2px!important;line-height:1.05!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body small{
+    font-size:8.6px!important;line-height:1.1!important;
+  }
+
+  /* WALLET: restore the subtitle lane above the balance and keep the amount clear
+     of the wallet illustration. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel::before{
+    height:218px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet>.panel>.panel-head{
+    height:88px!important;min-height:88px!important;padding-bottom:12px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card{
+    height:116px!important;min-height:116px!important;padding:15px 38% 12px 19px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card>strong{
+    font-size:35.5px!important;letter-spacing:-.03em!important;white-space:nowrap!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .balance-card>small{
+    white-space:nowrap!important;font-size:10px!important;
+  }
+
+  /* PROFILE: keep the preferred-name question on one line like the reference. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard>label{
+    max-width:none!important;width:100%!important;white-space:nowrap!important;font-size:14px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head h3{
+    font-size:18px!important;
+  }
+}
+
+@media(max-width:370px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{padding-right:35%!important;height:218px!important;min-height:218px!important;max-height:218px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero h1{font-size:19.3px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard>label{font-size:12.7px!important}
+}
