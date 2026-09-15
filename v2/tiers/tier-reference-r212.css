@@ -1,0 +1,253 @@
+/* THE FRENCH STORE — R212 owner feedback polish.
+   Premium-only presentation fixes for Gold/Diamond mobile. No commerce logic. */
+@media(max-width:620px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]),
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) body{
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+    letter-spacing:normal!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(h1,h2,h3,.panel-head h2,.fs-loyalty-head h3,.fs-pass-title b){
+    font-family:'Exo 2',system-ui,sans-serif!important;
+    letter-spacing:-.018em!important;
+    text-wrap:balance;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) :is(p,small,label,input,button,.record,.r6-game-card,.r6-package-card,.fs-player-verify){
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  }
+
+  /* Header logo: use the owner's full mark with a soft edge mask instead of a hard rectangle. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .topbar{
+    overflow:visible!important;
+    background:linear-gradient(180deg,#05080b 0%,#030609 100%)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand{
+    position:relative!important;width:min(56vw,236px)!important;min-width:178px!important;height:42px!important;
+    padding:0!important;background:none!important;overflow:visible!important;font-size:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand>span,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand>b{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::before{
+    content:''!important;position:absolute!important;inset:0!important;width:auto!important;height:auto!important;
+    border:0!important;border-radius:0!important;box-shadow:none!important;
+    background:url('../assets/brand/membership-premium-logo.webp') center/contain no-repeat!important;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%)!important;
+    mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%)!important;
+    filter:brightness(1.09) contrast(1.04) saturate(1.08) drop-shadow(0 0 10px rgba(63,174,255,.18))!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .brand::after{
+    content:''!important;position:absolute!important;inset:8% 2%!important;pointer-events:none!important;
+    background:radial-gradient(ellipse at center,rgba(61,168,255,.11),transparent 70%)!important;
+    filter:blur(8px)!important;opacity:.9!important;
+  }
+
+  /* Home ordering: hero -> 4 categories -> account sales -> 4 featured games -> socials. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio.active{
+    gap:10px!important;align-items:start!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.hero{order:1!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.category-card:not(.cuentas-entry){order:2!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.cuentas-entry{
+    order:3!important;grid-column:1/-1!important;margin:0!important;height:72px!important;min-height:72px!important;
+    padding:10px 13px!important;border-radius:14px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.cuentas-entry b{font-size:13px!important;line-height:1.2!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.category-grid>.cuentas-entry small::after{font-size:10px!important;line-height:1.3!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio>.compact-panel{
+    order:4!important;grid-column:1/-1!important;height:auto!important;min-height:0!important;padding:13px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel{
+    order:5!important;grid-column:1/-1!important;margin:0!important;
+  }
+
+  /* Featured games: always show the four requested games, in a readable 2x2 grid. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card{
+    display:none!important;width:100%!important;height:128px!important;grid-template-rows:88px minmax(0,1fr)!important;
+    border-radius:12px!important;overflow:hidden!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card.fs-r212-featured{
+    display:grid!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card img,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card>.fs-premium-clash-art{
+    width:100%!important;height:88px!important;min-height:88px!important;object-fit:cover!important;border-radius:11px 11px 0 0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card>span{
+    display:flex!important;align-items:center!important;min-height:38px!important;padding:7px 9px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList>.r6-feature-card b{
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important;font-size:11px!important;line-height:1.22!important;letter-spacing:0!important;
+  }
+
+  /* Official socials beneath featured games. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel{
+    position:relative!important;inset:auto!important;width:100%!important;padding:14px!important;
+    border:1.3px solid rgba(91,204,255,.72)!important;border-radius:16px!important;
+    background:radial-gradient(220px 100px at 100% 0,rgba(38,149,235,.15),transparent 70%),linear-gradient(145deg,#08131d,#071018)!important;
+    box-shadow:0 14px 34px rgba(0,0,0,.42),0 0 20px rgba(42,169,239,.12),inset 0 1px 0 rgba(217,248,255,.08)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel .official-socials-copy strong{font-size:16px!important;line-height:1.2!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel .official-socials-copy small{font-size:10.5px!important;line-height:1.35!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel .social-links{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel .social-link{min-width:0!important;padding:9px 7px!important;gap:6px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel .social-label b{font-size:10px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel .social-label small{font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .site-legal-footer>.official-socials{display:none!important}
+
+  /* WhatsApp: recognizable modern mark, clean green button. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp{
+    display:grid!important;place-items:center!important;width:58px!important;height:58px!important;right:16px!important;
+    border:2px solid rgba(255,255,255,.9)!important;border-radius:50%!important;background:#25D366!important;color:white!important;
+    box-shadow:0 10px 28px rgba(0,0,0,.46),0 0 0 3px rgba(37,211,102,.18),0 0 18px rgba(37,211,102,.28)!important;
+    font-size:0!important;padding:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .floating-whatsapp svg{width:31px!important;height:31px!important;display:block!important;fill:#fff!important}
+
+  /* Store catalog header/tabs: remove crowding and allow text to breathe. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading{
+    min-height:132px!important;padding:32px 118px 14px 16px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading .eyebrow{
+    white-space:normal!important;font-size:8px!important;line-height:1.35!important;letter-spacing:.18em!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading h2{
+    white-space:normal!important;font-size:26px!important;line-height:1.04!important;margin:6px 0 5px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .catalog-heading p{
+    white-space:normal!important;font-size:12px!important;line-height:1.3!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .category-tabs{
+    grid-auto-flow:row!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-columns:auto!important;
+    overflow:visible!important;gap:7px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-tienda .category-tabs button{
+    white-space:normal!important;min-width:0!important;min-height:44px!important;padding:8px 10px!important;font-size:11px!important;line-height:1.22!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList.r6-game-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body{padding:10px!important;gap:5px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body strong{
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important;font-size:12px!important;line-height:1.22!important;letter-spacing:0!important;word-break:normal!important;overflow-wrap:anywhere!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-card-body small{font-size:10px!important;line-height:1.32!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-genre{font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important;font-size:8px!important;line-height:1.25!important;letter-spacing:.07em!important}
+
+  /* Game detail: force full-width flow; no narrow left column or clipped copy. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList.r6-detail-list,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-detail.fs-detail-v2{
+    display:block!important;width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-detail.fs-detail-v2>*{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-detail.fs-detail-v2 .r6-back{
+    width:auto!important;max-width:100%!important;display:inline-flex!important;margin:0 0 12px!important;padding:10px 14px!important;font-size:13px!important;line-height:1.2!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-detail.fs-detail-v2 .r6-hero.fs-wide-hero{
+    position:relative!important;width:100%!important;height:auto!important;min-height:0!important;aspect-ratio:16/10!important;
+    margin:0 0 12px!important;border-radius:18px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-game-detail.fs-detail-v2 .r6-hero-logo{
+    width:64px!important;height:64px!important;left:13px!important;bottom:13px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-player-verify,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-detail-description,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-detail-service-note{
+    margin:0 0 12px!important;padding:14px!important;border-radius:16px!important;overflow:visible!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-player-verify :is(h3,b,strong,label,p,small,span),
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-detail-description :is(h3,p,small,span){
+    max-width:100%!important;white-space:normal!important;word-break:normal!important;overflow-wrap:break-word!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-player-verify h3,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-detail-description h3{
+    font-family:'Exo 2',system-ui,sans-serif!important;font-size:20px!important;line-height:1.14!important;letter-spacing:-.015em!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-player-verify p,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .fs-detail-description p{font-size:12.5px!important;line-height:1.5!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-package-grid{
+    display:grid!important;grid-template-columns:1fr!important;gap:10px!important;width:100%!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-package-card{
+    width:100%!important;min-height:0!important;padding:13px!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-package-copy strong{font-size:13px!important;line-height:1.3!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #catalogList .r6-package-copy small{font-size:10.5px!important;line-height:1.35!important}
+
+  /* Wallet: no rank-reward badge, no decorative left arrows/rings on requests. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet .fs-premium-rank-badge{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet #topupHistory .record::before,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet #topupHistory .record::after,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet #walletHistory .record::before,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet #walletHistory .record::after{
+    content:none!important;display:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet #topupHistory .record,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-wallet #walletHistory .record{
+    padding:12px!important;background:radial-gradient(160px 70px at 100% 0,rgba(242,190,74,.07),transparent 70%),linear-gradient(145deg,#0a0e12,#070a0d)!important;
+  }
+
+  /* Orders: deeper material, controlled lighting, stronger delivered state. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList .record{
+    border:1.35px solid rgba(244,194,87,.82)!important;
+    background:radial-gradient(190px 110px at 100% 0,rgba(242,188,67,.12),transparent 70%),radial-gradient(150px 90px at 0 100%,rgba(20,130,214,.08),transparent 72%),linear-gradient(145deg,#0d1115,#06080b)!important;
+    box-shadow:0 14px 30px rgba(0,0,0,.5),0 0 18px rgba(238,183,67,.11),inset 0 1px 0 rgba(255,237,194,.08),inset 0 -1px 0 rgba(0,0,0,.65)!important;
+  }
+  html[data-fs-tier="diamond"] #ordersList .record{
+    background:radial-gradient(180px 110px at 100% 0,rgba(48,177,255,.14),transparent 70%),radial-gradient(180px 100px at 0 100%,rgba(244,193,79,.09),transparent 72%),linear-gradient(145deg,#0c1218,#05080c)!important;
+    box-shadow:0 14px 32px rgba(0,0,0,.52),0 0 18px rgba(55,181,255,.11),inset 0 1px 0 rgba(222,248,255,.08)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList .record:has(.status.success),
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #ordersList .record:has(.fs-premium-delivered-bar){
+    box-shadow:0 14px 32px rgba(0,0,0,.5),0 0 20px rgba(31,211,127,.14),inset 0 1px 0 rgba(219,255,234,.08)!important;
+  }
+
+  /* Profile: proportional content, connected cards, no giant Save block, more depth. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel{
+    display:grid!important;gap:10px!important;padding-bottom:12px!important;background:radial-gradient(260px 160px at 100% 0,rgba(52,167,255,.11),transparent 72%),linear-gradient(180deg,#070a0e,#040608)!important;
+    box-shadow:0 18px 42px rgba(0,0,0,.52),0 0 24px rgba(42,152,238,.08)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
+    margin:0!important;box-shadow:0 12px 28px rgba(0,0,0,.5),0 0 16px rgba(45,169,255,.12),inset 0 1px 0 rgba(221,248,255,.08)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{
+    position:static!important;top:auto!important;height:auto!important;min-height:0!important;max-height:none!important;
+    display:grid!important;grid-template-columns:1fr!important;gap:8px!important;margin:0!important;padding:13px!important;overflow:visible!important;
+    border-radius:16px!important;background:radial-gradient(170px 90px at 100% 0,rgba(240,187,67,.09),transparent 70%),linear-gradient(145deg,#0b0e12,#07090c)!important;
+    box-shadow:0 12px 28px rgba(0,0,0,.46),0 0 14px rgba(239,185,69,.08),inset 0 1px 0 rgba(255,240,202,.07)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard label{
+    position:static!important;display:block!important;margin:0!important;font-size:15px!important;line-height:1.25!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard .input-row{
+    position:static!important;width:100%!important;height:auto!important;display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;margin:0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard input{
+    position:static!important;width:100%!important;height:42px!important;min-height:42px!important;max-height:42px!important;margin:0!important;padding:0 12px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard .primary-btn{
+    position:static!important;width:auto!important;min-width:94px!important;height:42px!important;min-height:42px!important;max-height:42px!important;margin:0!important;padding:0 16px!important;border-radius:12px!important;font-size:12px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard small{
+    position:static!important;display:block!important;margin:0!important;font-size:9.5px!important;line-height:1.35!important;white-space:normal!important;overflow:visible!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameResult{
+    position:static!important;margin:0!important;min-height:0!important;padding:8px 10px!important;font-size:10px!important;line-height:1.3!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameResult.hidden{display:none!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{
+    position:static!important;top:auto!important;margin:0!important;padding:12px!important;border-radius:17px!important;
+    box-shadow:0 14px 32px rgba(0,0,0,.48),0 0 18px rgba(70,178,255,.09),inset 0 1px 0 rgba(230,250,255,.08)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-loyalty-head h3{font-size:18px!important;line-height:1.12!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-card{height:154px!important;min-height:154px!important;max-height:154px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsRewardedAdsPanel{margin-top:12px!important}
+}
+
+@media(max-width:390px){
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel .social-links{grid-template-columns:1fr!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel .social-link{min-height:50px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard .input-row{grid-template-columns:1fr!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard .primary-btn{width:100%!important}
+}
