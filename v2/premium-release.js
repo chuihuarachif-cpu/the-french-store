@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r225-20260915';
-  const RELEASE = '20260915-r225-owner-corrections';
+  const VERSION = 'premium-release-r226-20260915';
+  const RELEASE = '20260915-r226-home-order-socials';
   const root = document.documentElement;
 
   function premiumLevel() {
@@ -44,6 +44,7 @@
     ensureStyle('fs-premium-reference-r213-css', `./tiers/tier-reference-r213.css?v=${RELEASE}`);
     ensureStyle('fs-premium-reference-r215-css', `./tiers/tier-reference-r215.css?v=${RELEASE}`);
     ensureStyle('fs-premium-reference-r225-css', `./tiers/tier-reference-r225.css?v=${RELEASE}`);
+    ensureStyle('fs-premium-reference-r226-css', `./tiers/tier-reference-r226.css?v=${RELEASE}`);
 
     ensureScript('fs-premium-reference-r211-js', `./tiers/tier-reference-r211.js?v=${RELEASE}`);
     ensureScript('fs-premium-reference-r177-js', `./tiers/tier-reference-r177.js?v=${RELEASE}`, () => window.FSPremiumReference?.refresh?.());
@@ -53,6 +54,7 @@
     ensureScript('fs-premium-reference-r212-js', `./tiers/tier-reference-r212.js?v=${RELEASE}`, () => window.FSPremiumR212?.refresh?.());
     ensureScript('fs-premium-reference-r215-js', `./tiers/tier-reference-r215.js?v=${RELEASE}`, () => window.FSPremiumR215?.refresh?.());
     ensureScript('fs-premium-reference-r225-js', `./tiers/tier-reference-r225.js?v=${RELEASE}`, () => window.FSPremiumR225?.refresh?.());
+    ensureScript('fs-premium-reference-r226-js', `./tiers/tier-reference-r226.js?v=${RELEASE}`, () => window.FSPremiumR226?.refresh?.());
   }
 
   function refreshHelpers() {
@@ -61,6 +63,7 @@
     try { window.FSPremiumR212?.refresh?.(); } catch {}
     try { window.FSPremiumR215?.refresh?.(); } catch {}
     try { window.FSPremiumR225?.refresh?.(); } catch {}
+    try { window.FSPremiumR226?.refresh?.(); } catch {}
   }
 
   function apply() {
