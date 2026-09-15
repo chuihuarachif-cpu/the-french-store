@@ -76,7 +76,6 @@
     <section id="view-pedidos" class="view auth-view"><section class="panel"><div class="panel-head"><div><span class="eyebrow">MIS PEDIDOS</span><h2>Historial y estado</h2></div><button id="refreshOrders" class="icon-btn" aria-label="Actualizar pedidos" title="Actualizar pedidos">↻</button></div><div id="ordersList" class="record-list"></div></section></section>
 
     <section id="view-perfil" class="view auth-view"><section class="panel profile-panel"><span class="eyebrow">MI CUENTA</span><h2>Perfil</h2><div class="profile-card"><div class="avatar">FS</div><div><b id="profileName">Cliente</b><span id="profileEmail">Sin sesión</span></div></div><div class="profile-actions"><button id="openAdmin" class="secondary-btn hidden">⚙️ Admin</button><button id="logoutButton" class="danger-btn hidden">Cerrar sesión</button></div></section></section>
-
     <section id="view-admin" class="view"><section class="panel admin-panel"><div class="panel-head"><div><span class="eyebrow">ADMINISTRACIÓN</span><h2>Panel Admin</h2></div><button id="refreshAdmin" class="icon-btn">↻</button></div><div class="admin-tabs"><button class="active" data-admin-tab="topups">Wallet</button><button data-admin-tab="payments">ACH por revisar</button><button data-admin-tab="orders">Pedidos</button></div><div id="adminContent" class="record-list"></div></section></section>
   </main>
 
@@ -124,8 +123,8 @@
   <div id="topupQrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" aria-label="Cerrar diálogo" data-close="topupQrModal">×</button><span class="eyebrow">CARGA FRENCH WALLET</span><h2 id="topupQrAmount">Preparando carga</h2><div id="topupQrReference" class="notice success"></div><div class="qr-box"><img alt="QR de carga para French Wallet" loading="eager" decoding="async"></div><p class="security-note">Escanea el QR individual y verifica el monto exacto antes de pagar.</p><p class="security-note"><b>La acreditación es automática.</b> Cuando el pago sea confirmado, el saldo aparecerá en French Wallet sin que tengas que avisar por WhatsApp.</p><p class="security-note">Si todavía no pagaste, puedes cancelar la solicitud. <b>No la canceles mientras tu banca esté procesando el pago.</b></p><div class="checkout-grid"><button class="secondary-btn" data-close="topupQrModal">Cerrar</button><button id="cancelTopupRequest" class="danger-btn">Cancelar solicitud</button></div></div></div>
 
   <script src="./notifications.js?v=20260825-r47" defer></script>
-  <script src="./bootstrap.js?v=20260913-r166" defer></script>
-  <script src="./premium-release.js?v=20260914-r205-live" defer></script>
+  <script src="./bootstrap.js?v=20260915-r214" defer></script>
+  <script src="./premium-release.js?v=20260915-r214-live" defer></script>
   <script src="./rank-pass-premium.js?v=20260906-r150" defer></script>
   <script src="./rank-pass-premium-ready.js?v=20260906-r150" defer></script>
   <script src="./cpx-rewards-provider.js?v=20260827-r101" defer></script>
