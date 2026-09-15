@@ -17,6 +17,21 @@
     { aliases: ['wutheringwaves'], src: './assets/apps/wuthering-waves.webp', title: 'Wuthering Waves' }
   ];
 
+  function ensureCorrectionStyles() {
+    const id = 'fs-premium-reference-r216-css';
+    const href = './tiers/tier-reference-r216.css?v=20260915-r216-browser-correction';
+    let link = document.getElementById(id);
+    if (!link) {
+      link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      link.href = href;
+      document.head.appendChild(link);
+    } else if (link.getAttribute('href') !== href) {
+      link.href = href;
+    }
+  }
+
   function directCardImage(card) {
     return [...card.children].find((node) => node.tagName === 'IMG') || null;
   }
@@ -33,21 +48,24 @@
       else card.appendChild(image);
     }
     image.dataset.fsOfficialArtwork = '1';
-    image.setAttribute('src', source);
+    if (image.getAttribute('src') !== source) image.setAttribute('src', source);
     image.setAttribute('alt', title);
     image.setAttribute('loading', 'eager');
     image.setAttribute('decoding', 'async');
   }
 
   function normalizeCaption(card, item) {
-    const caption = [...card.children].find((node) => node.tagName === 'SPAN' && !node.classList.contains('fs-artwork-fallback--feature'));
+    const caption = [...card.children].find((node) => node.tagName === 'SPAN' && !node.classList.contains('fs-artwork-fallback--feature') && !node.classList.contains('fs-maintenance-badge'));
     if (!caption) return;
-    let title = caption.querySelector('b,strong');
+    let title = caption.querySelector(':scope > b,:scope > strong');
     if (!title) {
       title = document.createElement('b');
       caption.prepend(title);
     }
     if (title.textContent !== item.title) title.textContent = item.title;
+
+    caption.querySelectorAll('.fs-maintenance-badge').forEach((node) => node.remove());
+    card.querySelectorAll(':scope > .fs-maintenance-badge').forEach((node) => node.remove());
 
     let note = caption.querySelector('.fs-r215-feature-note');
     if (item.note) {
@@ -91,10 +109,11 @@
 
   function decorate() {
     queued = false;
+    ensureCorrectionStyles();
     if (!paid()) return;
     decorateFeatured();
     restoreWhatsappGlyph();
-    root.dataset.fsPremiumFidelity = 'r215';
+    root.dataset.fsPremiumFidelity = 'r216';
   }
 
   function queue() {
