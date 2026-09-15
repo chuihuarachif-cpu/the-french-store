@@ -55,18 +55,12 @@
     });
   }
 
-  function removeWalletRewardBadge() {
-    if (!paid()) return;
-    document.querySelectorAll('#view-wallet .fs-premium-rank-badge').forEach(el => el.remove());
-  }
-
   function decorate() {
     queued = false;
     silenceEverything();
     decorateWhatsapp();
     if (!paid()) return;
     selectFeatured();
-    removeWalletRewardBadge();
     root.dataset.fsPremiumPolish = VERSION;
   }
 
