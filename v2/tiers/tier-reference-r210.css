@@ -1,10 +1,10 @@
 /* THE FRENCH STORE — R210 final premium reference convergence.
    Presentation only; scoped exclusively to backend-resolved Gold/Diamond tiers. */
 @media(max-width:620px){
-  /* HOME — use the dedicated clean premium Clash crop. The previous fallback to
-     the generic app bitmap rendered a blurred/brown tile in the visual artifact. */
+  /* HOME — restore the approved Clash crop (barbarian + wordmark). Newer source
+     experiments rendered a blurred/brown tile in the browser artifact. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img{
-    content:url('../assets/brand/premium-feature-clash-r207.webp')!important;
+    content:url('../assets/brand/premium-feature-clash-of-clans-r189.webp')!important;
     display:block!important;width:100%!important;height:82px!important;max-width:none!important;
     padding:0!important;margin:0!important;transform:none!important;scale:1!important;
     object-fit:cover!important;object-position:center!important;background:#080b0e!important;
