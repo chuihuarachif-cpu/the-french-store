@@ -18,18 +18,21 @@
   ];
 
   function ensureCorrectionStyles() {
-    const id = 'fs-premium-reference-r216-css';
-    const href = './tiers/tier-reference-r216.css?v=20260915-r216-browser-correction';
-    let link = document.getElementById(id);
-    if (!link) {
-      link = document.createElement('link');
-      link.id = id;
-      link.rel = 'stylesheet';
-      link.href = href;
-      document.head.appendChild(link);
-    } else if (link.getAttribute('href') !== href) {
-      link.href = href;
-    }
+    [
+      ['fs-premium-reference-r216-css','./tiers/tier-reference-r216.css?v=20260915-r216-browser-correction'],
+      ['fs-premium-reference-r217-css','./tiers/tier-reference-r217.css?v=20260915-r217-reference-match']
+    ].forEach(([id, href]) => {
+      let link = document.getElementById(id);
+      if (!link) {
+        link = document.createElement('link');
+        link.id = id;
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+      } else if (link.getAttribute('href') !== href) {
+        link.href = href;
+      }
+    });
   }
 
   function directCardImage(card) {
@@ -132,7 +135,7 @@
     decorateFeatured();
     decoratePassTitles();
     restoreWhatsappGlyph();
-    root.dataset.fsPremiumFidelity = 'r216';
+    root.dataset.fsPremiumFidelity = 'r217';
   }
 
   function queue() {
