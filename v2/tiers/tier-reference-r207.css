@@ -1,16 +1,15 @@
 /* THE FRENCH STORE — R207 pixel-reference convergence.
    Presentation only. Applies exclusively to backend-resolved Gold/Diamond. */
 @media(max-width:620px){
-  /* HOME — exact supplied Clash tile, immune to legacy image transforms/crops. */
+  /* HOME — deterministic Clash artwork from the repository, immune to legacy transforms. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img{
-    content:url('../assets/brand/premium-feature-clash-final-r204.webp')!important;
+    content:url('../assets/apps/clash-of-clans.webp')!important;
     display:block!important;width:100%!important;height:82px!important;max-width:none!important;
     padding:0!important;margin:0!important;transform:none!important;scale:1!important;
-    object-fit:contain!important;object-position:center!important;background:#080b0e!important;
+    object-fit:cover!important;object-position:center!important;background:#080b0e!important;
     filter:none!important;
   }
 
-  /* Reference rank tab has the small inward cut visible in the supplied capture. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge{
     min-height:27px!important;height:27px!important;padding:4px 10px 4px 14px!important;
     border-radius:0 11px 0 9px!important;
@@ -19,8 +18,6 @@
   }
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge .fs-premium-rank-icon{font-size:12px!important}
 
-  /* PROFILE — align the site-only capture to the supplied phone reference
-     (the reference includes ~25px of Android status chrome above the site). */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel{
     margin-top:-15px!important;padding-top:17px!important;overflow:hidden!important;
   }
@@ -33,8 +30,6 @@
   html[data-fs-tier="diamond"] #view-perfil .profile-card{
     background:radial-gradient(182px 138px at 91% 18%,rgba(28,158,255,.28),transparent 69%),linear-gradient(96deg,#06101a 0%,#04080d 57%,#041526 100%)!important;
   }
-  /* Clean hood artwork reconstructed from the supplied profile reference.
-     No badge/rank text is baked into the bitmap; live account state stays on top. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card::after{
     content:''!important;display:block!important;position:absolute!important;z-index:2!important;
     inset:auto!important;right:-1px!important;top:-59px!important;width:178px!important;height:142px!important;
@@ -68,14 +63,11 @@
   }
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard small{display:block!important;visibility:visible!important}
 
-  /* Rank Pass artwork alignment. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold::before{right:-25px!important}
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
     right:-9px!important;top:7px!important;width:72px!important;height:94px!important;
     background:url('../assets/brand/premium-pass-diamond-r206.webp') center/72px 94px no-repeat!important;
   }
 
-  /* Keep the requested premium social hub integrated, but below the approved
-     390x693 first-screen reference. It remains immediately available on scroll. */
   html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel{margin-top:120px!important}
 }
