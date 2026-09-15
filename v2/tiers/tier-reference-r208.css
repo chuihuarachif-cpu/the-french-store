@@ -1,0 +1,65 @@
+/* THE FRENCH STORE — R208 pixel-reference correction pass.
+   Presentation only; scoped exclusively to backend-resolved Gold/Diamond tiers. */
+@media(max-width:620px){
+  /* HOME — restore the exact approved Clash of Clans crop and match the 390px CTA width. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img{
+    content:url('../assets/brand/premium-feature-clash-r206.webp')!important;
+    width:100%!important;height:82px!important;padding:0!important;
+    object-fit:cover!important;object-position:center!important;background:#080b0e!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-inicio .hero-actions{
+    width:216px!important;max-width:100%!important;
+  }
+
+  /* PROFILE — align the live account card with the supplied 390px reference.
+     The account border was ~7px low and the generated modules below were ~16px low. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel::before{
+    height:190px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
+    margin:-7px 9px 0!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card::after{
+    top:-57px!important;width:178px!important;height:121px!important;
+    background-size:178px 121px!important;background-position:center top!important;
+  }
+  /* Cover only the stale source-email pixels in the reference-derived art.
+     Dynamic profile text stays live above this patch. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card::before{
+    content:''!important;display:block!important;position:absolute!important;z-index:3!important;
+    inset:auto!important;left:176px!important;top:37px!important;width:73px!important;height:25px!important;
+    background:linear-gradient(90deg,#05080b 0%,#06101a 62%,rgba(6,16,26,.18) 100%)!important;
+    border:0!important;box-shadow:none!important;opacity:.98!important;pointer-events:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.avatar{
+    top:14px!important;width:58px!important;height:58px!important;font-size:19px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>div:nth-child(2){
+    left:82px!important;top:20px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileEmail{
+    margin-top:5px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-badge{
+    top:7px!important;right:5px!important;min-width:96px!important;height:34px!important;min-height:34px!important;
+    padding:3px 10px!important;font-size:11px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-rank{
+    left:13px!important;right:13px!important;bottom:6px!important;height:28px!important;min-height:28px!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{
+    top:6px!important;
+  }
+
+  /* Gold pass title uses the crown silhouette from the approved card instead of a device emoji. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold .fs-pass-title>span{
+    font-size:0!important;background:none!important;border:0!important;box-shadow:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold .fs-pass-title>span::before{
+    content:'♛'!important;display:grid!important;place-items:center!important;
+    width:26px!important;height:26px!important;font:700 24px/1 Georgia,serif!important;
+    color:#ffd86c!important;text-shadow:0 0 8px rgba(255,195,55,.48)!important;
+  }
+}

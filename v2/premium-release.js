@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r204-20260914';
-  const RELEASE = '20260914-r204-reference-match';
+  const VERSION = 'premium-release-r211-final-20260914';
+  const RELEASE = '20260914-r211-final-reference-match';
   const root = document.documentElement;
   let active = '';
 
@@ -24,16 +24,36 @@
       if (reference.getAttribute('href') !== href) reference.href = href;
     }
 
-    let finalReference = document.getElementById('fs-premium-reference-r204-css');
+    let finalReference = document.getElementById('fs-premium-reference-r210-css');
     if (!finalReference) {
       finalReference = document.createElement('link');
-      finalReference.id = 'fs-premium-reference-r204-css';
+      finalReference.id = 'fs-premium-reference-r210-css';
       finalReference.rel = 'stylesheet';
-      finalReference.href = `./tiers/tier-reference-r204.css?v=${RELEASE}`;
+      finalReference.href = `./tiers/tier-reference-r210.css?v=${RELEASE}`;
       document.head.appendChild(finalReference);
     } else {
-      const href = `./tiers/tier-reference-r204.css?v=${RELEASE}`;
+      const href = `./tiers/tier-reference-r210.css?v=${RELEASE}`;
       if (finalReference.getAttribute('href') !== href) finalReference.href = href;
+    }
+
+    let clashReference = document.getElementById('fs-premium-reference-r211-css');
+    if (!clashReference) {
+      clashReference = document.createElement('link');
+      clashReference.id = 'fs-premium-reference-r211-css';
+      clashReference.rel = 'stylesheet';
+      clashReference.href = `./tiers/tier-reference-r211.css?v=${RELEASE}`;
+      document.head.appendChild(clashReference);
+    } else {
+      const href = `./tiers/tier-reference-r211.css?v=${RELEASE}`;
+      if (clashReference.getAttribute('href') !== href) clashReference.href = href;
+    }
+
+    if (!document.getElementById('fs-premium-reference-r211-js')) {
+      const clash = document.createElement('script');
+      clash.id = 'fs-premium-reference-r211-js';
+      clash.src = `./tiers/tier-reference-r211.js?v=${RELEASE}`;
+      clash.defer = true;
+      document.head.appendChild(clash);
     }
 
     if (!document.getElementById('fs-premium-reference-r177-js')) {

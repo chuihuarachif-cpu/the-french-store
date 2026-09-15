@@ -1,0 +1,73 @@
+/* THE FRENCH STORE — R207 pixel-reference convergence.
+   Presentation only. Applies exclusively to backend-resolved Gold/Diamond. */
+@media(max-width:620px){
+  /* HOME — deterministic Clash artwork from the repository, immune to legacy transforms. */
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #featuredList [data-r6-feature*="Clash"]>img{
+    content:url('../assets/apps/clash-of-clans.webp')!important;
+    display:block!important;width:100%!important;height:82px!important;max-width:none!important;
+    padding:0!important;margin:0!important;transform:none!important;scale:1!important;
+    object-fit:cover!important;object-position:center!important;background:#080b0e!important;
+    filter:none!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge{
+    min-height:27px!important;height:27px!important;padding:4px 10px 4px 14px!important;
+    border-radius:0 11px 0 9px!important;
+    clip-path:polygon(9px 0,100% 0,100% 100%,0 100%,6px 50%)!important;
+    font-size:9.2px!important;gap:5px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) .fs-premium-rank-badge .fs-premium-rank-icon{font-size:12px!important}
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel{
+    margin-top:-15px!important;padding-top:17px!important;overflow:hidden!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel::before{height:192px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil>.profile-panel>h2{margin-bottom:12px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card{
+    height:110px!important;min-height:110px!important;max-height:110px!important;overflow:visible!important;
+    background:radial-gradient(178px 135px at 91% 18%,rgba(18,115,230,.19),transparent 70%),linear-gradient(96deg,#070a0d 0%,#05080b 58%,#06111e 100%)!important;
+  }
+  html[data-fs-tier="diamond"] #view-perfil .profile-card{
+    background:radial-gradient(182px 138px at 91% 18%,rgba(28,158,255,.28),transparent 69%),linear-gradient(96deg,#06101a 0%,#04080d 57%,#041526 100%)!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card::after{
+    content:''!important;display:block!important;position:absolute!important;z-index:2!important;
+    inset:auto!important;right:-1px!important;top:-59px!important;width:178px!important;height:142px!important;
+    background:url('../assets/brand/premium-profile-mascot-r208.webp') center/178px 142px no-repeat!important;
+    border:0!important;border-radius:0!important;box-shadow:none!important;
+    clip-path:none!important;mask:none!important;-webkit-mask:none!important;
+    opacity:1!important;filter:none!important;pointer-events:none!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.avatar,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>div:nth-child(2),
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileName,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil #profileEmail,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-badge,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-rank{z-index:8!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-badge{
+    top:0!important;right:10px!important;min-width:94px!important;width:auto!important;height:32px!important;min-height:32px!important;padding:3px 10px!important;font-size:11px!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.avatar{left:14px!important;top:14px!important;width:55px!important;height:55px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>div:nth-child(2){left:82px!important;top:18px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #view-perfil .profile-card>.fs-premium-profile-rank{
+    left:13px!important;right:13px!important;bottom:5px!important;height:27px!important;min-height:27px!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard{margin-top:9px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard,
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel{top:0!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard .primary-btn{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    height:34px!important;min-height:34px!important;max-height:34px!important;flex:0 0 34px!important;
+    padding:0 12px!important;border-radius:12px!important;line-height:1!important;
+  }
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPreferredNameCard small{display:block!important;visibility:visible!important}
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-gold::before{right:-25px!important}
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsLoyaltyPanel .fs-pass-diamond::before{
+    right:-9px!important;top:7px!important;width:72px!important;height:94px!important;
+    background:url('../assets/brand/premium-pass-diamond-r206.webp') center/72px 94px no-repeat!important;
+  }
+
+  html:is([data-fs-tier="gold"],[data-fs-tier="diamond"]) #fsPremiumSocialsPanel{margin-top:120px!important}
+}
