@@ -10,10 +10,11 @@
   let active = false;
   let observersInstalled = false;
 
-  /* PR #142 still ships data-fs-world statically so its CSS/assets stay fully
-     testable. Remove it synchronously here; only the verified owner session may
-     opt back in after tier-gate resolves. */
+  /* Production starts with the public storefront. Local visual CI restores the
+     world flag synchronously so screenshots validate the Nightfall layer from
+     first paint; real users still require the authenticated owner gate below. */
   root.removeAttribute('data-fs-world');
+  if (LOCAL_QA) root.dataset.fsWorld = WORLD;
 
   const icons = {
     inicio:'M12 2 1 11h3v10h6v-6h4v6h6V11h3Z',
