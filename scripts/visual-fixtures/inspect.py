@@ -47,6 +47,11 @@ if len(sys.argv)>4 and sys.argv[4]=='r151':
 if data['scenario'] in ('lite','reduced'):
     assert data['motion'] in ('lite','off'), 'Progressive motion was ignored'
     assert data['heroAnimation']=='none' and data['ribbonAnimation']=='none', 'Decorative sweep runs in lightweight mode'
+    assert data.get('worldAnimation','none')=='none', 'Atmosphere runs in lightweight mode'
+elif data.get('world')=='nightfall':
+    assert data['heroAnimation']=='none', 'Reading surface must stay still'
+    expected_atmosphere='world-stars' if data['rank']=='diamond' and data['motion']=='full' else 'none'
+    assert data['worldAnimation']==expected_atmosphere, 'Tier atmosphere motion contract was lost'
 elif data['rank']=='diamond':
     # Historical fixtures use the old blue Diamond sweep; R171 current fixtures use
     # the exact same Noir & Gold sweep as Gold. Both are valid in before/after comparisons.
