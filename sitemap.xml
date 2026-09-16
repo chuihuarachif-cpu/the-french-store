@@ -1,3 +1,7 @@
+---
+layout: null
+permalink: /sitemap.xml
+---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://frenchstorebo.com/v2/</loc><lastmod>2026-09-16</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
@@ -6,6 +10,7 @@
   <url><loc>https://frenchstorebo.com/v2/cuentas.html</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://frenchstorebo.com/v2/streaming.html</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://frenchstorebo.com/v2/gift-cards.html</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  {% assign seo_pages = site.pages | where: "seo_item", true | sort: "permalink" %}{% for item in seo_pages %}<url><loc>https://frenchstorebo.com{{ item.permalink }}</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>{% endfor %}
   <url><loc>https://frenchstorebo.com/v2/about.html</loc><lastmod>2026-09-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://frenchstorebo.com/v2/terms.html</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://frenchstorebo.com/v2/privacy.html</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
