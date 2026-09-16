@@ -6,6 +6,7 @@
 
   const root = document.documentElement;
   const WORLD = 'nightfall';
+  const LOCAL_QA = ['127.0.0.1','localhost'].includes(location.hostname);
   let active = false;
   let observersInstalled = false;
 
@@ -126,6 +127,10 @@
 
   function reconcileOwnerPreview() {
     const gate = window.FSTierGate;
+    if (LOCAL_QA) {
+      activate();
+      return;
+    }
     if (!gate?.isResolved?.()) return;
     if (gate.isOwner?.() === true) {
       activate();
