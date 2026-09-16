@@ -2,19 +2,25 @@
 (() => {
   'use strict';
   const URL='https://jivaaripugjdpxjvjnsu.supabase.co';
-  const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXAiLCJyZWYiOiJqaXZhYXJpcHVnamRweGp2am5zdSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzg1NjQ2NzMyLCJleHAiOjIxMDEyMjI3MzJ9.invalid';
-  const REAL_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppdmFhcmlwdWdqZHB4anZqbnN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NDY3MzIsImV4cCI6MjEwMTIyMjczMn0.N60Xb1PqqPo12HdKEzPc4qCp1aFvVzwZz4VG04q_Es4';
-  const client=window.supabase.createClient(URL,REAL_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  const ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppdmFhcmlwdWdqZHB4anZqbnN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NDY3MzIsImV4cCI6MjEwMTIyMjczMn0.N60Xb1PqqPo12HdKEzPc4qCp1aFvVzwZz4VG04q_Es4';
+  const client=window.supabase.createClient(URL,ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   const TZ='America/La_Paz';
   let events=[];
-  let monthCursor=new Date();
+  let monthCursor=boliviaDate();
   let editingId=null;
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
   const slugify=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,64);
   const pad=n=>String(n).padStart(2,'0');
-  const localToday=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+
+  function boliviaParts(date=new Date()){
+    const parts=new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
+    return Object.fromEntries(parts.filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+  }
+  function boliviaDate(){const p=boliviaParts();return new Date(Number(p.year),Number(p.month)-1,Number(p.day),12)}
+  function localToday(){const p=boliviaParts();return `${p.year}-${p.month}-${p.day}`}
   const displayToday=()=>new Intl.DateTimeFormat('es-BO',{timeZone:TZ,dateStyle:'full'}).format(new Date());
+  const iso=(date)=>`${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
   async function rpc(name,args){const r=await client.rpc(name,args);if(r.error)throw r.error;return r.data}
   function toast(msg){const el=$('toast');if(!el)return;el.textContent=msg;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),3200)}
 
@@ -46,9 +52,9 @@
     </section>`);
     button.addEventListener('click',()=>openPanel(button));
     $('seasonalRefresh').onclick=load;
-    $('seasonalPrev').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()-1,1);renderCalendar()};
-    $('seasonalNext').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()+1,1);renderCalendar()};
-    $('seasonalCurrent').onclick=()=>{monthCursor=new Date();renderCalendar()};
+    $('seasonalPrev').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()-1,1,12);renderCalendar()};
+    $('seasonalNext').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()+1,1,12);renderCalendar()};
+    $('seasonalCurrent').onclick=()=>{monthCursor=boliviaDate();renderCalendar()};
     $('seasonalNew').onclick=resetForm;
     $('seasonalCancel').onclick=resetForm;
     $('seasonalSave').onclick=save;
@@ -76,6 +82,22 @@
     }catch(error){toast(error?.message==='ADMIN_APP_FORBIDDEN'?'Acceso administrativo rechazado.':'No se pudo cargar el calendario.')}
   }
 
+  function activeOn(e,date){
+    const target=new Date(`${date}T12:00:00`);
+    if(e.recurrence==='ONE_OFF'){
+      const start=new Date(`${String(e.one_off_start||'').slice(0,10)}T12:00:00`);
+      const end=new Date(`${String(e.one_off_end||'').slice(0,10)}T12:00:00`);
+      return Number.isFinite(start.getTime())&&Number.isFinite(end.getTime())&&target>=start&&target<=end;
+    }
+    const years=[target.getFullYear()-1,target.getFullYear(),target.getFullYear()+1];
+    return years.some(y=>{
+      const anchor=new Date(y,Number(e.anchor_month)-1,Number(e.anchor_day),12);
+      const start=new Date(anchor);start.setDate(start.getDate()+Number(e.start_offset_days??-3));
+      const end=new Date(start);end.setDate(end.getDate()+Number(e.duration_days||7)-1);
+      return target>=start&&target<=end;
+    });
+  }
+
   function renderCalendar(){
     const host=$('seasonalCalendar');if(!host)return;
     const y=monthCursor.getFullYear(),m=monthCursor.getMonth();
@@ -86,7 +108,7 @@
     const today=localToday();
     for(let d=1;d<=days;d++){
       const date=`${y}-${pad(m+1)}-${pad(d)}`;
-      const matches=events.filter(e=>e.recurrence==='ANNUAL_FIXED'?Number(e.anchor_month)===m+1&&Number(e.anchor_day)===d:String(e.one_off_start||'').slice(0,10)===date);
+      const matches=events.filter(e=>activeOn(e,date));
       html+=`<div class="seasonal-day ${date===today?'today':''}"><div class="seasonal-day-number">${d}</div><div class="seasonal-day-events">${matches.map(e=>`<div class="seasonal-day-event ${e.enabled?'':'disabled'}">${esc(e.name)}</div>`).join('')}</div></div>`;
     }
     host.innerHTML=html;
@@ -112,7 +134,7 @@
     if(recurrence==='ONE_OFF'&&!one)return toast('Elige el primer día del evento.');
     const end=one?new Date(`${one}T12:00:00`):null;if(end)end.setDate(end.getDate()+6);
     try{
-      await rpc('admin_app_upsert_seasonal_event',{p_id:editingId,p_slug:slug,p_name:name,p_scope:$('seasonalScope').value,p_recurrence:recurrence,p_anchor_month:recurrence==='ANNUAL_FIXED'?Number($('seasonalMonth').value):null,p_anchor_day:recurrence==='ANNUAL_FIXED'?Number($('seasonalDay').value):null,p_one_off_start:one,p_one_off_end:end?`${end.getFullYear()}-${pad(end.getMonth()+1)}-${pad(end.getDate())}`:null,p_start_offset_days:recurrence==='ANNUAL_FIXED'?-3:0,p_duration_days:7,p_enabled:$('seasonalEnabled').value==='1',p_priority:Number($('seasonalPriority').value)||100,p_decoration_key:slug,p_notes:$('seasonalNotes').value.trim()||null});
+      await rpc('admin_app_upsert_seasonal_event',{p_id:editingId,p_slug:slug,p_name:name,p_scope:$('seasonalScope').value,p_recurrence:recurrence,p_anchor_month:recurrence==='ANNUAL_FIXED'?Number($('seasonalMonth').value):null,p_anchor_day:recurrence==='ANNUAL_FIXED'?Number($('seasonalDay').value):null,p_one_off_start:one,p_one_off_end:end?iso(end):null,p_start_offset_days:recurrence==='ANNUAL_FIXED'?-3:0,p_duration_days:7,p_enabled:$('seasonalEnabled').value==='1',p_priority:Number($('seasonalPriority').value)||100,p_decoration_key:slug,p_notes:$('seasonalNotes').value.trim()||null});
       toast('Evento guardado.');resetForm();await load();
     }catch(error){toast(String(error?.message||'No se pudo guardar el evento.').slice(0,140))}
   }
