@@ -1,7 +1,19 @@
-/* Optional, idempotent presentation only. No account, cart or payment state. */
+/* FRENCH STORE Nightfall owner preview.
+   Presentation only: the world skin is disabled by default and activates only
+   after tier-gate confirms the authenticated store-owner account. */
 (() => {
   'use strict';
+
   const root = document.documentElement;
+  const WORLD = 'nightfall';
+  let active = false;
+  let observersInstalled = false;
+
+  /* PR #142 still ships data-fs-world statically so its CSS/assets stay fully
+     testable. Remove it synchronously here; only the verified owner session may
+     opt back in after tier-gate resolves. */
+  root.removeAttribute('data-fs-world');
+
   const icons = {
     inicio:'M12 2 1 11h3v10h6v-6h4v6h6V11h3Z',
     tienda:'M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 0h7v7h-7z',
@@ -10,7 +22,10 @@
     perfil:'M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c6 0 9 3 9 7H3c0-4 3-7 9-7z'
   };
   const categoryIcons = ['gamepad','user','tv','gift','users'];
+
   function decorate() {
+    if (!active) return;
+
     const cart = document.getElementById('cartButton');
     if (cart && !cart.querySelector('.world-cart-icon')) {
       for (const node of [...cart.childNodes]) if (node.nodeType === 3) node.remove();
@@ -18,12 +33,14 @@
       cart.setAttribute('aria-label','Abrir carrito');
       cart.setAttribute('aria-describedby','cartCount');
     }
+
     document.querySelectorAll('.bottom-nav button[data-nav]').forEach(button => {
       const host = button.querySelector('span');
       const shape = icons[button.dataset.nav];
       if (!host || !shape || host.querySelector('.world-nav-icon')) return;
       host.innerHTML = `<svg class="world-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${shape}"/></svg>`;
     });
+
     document.querySelectorAll('.hero-actions button').forEach(button => {
       if (button.querySelector('.world-action-icon')) return;
       const label = document.createElement('span');
@@ -37,9 +54,12 @@
         ? `<path fill="currentColor" d="${icons.tienda}"/>`
         : '<path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M20.5 11.7a8.7 8.7 0 0 1-12.8 7.7L3 21l1.6-4.6a8.7 8.7 0 1 1 15.9-4.7Z"/><path fill="currentColor" d="m8 7 1.5-.2 1 2.5-1.1 1.2c.7 1.4 1.8 2.5 3.2 3.1l1.1-1.1 2.5 1-.1 1.5c-.3 1.4-2 1.5-3.2 1-3.1-1.2-5.2-3.4-6-6.2C6.6 8.6 7.1 7.4 8 7Z"/>';
       const arrow = document.createElement('span');
-      arrow.className = 'world-action-arrow'; arrow.textContent = '›'; arrow.setAttribute('aria-hidden','true');
+      arrow.className = 'world-action-arrow';
+      arrow.textContent = '›';
+      arrow.setAttribute('aria-hidden','true');
       button.replaceChildren(icon,label,arrow);
     });
+
     document.querySelectorAll('#categoryGrid .category-card').forEach((card, index) => {
       const host = card.querySelector(':scope > span');
       if (!host || host.querySelector('.world-category-icon')) return;
@@ -48,40 +68,80 @@
       const image = document.createElement('img');
       image.src = `./assets/brand/premium-icon-${icon}-r191.svg`;
       image.className = 'world-category-icon';
-      image.alt = ''; image.width = 52; image.height = 52;
+      image.alt = '';
+      image.width = 52;
+      image.height = 52;
       host.replaceChildren(image);
       const arrow = document.createElement('i');
-      arrow.className = 'world-chevron'; arrow.textContent = '›'; arrow.setAttribute('aria-hidden','true');
+      arrow.className = 'world-chevron';
+      arrow.textContent = '›';
+      arrow.setAttribute('aria-hidden','true');
       card.appendChild(arrow);
     });
+
     const hero = document.querySelector('#view-inicio .hero');
     if (hero && !hero.querySelector('.world-tier-badge')) {
       const badge = document.createElement('span');
-      badge.className = 'world-tier-badge'; hero.appendChild(badge);
+      badge.className = 'world-tier-badge';
+      hero.appendChild(badge);
     }
+
     const profile = document.querySelector('.profile-card');
     if (profile && !profile.querySelector('.world-base-account')) {
       const badge = document.createElement('span');
-      badge.className = 'world-base-account'; badge.textContent = '☘ BASE · Cuenta básica';
+      badge.className = 'world-base-account';
+      badge.textContent = '☘ BASE · Cuenta básica';
       profile.appendChild(badge);
     }
+
     syncTier();
   }
+
   function syncTier() {
+    if (!active) return;
     const level = root.dataset.fsTier;
     const badge = document.querySelector('.world-tier-badge');
     if (badge) badge.textContent = level === 'diamond' ? '💎 DIAMOND' : level === 'gold' ? '♛ GOLD' : '☘ BASE · Cuenta básica';
   }
-  function boot() {
+
+  function installObservers() {
+    if (observersInstalled) return;
+    observersInstalled = true;
+    new MutationObserver(syncTier).observe(root,{attributes:true,attributeFilter:['data-fs-tier']});
+    const grid = document.getElementById('categoryGrid');
+    if (grid) new MutationObserver(decorate).observe(grid,{childList:true});
+  }
+
+  function activate() {
+    if (active) return;
+    active = true;
+    root.dataset.fsWorld = WORLD;
     try {
       decorate();
-      new MutationObserver(syncTier).observe(root,{attributes:true,attributeFilter:['data-fs-tier']});
-      const grid = document.getElementById('categoryGrid');
-      if (grid) new MutationObserver(decorate).observe(grid,{childList:true});
+      installObservers();
     } catch (error) {
-      console.warn('Optional world decoration unavailable.',error.message);
+      console.warn('Optional owner world preview unavailable.',String(error?.message || error).slice(0,120));
     }
   }
+
+  function reconcileOwnerPreview() {
+    const gate = window.FSTierGate;
+    if (!gate?.isResolved?.()) return;
+    if (gate.isOwner?.() === true) {
+      activate();
+      return;
+    }
+    root.removeAttribute('data-fs-world');
+    /* If the owner logs out after the decorator changed icon markup, reload once
+       so the next anonymous/non-owner session receives the untouched storefront. */
+    if (active) location.reload();
+  }
+
+  function boot() {
+    document.addEventListener('fs-tier-resolved',reconcileOwnerPreview);
+    reconcileOwnerPreview();
+  }
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
 })();
