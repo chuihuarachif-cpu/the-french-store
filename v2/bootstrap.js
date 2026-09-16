@@ -89,6 +89,9 @@
     await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260915-r214-muted');
     await loadScript('./tiers/tier-welcome.js', 'fs-tier-welcome-js', '20260911-r160');
     await loadScript('./tiers/tier-gate.js', 'fs-tier-gate-js', '20260911-r160');
+    // R167: calendario de eventos. Solo expone las claves activas; no dibuja
+    // efectos ni altera el checkout, Wallet, catálogo, precios o niveles.
+    await loadScript('./seasonal-events.js', 'fs-seasonal-events-js', '20260916-r167');
     // R163: vitrina "Cuentas en Venta", debajo de las 4 categorías públicas.
     // Presentación pura y fail-closed: si no puede leer, la sección no se
     // muestra y el resto de la tienda sigue igual. No toca catálogo, precios,
