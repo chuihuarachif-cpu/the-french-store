@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06111d">
+  <meta name="description" content="{{ page.description | escape }}">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://frenchstorebo.com{{ page.permalink }}">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_BO">
+  <meta property="og:site_name" content="FRENCH STORE">
+  <meta property="og:title" content="{{ page.seo_title | escape }}">
+  <meta property="og:description" content="{{ page.description | escape }}">
+  <meta property="og:url" content="https://frenchstorebo.com{{ page.permalink }}">
+  <meta property="og:image" content="https://frenchstorebo.com/v2/assets/brand/icon-512.png">
+  <title>{{ page.seo_title | escape }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/v2/legal.css">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@graph":[
+      {
+        "@type":"WebPage",
+        "name":{{ page.item_name | append: " en Bolivia" | jsonify }},
+        "description":{{ page.description | jsonify }},
+        "url":{{ page.permalink | prepend: "https://frenchstorebo.com" | jsonify }},
+        "isPartOf":{"@type":"WebSite","name":"FRENCH STORE","url":"https://frenchstorebo.com/v2/"},
+        "inLanguage":"es-BO"
+      },
+      {
+        "@type":"BreadcrumbList",
+        "itemListElement":[
+          {"@type":"ListItem","position":1,"name":"FRENCH STORE","item":"https://frenchstorebo.com/v2/"},
+          {% if page.seo_section == "game" %}
+          {"@type":"ListItem","position":2,"name":"Juegos","item":"https://frenchstorebo.com/v2/juegos.html"},
+          {% else %}
+          {"@type":"ListItem","position":2,"name":"Streaming","item":"https://frenchstorebo.com/v2/streaming.html"},
+          {% endif %}
+          {"@type":"ListItem","position":3,"name":{{ page.item_name | jsonify }},"item":{{ page.permalink | prepend: "https://frenchstorebo.com" | jsonify }}}
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="legal-page">
+  <header class="legal-topbar"><a class="brand-link" href="/v2/">💎 FRENCH STORE 💎</a><a class="back-link" href="/v2/">Abrir tienda →</a></header>
+  <main class="legal-shell">
+    <section class="legal-hero">
+      {% if page.seo_section == "streaming" %}<span class="legal-badge">STREAMING Y SERVICIOS DIGITALES · BOLIVIA</span>{% elsif page.mode == "id" %}<span class="legal-badge">RECARGAS POR ID · BOLIVIA</span>{% elsif page.mode == "gift" %}<span class="legal-badge">GIFT CARDS Y CÓDIGOS · BOLIVIA</span>{% elsif page.mode == "mixed" or page.mode == "steam" %}<span class="legal-badge">PRODUCTOS DIGITALES · BOLIVIA</span>{% else %}<span class="legal-badge">RECARGAS POR CUENTA · BOLIVIA</span>{% endif %}
+      <h1>{{ page.item_name }} en Bolivia</h1>
+      {% if page.seo_section == "streaming" %}<p>Consulta la opción de <strong>{{ page.item_name }}</strong> disponible en FRENCH STORE, con precio visible en bolivianos y condiciones indicadas antes de confirmar el pedido.</p>{% elsif page.mode == "id" %}<p>Consulta recargas de <strong>{{ page.item_name }}</strong> disponibles en FRENCH STORE, con precios visibles en bolivianos antes de confirmar el pedido.</p>{% elsif page.mode == "account_bonus" %}<p>Consulta la modalidad <strong>con bonus</strong> de {{ page.item_name }} disponible actualmente en FRENCH STORE, con precios visibles en bolivianos.</p>{% elsif page.mode == "account" %}<p>Consulta productos de <strong>{{ page.item_name }}</strong> con precio vigente en bolivianos y atención asistida según el producto.</p>{% elsif page.mode == "gift" %}<p>Consulta Gift Cards o códigos digitales de <strong>{{ page.item_name }}</strong> disponibles en FRENCH STORE, con precios visibles en bolivianos.</p>{% elsif page.mode == "mixed" %}<p>Consulta productos de <strong>{{ page.item_name }}</strong>, incluyendo opciones de recarga por cuenta y Gift Cards, con precios visibles en bolivianos.</p>{% elsif page.mode == "steam" %}<p>Consulta productos de <strong>Steam</strong>, incluyendo Steam Wallet y Gift Cards, con precios visibles en bolivianos.</p>{% endif %}
+      <span class="legal-updated">Precio y disponibilidad se confirman siempre en el catálogo vigente.</span>
+    </section>
+    <section class="legal-card">
+      <h2>Cómo comprar {{ page.item_name }}</h2>
+      {% if page.seo_section == "streaming" %}<p>Abre la categoría Streaming, selecciona {{ page.item_name }} y revisa exactamente qué incluye el producto, su duración, modalidad de entrega y precio vigente en Bs.</p>{% elsif page.mode == "id" %}<p>Los productos de {{ page.item_name }} se manejan como recargas por ID. Cuando corresponde, la tienda solicita el identificador necesario para dirigir la recarga; no necesitas entregar contraseñas ni códigos 2FA.</p>{% elsif page.mode == "account_bonus" %}<p>La oferta pública de {{ page.item_name }} que se promociona aquí corresponde únicamente a la modalidad con bonus. La variante sin bonus no se promociona mientras permanezca fuera de servicio.</p>{% elsif page.mode == "account" %}<p>Los productos de {{ page.item_name }} se manejan como recargas por cuenta con atención asistida. Revisa en el catálogo qué datos son necesarios para el producto exacto.</p>{% elsif page.mode == "gift" %}<p>Los productos de {{ page.item_name }} se ofrecen como códigos o Gift Cards digitales. Antes de pagar, revisa el valor, la región y las condiciones indicadas para cada opción.</p>{% elsif page.mode == "mixed" %}<p>{{ page.item_name }} puede aparecer en más de una modalidad. Verifica si elegiste una recarga asistida por cuenta o una Gift Card/código digital.</p>{% elsif page.mode == "steam" %}<p>Steam puede aparecer como Wallet o como código/Gift Card. Antes de pagar, verifica el valor, la región y la modalidad exacta mostrada en el catálogo.</p>{% endif %}
+      <ol><li>Abre el catálogo de FRENCH STORE.</li><li>Busca <strong>{{ page.item_name }}</strong> y selecciona el producto exacto.</li><li>Revisa precio en Bs, región, modalidad y datos requeridos.</li><li>Confirma el pedido con el método de pago disponible.</li><li>Consulta el avance desde <strong>Mis Pedidos</strong>.</li></ol>
+      <p class="legal-note"><a href="/v2/"><strong>Abrir catálogo de FRENCH STORE →</strong></a></p>
+    </section>
+    <section class="legal-card"><h2>Precio y disponibilidad</h2><p>Los precios y la disponibilidad pueden cambiar por proveedor, región o mantenimiento. El importe se vuelve a validar al crear el pedido, por lo que esta página no publica un precio fijo que pueda quedar desactualizado.</p></section>
+    <section class="legal-card"><h2>Información importante</h2><p>FRENCH STORE es un revendedor independiente. La marca {{ page.item_name }} pertenece a su respectivo titular y su mención sirve para identificar el producto disponible; no implica afiliación o patrocinio oficial salvo indicación expresa.</p></section>
+    <section class="legal-card">{% if page.seo_section == "game" %}<h2>Más juegos</h2><p><a href="/v2/juegos.html">Ver todos los juegos disponibles →</a></p>{% else %}<h2>Más servicios</h2><p><a href="/v2/streaming.html">Ver todos los servicios disponibles →</a></p>{% endif %}</section>
+    <footer class="legal-footer-page"><nav><a href="/v2/">Tienda</a><a href="/v2/juegos.html">Juegos</a><a href="/v2/recargas.html">Recargas</a><a href="/v2/gift-cards.html">Gift Cards</a><a href="/v2/streaming.html">Streaming</a></nav><div>© 2026 FRENCH STORE · Bolivia</div></footer>
+  </main>
+</body>
+</html>
