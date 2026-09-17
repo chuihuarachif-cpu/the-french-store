@@ -1,0 +1,258 @@
+/* FRENCH STORE — unified blue mobile polish r3.
+   Corrects legacy Nightfall Base frame specificity and the <=620px layout.
+   Presentation only: no auth, rank, pricing, wallet, order or checkout logic. */
+
+/* The legacy world layer applies a forest nine-slice with a selector that is
+   more specific than the first unified pass. Match/exceed that specificity so
+   the blue interface never inherits vines, wood or forest framing. */
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] :is(
+  .hero,.category-card,.compact-panel,.balance-card,.topup-box,.profile-card,.record,.official-socials,
+  #view-tienda>.panel,#view-wallet>.panel,#view-pedidos>.panel,#view-perfil>.panel
+)::after {
+  content:none!important;
+  display:none!important;
+  inset:auto!important;
+  border:0!important;
+  border-image:none!important;
+  background:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+  animation:none!important;
+}
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] :is(.brand,.bottom-nav)::after,
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] :is(.brand,.bottom-nav)::before {
+  content:none!important;
+  display:none!important;
+  border:0!important;
+  border-image:none!important;
+  background:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+html[data-fs-interface="unified-blue"] :is(.brand,.bottom-nav,.hero,.category-card,.compact-panel) {
+  border-image:none!important;
+}
+
+/* The supplied reference uses a luminous blue diamond in the hero. Keep the
+   old raster mascot only as a DOM fallback and render the approved visual as a
+   lightweight CSS gem so it stays crisp at every mobile density. */
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-inicio .hero-gem {
+  background:none!important;
+}
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-inicio .hero-gem img {
+  display:none!important;
+}
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-inicio .hero-gem::before {
+  content:""!important;
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  width:88%!important;
+  max-width:230px!important;
+  aspect-ratio:1.08!important;
+  margin:auto!important;
+  clip-path:polygon(24% 7%,76% 7%,98% 35%,50% 96%,2% 35%)!important;
+  background:
+    radial-gradient(circle at 31% 18%,rgba(255,255,255,.96) 0 2.5%,rgba(207,252,255,.58) 3.2%,transparent 8%),
+    linear-gradient(153deg,transparent 0 48.5%,rgba(220,252,255,.70) 49.2% 50.2%,transparent 51%),
+    linear-gradient(27deg,transparent 0 48.5%,rgba(118,236,255,.56) 49.2% 50.2%,transparent 51%),
+    linear-gradient(90deg,transparent 0 49%,rgba(191,250,255,.52) 49.5% 50.5%,transparent 51%),
+    conic-gradient(from 44deg at 50% 35%,#d9fdff 0 7%,#4ce9ff 8% 19%,#087bd8 20% 31%,#3ccfff 32% 43%,#033d99 44% 55%,#5deeff 56% 67%,#0b72d1 68% 79%,#b8f9ff 80% 91%,#3bc9ff 92% 100%)!important;
+  filter:
+    drop-shadow(0 16px 20px rgba(0,0,0,.56))
+    drop-shadow(0 0 9px rgba(94,235,255,.92))
+    drop-shadow(0 0 24px rgba(23,152,255,.58))!important;
+  opacity:1!important;
+  transform:none!important;
+  animation:none!important;
+}
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-inicio .hero-gem::after {
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  left:23%!important;
+  top:16%!important;
+  width:29%!important;
+  height:11%!important;
+  border-radius:50%!important;
+  background:radial-gradient(ellipse,rgba(255,255,255,.92),rgba(172,246,255,.34) 42%,transparent 72%)!important;
+  filter:blur(1.5px) drop-shadow(0 0 9px rgba(180,251,255,.72))!important;
+  transform:rotate(-17deg)!important;
+  pointer-events:none!important;
+}
+
+/* Keep the header clean: logo + account icon + cart, with no truncated text. */
+@media (max-width:620px) {
+  html[data-fs-interface="unified-blue"] .topbar {
+    align-items:center!important;
+    overflow:visible!important;
+  }
+  html[data-fs-interface="unified-blue"] .brand {
+    flex:1 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:50px!important;
+    background-position:left center!important;
+    background-size:contain!important;
+  }
+  html[data-fs-interface="unified-blue"] .top-actions {
+    flex:0 0 auto!important;
+    gap:6px!important;
+  }
+  html[data-fs-interface="unified-blue"] #authButton {
+    width:46px!important;
+    min-width:46px!important;
+    max-width:46px!important;
+    height:50px!important;
+    padding:6px!important;
+    overflow:hidden!important;
+    font-size:0!important;
+    line-height:0!important;
+    display:grid!important;
+    place-items:center!important;
+  }
+  html[data-fs-interface="unified-blue"] #authButton::before {
+    content:""!important;
+    display:block!important;
+    width:28px!important;
+    height:30px!important;
+    margin:auto!important;
+    background:url('../assets/world/account.svg') center/contain no-repeat!important;
+  }
+  html[data-fs-interface="unified-blue"] #cartButton {
+    width:auto!important;
+    min-width:56px!important;
+    height:50px!important;
+  }
+
+  /* Restore a deliberate two-column hero instead of the accidental implicit
+     grid column seen on phones. The artwork gets a real column and therefore
+     cannot disappear behind the copy. */
+  html[data-fs-interface="unified-blue"] #view-inicio>.hero {
+    display:grid!important;
+    grid-template-columns:minmax(0,1.4fr) minmax(105px,.6fr)!important;
+    grid-template-rows:auto auto auto auto auto!important;
+    align-items:center!important;
+    gap:12px 10px!important;
+    padding:22px 18px 18px!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero-copy {
+    display:contents!important;
+    padding:0!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero-copy>.eyebrow {
+    grid-column:1/-1!important;
+    grid-row:1!important;
+    margin:0 0 2px!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero h1 {
+    grid-column:1!important;
+    grid-row:2!important;
+    align-self:center!important;
+    max-width:none!important;
+    margin:0!important;
+    font-size:clamp(30px,8.1vw,36px)!important;
+    line-height:1.01!important;
+    letter-spacing:-.035em!important;
+    text-wrap:balance!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero-gem {
+    grid-column:2!important;
+    grid-row:2!important;
+    position:relative!important;
+    inset:auto!important;
+    right:auto!important;
+    top:auto!important;
+    width:100%!important;
+    max-width:150px!important;
+    margin:auto!important;
+    opacity:1!important;
+    aspect-ratio:1!important;
+    z-index:2!important;
+    overflow:visible!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero p {
+    grid-column:1/-1!important;
+    grid-row:3!important;
+    max-width:none!important;
+    margin:2px 0 0!important;
+    font-size:14px!important;
+    line-height:1.5!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero-actions {
+    grid-column:1/-1!important;
+    grid-row:4!important;
+    width:100%!important;
+    max-width:none!important;
+    margin:6px 0 0!important;
+    gap:10px!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero-actions button {
+    min-height:56px!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .world-trust-strip {
+    grid-column:1/-1!important;
+    grid-row:5!important;
+    width:100%!important;
+    margin:4px 0 0!important;
+    gap:4px!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .world-trust-item {
+    grid-template-columns:26px minmax(0,1fr)!important;
+    column-gap:5px!important;
+    padding:7px 0!important;
+    overflow:visible!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .world-trust-icon,
+  html[data-fs-interface="unified-blue"] #view-inicio .world-trust-icon svg {
+    width:24px!important;
+    height:24px!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .world-trust-item strong {
+    font-size:10px!important;
+    line-height:1.2!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .world-trust-item small {
+    font-size:9px!important;
+    line-height:1.25!important;
+  }
+
+  /* world-theme centers the dock with translateX(-50%). The unified mobile
+     layout uses left/right insets, so explicitly neutralize the old transform
+     and width or the dock is shifted halfway off-screen. */
+  html[data-fs-interface="unified-blue"] .bottom-nav {
+    left:9px!important;
+    right:9px!important;
+    width:auto!important;
+    max-width:none!important;
+    transform:none!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    overflow:visible!important;
+  }
+  html[data-fs-interface="unified-blue"] .bottom-nav button {
+    min-width:0!important;
+    padding-inline:2px!important;
+  }
+
+  html[data-fs-interface="unified-blue"] .floating-whatsapp {
+    width:48px!important;
+    height:48px!important;
+    right:12px!important;
+    bottom:90px!important;
+  }
+}
+
+@media (max-width:390px) {
+  html[data-fs-interface="unified-blue"] #view-inicio>.hero {
+    grid-template-columns:minmax(0,1.45fr) minmax(88px,.55fr)!important;
+    padding-inline:16px!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero h1 {
+    font-size:clamp(28px,8vw,32px)!important;
+  }
+  html[data-fs-interface="unified-blue"] #view-inicio .hero-gem {max-width:118px!important;}
+  html[data-fs-interface="unified-blue"] #view-inicio .world-trust-item small {display:none!important;}
+}

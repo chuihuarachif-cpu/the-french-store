@@ -34,7 +34,8 @@ jobs:
           node --check v2/premium-release.js
           node --check scripts/test-r167-tier-frames.mjs
           grep -q 'tier-gate-unified-ui-v1-20260917' v2/tiers/tier-gate.js
-          grep -q 'unified-blue-r2-20260917' v2/tiers/world-ui.js
+          grep -q 'unified-blue-r3-20260917' v2/tiers/world-ui.js
+          grep -q 'unified-blue-mobile-fix.css' v2/tiers/world-ui.js
           grep -q 'layer(fs-world)' v2/tiers/world-ui.js
 
       - name: CSS structural and secret safety
@@ -44,6 +45,7 @@ jobs:
           files = [
               Path('v2/tiers/tier-base.css'),
               Path('v2/tiers/unified-blue.css'),
+              Path('v2/tiers/unified-blue-mobile-fix.css'),
           ]
           forbidden = ['service_role', 'GAMERHUB_API_KEY', 'GAMERHUB_API_SECRET', 'OPENAI_API_KEY', 'GEMINI_API_KEY']
           for path in files:
@@ -51,6 +53,7 @@ jobs:
               assert text.count('{') == text.count('}'), f'Unbalanced CSS braces in {path}'
               found = [token for token in forbidden if token in text]
               assert not found, f'Forbidden secret-domain tokens in {path}: {found}'
-              assert len(text.encode('utf-8')) < 80000, f'{path} grew beyond the mobile presentation budget'
+              budget = 30000 if path.name == 'unified-blue-mobile-fix.css' else 80000
+              assert len(text.encode('utf-8')) < budget, f'{path} grew beyond the presentation budget'
           print('Unified CSS structure and secret checks OK')
           PY
