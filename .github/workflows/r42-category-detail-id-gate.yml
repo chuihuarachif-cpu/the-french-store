@@ -85,8 +85,17 @@ jobs:
       - name: Detail module and stylesheet are loaded through the existing entrypoint
         run: |
           set -euo pipefail
-          grep -Fq './detail-layout-v2.js?v=20260824-2' v2/player-verify.js
-          grep -Fq './detail-layout-v2.css?v=20260824-2' v2/detail-layout-v2.js
+          grep -Fq './detail-layout-v2.js?v=20260917-r4' v2/player-verify.js
+          grep -Fq './detail-layout-v2.css?v=20260917-r4' v2/detail-layout-v2.js
+
+      - name: Purchase actions stay readable on narrow package cards
+        run: |
+          set -euo pipefail
+          grep -Fq 'grid-template-columns:minmax(0,1fr)!important' v2/detail-layout-v2.css
+          grep -Fq 'writing-mode:horizontal-tb!important' v2/detail-layout-v2.css
+          grep -Fq 'word-break:normal!important' v2/detail-layout-v2.css
+          grep -Fq 'overflow-wrap:normal!important' v2/detail-layout-v2.css
+          grep -Fq 'width:100%!important' v2/detail-layout-v2.css
 
       - name: Catalog observers stay child-list scoped
         run: |
