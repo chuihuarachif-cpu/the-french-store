@@ -36,7 +36,7 @@ ok(index.includes('data-fs-interface="unified-blue"'), 'Unified interface marker
 ok(index.includes('world-ui.js?v=20260917-r4'), 'World UI must use the current cache-busting key');
 ok(index.includes('premium-release.js?v=20260917-unified-retired-r4'), 'Retired premium cleanup must use a fresh cache key');
 ok(index.includes('unified-blue-reference-r4.css?v=20260917-r4'), 'Reference-match stylesheet must load on first paint');
-ok(index.includes('unified-blue-diamond-r5.css?v=20260917-r5'), 'Transparent diamond override must load on first paint');
+ok(index.includes('unified-blue-diamond-r5.css?v=20260917-r6'), 'Final unified cleanup must use the current cache-busting key');
 ok(index.includes('id="fs-unified-blue-css"') && index.includes('data-fs-unified="unified-blue-r3-20260917"'), 'Static unified style must stay compatible with the runtime bootstrap');
 
 // One public visual system must exist and be responsive/accessibility aware.
@@ -58,7 +58,10 @@ ok(Buffer.byteLength(diamond,'utf8') < 10000, 'Diamond override exceeded present
 
 // Mobile screenshot regressions: forest frame and translated dock must stay gone.
 ok(mobileFix.includes('[data-fs-tier="base"] :is('), 'Mobile fix must match legacy Base selector specificity');
-ok(mobileFix.includes('border-image:none!important'), 'Forest nine-slice must be neutralized');
+ok(mobileFix.includes('border-image:none!important'), 'Home forest nine-slice must be neutralized');
+ok(diamond.includes('#view-wallet .panel-head') && diamond.includes('#view-pedidos .panel-head') && diamond.includes('#view-perfil .profile-card'), 'Authenticated screens must neutralize legacy forest frames');
+ok(diamond.includes('border-image:none!important') && diamond.includes('content:none!important'), 'Legacy bark/foliage pseudo-elements must be disabled');
+ok(diamond.includes('premium-wallet-r180.webp'), 'Wallet illustration must remain after forest-frame cleanup');
 ok(mobileFix.includes('.bottom-nav') && mobileFix.includes('transform:none!important'), 'Mobile dock transform reset is missing');
 ok(mobileFix.includes('width:auto!important') && mobileFix.includes('right:9px!important'), 'Mobile dock must fit the viewport');
 ok(mobileFix.includes('grid-template-columns:minmax(0,1.4fr) minmax(105px,.6fr)'), 'Mobile hero must keep an explicit art column');
