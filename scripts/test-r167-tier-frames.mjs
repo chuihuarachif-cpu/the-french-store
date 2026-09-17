@@ -49,6 +49,8 @@ ok(gate.includes('rankLevel:() => rankLevel'), 'Actual rank must remain observab
 
 // The public UI bootstrap must not be owner-only and must add approved details.
 ok(world.includes("root.dataset.fsInterface = 'unified-blue'"), 'Public UI bootstrap must set unified interface');
+ok(world.includes("layer(fs-world)"), 'Unified skin must be imported into the fs-world cascade layer');
+ok(world.includes("unified-blue-r2-20260917"), 'Unified skin release marker is stale');
 ok(!world.includes('reconcileOwnerPreview'), 'Unified interface must not be owner-gated');
 ok(!world.includes('LOCAL_QA'), 'Unified interface must not be limited to local QA');
 ok(world.includes('Compra segura') && world.includes('Entrega inmediata') && world.includes('Soporte confiable'), 'Approved home trust copy is missing');
