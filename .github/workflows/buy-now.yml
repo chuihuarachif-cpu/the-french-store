@@ -35,7 +35,7 @@ jobs:
           grep -Fq "addToCart(productId)" v2/buy-now.js
           grep -Fq "openModal('cartModal')" v2/buy-now.js
           grep -Fq "#catalogList .r6-package-card .fs-buy-actions" v2/buy-now.js
-          grep -Fq "grid-template-columns:1fr!important" v2/buy-now.js
+          grep -Fq "grid-template-columns:minmax(0,1fr)!important" v2/buy-now.js
           grep -Fq "width:100%!important" v2/buy-now.js
           grep -Fq "writing-mode:horizontal-tb!important" v2/buy-now.js
           grep -Fq "word-break:normal!important" v2/buy-now.js
