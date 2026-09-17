@@ -1,0 +1,24 @@
+/* Final hero artwork override: transparent vector diamond, no rectangular card. */
+@media (max-width:620px){
+  html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-inicio .hero-gem::before{
+    content:""!important;
+    display:block!important;
+    position:absolute!important;
+    inset:-28% -31%!important;
+    width:auto!important;
+    max-width:none!important;
+    height:auto!important;
+    margin:0!important;
+    clip-path:none!important;
+    background:url('../assets/brand/unified-hero-diamond-r4.svg') center/contain no-repeat!important;
+    filter:drop-shadow(0 14px 18px rgba(0,0,0,.52)) drop-shadow(0 0 16px rgba(87,229,255,.62))!important;
+    opacity:1!important;
+    transform:none!important;
+    animation:none!important;
+    pointer-events:none!important;
+  }
+  html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-inicio .hero-gem::after{
+    content:none!important;
+    display:none!important;
+  }
+}
