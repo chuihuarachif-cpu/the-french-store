@@ -1,4 +1,8 @@
 /* Final mobile reference details: transparent hero diamond + clean account UI. */
+html[data-fs-interface="unified-blue"] .fs-rank-premium-ribbon{
+  display:none!important;
+}
+
 @media (max-width:620px){
   html[data-fs-interface="unified-blue"] #authButton::before{
     background:url('../assets/world/account-user-r5.svg') center/contain no-repeat!important;
@@ -29,15 +33,20 @@
   /* Match the reference wording without changing product/category behavior. */
   html[data-fs-interface="unified-blue"] #categoryGrid .category-card.purple>small,
   html[data-fs-interface="unified-blue"] #categoryGrid .category-card.gold>small{
+    display:block!important;
+    min-height:30px!important;
     font-size:0!important;
+    line-height:1.3!important;
   }
   html[data-fs-interface="unified-blue"] #categoryGrid .category-card.purple>small::after{
     content:"Películas, series y plataformas";
+    display:block!important;
     font-size:11.5px!important;
     line-height:1.3!important;
   }
   html[data-fs-interface="unified-blue"] #categoryGrid .category-card.gold>small::after{
     content:"Tarjetas de regalo y suscripciones";
+    display:block!important;
     font-size:11.5px!important;
     line-height:1.3!important;
   }
