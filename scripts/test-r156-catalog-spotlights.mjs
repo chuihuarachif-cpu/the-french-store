@@ -5,11 +5,11 @@ const loader = readFileSync('v2/catalog-order.js', 'utf8');
 const js = readFileSync('v2/catalog-product-spotlights.js', 'utf8');
 const css = readFileSync('v2/catalog-product-spotlights.css', 'utf8');
 
-assert.match(loader, /catalog-product-spotlights\\.css\\?v=\\$\\{SPOTLIGHT_REVISION\\}/);
-assert.match(loader, /catalog-product-spotlights\\.js\\?v=\\$\\{SPOTLIGHT_REVISION\\}/);
-assert.match(loader, /SPOTLIGHT_REVISION = '20260917-r157'/);
-assert.match(loader, /norm\(game\)\.includes\('mobilelegends'\) && norm\(name\) === 'pasesemanal'/);
-assert.match(loader, /badge\.textContent = 'POPULAR'/);
+assert.ok(loader.includes('catalog-product-spotlights.css?v=${SPOTLIGHT_REVISION}'));
+assert.ok(loader.includes('catalog-product-spotlights.js?v=${SPOTLIGHT_REVISION}'));
+assert.ok(loader.includes("SPOTLIGHT_REVISION = '20260917-r157'"));
+assert.ok(loader.includes("norm(game).includes('mobilelegends') && norm(name) === 'pasesemanal'"));
+assert.ok(loader.includes("badge.textContent = 'POPULAR'"));
 assert.match(js, /brawlstars/);
 assert.match(js, /clearLegacyPassSpotlight/);
 assert.match(js, /fs-brawl-gem-product/);
