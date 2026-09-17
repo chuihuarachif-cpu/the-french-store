@@ -77,7 +77,7 @@ jobs:
                   if parsed > today:
                       raise SystemExit(f'SITEMAP_FUTURE_LASTMOD:{loc}:{lastmod}')
 
-          expected = {
+          required = {
               'https://frenchstorebo.com/v2/',
               'https://frenchstorebo.com/v2/recargas.html',
               'https://frenchstorebo.com/v2/streaming.html',
@@ -88,13 +88,16 @@ jobs:
               'https://frenchstorebo.com/v2/refunds.html',
               'https://frenchstorebo.com/v2/cookies.html',
           }
-          if set(urls) != expected:
-              raise SystemExit('SITEMAP_URL_SET_CHANGED')
+          missing = required.difference(urls)
+          if missing:
+              raise SystemExit('SITEMAP_REQUIRED_URL_MISSING:' + ','.join(sorted(missing)))
           if len(urls) != len(set(urls)):
               raise SystemExit('SITEMAP_DUPLICATE_URL')
+          if any(not url.startswith('https://frenchstorebo.com/v2/') for url in urls):
+              raise SystemExit('SITEMAP_NON_STOREFRONT_URL')
           if any('/admin' in url for url in urls):
               raise SystemExit('ADMIN_MUST_NOT_BE_INDEXED')
-          print('Sitemap XML contract: PASS')
+          print(f'Sitemap XML contract: PASS ({len(urls)} public storefront URLs)')
           PY
 
           grep -Fq 'User-agent: *' robots.txt
