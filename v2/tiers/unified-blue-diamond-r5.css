@@ -31,13 +31,13 @@ html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-tienda #catalo
   pointer-events:none!important;
 }
 
-/* Wallet keeps the clean blue illustration from the approved reference instead
+/* Wallet keeps a clean cyan illustration from the approved reference instead
    of the retired forest ornament. Put the art in the card background as well as
    a pseudo fallback so older cascade layers cannot erase it. */
 html[data-fs-interface="unified-blue"][data-fs-tier] #view-wallet .balance-card{
-  padding-right:36%!important;
+  padding-right:38%!important;
   background:
-    url('../assets/brand/premium-wallet-r180.webp') right 18px center/30% auto no-repeat,
+    url('../assets/world/wallet-blue-r8.svg') right 12px center/34% auto no-repeat,
     radial-gradient(ellipse at 88% 2%,rgba(35,151,255,.13),transparent 42%),
     linear-gradient(145deg,rgba(4,23,39,.96),rgba(2,13,25,.97))!important;
 }
@@ -46,14 +46,14 @@ html[data-fs-interface="unified-blue"] #view-wallet .balance-card::after{
   display:block!important;
   position:absolute!important;
   z-index:0!important;
-  inset:12px 14px 12px auto!important;
-  width:31%!important;
+  inset:8px 8px 8px auto!important;
+  width:36%!important;
   height:auto!important;
   border:0!important;
   border-image:none!important;
-  background:url('../assets/brand/premium-wallet-r180.webp') center/contain no-repeat!important;
-  opacity:.92!important;
-  filter:drop-shadow(0 8px 15px rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(65,211,255,.16))!important;
+  background:url('../assets/world/wallet-blue-r8.svg') center/contain no-repeat!important;
+  opacity:.96!important;
+  filter:drop-shadow(0 8px 15px rgba(0,0,0,.45)) drop-shadow(0 0 18px rgba(65,211,255,.20))!important;
   pointer-events:none!important;
   animation:none!important;
 }
