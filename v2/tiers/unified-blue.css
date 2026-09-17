@@ -1,0 +1,432 @@
+/* FRENCH STORE — UNIFIED BLUE / CYAN INTERFACE
+   One presentation system for every account. Rank Pass remains functional,
+   but Gold/Diamond never change the storefront skin.
+   Presentation only: no pricing, auth, wallet, order or checkout behavior. */
+
+html[data-fs-interface="unified-blue"] {
+  --world-text:#f6fbff!important;
+  --world-muted:#aebdd0!important;
+  --world-gold:#58eaff!important; /* legacy variable name, unified cyan accent */
+  --world-edge:rgba(59,183,244,.58)!important;
+  --world-highlight:#8ff7ff!important;
+  --world-radius:22px!important;
+  --world-scene:url('../assets/world/galaxy.webp')!important;
+  --world-texture:none!important;
+  --world-surface:
+    radial-gradient(ellipse at 88% 8%,rgba(43,149,255,.14),transparent 42%),
+    linear-gradient(145deg,rgba(5,22,38,.96),rgba(2,12,23,.97) 62%,rgba(4,22,36,.97))!important;
+  --world-shadow:
+    inset 0 1px 0 rgba(199,247,255,.16),
+    inset 0 -1px 0 rgba(15,86,125,.30),
+    0 0 0 1px rgba(38,143,203,.12),
+    0 0 22px rgba(15,148,235,.10),
+    0 18px 45px rgba(0,0,0,.45)!important;
+  --world-glow:rgba(41,188,255,.32)!important;
+  --world-button-text:#02131e!important;
+  --fs-accent:#79efff!important;
+  --fs-edge:rgba(74,197,246,.32)!important;
+  --fs-highlight:rgba(183,247,255,.10)!important;
+  --fs-surface:#071a2a!important;
+  --fs-rank-tint:rgba(44,153,225,.08)!important;
+  --fs-cyan:#67eaff!important;
+  --fs-blue:#55aaff!important;
+  --t-accent:#67eaff!important;
+  --t-ring:rgba(103,234,255,.85)!important;
+  color-scheme:dark!important;
+  background:#020912!important;
+}
+
+/* Membership may still be Gold/Diamond for benefits and account status, but
+   it no longer changes presentation variables. */
+html[data-fs-interface="unified-blue"][data-fs-membership="gold"],
+html[data-fs-interface="unified-blue"][data-fs-membership="diamond"] {
+  --fs-accent:#79efff!important;
+  --fs-edge:rgba(74,197,246,.32)!important;
+  --fs-highlight:rgba(183,247,255,.10)!important;
+  --fs-surface:#071a2a!important;
+  --fs-rank-tint:rgba(44,153,225,.08)!important;
+}
+
+html[data-fs-interface="unified-blue"] body {
+  color:#f6fbff!important;
+  background:#020912!important;
+}
+html[data-fs-interface="unified-blue"] body::before {
+  content:""!important;
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  z-index:-2!important;
+  pointer-events:none!important;
+  opacity:1!important;
+  background:
+    linear-gradient(180deg,rgba(1,8,18,.18),rgba(1,8,18,.58) 74%,#020912 100%),
+    radial-gradient(ellipse at 82% 22%,rgba(27,145,255,.16),transparent 43%),
+    var(--world-scene) center top/cover no-repeat!important;
+  mask:none!important;
+  -webkit-mask:none!important;
+}
+html[data-fs-interface="unified-blue"] body::after {
+  content:""!important;
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+  opacity:.72!important;
+  background:
+    radial-gradient(2px 2px at 8% 17%,#bdf8ff,transparent 70%),
+    radial-gradient(2px 2px at 92% 31%,#76dcff,transparent 70%),
+    radial-gradient(1.5px 1.5px at 13% 71%,#69d8ff,transparent 70%),
+    radial-gradient(1px 1px at 78% 11%,#e7fbff,transparent 70%),
+    radial-gradient(1.5px 1.5px at 88% 82%,#8cecff,transparent 70%)!important;
+  animation:none!important;
+}
+
+html[data-fs-interface="unified-blue"] :is(h1,h2,h3,h4) {
+  color:#f7fbff!important;
+  text-shadow:0 2px 18px rgba(40,173,255,.14)!important;
+}
+html[data-fs-interface="unified-blue"] .eyebrow,
+html[data-fs-interface="unified-blue"] .social-kicker,
+html[data-fs-interface="unified-blue"] .r6-game-genre {
+  color:#5fe8ff!important;
+}
+html[data-fs-interface="unified-blue"] .eyebrow::before {
+  background:#5fe8ff!important;
+  box-shadow:0 0 10px rgba(75,225,255,.75)!important;
+}
+html[data-fs-interface="unified-blue"] .world-highlight-word {
+  color:#56ebff!important;
+  -webkit-text-fill-color:#56ebff!important;
+  text-shadow:0 0 24px rgba(38,210,255,.26)!important;
+}
+
+/* Remove old forest / paid-only ornaments. */
+html[data-fs-interface="unified-blue"] :is(
+  .hero,.category-card,.compact-panel,.balance-card,.topup-box,.profile-card,.record,.official-socials,
+  #view-tienda>.panel,#view-wallet>.panel,#view-pedidos>.panel,#view-perfil>.panel
+)::after {
+  background:none!important;
+  content:none!important;
+  filter:none!important;
+  animation:none!important;
+}
+html[data-fs-interface="unified-blue"] :is(.world-tier-badge,.world-base-account,.fs-tier-dock,.fs-premium-rank-badge,.fs-premium-profile-badge,.fs-premium-profile-rank) {
+  display:none!important;
+}
+
+/* Header */
+html[data-fs-interface="unified-blue"] .topbar {
+  border-bottom:1px solid rgba(69,191,245,.24)!important;
+  background:linear-gradient(180deg,rgba(2,10,20,.94),rgba(3,14,27,.78))!important;
+  box-shadow:0 10px 34px rgba(0,0,0,.28)!important;
+}
+html[data-fs-interface="unified-blue"] .brand {
+  border:0!important;
+  background:url('../assets/brand/premium-header-r180.webp') left center/contain no-repeat!important;
+  box-shadow:none!important;
+}
+html[data-fs-interface="unified-blue"] :is(.ghost-btn,.cart-btn,.icon-btn,.cart-inline) {
+  border:1px solid rgba(72,181,239,.48)!important;
+  background:linear-gradient(160deg,rgba(7,28,45,.93),rgba(3,14,26,.95))!important;
+  color:#e8f8ff!important;
+  box-shadow:inset 0 1px 0 rgba(179,240,255,.08),0 0 18px rgba(20,144,220,.08)!important;
+}
+html[data-fs-interface="unified-blue"] :is(.cart-btn,.cart-inline,.icon-btn) {color:#6cecff!important;}
+
+/* Main framed screens, matching the supplied mobile references. */
+html[data-fs-interface="unified-blue"] :is(#view-tienda,#view-wallet,#view-pedidos,#view-perfil) > .panel {
+  border:1px solid rgba(61,179,237,.56)!important;
+  border-radius:28px!important;
+  padding:16px!important;
+  background:
+    radial-gradient(ellipse at 95% 0,rgba(24,133,221,.15),transparent 36%),
+    linear-gradient(155deg,rgba(3,18,31,.92),rgba(2,11,22,.94))!important;
+  box-shadow:inset 0 1px 0 rgba(180,241,255,.10),0 0 24px rgba(24,149,227,.08),0 18px 45px rgba(0,0,0,.38)!important;
+  overflow:hidden!important;
+}
+html[data-fs-interface="unified-blue"] :is(
+  #view-tienda .catalog-heading,
+  #view-wallet .panel-head,#view-wallet .balance-card,#view-wallet .topup-box,#view-wallet .split-grid>div,
+  #view-pedidos .panel-head,#view-pedidos #ordersList>.record,
+  #view-perfil .profile-card,#view-perfil #fsPreferredNameCard,#view-perfil #fsLoyaltyPanel,
+  #cartModal .modal-card
+) {
+  border-color:rgba(70,191,245,.56)!important;
+  background:
+    radial-gradient(ellipse at 88% 2%,rgba(35,151,255,.13),transparent 42%),
+    linear-gradient(145deg,rgba(4,23,39,.96),rgba(2,13,25,.97))!important;
+  box-shadow:inset 0 1px 0 rgba(190,245,255,.12),0 0 18px rgba(29,160,235,.08),0 14px 30px rgba(0,0,0,.28)!important;
+}
+
+/* Hero */
+html[data-fs-interface="unified-blue"] #view-inicio>.hero {
+  border-color:rgba(65,188,245,.58)!important;
+  background:
+    radial-gradient(ellipse at 82% 42%,rgba(26,154,255,.25),transparent 42%),
+    linear-gradient(100deg,rgba(2,15,28,.97) 0 50%,rgba(2,13,25,.72) 76%,rgba(4,20,34,.88)),
+    url('../assets/world/galaxy.webp') center/cover no-repeat!important;
+  box-shadow:inset 0 1px 0 rgba(193,247,255,.12),0 0 26px rgba(22,151,232,.10),0 22px 50px rgba(0,0,0,.42)!important;
+}
+html[data-fs-interface="unified-blue"] .hero h1 {
+  color:#f7fbff!important;
+  -webkit-text-fill-color:currentColor!important;
+  background:none!important;
+  font-family:'Orbitron','Exo 2',system-ui,sans-serif!important;
+  font-weight:700!important;
+  letter-spacing:-.03em!important;
+}
+html[data-fs-interface="unified-blue"] .hero p {color:#c1cede!important;}
+html[data-fs-interface="unified-blue"] .hero-gem {
+  border-radius:22px!important;
+  overflow:visible!important;
+  mix-blend-mode:normal!important;
+}
+html[data-fs-interface="unified-blue"] .hero-gem img {
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  filter:brightness(1.08) saturate(1.14) drop-shadow(0 16px 26px rgba(0,0,0,.58)) drop-shadow(0 0 24px rgba(28,170,255,.38))!important;
+}
+
+/* CTAs */
+html[data-fs-interface="unified-blue"] .primary-btn,
+html[data-fs-interface="unified-blue"][data-fs-membership="gold"] .primary-btn,
+html[data-fs-interface="unified-blue"][data-fs-membership="diamond"] .primary-btn {
+  border:1px solid rgba(207,252,255,.92)!important;
+  background:linear-gradient(110deg,#8ff7ff 0%,#4be6f8 42%,#19baf0 100%)!important;
+  color:#03131c!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 8px 28px rgba(28,186,234,.18),0 0 18px rgba(43,210,255,.14)!important;
+  text-shadow:none!important;
+}
+html[data-fs-interface="unified-blue"] .secondary-btn,
+html[data-fs-interface="unified-blue"][data-fs-membership="gold"] .secondary-btn {
+  border:1px solid rgba(67,171,225,.44)!important;
+  background:linear-gradient(160deg,rgba(5,25,42,.95),rgba(2,14,27,.96))!important;
+  color:#edf8ff!important;
+  box-shadow:inset 0 1px 0 rgba(184,240,255,.08)!important;
+}
+
+/* Home trust row */
+html[data-fs-interface="unified-blue"] .world-trust-strip {
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:14px!important;
+  margin-top:18px!important;
+}
+html[data-fs-interface="unified-blue"] .world-trust-item {
+  display:grid!important;
+  grid-template-columns:38px minmax(0,1fr)!important;
+  column-gap:10px!important;
+  align-items:center!important;
+  min-width:0!important;
+  padding:10px 4px!important;
+}
+html[data-fs-interface="unified-blue"] .world-trust-icon {
+  width:36px!important;height:36px!important;display:grid!important;place-items:center!important;
+  color:#64eaff!important;filter:drop-shadow(0 0 8px rgba(72,222,255,.36))!important;
+}
+html[data-fs-interface="unified-blue"] .world-trust-icon svg {width:32px!important;height:32px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;}
+html[data-fs-interface="unified-blue"] .world-trust-item strong {display:block!important;color:#f4f8ff!important;font-size:13px!important;line-height:1.25!important;}
+html[data-fs-interface="unified-blue"] .world-trust-item small {display:block!important;color:#9fb0c6!important;font-size:11px!important;line-height:1.3!important;margin-top:2px!important;}
+
+/* Categories */
+html[data-fs-interface="unified-blue"] #categoryGrid .category-card,
+html[data-fs-interface="unified-blue"][data-fs-membership="gold"] .category-card,
+html[data-fs-interface="unified-blue"][data-fs-membership="diamond"] .category-card {
+  border-color:rgba(56,165,226,.42)!important;
+  background:
+    radial-gradient(ellipse at 8% 50%,color-mix(in srgb,var(--card-accent,#5fe8ff) 15%,transparent),transparent 54%),
+    linear-gradient(145deg,rgba(6,27,44,.96),rgba(2,15,28,.98))!important;
+  box-shadow:inset 0 1px 0 rgba(176,239,255,.08),0 12px 28px rgba(0,0,0,.30)!important;
+}
+html[data-fs-interface="unified-blue"] #categoryGrid .category-card>b {color:#f5f9ff!important;}
+html[data-fs-interface="unified-blue"] #categoryGrid .category-card>small {color:#aebed2!important;}
+html[data-fs-interface="unified-blue"] .world-chevron {color:#6aeaff!important;}
+
+/* Catalog */
+html[data-fs-interface="unified-blue"] #view-tienda .category-tabs button {
+  border-color:rgba(64,171,228,.38)!important;
+  background:linear-gradient(155deg,rgba(5,27,45,.95),rgba(2,14,27,.96))!important;
+  color:#dce9f5!important;
+}
+html[data-fs-interface="unified-blue"] #view-tienda .category-tabs button.active {
+  border-color:#7af3ff!important;
+  background:linear-gradient(135deg,#49dfee,#0b80b6)!important;
+  color:#f5feff!important;
+  box-shadow:inset 0 1px 0 rgba(218,255,255,.6),0 0 20px rgba(39,202,242,.22)!important;
+}
+html[data-fs-interface="unified-blue"] #view-tienda #catalogList .r6-game-card,
+html[data-fs-interface="unified-blue"] .r6-feature-card {
+  border-color:rgba(54,174,235,.52)!important;
+  background:linear-gradient(155deg,rgba(5,26,43,.97),rgba(2,14,26,.98))!important;
+  box-shadow:inset 0 1px 0 rgba(185,243,255,.08),0 10px 28px rgba(0,0,0,.34),0 0 16px rgba(23,149,225,.08)!important;
+}
+html[data-fs-interface="unified-blue"] #view-tienda #catalogList .r6-game-card-body {background:linear-gradient(180deg,rgba(4,25,41,.98),rgba(2,14,26,.99))!important;}
+html[data-fs-interface="unified-blue"] #view-tienda #catalogList .r6-game-card-foot {border-color:rgba(53,166,224,.28)!important;color:#67eaff!important;}
+
+/* Wallet */
+html[data-fs-interface="unified-blue"] #view-wallet .balance-card,
+html[data-fs-interface="unified-blue"][data-fs-membership="gold"] .balance-card,
+html[data-fs-interface="unified-blue"][data-fs-membership="diamond"] .balance-card {
+  border-color:rgba(70,194,248,.62)!important;
+  background:
+    radial-gradient(ellipse at 82% 48%,rgba(26,149,255,.20),transparent 46%),
+    linear-gradient(145deg,rgba(4,29,48,.98),rgba(2,15,29,.99))!important;
+}
+html[data-fs-interface="unified-blue"] #view-wallet .balance-card>strong {color:#7ff4ff!important;text-shadow:0 0 22px rgba(47,218,255,.26)!important;}
+html[data-fs-interface="unified-blue"] :is(#view-wallet .topup-box,#view-perfil #fsPreferredNameCard) input {
+  border-color:rgba(62,185,242,.56)!important;
+  background:#020c16e8!important;
+  color:#f4fbff!important;
+  box-shadow:inset 0 3px 12px rgba(0,0,0,.6),0 0 12px rgba(24,148,221,.05)!important;
+}
+
+/* Profile */
+html[data-fs-interface="unified-blue"] #view-perfil .profile-card {
+  border-color:rgba(65,190,246,.64)!important;
+  background:radial-gradient(ellipse at 18% 48%,rgba(17,147,255,.22),transparent 33%),linear-gradient(145deg,rgba(4,27,45,.97),rgba(2,14,26,.98))!important;
+}
+html[data-fs-interface="unified-blue"] #view-perfil .avatar {
+  display:grid!important;place-items:center!important;
+  width:76px!important;height:76px!important;border:1px solid #27bff4!important;border-radius:50%!important;
+  background:radial-gradient(circle at 45% 35%,rgba(52,219,255,.32),rgba(4,33,54,.88) 62%)!important;
+  color:#55e8ff!important;box-shadow:0 0 20px rgba(31,182,255,.20),inset 0 1px 0 rgba(205,250,255,.14)!important;
+  font-size:0!important;
+}
+html[data-fs-interface="unified-blue"] #view-perfil .avatar svg {width:45px!important;height:45px!important;fill:currentColor!important;filter:drop-shadow(0 0 8px rgba(75,230,255,.30))!important;}
+
+/* Rank Pass remains visible as a product/account feature, but its surrounding
+   page chrome stays blue for every user. The rank card itself may still show
+   Gold/Diamond wording because that is status/content, not a separate skin. */
+html[data-fs-interface="unified-blue"] #fsLoyaltyPanel {
+  border-color:rgba(57,177,235,.50)!important;
+  background:radial-gradient(ellipse at 95% 15%,rgba(26,145,248,.14),transparent 40%),linear-gradient(150deg,rgba(4,24,40,.96),rgba(2,13,25,.98))!important;
+}
+
+/* Orders empty state */
+html[data-fs-interface="unified-blue"] .world-orders-empty {
+  display:grid!important;justify-items:center!important;text-align:center!important;gap:10px!important;
+  padding:28px 18px!important;color:#f4f8ff!important;
+}
+html[data-fs-interface="unified-blue"] .world-orders-empty-icon {width:84px!important;height:64px!important;color:#65e9ff!important;filter:drop-shadow(0 0 12px rgba(56,217,255,.28))!important;}
+html[data-fs-interface="unified-blue"] .world-orders-empty-icon svg {width:100%!important;height:100%!important;fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;}
+html[data-fs-interface="unified-blue"] .world-orders-empty strong {font-size:18px!important;}
+html[data-fs-interface="unified-blue"] .world-orders-empty p {margin:0!important;color:#aebbd0!important;font-size:14px!important;line-height:1.45!important;}
+html[data-fs-interface="unified-blue"] .world-orders-empty .primary-btn {width:min(100%,520px)!important;margin-top:8px!important;}
+
+/* Footer/socials */
+html[data-fs-interface="unified-blue"] .site-legal-footer {
+  border:1px solid rgba(59,177,235,.48)!important;
+  border-radius:26px!important;
+  background:radial-gradient(ellipse at 90% 0,rgba(22,134,225,.14),transparent 42%),linear-gradient(150deg,rgba(4,23,39,.95),rgba(2,13,24,.97))!important;
+  box-shadow:inset 0 1px 0 rgba(182,242,255,.08),0 18px 44px rgba(0,0,0,.34)!important;
+}
+html[data-fs-interface="unified-blue"] .site-legal-footer .official-socials {display:block!important;}
+html[data-fs-interface="unified-blue"] .official-socials {
+  border-color:rgba(64,186,241,.56)!important;
+  background:linear-gradient(145deg,rgba(4,27,45,.96),rgba(2,14,27,.98))!important;
+}
+html[data-fs-interface="unified-blue"] .social-link {border-color:rgba(57,164,221,.38)!important;background:linear-gradient(150deg,rgba(5,26,43,.94),rgba(2,14,27,.96))!important;}
+
+/* Fixed bottom dock */
+html[data-fs-interface="unified-blue"] .bottom-nav {
+  border:1px solid rgba(57,166,225,.45)!important;
+  background:linear-gradient(180deg,rgba(4,22,37,.95),rgba(2,12,23,.97))!important;
+  box-shadow:inset 0 1px 0 rgba(178,239,255,.08),0 -8px 30px rgba(0,0,0,.25),0 0 22px rgba(18,131,204,.08)!important;
+  backdrop-filter:blur(18px) saturate(1.1)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.1)!important;
+}
+html[data-fs-interface="unified-blue"] .bottom-nav button,
+html[data-fs-interface="unified-blue"][data-fs-membership="gold"] .bottom-nav button,
+html[data-fs-interface="unified-blue"][data-fs-membership="diamond"] .bottom-nav button {color:#8fa8c1!important;background:transparent!important;filter:none!important;text-shadow:none!important;}
+html[data-fs-interface="unified-blue"] .bottom-nav button.active,
+html[data-fs-interface="unified-blue"][data-fs-membership="gold"] .bottom-nav button.active,
+html[data-fs-interface="unified-blue"][data-fs-membership="diamond"] .bottom-nav button.active {
+  color:#7af3ff!important;
+  background:radial-gradient(ellipse at 50% 0,rgba(55,218,255,.20),transparent 58%),linear-gradient(155deg,rgba(7,48,70,.92),rgba(3,24,41,.94))!important;
+  box-shadow:inset 0 1px 0 rgba(196,249,255,.16),0 0 18px rgba(36,198,239,.16)!important;
+}
+html[data-fs-interface="unified-blue"] .bottom-nav button.active::before {background:#60ecff!important;box-shadow:0 0 12px rgba(66,225,255,.72)!important;}
+
+/* WhatsApp stays green and visually separate from the brand accent. */
+html[data-fs-interface="unified-blue"] .floating-whatsapp {filter:drop-shadow(0 10px 18px rgba(0,0,0,.38))!important;}
+
+@media (max-width:620px) {
+  html[data-fs-interface="unified-blue"] .topbar {
+    min-height:74px!important;height:auto!important;width:calc(100% - 20px)!important;padding:10px 0!important;gap:8px!important;
+  }
+  html[data-fs-interface="unified-blue"] .brand {height:52px!important;width:min(54vw,245px)!important;min-width:160px!important;}
+  html[data-fs-interface="unified-blue"] #authButton {min-width:0!important;padding:9px 12px!important;font-size:12px!important;}
+  html[data-fs-interface="unified-blue"] #cartButton {padding:9px 10px!important;}
+  html[data-fs-interface="unified-blue"] main {width:calc(100% - 20px)!important;}
+
+  html[data-fs-interface="unified-blue"] #view-inicio>.hero {
+    min-height:0!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    padding:24px 20px 20px!important;
+    gap:14px!important;
+    border-radius:24px!important;
+    overflow:hidden!important;
+  }
+  html[data-fs-interface="unified-blue"] .hero-copy {z-index:3!important;}
+  html[data-fs-interface="unified-blue"] .hero h1 {font-size:clamp(36px,10.6vw,52px)!important;line-height:.98!important;margin:12px 0 14px!important;max-width:95%!important;}
+  html[data-fs-interface="unified-blue"] .hero p {font-size:14px!important;line-height:1.55!important;max-width:92%!important;}
+  html[data-fs-interface="unified-blue"] .hero-actions {max-width:none!important;margin-top:18px!important;}
+  html[data-fs-interface="unified-blue"] .hero-actions button {min-height:58px!important;font-size:16px!important;border-radius:16px!important;}
+  html[data-fs-interface="unified-blue"] .hero-gem {
+    position:absolute!important;right:-25px!important;top:72px!important;width:48%!important;max-width:220px!important;aspect-ratio:1!important;
+    opacity:.93!important;z-index:1!important;pointer-events:none!important;
+  }
+  html[data-fs-interface="unified-blue"] .hero-copy {padding-right:2px!important;}
+  html[data-fs-interface="unified-blue"] .world-trust-strip {grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;margin-top:16px!important;}
+  html[data-fs-interface="unified-blue"] .world-trust-item {grid-template-columns:30px minmax(0,1fr)!important;column-gap:6px!important;padding:8px 0!important;}
+  html[data-fs-interface="unified-blue"] .world-trust-icon {width:28px!important;height:28px!important;}
+  html[data-fs-interface="unified-blue"] .world-trust-icon svg {width:26px!important;height:26px!important;}
+  html[data-fs-interface="unified-blue"] .world-trust-item strong {font-size:10.5px!important;}
+  html[data-fs-interface="unified-blue"] .world-trust-item small {font-size:9.5px!important;}
+
+  html[data-fs-interface="unified-blue"] #categoryGrid {grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
+  html[data-fs-interface="unified-blue"] #categoryGrid .category-card {min-height:104px!important;padding:14px 12px!important;grid-template-columns:46px minmax(0,1fr) 12px!important;column-gap:9px!important;border-radius:18px!important;}
+  html[data-fs-interface="unified-blue"] #categoryGrid .category-card>span:first-child,
+  html[data-fs-interface="unified-blue"] #categoryGrid .world-category-icon {width:44px!important;height:44px!important;}
+  html[data-fs-interface="unified-blue"] #categoryGrid .category-card>b {font-size:15px!important;}
+  html[data-fs-interface="unified-blue"] #categoryGrid .category-card>small {font-size:11.5px!important;line-height:1.32!important;}
+
+  html[data-fs-interface="unified-blue"] :is(#view-tienda,#view-wallet,#view-pedidos,#view-perfil) > .panel {padding:10px!important;border-radius:23px!important;}
+  html[data-fs-interface="unified-blue"] :is(#view-tienda,#view-wallet,#view-pedidos,#view-perfil) h2 {font-family:'Orbitron','Exo 2',system-ui,sans-serif!important;font-size:clamp(28px,8.7vw,40px)!important;line-height:1.03!important;}
+  html[data-fs-interface="unified-blue"] :is(#view-tienda,#view-wallet,#view-pedidos) .panel-head {padding:20px 16px!important;min-height:108px!important;border-radius:20px!important;}
+
+  html[data-fs-interface="unified-blue"] #view-wallet .balance-card {min-height:200px!important;padding:24px 42% 24px 18px!important;border-radius:20px!important;}
+  html[data-fs-interface="unified-blue"] #view-wallet .balance-card::after {width:42%!important;right:4px!important;}
+  html[data-fs-interface="unified-blue"] #view-wallet .balance-card>strong {font-size:clamp(38px,12vw,58px)!important;}
+  html[data-fs-interface="unified-blue"] :is(#view-wallet .topup-box,#view-perfil #fsPreferredNameCard) {padding:18px!important;border-radius:20px!important;}
+  html[data-fs-interface="unified-blue"] :is(#view-wallet .topup-box,#view-perfil #fsPreferredNameCard) .input-row {grid-template-columns:1fr!important;}
+  html[data-fs-interface="unified-blue"] :is(#view-wallet .topup-box,#view-perfil #fsPreferredNameCard) .primary-btn {width:100%!important;}
+  html[data-fs-interface="unified-blue"] #view-wallet .split-grid {grid-template-columns:1fr!important;gap:12px!important;}
+
+  html[data-fs-interface="unified-blue"] #view-perfil .profile-card {padding:18px!important;border-radius:20px!important;}
+  html[data-fs-interface="unified-blue"] #view-perfil .avatar {width:68px!important;height:68px!important;}
+  html[data-fs-interface="unified-blue"] #view-perfil .avatar svg {width:40px!important;height:40px!important;}
+
+  html[data-fs-interface="unified-blue"] .site-legal-footer {width:calc(100% - 20px)!important;border-radius:23px!important;}
+  html[data-fs-interface="unified-blue"] .official-socials {border-radius:20px!important;}
+
+  html[data-fs-interface="unified-blue"] .bottom-nav {left:9px!important;right:9px!important;bottom:8px!important;height:72px!important;border-radius:22px!important;padding:5px!important;}
+  html[data-fs-interface="unified-blue"] .bottom-nav button {border-radius:18px!important;}
+}
+
+@media (max-width:380px) {
+  html[data-fs-interface="unified-blue"] .brand {min-width:145px!important;width:49vw!important;}
+  html[data-fs-interface="unified-blue"] #authButton {max-width:102px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+  html[data-fs-interface="unified-blue"] .hero h1 {font-size:clamp(32px,10vw,42px)!important;}
+  html[data-fs-interface="unified-blue"] .world-trust-item small {display:none!important;}
+}
+
+@media (prefers-reduced-motion:reduce) {
+  html[data-fs-interface="unified-blue"] *,
+  html[data-fs-interface="unified-blue"] *::before,
+  html[data-fs-interface="unified-blue"] *::after {scroll-behavior:auto!important;}
+  html[data-fs-interface="unified-blue"] :is(.hero,.category-card,.r6-game-card,.r6-feature-card,.bottom-nav button) {animation:none!important;transition:none!important;}
+}
