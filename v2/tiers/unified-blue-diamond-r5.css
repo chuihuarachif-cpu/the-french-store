@@ -32,7 +32,15 @@ html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-tienda #catalo
 }
 
 /* Wallet keeps the clean blue illustration from the approved reference instead
-   of the retired forest ornament. */
+   of the retired forest ornament. Put the art in the card background as well as
+   a pseudo fallback so older cascade layers cannot erase it. */
+html[data-fs-interface="unified-blue"][data-fs-tier] #view-wallet .balance-card{
+  padding-right:36%!important;
+  background:
+    url('../assets/brand/premium-wallet-r180.webp') right 18px center/30% auto no-repeat,
+    radial-gradient(ellipse at 88% 2%,rgba(35,151,255,.13),transparent 42%),
+    linear-gradient(145deg,rgba(4,23,39,.96),rgba(2,13,25,.97))!important;
+}
 html[data-fs-interface="unified-blue"] #view-wallet .balance-card::after{
   content:""!important;
   display:block!important;
@@ -52,6 +60,31 @@ html[data-fs-interface="unified-blue"] #view-wallet .balance-card::after{
 html[data-fs-interface="unified-blue"] #view-wallet .balance-card>*{
   position:relative!important;
   z-index:1!important;
+}
+
+/* Retire the last gold navigation accents from the old world layer. Rank may
+   still be Gold/Diamond as account data; navigation stays cyan for everyone. */
+html[data-fs-interface="unified-blue"][data-fs-world] .bottom-nav button{
+  color:#a9bdd0!important;
+}
+html[data-fs-interface="unified-blue"][data-fs-world] .bottom-nav button.active{
+  color:#8ff7ff!important;
+  border-color:#58eaff!important;
+  background:radial-gradient(ellipse at 50% 80%,rgba(61,221,255,.20),transparent 80%),#061a29!important;
+  box-shadow:inset 0 0 14px rgba(81,222,255,.18),0 0 10px rgba(42,205,255,.18)!important;
+}
+html[data-fs-interface="unified-blue"][data-fs-world] .bottom-nav button.active::before{
+  background:#8ff7ff!important;
+  box-shadow:0 0 10px rgba(87,231,255,.88)!important;
+}
+html[data-fs-interface="unified-blue"][data-fs-world] .world-nav-icon{
+  filter:drop-shadow(0 0 5px rgba(91,226,255,.34))!important;
+}
+html[data-fs-interface="unified-blue"][data-fs-world][data-fs-tier] #view-tienda .category-tabs button.active{
+  border-color:#76f1ff!important;
+  background:linear-gradient(135deg,#4ce4f5,#0a83b9)!important;
+  color:#f6feff!important;
+  box-shadow:inset 0 1px 0 rgba(218,255,255,.62),0 0 20px rgba(42,206,244,.22)!important;
 }
 
 @media (max-width:620px){
