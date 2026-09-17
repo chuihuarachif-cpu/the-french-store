@@ -1,0 +1,29 @@
+/* R169 — vencimientos de Streaming dentro de Entregas. */
+.r169-reminders{margin-top:16px;padding:15px;border:1px solid #1b4d63;border-radius:18px;background:linear-gradient(180deg,#071e2b,#051822)}
+.r169-head h3,.r169-manual h4,.r169-list-head h4{margin:4px 0 6px}
+.r169-head p{margin:0;color:#8fa8b6;font-size:.83rem;line-height:1.45}
+.r169-manual{margin-top:14px;padding-top:12px;border-top:1px solid #163c4f}
+.r169-manual input{width:100%;border:1px solid #214b61;border-radius:12px;background:#03141f;color:#fff;padding:11px 12px;outline:none}
+.r169-manual input:focus{border-color:#42d8ec;box-shadow:0 0 0 2px rgba(66,216,236,.08)}
+.r169-list-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px}
+.r169-list-head button{min-width:110px}
+.r169-list{display:grid;gap:10px}
+.r169-empty{padding:13px;border:1px dashed #24566c;border-radius:12px;color:#8fa8b6;font-size:.8rem}
+.r169-reminder{padding:12px;border:1px solid #1d4a5f;border-radius:14px;background:#061923}
+.r169-reminder.is-paused{opacity:.58}
+.r169-reminder.is-expired{border-color:#6d4c29}
+.r169-reminder-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.r169-reminder-main strong{display:block;color:#eefcff}
+.r169-reminder-main span{display:block;margin-top:3px;color:#8ea8b6;font-size:.75rem}
+.r169-countdown{white-space:nowrap;color:#68e3f2;font-size:.76rem}
+.r169-reminder.is-expired .r169-countdown{color:#ffd195}
+.r169-reminder p{margin:8px 0 0;color:#a7bdc7;font-size:.76rem;line-height:1.4}
+.r169-reminder-actions{display:grid;grid-template-columns:minmax(150px,1fr) repeat(3,auto);gap:7px;margin-top:10px}
+.r169-reminder-actions input{min-width:0;border:1px solid #214b61;border-radius:10px;background:#03141f;color:#fff;padding:9px 10px}
+.r169-reminder-actions button{padding:9px 10px;white-space:nowrap}
+@media(max-width:760px){
+  .r169-reminder-main{display:block}
+  .r169-countdown{display:block;margin-top:7px}
+  .r169-reminder-actions{grid-template-columns:1fr 1fr}
+  .r169-reminder-actions input{grid-column:1/-1}
+}
