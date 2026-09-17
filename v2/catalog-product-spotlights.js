@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'catalog-product-spotlights-r156-20260907';
+  const VERSION = 'catalog-product-spotlights-r157-20260917';
   let scheduled = false;
 
   function norm(value) {
@@ -25,43 +25,23 @@
       detail?.querySelector('.r6-hero-logo img[alt]')?.alt || '';
   }
 
-  function isPass(name) {
-    const value = String(name || '').toLowerCase();
-    return /(^|\s|[^a-záéíóúñ])(pase|pass)(\s|$|[^a-záéíóúñ])/i.test(value);
-  }
-
-  function ensureSpotlightBadge(card, plus) {
-    const copy = card.querySelector('.r6-package-copy');
-    if (!copy) return;
-    let badge = copy.querySelector(':scope > .fs-product-spotlight-badge');
-    if (!badge) {
-      badge = document.createElement('span');
-      badge.className = 'fs-product-spotlight-badge';
-      badge.setAttribute('aria-hidden', 'true');
-      copy.prepend(badge);
-    }
-    badge.textContent = plus ? '✨ PLUS DESTACADO' : '🎟️ PASE DESTACADO';
+  function clearLegacyPassSpotlight(card) {
+    if (!card) return;
+    card.classList.remove('fs-pass-product', 'fs-pass-plus');
+    delete card.dataset.fsProductSpotlight;
+    card.querySelectorAll('.fs-product-spotlight-badge').forEach((badge) => badge.remove());
   }
 
   function decoratePackage(card, brawl) {
     if (!card) return;
-    const name = packageName(card);
-    const key = norm(name);
-    const pass = isPass(name);
-    const plus = pass && key.includes('plus');
+    const key = norm(packageName(card));
     const gem = brawl && key.includes('gema');
 
-    card.classList.toggle('fs-pass-product', pass);
-    card.classList.toggle('fs-pass-plus', plus);
+    // R157: generic pass highlighting is retired. The only product carrying a
+    // merchandising badge is Mobile Legends' exact normal Pase Semanal, which
+    // is owned by catalog-order.js as POPULAR.
+    clearLegacyPassSpotlight(card);
     card.classList.toggle('fs-brawl-gem-product', gem);
-
-    if (pass) {
-      card.dataset.fsProductSpotlight = plus ? 'pass-plus' : 'pass';
-      ensureSpotlightBadge(card, plus);
-    } else {
-      delete card.dataset.fsProductSpotlight;
-      card.querySelector('.fs-product-spotlight-badge')?.remove();
-    }
   }
 
   function decorateGameCards(root = document) {
