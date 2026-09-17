@@ -5,6 +5,7 @@ on:
     paths:
       - 'v2/index.html'
       - 'v2/tiers/**'
+      - 'v2/assets/brand/unified-hero-diamond-r4.svg'
       - 'v2/premium-release.js'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
@@ -13,6 +14,7 @@ on:
     paths:
       - 'v2/index.html'
       - 'v2/tiers/**'
+      - 'v2/assets/brand/unified-hero-diamond-r4.svg'
       - 'v2/premium-release.js'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
@@ -43,6 +45,7 @@ jobs:
           grep -q 'world-ui.js?v=20260917-r4' v2/index.html
           grep -q 'premium-release.js?v=20260917-unified-retired-r4' v2/index.html
           grep -q 'unified-blue-reference-r4.css?v=20260917-r4' v2/index.html
+          grep -q 'unified-blue-diamond-r5.css?v=20260917-r5' v2/index.html
 
       - name: CSS structural and secret safety
         run: |
@@ -53,6 +56,7 @@ jobs:
               Path('v2/tiers/unified-blue.css'),
               Path('v2/tiers/unified-blue-mobile-fix.css'),
               Path('v2/tiers/unified-blue-reference-r4.css'),
+              Path('v2/tiers/unified-blue-diamond-r5.css'),
           ]
           forbidden = ['service_role', 'GAMERHUB_API_KEY', 'GAMERHUB_API_SECRET', 'OPENAI_API_KEY', 'GEMINI_API_KEY']
           for path in files:
@@ -60,7 +64,12 @@ jobs:
               assert text.count('{') == text.count('}'), f'Unbalanced CSS braces in {path}'
               found = [token for token in forbidden if token in text]
               assert not found, f'Forbidden secret-domain tokens in {path}: {found}'
-              budget = 30000 if path.name in ('unified-blue-mobile-fix.css','unified-blue-reference-r4.css') else 80000
+              if path.name == 'unified-blue-diamond-r5.css':
+                  budget = 10000
+              elif path.name in ('unified-blue-mobile-fix.css','unified-blue-reference-r4.css'):
+                  budget = 30000
+              else:
+                  budget = 80000
               assert len(text.encode('utf-8')) < budget, f'{path} grew beyond the presentation budget'
           print('Unified CSS structure and secret checks OK')
           PY
