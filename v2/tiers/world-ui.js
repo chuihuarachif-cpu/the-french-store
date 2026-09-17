@@ -5,7 +5,7 @@
   'use strict';
 
   const root = document.documentElement;
-  const VERSION = 'unified-blue-r1-20260917';
+  const VERSION = 'unified-blue-r2-20260917';
   const WORLD = 'nightfall';
   let observersInstalled = false;
 
@@ -16,15 +16,24 @@
 
   function ensureUnifiedStyle() {
     const id = 'fs-unified-blue-css';
-    let link = document.getElementById(id);
-    if (!link) {
-      link = document.createElement('link');
-      link.id = id;
-      link.rel = 'stylesheet';
-      link.href = `./tiers/unified-blue.css?v=${VERSION}`;
-      document.head.appendChild(link);
+    let node = document.getElementById(id);
+    /* world-theme.css intentionally puts its !important rules inside
+       @layer fs-world. Unlayered !important declarations lose to layered
+       important declarations, so import the unified sheet into the SAME
+       layer. Because this node is appended later, the unified rules win by
+       normal source order/specificity without touching business CSS. */
+    if (node && node.tagName !== 'STYLE') {
+      node.remove();
+      node = null;
     }
-    return link;
+    if (!node) {
+      node = document.createElement('style');
+      node.id = id;
+      node.dataset.fsUnified = VERSION;
+      node.textContent = `@import url("./tiers/unified-blue.css?v=${VERSION}") layer(fs-world);`;
+      document.head.appendChild(node);
+    }
+    return node;
   }
 
   ensureUnifiedStyle();
@@ -185,6 +194,7 @@
     try {
       root.dataset.fsWorld = WORLD;
       root.dataset.fsInterface = 'unified-blue';
+      ensureUnifiedStyle();
       removeLegacyTierDecorations();
       decorateCart();
       decorateBottomNav();
@@ -211,6 +221,7 @@
     new MutationObserver(() => {
       root.dataset.fsWorld = WORLD;
       root.dataset.fsInterface = 'unified-blue';
+      ensureUnifiedStyle();
       removeLegacyTierDecorations();
     }).observe(root,{attributes:true,attributeFilter:['data-fs-tier','data-fs-membership']});
   }
