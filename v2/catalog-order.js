@@ -15,7 +15,7 @@
   const RESOURCE_RE = /(diamant|diamond|\buc\b|\bcp\b|coin|moneda|cristal|crystal|gem|jade|bond|robux|v[- ]?bucks?|point|punto|credit|token|gold|oro|cash|coupon|cupon)/i;
   const PASS_RE = /(pase|pass|weekly|semanal|mensual|crep[uú]sculo|twilight|subscription|suscripci[oó]n|membres[ií]a|membership|battle\s*(?:pass|bounty)|elite\s*pass|\blv\.?\s*\d|level\s*\d)/i;
   const EVENT_RE = /(evento|event|x\s*2|2\s*x|doble|double)/i;
-  const SPOTLIGHT_REVISION = '20260907-r156';
+  const SPOTLIGHT_REVISION = '20260917-r157';
 
   let scheduled = false;
 
