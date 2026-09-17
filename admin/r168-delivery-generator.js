@@ -1,4 +1,4 @@
-/* R168 — generador privado de entregas/garantías. Los datos pegados no se guardan ni se envían. */
+/* R169 — generador privado de entregas/garantías con icono por plataforma. Los datos pegados no se guardan ni se envían. */
 (() => {
   'use strict';
 
@@ -12,11 +12,48 @@
     guarantee:'La garantía cubre fallas de acceso o del servicio durante el periodo contratado. Puede quedar sin efecto si se modifican datos, se comparte el acceso o se incumplen estas condiciones.'
   };
 
+  // R169: identidad del catálogo actual. WhatsApp solo admite texto, por eso cada plataforma usa un emoji reconocible.
+  const SERVICE_META=[
+    {aliases:['chatgpt plus','chat gpt plus','chatgpt','chat gpt'],name:'ChatGPT Plus',icon:'🤖'},
+    {aliases:['gemini pro','gemini'],name:'Gemini Pro',icon:'🤖'},
+    {aliases:['netflix'],name:'Netflix',icon:'🎬'},
+    {aliases:['spotify premium','spotify'],name:'Spotify',icon:'🎵'},
+    {aliases:['disney premium','disney+','disney plus','disney'],name:'Disney Premium',icon:'🏰'},
+    {aliases:['hbo max','hbomax','max'],name:'HBO Max',icon:'🎞️'},
+    {aliases:['prime video','primevideo','amazon prime'],name:'Prime Video',icon:'📺'},
+    {aliases:['crunchyroll'],name:'Crunchyroll',icon:'🍥'},
+    {aliases:['vix plus','vix+','vix'],name:'ViX Plus',icon:'📺'},
+    {aliases:['magis tv pro','magis tv','magis'],name:'Magis TV Pro',icon:'📡'},
+    {aliases:['flujo tv','flujotv','flujo'],name:'Flujo TV',icon:'📡'},
+    {aliases:['youtube premium','youtube'],name:'YouTube Premium',icon:'▶️'},
+    {aliases:['paramount+','paramount plus','paramount'],name:'Paramount+',icon:'🎬'},
+    {aliases:['canva pro','canva'],name:'Canva Pro',icon:'🎨'},
+    {aliases:['capcut pro','capcut'],name:'CapCut Pro',icon:'🎬'},
+    {aliases:['microsoft 365','office 365','microsoft','office'],name:'Microsoft 365',icon:'💼'},
+    {aliases:['adobe'],name:'Adobe',icon:'🎨'}
+  ];
+
+  function norm(value){
+    return String(value||'')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase()
+      .replace(/[^a-z0-9+]+/g,'')
+      .trim();
+  }
+  function serviceMetaFor(value){
+    const key=norm(value);
+    if(!key)return {name:'Servicio digital',icon:'💎'};
+    return SERVICE_META.find(item=>item.aliases.some(alias=>{
+      const candidate=norm(alias);
+      return key===candidate||key.includes(candidate)||candidate.includes(key);
+    }))||{name:String(value||'Servicio digital').trim()||'Servicio digital',icon:'💎'};
+  }
   function cleanLine(value){
     return String(value||'')
       .replace(/[\*_`~]/g,'')
       .replace(/[\u200B-\u200D\uFEFF]/g,'')
-      .replace(/^\s*[🛑🤖💯🔰✅⏳🗓️📧🔑👤🔒🎵🎬⭐🟢🟣🔵🟡]+\s*/u,'')
+      .replace(/^\s*[🛑🤖💯🔰✅⏳🗓️📧🔑👤🔒🎵🎬🎞️🍥🏰📺📡▶️🎨💼⭐🟢🟣🔵🟡💎✨]+\s*/u,'')
       .trim();
   }
   function linesOf(text){return String(text||'').replace(/\r/g,'').split('\n').map(cleanLine).filter(Boolean)}
@@ -31,15 +68,10 @@
     return '';
   }
   function detectService(text,lines){
-    const source=`${text}\n${lines.slice(0,5).join('\n')}`.toUpperCase();
-    const known=[
-      [/CHAT\s*GPT|CHATGPT/,'ChatGPT Plus'],[/NETFLIX/,'Netflix'],[/SPOTIFY/,'Spotify Premium'],
-      [/DISNEY/,'Disney+'],[/HBO\s*MAX|MAX\b/,'Max'],[/PRIME\s*VIDEO/,'Prime Video'],
-      [/CRUNCHYROLL/,'Crunchyroll'],[/YOUTUBE/,'YouTube Premium'],[/PARAMOUNT/,'Paramount+'],
-      [/VIX/,'ViX Plus'],[/MAGIS/,'Magis TV'],[/FLUJO/,'Flujo TV'],[/CANVA/,'Canva Pro'],
-      [/CAPCUT/,'CapCut Pro'],[/MICROSOFT|OFFICE\s*365/,'Microsoft 365'],[/ADOBE/,'Adobe']
-    ];
-    for(const [pattern,name] of known)if(pattern.test(source))return name;
+    const head=lines.slice(0,8).join(' ');
+    const key=norm(head);
+    const match=SERVICE_META.find(item=>item.aliases.some(alias=>key.includes(norm(alias))));
+    if(match)return match.name;
     const candidate=lines.find(line=>line.length<=48&&!line.includes('@')&&!/^(duraci[oó]n|inicio|vence|correo|contrase|perfil|pin|titular|renovaci[oó]n)/i.test(line));
     return candidate?candidate.replace(/[^\p{L}\p{N}+ .&/-]/gu,'').trim():'';
   }
@@ -100,7 +132,9 @@
   }
   function line(label,val,emoji){return val?`${emoji} *${label}:* ${val}`:''}
   function buildMessage(){
-    const service=value('deliveryService')||'Servicio digital';
+    const rawService=value('deliveryService')||'Servicio digital';
+    const meta=serviceMetaFor(rawService);
+    const service=meta.name==='Servicio digital'?rawService:meta.name;
     const fields=[
       line('Duración',value('deliveryDuration'),'⏳'),
       line('Inicio',value('deliveryStart'),'🗓️'),
@@ -117,7 +151,7 @@
     const rules=getRules();
     const parts=[
       '💎 *FRENCH STORE* 💎',
-      `✨ *${service.toUpperCase()}* ✨`,
+      `${meta.icon} *${service.toUpperCase()}* ${meta.icon}`,
       '*Datos de tu suscripción:*',
       fields.join('\n'),
       access.join('\n'),
@@ -128,7 +162,7 @@
       `4️⃣ *Reporta cualquier falla:* ${rules.rule4}`,
       '*SOBRE TU GARANTÍA:*',
       `✅ ${rules.guarantee}`,
-      'Gracias por comprar en *FRENCH STORE*. ¡Disfruta tu servicio! 😊'
+      'Gracias por comprar en 💎 *FRENCH STORE* 💎. ¡Disfruta tu servicio! 😊'
     ];
     return parts.filter(part=>part&&part.trim()).join('\n\n').replace(/\n{3,}/g,'\n\n');
   }
@@ -166,7 +200,7 @@
     try{
       await navigator.clipboard.writeText(text);
       const status=$('deliveryParserStatus');
-      if(status){status.className='r168-status ok';status.textContent='Mensaje de FRENCH STORE copiado. Ya puedes pegarlo en WhatsApp.'}
+      if(status){status.className='r168-status ok';status.textContent='Mensaje de 💎 FRENCH STORE 💎 copiado. Ya puedes pegarlo en WhatsApp.'}
     }catch{
       const temp=document.createElement('textarea');temp.value=text;temp.style.position='fixed';temp.style.opacity='0';document.body.appendChild(temp);temp.select();
       const ok=document.execCommand('copy');temp.remove();
@@ -209,7 +243,7 @@
           <h3>2. Revisa o corrige</h3>
           <p>Todo es editable por si tu proveedor usa un formato distinto.</p>
           <div class="r168-fields">
-            <label class="r168-label wide"><span>Servicio</span><input id="deliveryService" type="text" autocomplete="off" placeholder="Netflix, Spotify Premium, ChatGPT Plus…"></label>
+            <label class="r168-label wide"><span>Servicio</span><input id="deliveryService" type="text" autocomplete="off" placeholder="Netflix, Spotify, Gemini Pro, ChatGPT Plus…"></label>
             <label class="r168-label"><span>Duración</span><input id="deliveryDuration" type="text" autocomplete="off" placeholder="30 Días"></label>
             <label class="r168-label"><span>Inicio</span><input id="deliveryStart" type="text" autocomplete="off" placeholder="02/09/26"></label>
             <label class="r168-label"><span>Vence / corte</span><input id="deliveryEnd" type="text" autocomplete="off" placeholder="02/10/26"></label>
@@ -234,7 +268,7 @@
         </div>
       </details>
       <div class="r168-preview">
-        <div class="r168-preview-brand"><img src="../v2/assets/brand/icon-192.png" alt="Logo FRENCH STORE"><div><strong>FRENCH STORE</strong><small>VISTA PREVIA DE ENTREGA</small></div></div>
+        <div class="r168-preview-brand"><img src="../v2/assets/brand/icon-192.png" alt="Logo FRENCH STORE"><div><strong>💎 FRENCH STORE 💎</strong><small>VISTA PREVIA DE ENTREGA</small></div></div>
         <pre id="deliveryPreview"></pre>
       </div>
       <div class="r168-actions"><button id="deliveryCopy" class="primary" type="button">📋 Copiar mensaje para WhatsApp</button></div>
