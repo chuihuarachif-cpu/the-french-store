@@ -16,7 +16,7 @@ const ok = (condition, message) => { assert.ok(condition, message); checks += 1;
 
 const forbidden = ['service_role','GAMERHUB_API_KEY','GAMERHUB_API_SECRET','OPENAI_API_KEY','GEMINI_API_KEY'];
 for (const [name,text] of Object.entries({base,unified,gate,world,premiumRelease})) {
-  ok(text.count ? true : true, `${name} loaded`);
+  ok(text.length > 0, `${name} loaded`);
   for (const token of forbidden) ok(!text.includes(token), `${name} must not expose ${token}`);
 }
 
@@ -44,7 +44,7 @@ ok(gate.includes("root.dataset.fsTier = 'base'"), 'Visual tier must be fixed to 
 ok(gate.includes("root.dataset.fsInterface = 'unified-blue'"), 'Gate must preserve unified interface marker');
 ok(!gate.includes('tier-${level}.css'), 'Gate must not dynamically load rank-specific CSS');
 ok(!gate.includes('loadStyle('), 'Rank-specific stylesheet loader must stay retired');
-ok(!gate.includes('fs-tier-dock'), 'Owner tier preview dock must stay retired');
+ok(!gate.includes('createDock') && !gate.includes('OWNER_PREVIEW') && !gate.includes("document.createElement('aside')"), 'Owner tier preview dock must stay retired');
 ok(gate.includes('rankLevel:() => rankLevel'), 'Actual rank must remain observable separately from visual tier');
 
 // The public UI bootstrap must not be owner-only and must add approved details.
