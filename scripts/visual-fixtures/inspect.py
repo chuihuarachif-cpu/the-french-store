@@ -49,9 +49,11 @@ if data['scenario'] in ('lite','reduced'):
     assert data['heroAnimation']=='none' and data['ribbonAnimation']=='none', 'Decorative sweep runs in lightweight mode'
     assert data.get('worldAnimation','none')=='none', 'Atmosphere runs in lightweight mode'
 elif data.get('world')=='nightfall':
+    # The unified storefront deliberately keeps its reading surface and cosmic
+    # atmosphere still for every rank. Diamond remains a real membership state,
+    # but no longer enables rank-specific visual motion.
     assert data['heroAnimation']=='none', 'Reading surface must stay still'
-    expected_atmosphere='world-stars' if data['rank']=='diamond' and data['motion']=='full' else 'none'
-    assert data['worldAnimation']==expected_atmosphere, 'Tier atmosphere motion contract was lost'
+    assert data['worldAnimation']=='none', 'Unified atmosphere must stay still across ranks'
 elif data['rank']=='diamond':
     # Historical fixtures use the old blue Diamond sweep; R171 current fixtures use
     # the exact same Noir & Gold sweep as Gold. Both are valid in before/after comparisons.

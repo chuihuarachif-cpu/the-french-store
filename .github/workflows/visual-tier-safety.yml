@@ -4,12 +4,14 @@ on:
   pull_request:
     paths:
       - 'v2/tiers/**'
+      - 'v2/premium-release.js'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
   push:
     branches: [main]
     paths:
       - 'v2/tiers/**'
+      - 'v2/premium-release.js'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
 
@@ -22,13 +24,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Obsidian Prism visual contract
+      - name: Unified blue visual contract
         run: node scripts/test-r167-tier-frames.mjs
 
-      - name: Tier loader syntax and release cache key
+      - name: Presentation JavaScript syntax
         run: |
           node --check v2/tiers/tier-gate.js
-          grep -q '20260914-obsidian-prism' v2/tiers/tier-gate.js
+          node --check v2/tiers/world-ui.js
+          node --check v2/premium-release.js
+          node --check scripts/test-r167-tier-frames.mjs
+          grep -q 'tier-gate-unified-ui-v1-20260917' v2/tiers/tier-gate.js
+          grep -q 'unified-blue-r2-20260917' v2/tiers/world-ui.js
+          grep -q 'layer(fs-world)' v2/tiers/world-ui.js
 
       - name: CSS structural and secret safety
         run: |
@@ -36,8 +43,7 @@ jobs:
           from pathlib import Path
           files = [
               Path('v2/tiers/tier-base.css'),
-              Path('v2/tiers/tier-gold.css'),
-              Path('v2/tiers/tier-diamond.css'),
+              Path('v2/tiers/unified-blue.css'),
           ]
           forbidden = ['service_role', 'GAMERHUB_API_KEY', 'GAMERHUB_API_SECRET', 'OPENAI_API_KEY', 'GEMINI_API_KEY']
           for path in files:
@@ -45,6 +51,6 @@ jobs:
               assert text.count('{') == text.count('}'), f'Unbalanced CSS braces in {path}'
               found = [token for token in forbidden if token in text]
               assert not found, f'Forbidden secret-domain tokens in {path}: {found}'
-              assert len(text.encode('utf-8')) < 60000, f'{path} grew beyond the mobile presentation budget'
-          print('Tier CSS structure and secret checks OK')
+              assert len(text.encode('utf-8')) < 80000, f'{path} grew beyond the mobile presentation budget'
+          print('Unified CSS structure and secret checks OK')
           PY

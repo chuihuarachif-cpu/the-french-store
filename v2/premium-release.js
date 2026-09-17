@@ -1,94 +1,53 @@
+/* FRENCH STORE — legacy premium-skin retirement.
+   Rank Pass is still functional, but Gold/Diamond no longer load a different
+   storefront interface. This compatibility module removes stale presentation
+   assets if an older cached session injected them. */
 (() => {
   'use strict';
 
-  const VERSION = 'premium-release-r226-20260915';
-  const RELEASE = '20260915-r226-home-order-socials';
+  const VERSION = 'premium-skins-retired-20260917';
   const root = document.documentElement;
 
-  function premiumLevel() {
-    const level = String(root.dataset.fsTier || 'base').toLowerCase();
-    return level === 'gold' || level === 'diamond' ? level : '';
+  const legacyIds = [
+    'fs-premium-release-css',
+    'fs-premium-reference-r178-css',
+    'fs-premium-reference-r210-css',
+    'fs-premium-reference-r211-css',
+    'fs-premium-reference-r212-css',
+    'fs-premium-reference-r213-css',
+    'fs-premium-reference-r215-css',
+    'fs-premium-reference-r225-css',
+    'fs-premium-reference-r226-css',
+    'fs-premium-reference-r211-js',
+    'fs-premium-reference-r177-js',
+    'fs-premium-reference-r182-art-js',
+    'fs-premium-reference-r185-js',
+    'fs-premium-reference-r199-socials-js',
+    'fs-premium-reference-r212-js',
+    'fs-premium-reference-r215-js',
+    'fs-premium-reference-r225-js',
+    'fs-premium-reference-r226-js',
+    'fs-tier-gold-css',
+    'fs-tier-diamond-css',
+    'fs-tier-depth-js',
+    'fs-tier-shine-js'
+  ];
+
+  function cleanup() {
+    root.removeAttribute('data-fs-premium-release');
+    legacyIds.forEach(id => document.getElementById(id)?.remove());
+    document.querySelectorAll('.fs-premium-hero-art,.fs-premium-profile-art,.fs-tier-dock').forEach(node => node.remove());
+    root.dataset.fsWorld = 'nightfall';
+    root.dataset.fsInterface = 'unified-blue';
   }
 
-  function ensureStyle(id, href) {
-    let link = document.getElementById(id);
-    if (!link) {
-      link = document.createElement('link');
-      link.id = id;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    }
-    if (link.getAttribute('href') !== href) link.href = href;
-    return link;
-  }
-
-  function ensureScript(id, src, refresh) {
-    let script = document.getElementById(id);
-    if (!script) {
-      script = document.createElement('script');
-      script.id = id;
-      script.src = src;
-      script.defer = true;
-      document.head.appendChild(script);
-    } else {
-      try { refresh?.(); } catch {}
-    }
-    return script;
-  }
-
-  function ensureReferenceAssets() {
-    ensureStyle('fs-premium-reference-r178-css', `./tiers/tier-reference-r178.css?v=${RELEASE}`);
-    ensureStyle('fs-premium-reference-r210-css', `./tiers/tier-reference-r210.css?v=${RELEASE}`);
-    ensureStyle('fs-premium-reference-r211-css', `./tiers/tier-reference-r211.css?v=${RELEASE}`);
-    ensureStyle('fs-premium-reference-r212-css', `./tiers/tier-reference-r212.css?v=${RELEASE}`);
-    ensureStyle('fs-premium-reference-r213-css', `./tiers/tier-reference-r213.css?v=${RELEASE}`);
-    ensureStyle('fs-premium-reference-r215-css', `./tiers/tier-reference-r215.css?v=${RELEASE}`);
-    ensureStyle('fs-premium-reference-r225-css', `./tiers/tier-reference-r225.css?v=${RELEASE}`);
-    ensureStyle('fs-premium-reference-r226-css', `./tiers/tier-reference-r226.css?v=${RELEASE}`);
-
-    ensureScript('fs-premium-reference-r211-js', `./tiers/tier-reference-r211.js?v=${RELEASE}`);
-    ensureScript('fs-premium-reference-r177-js', `./tiers/tier-reference-r177.js?v=${RELEASE}`, () => window.FSPremiumReference?.refresh?.());
-    ensureScript('fs-premium-reference-r182-art-js', `./tiers/tier-reference-r182-art.js?v=${RELEASE}`);
-    ensureScript('fs-premium-reference-r185-js', `./tiers/tier-reference-r185.js?v=${RELEASE}`, () => window.FSPremiumR185?.refresh?.());
-    ensureScript('fs-premium-reference-r199-socials-js', `./tiers/tier-reference-r199-socials.js?v=${RELEASE}`);
-    ensureScript('fs-premium-reference-r212-js', `./tiers/tier-reference-r212.js?v=${RELEASE}`, () => window.FSPremiumR212?.refresh?.());
-    ensureScript('fs-premium-reference-r215-js', `./tiers/tier-reference-r215.js?v=${RELEASE}`, () => window.FSPremiumR215?.refresh?.());
-    ensureScript('fs-premium-reference-r225-js', `./tiers/tier-reference-r225.js?v=${RELEASE}`, () => window.FSPremiumR225?.refresh?.());
-    ensureScript('fs-premium-reference-r226-js', `./tiers/tier-reference-r226.js?v=${RELEASE}`, () => window.FSPremiumR226?.refresh?.());
-  }
-
-  function refreshHelpers() {
-    try { window.FSPremiumReference?.refresh?.(); } catch {}
-    try { window.FSPremiumR185?.refresh?.(); } catch {}
-    try { window.FSPremiumR212?.refresh?.(); } catch {}
-    try { window.FSPremiumR215?.refresh?.(); } catch {}
-    try { window.FSPremiumR225?.refresh?.(); } catch {}
-    try { window.FSPremiumR226?.refresh?.(); } catch {}
-  }
-
-  function apply() {
-    const level = premiumLevel();
-    if (!level) {
-      root.removeAttribute('data-fs-premium-release');
-      refreshHelpers();
-      return;
-    }
-
-    ensureStyle('fs-premium-release-css', `./tiers/tier-${level}.css?v=${RELEASE}`);
-    ensureReferenceAssets();
-    root.dataset.fsPremiumRelease = VERSION;
-    refreshHelpers();
-  }
-
-  const observer = new MutationObserver((records) => {
-    if (records.some((record) => record.attributeName === 'data-fs-tier')) apply();
+  new MutationObserver(cleanup).observe(root, {
+    attributes:true,
+    attributeFilter:['data-fs-tier','data-fs-premium-release']
   });
-  observer.observe(root, { attributes:true, attributeFilter:['data-fs-tier'] });
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply, { once:true });
-  else apply();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',cleanup,{once:true});
+  else cleanup();
 
-  setTimeout(apply, 250);
-  setTimeout(apply, 1000);
-  setTimeout(apply, 2500);
+  window.FSPremiumRelease = Object.freeze({version:VERSION,refresh:cleanup,retired:true});
 })();
