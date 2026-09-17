@@ -13,6 +13,7 @@ const mobileFix = read('v2/tiers/unified-blue-mobile-fix.css');
 const reference = read('v2/tiers/unified-blue-reference-r4.css');
 const diamond = read('v2/tiers/unified-blue-diamond-r5.css');
 const diamondSvg = read('v2/assets/brand/unified-hero-diamond-r4.svg');
+const walletSvg = read('v2/assets/world/wallet-blue-r8.svg');
 const gate = read('v2/tiers/tier-gate.js');
 const world = read('v2/tiers/world-ui.js');
 const premiumRelease = read('v2/premium-release.js');
@@ -20,7 +21,7 @@ let checks = 0;
 const ok = (condition, message) => { assert.ok(condition, message); checks += 1; };
 
 const forbidden = ['service_role','GAMERHUB_API_KEY','GAMERHUB_API_SECRET','OPENAI_API_KEY','GEMINI_API_KEY'];
-for (const [name,text] of Object.entries({index,base,unified,mobileFix,reference,diamond,diamondSvg,gate,world,premiumRelease})) {
+for (const [name,text] of Object.entries({index,base,unified,mobileFix,reference,diamond,diamondSvg,walletSvg,gate,world,premiumRelease})) {
   ok(text.length > 0, `${name} loaded`);
   for (const token of forbidden) ok(!text.includes(token), `${name} must not expose ${token}`);
 }
@@ -36,7 +37,7 @@ ok(index.includes('data-fs-interface="unified-blue"'), 'Unified interface marker
 ok(index.includes('world-ui.js?v=20260917-r4'), 'World UI must use the current cache-busting key');
 ok(index.includes('premium-release.js?v=20260917-unified-retired-r4'), 'Retired premium cleanup must use a fresh cache key');
 ok(index.includes('unified-blue-reference-r4.css?v=20260917-r4'), 'Reference-match stylesheet must load on first paint');
-ok(index.includes('unified-blue-diamond-r5.css?v=20260917-r7'), 'Final unified cleanup must use the current cache-busting key');
+ok(index.includes('unified-blue-diamond-r5.css?v=20260917-r8'), 'Final unified cleanup must use the current cache-busting key');
 ok(index.includes('id="fs-unified-blue-css"') && index.includes('data-fs-unified="unified-blue-r3-20260917"'), 'Static unified style must stay compatible with the runtime bootstrap');
 
 // One public visual system must exist and be responsive/accessibility aware.
@@ -61,7 +62,7 @@ ok(mobileFix.includes('[data-fs-tier="base"] :is('), 'Mobile fix must match lega
 ok(mobileFix.includes('border-image:none!important'), 'Home forest nine-slice must be neutralized');
 ok(diamond.includes('#view-wallet .panel-head') && diamond.includes('#view-pedidos .panel-head') && diamond.includes('#view-perfil .profile-card'), 'Authenticated screens must neutralize legacy forest frames');
 ok(diamond.includes('border-image:none!important') && diamond.includes('content:none!important'), 'Legacy bark/foliage pseudo-elements must be disabled');
-ok(diamond.includes('premium-wallet-r180.webp'), 'Wallet illustration must remain after forest-frame cleanup');
+ok(diamond.includes('wallet-blue-r8.svg') && walletSvg.includes('<linearGradient') && walletSvg.includes('id="glow"'), 'Wallet illustration must remain visible after forest-frame cleanup');
 ok(diamond.includes('.bottom-nav button.active') && diamond.includes('border-color:#58eaff!important'), 'Bottom navigation active state must stay cyan');
 ok(diamond.includes('.category-tabs button.active') && diamond.includes('border-color:#76f1ff!important'), 'Catalog active tab must stay cyan');
 ok(mobileFix.includes('.bottom-nav') && mobileFix.includes('transform:none!important'), 'Mobile dock transform reset is missing');
