@@ -1,0 +1,76 @@
+/* R168 — navegación administrativa por botones + generador privado de entregas. */
+.tabs{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  gap:10px;
+  overflow:visible;
+  scrollbar-width:auto;
+  margin-bottom:16px;
+  padding:0;
+  position:static;
+  background:transparent;
+}
+.tabs button{
+  width:100%;
+  min-height:58px;
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  text-align:left;
+  line-height:1.2;
+  white-space:normal;
+  font-size:.82rem;
+  font-weight:750;
+  background:#08202e;
+  color:#afc7d3;
+  border:1px solid #193f53;
+  border-radius:14px;
+}
+.tabs button.active{
+  background:linear-gradient(180deg,#0f4c61,#0a3547);
+  color:#fff;
+  border-color:#49dff2;
+  box-shadow:0 0 0 1px rgba(73,223,242,.08),0 8px 24px rgba(0,0,0,.2);
+}
+
+.r168-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:16px}
+.r168-card{padding:15px;border:1px solid #183f53;border-radius:16px;background:#071d2a}
+.r168-card h3{margin:0 0 6px;font-size:1rem}
+.r168-card>p{margin:0 0 12px;color:#8fa8b6;font-size:.83rem;line-height:1.45}
+.r168-label{display:block;margin-top:10px;color:#9db5c2;font-size:.76rem;font-weight:700}
+.r168-label span{display:block;margin-bottom:5px}
+.r168-card textarea,.r168-card input{
+  width:100%;
+  border:1px solid #214b61;
+  border-radius:12px;
+  background:#03141f;
+  color:#fff;
+  padding:11px 12px;
+  outline:none;
+}
+.r168-card textarea:focus,.r168-card input:focus{border-color:#42d8ec;box-shadow:0 0 0 2px rgba(66,216,236,.08)}
+#deliveryProviderText{min-height:250px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.78rem;line-height:1.45}
+.r168-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.r168-fields .wide{grid-column:1/-1}
+.r168-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.r168-actions button{flex:1;min-width:135px}
+.r168-status{margin-top:10px;padding:9px 10px;border-radius:11px;background:#082434;color:#a7c3d0;font-size:.78rem;line-height:1.4}
+.r168-status.ok{background:#0a3c30;color:#a5edcc}
+.r168-status.warn{background:#4a3513;color:#ffe0a0}
+.r168-rules{margin-top:14px;border:1px solid #183f53;border-radius:14px;background:#061923;overflow:hidden}
+.r168-rules summary{cursor:pointer;padding:12px 14px;color:#dff8ff;font-weight:800;list-style:none}
+.r168-rules summary::-webkit-details-marker{display:none}
+.r168-rules-body{padding:0 14px 14px}
+.r168-rules-body textarea{min-height:76px;resize:vertical}
+.r168-preview{margin-top:16px;border:1px solid #24566c;border-radius:18px;background:linear-gradient(180deg,#071e2c,#051721);overflow:hidden}
+.r168-preview-brand{display:flex;align-items:center;gap:12px;padding:14px 15px;border-bottom:1px solid #17445b;background:rgba(10,44,60,.75)}
+.r168-preview-brand img{width:46px;height:46px;border-radius:13px;object-fit:cover;border:1px solid rgba(89,226,244,.3)}
+.r168-preview-brand strong{display:block;letter-spacing:.08em}
+.r168-preview-brand small{display:block;margin-top:3px;color:#6fdae9;font-size:.7rem;letter-spacing:.12em}
+#deliveryPreview{margin:0;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere;color:#eaf9ff;font:500 .86rem/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+.r168-privacy{margin-top:12px;padding:10px 11px;border-left:3px solid #44d8ec;border-radius:8px;background:#071c28;color:#9fb8c5;font-size:.78rem;line-height:1.45}
+
+@media(min-width:820px){.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:760px){.r168-grid{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.tabs button{min-height:60px;font-size:.78rem}.r168-fields{grid-template-columns:1fr}.r168-fields .wide{grid-column:auto}}
+@media(max-width:360px){.tabs{grid-template-columns:1fr 1fr;gap:8px}.tabs button{padding:10px;font-size:.72rem}}

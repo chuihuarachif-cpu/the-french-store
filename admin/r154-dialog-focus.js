@@ -45,3 +45,13 @@
 
 import('./r164-resellers.js?v=20260913-r166').catch(()=>{});
 import('./r165-streaming-fixed-prices.js?v=20260913-r166').catch(()=>{});
+
+/* R168 — herramientas administrativas escalables y generador privado de entregas. */
+if(!document.querySelector('link[data-r168-admin-tools]')){
+  const style=document.createElement('link');
+  style.rel='stylesheet';
+  style.href='./r168-admin-tools.css?v=20260916-r168';
+  style.dataset.r168AdminTools='1';
+  document.head.appendChild(style);
+}
+import('./r168-delivery-generator.js?v=20260916-r168').catch(()=>{});
