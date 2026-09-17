@@ -34,7 +34,8 @@ jobs:
           node --check v2/premium-release.js
           node --check scripts/test-r167-tier-frames.mjs
           grep -q 'tier-gate-unified-ui-v1-20260917' v2/tiers/tier-gate.js
-          grep -q 'unified-blue-r1-20260917' v2/tiers/world-ui.js
+          grep -q 'unified-blue-r2-20260917' v2/tiers/world-ui.js
+          grep -q 'layer(fs-world)' v2/tiers/world-ui.js
 
       - name: CSS structural and secret safety
         run: |
