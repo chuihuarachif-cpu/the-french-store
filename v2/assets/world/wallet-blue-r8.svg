@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" role="img" aria-label="">
+  <defs>
+    <linearGradient id="wallet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7df5ff"/>
+      <stop offset=".42" stop-color="#1fc8f4"/>
+      <stop offset="1" stop-color="#0878bd"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#113553"/>
+      <stop offset="1" stop-color="#061827"/>
+    </linearGradient>
+    <radialGradient id="coin" cx="35%" cy="28%" r="70%">
+      <stop offset="0" stop-color="#e7feff"/>
+      <stop offset=".35" stop-color="#6ceeff"/>
+      <stop offset="1" stop-color="#168fd0"/>
+    </radialGradient>
+    <filter id="glow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="13"/>
+    </filter>
+  </defs>
+  <ellipse cx="126" cy="92" rx="91" ry="62" fill="#22bfff" opacity=".13" filter="url(#soft)"/>
+  <g transform="translate(28 28)">
+    <path d="M36 27 146 7c14-3 27 7 29 21l3 22-136 24Z" fill="#0b2942" stroke="#4ce7ff" stroke-width="3" opacity=".95"/>
+    <path d="M41 22 134 6l16 23-104 18Z" fill="url(#wallet)" opacity=".68"/>
+    <rect x="13" y="43" width="164" height="88" rx="21" fill="url(#face)" stroke="url(#wallet)" stroke-width="4" filter="url(#glow)"/>
+    <path d="M23 61c34 11 83 12 144 0" fill="none" stroke="#7df5ff" stroke-width="2" opacity=".22"/>
+    <path d="M138 68h46c12 0 22 10 22 22s-10 22-22 22h-46c-9 0-16-7-16-16V84c0-9 7-16 16-16Z" fill="#09243a" stroke="#53eaff" stroke-width="3"/>
+    <circle cx="174" cy="90" r="8" fill="url(#coin)" filter="url(#glow)"/>
+    <path d="M39 92h49" stroke="#43dff9" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+    <path d="M39 108h33" stroke="#2c8ec1" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+  </g>
+  <g filter="url(#glow)" opacity=".9">
+    <path d="m197 27 3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#d9fdff"/>
+    <path d="m48 21 2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#8eefff"/>
+  </g>
+</svg>

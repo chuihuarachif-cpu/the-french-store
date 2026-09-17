@@ -1,9 +1,8 @@
 <!doctype html>
-<!-- data-fs-tier="base" is set statically so the Base visual layer applies on
-     the first paint with no flash. tier-gate.js only ever upgrades it to
-     "gold" or "diamond" when the account's real rank says so, and falls back
-     to "base" if the rank cannot be read. -->
-<html lang="es" data-fs-tier="base" data-fs-world="nightfall">
+<!-- The storefront uses one unified blue/cyan visual system for every account.
+     data-fs-tier="base" is now only the stable presentation compatibility
+     marker; Rank Pass status and benefits are resolved separately. -->
+<html lang="es" data-fs-tier="base" data-fs-world="nightfall" data-fs-interface="unified-blue">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -48,7 +47,13 @@
   <link rel="stylesheet" href="./tiers/tier-base.css?v=20260911-r160">
   <link rel="stylesheet" href="./tiers/world-theme.css?v=20260915-nightfall">
   <link rel="stylesheet" href="./tiers/world-screens.css?v=20260915-nightfall">
-  <script src="./tiers/world-ui.js?v=20260915-nightfall" defer></script>
+  <style id="fs-unified-blue-css" data-fs-unified="unified-blue-r3-20260917">
+    @import url("./tiers/unified-blue.css?v=20260917-r4") layer(fs-world);
+    @import url("./tiers/unified-blue-mobile-fix.css?v=20260917-r4") layer(fs-world);
+    @import url("./tiers/unified-blue-reference-r4.css?v=20260917-r4") layer(fs-world);
+    @import url("./tiers/unified-blue-diamond-r5.css?v=20260917-r8") layer(fs-world);
+  </style>
+  <script src="./tiers/world-ui.js?v=20260917-r4" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -127,7 +132,7 @@
 
   <script src="./notifications.js?v=20260825-r47" defer></script>
   <script src="./bootstrap.js?v=20260915-r214" defer></script>
-  <script src="./premium-release.js?v=20260915-r222-live" defer></script>
+  <script src="./premium-release.js?v=20260917-unified-retired-r4" defer></script>
   <script src="./rank-pass-premium.js?v=20260906-r150" defer></script>
   <script src="./rank-pass-premium-ready.js?v=20260906-r150" defer></script>
   <script src="./cpx-rewards-provider.js?v=20260827-r101" defer></script>

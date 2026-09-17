@@ -6,9 +6,14 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const read = path => fs.readFileSync(path, 'utf8');
+const index = read('v2/index.html');
 const base = read('v2/tiers/tier-base.css');
 const unified = read('v2/tiers/unified-blue.css');
 const mobileFix = read('v2/tiers/unified-blue-mobile-fix.css');
+const reference = read('v2/tiers/unified-blue-reference-r4.css');
+const diamond = read('v2/tiers/unified-blue-diamond-r5.css');
+const diamondSvg = read('v2/assets/brand/unified-hero-diamond-r4.svg');
+const walletSvg = read('v2/assets/world/wallet-blue-r8.svg');
 const gate = read('v2/tiers/tier-gate.js');
 const world = read('v2/tiers/world-ui.js');
 const premiumRelease = read('v2/premium-release.js');
@@ -16,7 +21,7 @@ let checks = 0;
 const ok = (condition, message) => { assert.ok(condition, message); checks += 1; };
 
 const forbidden = ['service_role','GAMERHUB_API_KEY','GAMERHUB_API_SECRET','OPENAI_API_KEY','GEMINI_API_KEY'];
-for (const [name,text] of Object.entries({base,unified,mobileFix,gate,world,premiumRelease})) {
+for (const [name,text] of Object.entries({index,base,unified,mobileFix,reference,diamond,diamondSvg,walletSvg,gate,world,premiumRelease})) {
   ok(text.length > 0, `${name} loaded`);
   for (const token of forbidden) ok(!text.includes(token), `${name} must not expose ${token}`);
 }
@@ -26,6 +31,14 @@ ok(base.includes('--fs-surface') && base.includes('--fs-cyan'), 'Base design tok
 ok(base.includes('data-r8-motion="full"'), 'Base motion capability policy must remain');
 ok(base.includes('prefers-reduced-motion:reduce'), 'Base reduced-motion fallback is required');
 ok(base.includes(':focus-visible'), 'Base keyboard focus treatment is required');
+
+// First paint and cache contract: browsers must not keep the pre-unification UI.
+ok(index.includes('data-fs-interface="unified-blue"'), 'Unified interface marker must exist before JavaScript');
+ok(index.includes('world-ui.js?v=20260917-r4'), 'World UI must use the current cache-busting key');
+ok(index.includes('premium-release.js?v=20260917-unified-retired-r4'), 'Retired premium cleanup must use a fresh cache key');
+ok(index.includes('unified-blue-reference-r4.css?v=20260917-r4'), 'Reference-match stylesheet must load on first paint');
+ok(index.includes('unified-blue-diamond-r5.css?v=20260917-r8'), 'Final unified cleanup must use the current cache-busting key');
+ok(index.includes('id="fs-unified-blue-css"') && index.includes('data-fs-unified="unified-blue-r3-20260917"'), 'Static unified style must stay compatible with the runtime bootstrap');
 
 // One public visual system must exist and be responsive/accessibility aware.
 ok(unified.includes('data-fs-interface="unified-blue"'), 'Unified skin selector is missing');
@@ -37,17 +50,36 @@ ok(unified.includes('prefers-reduced-motion:reduce'), 'Unified reduced-motion fa
 ok(unified.includes(':focus-visible') || base.includes(':focus-visible'), 'Visible keyboard focus must remain');
 ok(unified.split('{').length === unified.split('}').length, 'Unified CSS braces are unbalanced');
 ok(mobileFix.split('{').length === mobileFix.split('}').length, 'Mobile fix CSS braces are unbalanced');
+ok(reference.split('{').length === reference.split('}').length, 'Reference-match CSS braces are unbalanced');
+ok(diamond.split('{').length === diamond.split('}').length, 'Diamond override CSS braces are unbalanced');
 ok(Buffer.byteLength(unified,'utf8') < 80000, 'Unified CSS exceeded presentation budget');
 ok(Buffer.byteLength(mobileFix,'utf8') < 30000, 'Mobile fix CSS exceeded hotfix budget');
+ok(Buffer.byteLength(reference,'utf8') < 30000, 'Reference-match CSS exceeded presentation budget');
+ok(Buffer.byteLength(diamond,'utf8') < 10000, 'Diamond override exceeded presentation budget');
 
 // Mobile screenshot regressions: forest frame and translated dock must stay gone.
 ok(mobileFix.includes('[data-fs-tier="base"] :is('), 'Mobile fix must match legacy Base selector specificity');
-ok(mobileFix.includes('border-image:none!important'), 'Forest nine-slice must be neutralized');
+ok(mobileFix.includes('border-image:none!important'), 'Home forest nine-slice must be neutralized');
+ok(diamond.includes('#view-wallet .panel-head') && diamond.includes('#view-pedidos .panel-head') && diamond.includes('#view-perfil .profile-card'), 'Authenticated screens must neutralize legacy forest frames');
+ok(diamond.includes('border-image:none!important') && diamond.includes('content:none!important'), 'Legacy bark/foliage pseudo-elements must be disabled');
+ok(diamond.includes('wallet-blue-r8.svg') && walletSvg.includes('<linearGradient') && walletSvg.includes('id="glow"'), 'Wallet illustration must remain visible after forest-frame cleanup');
+ok(diamond.includes('.bottom-nav button.active') && diamond.includes('border-color:#58eaff!important'), 'Bottom navigation active state must stay cyan');
+ok(diamond.includes('.category-tabs button.active') && diamond.includes('border-color:#76f1ff!important'), 'Catalog active tab must stay cyan');
 ok(mobileFix.includes('.bottom-nav') && mobileFix.includes('transform:none!important'), 'Mobile dock transform reset is missing');
 ok(mobileFix.includes('width:auto!important') && mobileFix.includes('right:9px!important'), 'Mobile dock must fit the viewport');
 ok(mobileFix.includes('grid-template-columns:minmax(0,1.4fr) minmax(105px,.6fr)'), 'Mobile hero must keep an explicit art column');
 ok(mobileFix.includes('.hero-copy') && mobileFix.includes('display:contents!important'), 'Mobile hero children must participate in the intended grid');
-ok(mobileFix.includes('#authButton') && mobileFix.includes('font-size:0!important'), 'Mobile account control must not show truncated text');
+
+// Final reference match: full account control, real blue diamond, four bright cards, clean home dock.
+ok(diamond.includes('unified-hero-diamond-r4.svg'), 'Transparent blue diamond asset must be rendered in the hero');
+ok(diamondSvg.includes('<polygon') && diamondSvg.includes('id="glow"') && diamondSvg.includes('<ellipse'), 'Diamond SVG must retain facets, glow and orbit details');
+ok(reference.includes('premium-header-r180.webp'), 'Approved clean header artwork must be used');
+ok(reference.includes('#authButton') && reference.includes('min-width:92px!important') && reference.includes('font-size:12px!important'), 'Mobile account control must preserve readable text');
+ok(reference.includes('content:"ID"') && reference.includes('content:"ACC"') && reference.includes('content:"TV"') && reference.includes('content:"GC"'), 'Reference category markers are incomplete');
+ok(reference.includes('.cuentas-entry{display:none!important'), 'Home reference must keep the four-card 2x2 grid');
+ok(reference.includes('body:has(#view-inicio.active) .floating-whatsapp{display:none!important'), 'Floating WhatsApp must not overlap the home reference');
+ok(reference.includes('.bottom-nav') && reference.includes('overflow:hidden!important') && reference.includes('transform:none!important'), 'Reference dock must be centered and clipped cleanly');
+ok(reference.includes('opacity:1!important') && reference.includes('filter:none!important'), 'Reference category cards must not remain dimmed by legacy effects');
 
 // Rank remains backend-derived, but visual level is always Base/unified-blue.
 ok(gate.includes("sb.rpc('get_my_loyalty_summary')"), 'Rank must still come from the existing backend summary RPC');
@@ -68,7 +100,7 @@ ok(world.includes('node.dataset.fsUnified !== VERSION'), 'Unified style must ref
 ok(!world.includes('reconcileOwnerPreview'), 'Unified interface must not be owner-gated');
 ok(!world.includes('LOCAL_QA'), 'Unified interface must not be limited to local QA');
 ok(world.includes('Compra segura') && world.includes('Entrega inmediata') && world.includes('Soporte confiable'), 'Approved home trust copy is missing');
-ok(world.includes('premium-hero-r183.webp'), 'Approved hero artwork hook is missing');
+ok(world.includes('premium-hero-r183.webp'), 'Approved hero fallback hook is missing');
 ok(world.includes('world-orders-empty'), 'Approved empty-order component is missing');
 ok(world.includes('premium-icon-${icon}-r191.svg'), 'Category icon system is missing');
 
@@ -79,6 +111,6 @@ ok(!premiumRelease.includes("document.createElement('link')"), 'Premium release 
 ok(premiumRelease.includes("'fs-tier-gold-css'") && premiumRelease.includes("'fs-tier-diamond-css'"), 'Cleanup must remove stale cached tier styles');
 
 // Decorative layers must never capture input.
-ok(!/::(?:before|after)[^{]*\{[^}]*pointer-events\s*:\s*auto/is.test(`${unified}\n${mobileFix}`), 'Decorative pseudo-elements must not capture input');
+ok(!/::(?:before|after)[^{]*\{[^}]*pointer-events\s*:\s*auto/is.test(`${unified}\n${mobileFix}\n${reference}\n${diamond}`), 'Decorative pseudo-elements must not capture input');
 
 console.log(`Unified blue storefront contract: ${checks}/${checks} checks passed.`);

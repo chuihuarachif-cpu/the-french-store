@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" role="img" aria-label="Diamante azul">
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="49%" r="54%">
+      <stop offset="0" stop-color="#7ff6ff" stop-opacity=".34"/>
+      <stop offset=".48" stop-color="#188dff" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#0068d8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="topA" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9ffff"/><stop offset=".45" stop-color="#66eaff"/><stop offset="1" stop-color="#087bea"/></linearGradient>
+    <linearGradient id="topB" x1="1" y1="0" x2="0" y2="1"><stop stop-color="#d9fbff"/><stop offset=".5" stop-color="#319dff"/><stop offset="1" stop-color="#073d9f"/></linearGradient>
+    <linearGradient id="facet1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8df7ff"/><stop offset=".45" stop-color="#0a9cff"/><stop offset="1" stop-color="#07307f"/></linearGradient>
+    <linearGradient id="facet2" x1="1" y1="0" x2="0" y2="1"><stop stop-color="#f1ffff"/><stop offset=".25" stop-color="#61dfff"/><stop offset=".72" stop-color="#0872da"/><stop offset="1" stop-color="#041d62"/></linearGradient>
+    <linearGradient id="facet3" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#031746"/><stop offset=".52" stop-color="#095bc8"/><stop offset="1" stop-color="#9cf8ff"/></linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="9"/></filter>
+  </defs>
+
+  <ellipse cx="183" cy="165" rx="152" ry="112" fill="url(#halo)"/>
+  <ellipse cx="181" cy="201" rx="145" ry="54" fill="none" stroke="#2cc9ff" stroke-opacity=".28" stroke-width="2" transform="rotate(-11 181 201)"/>
+  <ellipse cx="182" cy="203" rx="121" ry="39" fill="none" stroke="#8cf6ff" stroke-opacity=".18" stroke-width="1.5" transform="rotate(-11 182 203)"/>
+  <path d="M33 222 C92 257 250 270 331 185" fill="none" stroke="#1ebcff" stroke-opacity=".26" stroke-width="3" filter="url(#glow)"/>
+  <path d="M43 214 C108 244 245 246 318 177" fill="none" stroke="#c8fdff" stroke-opacity=".32" stroke-width="1.3"/>
+
+  <g filter="url(#glow)">
+    <polygon points="78,99 135,53 234,53 292,101 184,270" fill="#087fdc" stroke="#d8ffff" stroke-opacity=".78" stroke-width="2"/>
+    <polygon points="78,99 135,53 184,101" fill="url(#topA)"/>
+    <polygon points="135,53 234,53 184,101" fill="url(#topB)"/>
+    <polygon points="234,53 292,101 184,101" fill="#43c9ff"/>
+    <polygon points="78,99 184,101 121,157" fill="url(#facet1)"/>
+    <polygon points="78,99 121,157 184,270" fill="url(#facet3)"/>
+    <polygon points="121,157 184,101 184,270" fill="url(#facet2)"/>
+    <polygon points="184,101 292,101 245,158" fill="#157fdf"/>
+    <polygon points="184,101 245,158 184,270" fill="#0d52bc"/>
+    <polygon points="245,158 292,101 184,270" fill="#052a80"/>
+    <polygon points="135,53 121,157 184,101" fill="#a8fbff" fill-opacity=".45"/>
+    <polygon points="234,53 245,158 184,101" fill="#d9ffff" fill-opacity=".16"/>
+    <polyline points="78,99 184,101 292,101" fill="none" stroke="#e8ffff" stroke-opacity=".78" stroke-width="1.5"/>
+    <polyline points="135,53 184,101 234,53" fill="none" stroke="#f1ffff" stroke-opacity=".6" stroke-width="1.2"/>
+    <polyline points="121,157 184,101 245,158 184,270 121,157" fill="none" stroke="#8eecff" stroke-opacity=".48" stroke-width="1.2"/>
+  </g>
+
+  <g fill="#ecffff" filter="url(#glow)">
+    <circle cx="239" cy="87" r="4.8"/>
+    <circle cx="138" cy="70" r="2.7"/>
+    <circle cx="282" cy="171" r="2.8"/>
+    <circle cx="83" cy="173" r="2.4"/>
+    <circle cx="315" cy="115" r="1.8"/>
+  </g>
+  <g stroke="#eaffff" stroke-linecap="round" filter="url(#glow)">
+    <path d="M239 72v30M224 87h30" stroke-width="2.4"/>
+    <path d="M310 105v19M300 114h20" stroke-width="1.6"/>
+    <path d="M91 154v16M83 162h16" stroke-width="1.4"/>
+  </g>
+  <ellipse cx="184" cy="281" rx="102" ry="13" fill="#099cff" fill-opacity=".23" filter="url(#soft)"/>
+</svg>
