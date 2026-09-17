@@ -5,7 +5,7 @@
   'use strict';
 
   const root = document.documentElement;
-  const VERSION = 'unified-blue-r2-20260917';
+  const VERSION = 'unified-blue-r3-20260917';
   const WORLD = 'nightfall';
   let observersInstalled = false;
 
@@ -18,11 +18,10 @@
     const id = 'fs-unified-blue-css';
     let node = document.getElementById(id);
     /* world-theme.css intentionally puts its !important rules inside
-       @layer fs-world. Unlayered !important declarations lose to layered
-       important declarations, so import the unified sheet into the SAME
-       layer. Because this node is appended later, the unified rules win by
-       normal source order/specificity without touching business CSS. */
-    if (node && node.tagName !== 'STYLE') {
+       @layer fs-world. Import the unified sheets into that same layer, later
+       in source order, so presentation can override legacy Nightfall rules
+       without changing any business stylesheet or renderer. */
+    if (node && (node.tagName !== 'STYLE' || node.dataset.fsUnified !== VERSION)) {
       node.remove();
       node = null;
     }
@@ -30,7 +29,10 @@
       node = document.createElement('style');
       node.id = id;
       node.dataset.fsUnified = VERSION;
-      node.textContent = `@import url("./tiers/unified-blue.css?v=${VERSION}") layer(fs-world);`;
+      node.textContent = [
+        `@import url("./tiers/unified-blue.css?v=${VERSION}") layer(fs-world);`,
+        `@import url("./tiers/unified-blue-mobile-fix.css?v=${VERSION}") layer(fs-world);`
+      ].join('\n');
       document.head.appendChild(node);
     }
     return node;
