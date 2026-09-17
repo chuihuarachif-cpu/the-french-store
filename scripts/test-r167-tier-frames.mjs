@@ -11,6 +11,8 @@ const base = read('v2/tiers/tier-base.css');
 const unified = read('v2/tiers/unified-blue.css');
 const mobileFix = read('v2/tiers/unified-blue-mobile-fix.css');
 const reference = read('v2/tiers/unified-blue-reference-r4.css');
+const diamond = read('v2/tiers/unified-blue-diamond-r5.css');
+const diamondSvg = read('v2/assets/brand/unified-hero-diamond-r4.svg');
 const gate = read('v2/tiers/tier-gate.js');
 const world = read('v2/tiers/world-ui.js');
 const premiumRelease = read('v2/premium-release.js');
@@ -18,7 +20,7 @@ let checks = 0;
 const ok = (condition, message) => { assert.ok(condition, message); checks += 1; };
 
 const forbidden = ['service_role','GAMERHUB_API_KEY','GAMERHUB_API_SECRET','OPENAI_API_KEY','GEMINI_API_KEY'];
-for (const [name,text] of Object.entries({index,base,unified,mobileFix,reference,gate,world,premiumRelease})) {
+for (const [name,text] of Object.entries({index,base,unified,mobileFix,reference,diamond,diamondSvg,gate,world,premiumRelease})) {
   ok(text.length > 0, `${name} loaded`);
   for (const token of forbidden) ok(!text.includes(token), `${name} must not expose ${token}`);
 }
@@ -34,6 +36,7 @@ ok(index.includes('data-fs-interface="unified-blue"'), 'Unified interface marker
 ok(index.includes('world-ui.js?v=20260917-r4'), 'World UI must use the current cache-busting key');
 ok(index.includes('premium-release.js?v=20260917-unified-retired-r4'), 'Retired premium cleanup must use a fresh cache key');
 ok(index.includes('unified-blue-reference-r4.css?v=20260917-r4'), 'Reference-match stylesheet must load on first paint');
+ok(index.includes('unified-blue-diamond-r5.css?v=20260917-r5'), 'Transparent diamond override must load on first paint');
 ok(index.includes('id="fs-unified-blue-css"') && index.includes('data-fs-unified="unified-blue-r3-20260917"'), 'Static unified style must stay compatible with the runtime bootstrap');
 
 // One public visual system must exist and be responsive/accessibility aware.
@@ -47,9 +50,11 @@ ok(unified.includes(':focus-visible') || base.includes(':focus-visible'), 'Visib
 ok(unified.split('{').length === unified.split('}').length, 'Unified CSS braces are unbalanced');
 ok(mobileFix.split('{').length === mobileFix.split('}').length, 'Mobile fix CSS braces are unbalanced');
 ok(reference.split('{').length === reference.split('}').length, 'Reference-match CSS braces are unbalanced');
+ok(diamond.split('{').length === diamond.split('}').length, 'Diamond override CSS braces are unbalanced');
 ok(Buffer.byteLength(unified,'utf8') < 80000, 'Unified CSS exceeded presentation budget');
 ok(Buffer.byteLength(mobileFix,'utf8') < 30000, 'Mobile fix CSS exceeded hotfix budget');
 ok(Buffer.byteLength(reference,'utf8') < 30000, 'Reference-match CSS exceeded presentation budget');
+ok(Buffer.byteLength(diamond,'utf8') < 10000, 'Diamond override exceeded presentation budget');
 
 // Mobile screenshot regressions: forest frame and translated dock must stay gone.
 ok(mobileFix.includes('[data-fs-tier="base"] :is('), 'Mobile fix must match legacy Base selector specificity');
@@ -60,7 +65,8 @@ ok(mobileFix.includes('grid-template-columns:minmax(0,1.4fr) minmax(105px,.6fr)'
 ok(mobileFix.includes('.hero-copy') && mobileFix.includes('display:contents!important'), 'Mobile hero children must participate in the intended grid');
 
 // Final reference match: full account control, real blue diamond, four bright cards, clean home dock.
-ok(reference.includes('premium-pass-diamond-r206.webp'), 'Approved blue diamond asset must be rendered in the hero');
+ok(diamond.includes('unified-hero-diamond-r4.svg'), 'Transparent blue diamond asset must be rendered in the hero');
+ok(diamondSvg.includes('<polygon') && diamondSvg.includes('id="glow"') && diamondSvg.includes('<ellipse'), 'Diamond SVG must retain facets, glow and orbit details');
 ok(reference.includes('premium-header-r180.webp'), 'Approved clean header artwork must be used');
 ok(reference.includes('#authButton') && reference.includes('min-width:92px!important') && reference.includes('font-size:12px!important'), 'Mobile account control must preserve readable text');
 ok(reference.includes('content:"ID"') && reference.includes('content:"ACC"') && reference.includes('content:"TV"') && reference.includes('content:"GC"'), 'Reference category markers are incomplete');
@@ -99,6 +105,6 @@ ok(!premiumRelease.includes("document.createElement('link')"), 'Premium release 
 ok(premiumRelease.includes("'fs-tier-gold-css'") && premiumRelease.includes("'fs-tier-diamond-css'"), 'Cleanup must remove stale cached tier styles');
 
 // Decorative layers must never capture input.
-ok(!/::(?:before|after)[^{]*\{[^}]*pointer-events\s*:\s*auto/is.test(`${unified}\n${mobileFix}\n${reference}`), 'Decorative pseudo-elements must not capture input');
+ok(!/::(?:before|after)[^{]*\{[^}]*pointer-events\s*:\s*auto/is.test(`${unified}\n${mobileFix}\n${reference}\n${diamond}`), 'Decorative pseudo-elements must not capture input');
 
 console.log(`Unified blue storefront contract: ${checks}/${checks} checks passed.`);
