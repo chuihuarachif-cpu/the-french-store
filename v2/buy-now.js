@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'buy-now-v3-20260917';
+  const VERSION = 'buy-now-v4-20260917';
   let scheduled = false;
 
   function productIdFromAddButton(button) {
@@ -26,10 +26,10 @@
       .fs-buy-actions .add-btn{box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}
       .package-row .fs-buy-actions,.r6-package-actions .fs-buy-actions{justify-content:stretch}
       #catalogList .r6-package-card .r6-package-actions{width:100%!important;min-width:0!important;justify-items:stretch!important;flex:1 1 100%!important}
-      #catalogList .r6-package-card .fs-buy-actions{display:grid!important;grid-template-columns:1fr!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:7px!important}
-      #catalogList .r6-package-card .fs-buy-actions button{box-sizing:border-box;width:100%!important;max-width:100%!important;min-width:0!important;min-height:42px!important;padding:9px 7px!important;font-size:12px!important;line-height:1.2!important;white-space:normal!important;overflow-wrap:anywhere!important;text-align:center!important}
+      #catalogList .r6-package-card .fs-buy-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:7px!important}
+      #catalogList .r6-package-card .fs-buy-actions button{box-sizing:border-box;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:44px!important;padding:10px 9px!important;font-size:12px!important;line-height:1.2!important;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;hyphens:none!important;writing-mode:horizontal-tb!important;text-orientation:mixed!important;text-align:center!important}
       #cartModal.fs-buy-now-mode .modal-card{box-shadow:0 22px 70px rgba(0,0,0,.48),0 0 0 1px rgba(54,206,255,.16)}
-      @media(max-width:900px){#catalogList .r6-package-card{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}#catalogList .r6-package-card .r6-package-copy{min-width:0!important}#catalogList .r6-package-card .r6-package-actions{display:grid!important;grid-template-columns:1fr!important}}
+      @media(max-width:900px){#catalogList .r6-package-card{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}#catalogList .r6-package-card .r6-package-copy{min-width:0!important}#catalogList .r6-package-card .r6-package-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important}#catalogList .r6-package-card .fs-buy-actions button{writing-mode:horizontal-tb!important;word-break:normal!important;overflow-wrap:normal!important}}
       @media(max-width:560px){.fs-buy-actions{width:100%}.fs-buy-actions .add-btn,.fs-buy-actions .fs-buy-now{min-width:0;padding:10px 8px}}
     `;
     document.head.appendChild(style);
