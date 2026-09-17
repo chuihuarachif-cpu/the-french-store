@@ -3,6 +3,7 @@ name: Visual Tier Safety
 on:
   pull_request:
     paths:
+      - 'v2/index.html'
       - 'v2/tiers/**'
       - 'v2/premium-release.js'
       - 'scripts/test-r167-tier-frames.mjs'
@@ -10,6 +11,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'v2/index.html'
       - 'v2/tiers/**'
       - 'v2/premium-release.js'
       - 'scripts/test-r167-tier-frames.mjs'
@@ -37,6 +39,10 @@ jobs:
           grep -q 'unified-blue-r3-20260917' v2/tiers/world-ui.js
           grep -q 'unified-blue-mobile-fix.css' v2/tiers/world-ui.js
           grep -q 'layer(fs-world)' v2/tiers/world-ui.js
+          grep -q 'data-fs-interface="unified-blue"' v2/index.html
+          grep -q 'world-ui.js?v=20260917-r4' v2/index.html
+          grep -q 'premium-release.js?v=20260917-unified-retired-r4' v2/index.html
+          grep -q 'unified-blue-reference-r4.css?v=20260917-r4' v2/index.html
 
       - name: CSS structural and secret safety
         run: |
@@ -46,6 +52,7 @@ jobs:
               Path('v2/tiers/tier-base.css'),
               Path('v2/tiers/unified-blue.css'),
               Path('v2/tiers/unified-blue-mobile-fix.css'),
+              Path('v2/tiers/unified-blue-reference-r4.css'),
           ]
           forbidden = ['service_role', 'GAMERHUB_API_KEY', 'GAMERHUB_API_SECRET', 'OPENAI_API_KEY', 'GEMINI_API_KEY']
           for path in files:
@@ -53,7 +60,7 @@ jobs:
               assert text.count('{') == text.count('}'), f'Unbalanced CSS braces in {path}'
               found = [token for token in forbidden if token in text]
               assert not found, f'Forbidden secret-domain tokens in {path}: {found}'
-              budget = 30000 if path.name == 'unified-blue-mobile-fix.css' else 80000
+              budget = 30000 if path.name in ('unified-blue-mobile-fix.css','unified-blue-reference-r4.css') else 80000
               assert len(text.encode('utf-8')) < budget, f'{path} grew beyond the presentation budget'
           print('Unified CSS structure and secret checks OK')
           PY
