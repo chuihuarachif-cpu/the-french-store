@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r214-muted-cache-20260915';
+  const VERSION = 'r215-catalog-cache-20260917';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -125,7 +125,7 @@
     },
     catalog: async () => {
       await loadStyle('./weekly-pass-feature.css?v=20260825-r50', 'fs-weekly-pass-feature-css');
-      await loadScript('./catalog-order.js?v=20260825-r50', 'fs-catalog-order-js');
+      await loadScript('./catalog-order.js?v=20260917-r157', 'fs-catalog-order-js');
     },
     admin: async () => {
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');

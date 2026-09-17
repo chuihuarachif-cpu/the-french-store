@@ -55,7 +55,7 @@ jobs:
         run: |
           set -euo pipefail
           grep -Fq "weekly-pass-feature.css?v=20260825-r50" v2/bootstrap.js
-          grep -Fq "catalog-order.js?v=20260825-r50" v2/bootstrap.js
+          grep -Fq "catalog-order.js?v=20260917-r157" v2/bootstrap.js
           node scripts/test-bootstrap-release.mjs
 
       - name: Guard critical business boundaries

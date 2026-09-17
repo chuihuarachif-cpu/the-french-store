@@ -44,5 +44,5 @@ assert.equal((await request('/admin/app.js?v=missing')).type,'error','Offline JS
 assert.equal(await (await request('/admin/app.js?v=new')).text(),'asset');
 assert.match(await (await request('/admin/','GET','navigate')).text(),/shell/);
 online=true;cacheAvailable=false;assert.equal((await request('/admin/app.js')).status,200,'Unavailable Cache Storage cannot prevent a network read');
-let activation;handlers.activate({waitUntil:p=>{activation=p;}});await activation;assert.deepEqual(removed,['fs-admin-r92-20260826']);
+let activation;handlers.activate({waitUntil:p=>{activation=p;}});await activation;assert.deepEqual(removed,['fs-admin-r92-20260826','fs-admin-r154-20260907']);
 console.log('R154: USD null/error/freshness/coalescing, quote cents/races, read-only RPCs and SW network/cache/MIME/error isolation PASS');
