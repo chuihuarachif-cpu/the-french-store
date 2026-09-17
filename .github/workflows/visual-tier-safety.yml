@@ -6,6 +6,7 @@ on:
       - 'v2/index.html'
       - 'v2/tiers/**'
       - 'v2/assets/brand/unified-hero-diamond-r4.svg'
+      - 'v2/assets/world/wallet-blue-r8.svg'
       - 'v2/premium-release.js'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
@@ -15,6 +16,7 @@ on:
       - 'v2/index.html'
       - 'v2/tiers/**'
       - 'v2/assets/brand/unified-hero-diamond-r4.svg'
+      - 'v2/assets/world/wallet-blue-r8.svg'
       - 'v2/premium-release.js'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
@@ -45,7 +47,7 @@ jobs:
           grep -q 'world-ui.js?v=20260917-r4' v2/index.html
           grep -q 'premium-release.js?v=20260917-unified-retired-r4' v2/index.html
           grep -q 'unified-blue-reference-r4.css?v=20260917-r4' v2/index.html
-          grep -q 'unified-blue-diamond-r5.css?v=20260917-r7' v2/index.html
+          grep -q 'unified-blue-diamond-r5.css?v=20260917-r8' v2/index.html
 
       - name: CSS structural and secret safety
         run: |
