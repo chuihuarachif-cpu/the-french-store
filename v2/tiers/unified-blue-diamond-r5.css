@@ -3,6 +3,57 @@ html[data-fs-interface="unified-blue"] .fs-rank-premium-ribbon{
   display:none!important;
 }
 
+/* The old Base skin still ships for compatibility, but its bark/foliage frame
+   must never leak into the unified blue storefront. Match the legacy selectors
+   at equal-or-higher specificity and retire only those decorative layers. */
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] :is(
+  #view-tienda .catalog-heading,
+  #view-wallet .panel-head,
+  #view-pedidos .panel-head,
+  #view-perfil .profile-card
+)::before,
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] :is(
+  .compact-panel,
+  .topup-box,
+  .profile-card,
+  .record,
+  .official-socials
+)::after,
+html[data-fs-interface="unified-blue"][data-fs-tier="base"] #view-tienda #catalogList .r6-game-card::after{
+  content:none!important;
+  display:none!important;
+  border:0!important;
+  border-image:none!important;
+  background:none!important;
+  filter:none!important;
+  opacity:0!important;
+  animation:none!important;
+  pointer-events:none!important;
+}
+
+/* Wallet keeps the clean blue illustration from the approved reference instead
+   of the retired forest ornament. */
+html[data-fs-interface="unified-blue"] #view-wallet .balance-card::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  z-index:0!important;
+  inset:12px 14px 12px auto!important;
+  width:31%!important;
+  height:auto!important;
+  border:0!important;
+  border-image:none!important;
+  background:url('../assets/brand/premium-wallet-r180.webp') center/contain no-repeat!important;
+  opacity:.92!important;
+  filter:drop-shadow(0 8px 15px rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(65,211,255,.16))!important;
+  pointer-events:none!important;
+  animation:none!important;
+}
+html[data-fs-interface="unified-blue"] #view-wallet .balance-card>*{
+  position:relative!important;
+  z-index:1!important;
+}
+
 @media (max-width:620px){
   html[data-fs-interface="unified-blue"] #authButton::before{
     background:url('../assets/world/account-user-r5.svg') center/contain no-repeat!important;
