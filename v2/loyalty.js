@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'french-rank-pass-v3-20260823';
+  const VERSION = 'french-rank-pass-v4-20260918';
   const state = { summary: null, launch: null, loading: null, userId: null, revision: 0, mounted: false };
   const root = document.documentElement;
 
@@ -162,16 +162,14 @@
 
   function planBenefits(plan, isLaunched) {
     if (plan.code === 'DIAMANT_BLEU') return [
-      'Tema Diamond Rank e insignia premium desde ahora',
-      isLaunched ? 'x2 French Rewards en compras elegibles' : 'x2 French Rewards cuando el programa se lance',
-      isLaunched ? 'Bonus de miembro superior, limitado por margen seguro' : 'Bonus Diamond reservado para cuando Rewards esté activo',
-      '30 días · sin renovación automática'
+      'Máximas recompensas',
+      'Tema e insignia Diamond',
+      '30 días · sin auto-renovación'
     ];
     return [
-      'Tema Gold Rank e insignia dorada desde ahora',
-      isLaunched ? 'x1.5 French Rewards en compras elegibles' : 'x1.5 French Rewards cuando el programa se lance',
-      isLaunched ? 'Bonus de miembro, limitado por margen seguro' : 'Bonus Gold reservado para cuando Rewards esté activo',
-      '30 días · sin renovación automática'
+      'Más recompensas',
+      'Tema e insignia Gold',
+      '30 días · sin auto-renovación'
     ];
   }
 
@@ -179,16 +177,41 @@
     const same = activePass?.code === plan.code;
     const blockedByPass = !!activePass && !same;
     const benefits = planBenefits(plan, isLaunched).map((item) => `<li>${html(item)}</li>`).join('');
-    const action = same ? 'Renovar +30 días' : 'Activar con Wallet';
-    const label = blockedByPass ? 'Disponible al vencer tu rango actual' : action;
-    const reserve = !isLaunched ? '<span class="fs-pass-reserve">Rewards en reserva</span>' : '';
-    return `<article class="fs-pass-card fs-pass-${html(plan.theme)} ${same ? 'active' : ''}">
-      ${reserve}
-      <div class="fs-pass-title"><span>${plan.theme === 'diamond' ? '💎' : '🏆'}</span><div><b>${html(plan.name)}</b><small>${html(plan.subtitle)}</small></div></div>
-      <div class="fs-pass-price"><strong>${bob(plan.price_bob)}</strong><span>/ ${int(plan.duration_days)} días</span></div>
+    const passTitle = plan.code === 'DIAMANT_BLEU' ? 'DIAMOND PASS' : 'GOLD PASS';
+    const multiplier = plan.code === 'DIAMANT_BLEU' ? 'x2 Rewards' : 'x1.5 Rewards';
+    const icon = plan.code === 'DIAMANT_BLEU' ? '💎' : '👑';
+    const action = same ? 'Renovar +30 días' : 'Obtener';
+    const label = blockedByPass ? 'Disponible al vencer' : action;
+    return `<article class="fs-pass-card fs-pass-${html(plan.theme)} ${same ? 'active' : ''}" data-fs-pass-card="${html(plan.code)}">
+      <div class="fs-pass-title"><span aria-hidden="true">${icon}</span><div><b>${passTitle}</b><small>${multiplier}</small></div></div>
       <ul>${benefits}</ul>
-      <button class="${plan.theme === 'diamond' ? 'primary-btn' : 'secondary-btn'} full" data-fs-pass-buy="${html(plan.code)}" ${blockedByPass ? 'disabled' : ''}>${html(label)}</button>
+      <button type="button" class="fs-pass-toggle full" data-fs-pass-toggle="${html(plan.code)}" aria-expanded="false" ${blockedByPass ? 'disabled' : ''}>${html(label)}</button>
+      <div class="fs-pass-checkout" data-fs-pass-checkout="${html(plan.code)}" hidden>
+        <div class="fs-pass-price"><strong>${bob(plan.price_bob)}</strong><span>· ${int(plan.duration_days)} días</span></div>
+        <div class="fs-pass-payments">
+          <button type="button" class="secondary-btn full" data-fs-pass-buy="${html(plan.code)}">French Wallet</button>
+          <button type="button" class="primary-btn full" data-fs-pass-qr="${html(plan.code)}">Pagar con QR</button>
+        </div>
+        <small class="fs-pass-payment-note">Pago único · sin renovación automática</small>
+      </div>
     </article>`;
+  }
+
+  function togglePassCheckout(code, button) {
+    let opened = false;
+    document.querySelectorAll('[data-fs-pass-checkout]').forEach((panel) => {
+      const match = panel.dataset.fsPassCheckout === code;
+      if (match) {
+        const nextHidden = !panel.hidden;
+        panel.hidden = nextHidden;
+        opened = !nextHidden;
+      } else {
+        panel.hidden = true;
+      }
+    });
+    document.querySelectorAll('[data-fs-pass-toggle]').forEach((toggle) => {
+      toggle.setAttribute('aria-expanded', String(toggle === button && opened));
+    });
   }
 
   function recentRows(rows) {
@@ -291,7 +314,7 @@
       ${renderRankIntro()}
       <div class="fs-cercle-section">${passStatus}
         <div class="fs-pass-grid">${(s.plans || []).map((plan) => planCard(plan, active, isLaunched)).join('')}</div>
-        <p class="fs-loyalty-fine">El Rank Pass se paga con French Wallet, dura 30 días y nunca se renueva automáticamente. Gold y Diamond cambian visualmente tu cuenta desde el momento de activación. Los multiplicadores y bonus de puntos solo operan cuando French Rewards está activo. <a href="./loyalty-terms.html" target="_blank" rel="noopener noreferrer">Ver condiciones.</a></p>
+        <p class="fs-loyalty-fine">El Rank Pass puede pagarse con French Wallet o QR, dura 30 días y nunca se renueva automáticamente. Gold y Diamond cambian visualmente tu cuenta desde el momento de activación. Los multiplicadores y bonus de puntos solo operan cuando French Rewards está activo. <a href="./loyalty-terms.html" target="_blank" rel="noopener noreferrer">Ver condiciones.</a></p>
       </div>
       <div class="fs-rewards-divider"></div>
       <div class="fs-loyalty-head"><div><span class="eyebrow">FRENCH REWARDS</span><h3>${isLaunched ? 'Tus puntos y beneficios' : 'Próximo programa de beneficios'}</h3></div></div>
@@ -357,8 +380,13 @@
   }
 
   function onClick(event) {
-    const target = event.target.closest?.('[data-fs-pass-buy],[data-fs-redeem],[data-fs-loyalty-refresh]');
+    const target = event.target.closest?.('[data-fs-pass-toggle],[data-fs-pass-buy],[data-fs-redeem],[data-fs-loyalty-refresh]');
     if (!target) return;
+    if (target.dataset.fsPassToggle) {
+      event.preventDefault();
+      togglePassCheckout(target.dataset.fsPassToggle, target);
+      return;
+    }
     if (target.dataset.fsPassBuy) { purchasePass(target.dataset.fsPassBuy, target); return; }
     if (target.hasAttribute('data-fs-redeem')) { redeem(target); return; }
     if (target.hasAttribute('data-fs-loyalty-refresh')) fetchSummary(true);

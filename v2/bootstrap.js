@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r218-owner-classic-categories-20260918';
+  const VERSION = 'r219-rank-pass-qr-20260918';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -117,7 +117,7 @@
     },
     wallet: async () => {
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
-      await loadScript('./bisa-wallet.js', 'fs-bisa-wallet-js');
+      await loadScript('./bisa-wallet.js', 'fs-bisa-wallet-js', '20260918-r160');
     },
     orders: async () => {
       await ensureFeature('checkout');
@@ -143,7 +143,7 @@
     },
     loyalty: async () => {
       await loadStyle('./loyalty.css', 'fs-loyalty-css');
-      await loadScript('./loyalty.js', 'fs-loyalty-js', '20260906-r150');
+      await loadScript('./loyalty.js', 'fs-loyalty-js', '20260918-r160');
       await loadStyle('./rewarded-ads.css', 'fs-rewarded-ads-css');
       await loadScript('./rewarded-ads-ui.js?v=20260827-r108', 'fs-rewarded-ads-js');
       await loadStyle('./profile-cleanup.css?v=20260825-r49', 'fs-profile-cleanup-css');

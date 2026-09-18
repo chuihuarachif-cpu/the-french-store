@@ -11,6 +11,10 @@ on:
       - 'v2/rank-pass-premium.js'
       - 'v2/rank-pass-premium-ready.js'
       - 'v2/rank-pass-premium.css'
+      - 'v2/rank-pass-showcase.css'
+      - 'v2/bisa-wallet.js'
+      - 'v2/loyalty.js'
+      - 'docs/sql/20260918_rank_pass_qr_payment_intents.sql'
       - 'v2/rewarded-ads-ui.js'
       - 'v2/rewarded-ads.css'
       - 'v2/cpx-rewards-provider.js'
@@ -30,6 +34,10 @@ on:
       - 'v2/rank-pass-premium.js'
       - 'v2/rank-pass-premium-ready.js'
       - 'v2/rank-pass-premium.css'
+      - 'v2/rank-pass-showcase.css'
+      - 'v2/bisa-wallet.js'
+      - 'v2/loyalty.js'
+      - 'docs/sql/20260918_rank_pass_qr_payment_intents.sql'
       - 'v2/rewarded-ads-ui.js'
       - 'v2/rewarded-ads.css'
       - 'v2/cpx-rewards-provider.js'
@@ -60,6 +68,8 @@ jobs:
             v2/notifications.js \
             v2/rank-pass-premium.js \
             v2/rank-pass-premium-ready.js \
+            v2/bisa-wallet.js \
+            v2/loyalty.js \
             v2/rewarded-ads-ui.js \
             v2/cpx-rewards-provider.js; do
             test -s "$f"
@@ -75,13 +85,21 @@ jobs:
         run: |
           set -euo pipefail
           ! grep -REn 'SUPABASE_SERVICE_ROLE_KEY|service_role|CPX_APP_SECURITY_HASH|GAMERHUB_API|BISA.*PASSWORD' \
-            v2/notifications.js v2/rank-pass-premium.js v2/rank-pass-premium-ready.js \
+            v2/notifications.js v2/rank-pass-premium.js v2/rank-pass-premium-ready.js v2/bisa-wallet.js \
             v2/rewarded-ads-ui.js v2/cpx-rewards-provider.js
           grep -Fq 'id="checkoutWallet"' v2/index.html
           grep -Fq 'id="checkoutQR"' v2/index.html
           grep -Fq 'id="qrModal"' v2/index.html
           grep -Fq 'id="topupQrModal"' v2/index.html
           grep -Fq "https://api.frenchstorebo.com" v2/index.html
+          grep -Fq "request_loyalty_pass_qr" v2/rank-pass-premium.js
+          grep -Fq "finalize_loyalty_pass_qr" v2/rank-pass-premium.js
+          grep -Fq "fs:wallet-topup-status" v2/rank-pass-premium.js
+          grep -Fq "fs:wallet-topup-status" v2/bisa-wallet.js
+          ! grep -Fq "/bisa-sip/" v2/rank-pass-premium.js
+          grep -Fq "request_loyalty_pass_qr" docs/sql/20260918_rank_pass_qr_payment_intents.sql
+          grep -Fq "finalize_loyalty_pass_qr" docs/sql/20260918_rank_pass_qr_payment_intents.sql
+          grep -Fq "revoke all on table public.loyalty_pass_qr_intents from anon, authenticated" docs/sql/20260918_rank_pass_qr_payment_intents.sql
 
       - name: Guard voluntary third-party loading
         run: |
@@ -107,6 +125,10 @@ jobs:
           grep -Fq 'data-fs-membership="diamond"' v2/rank-pass-premium.css
           grep -Fq '@media(prefers-reduced-motion:reduce)' v2/rank-pass-premium.css
           grep -Fq 'Keep the FRENCH STORE brand cyan/blue' v2/rank-pass-premium.css
+          grep -Fq 'grid-template-columns:repeat(2,minmax(0,1fr))!important' v2/rank-pass-showcase.css
+          grep -Fq '.fs-pass-checkout[hidden]' v2/rank-pass-showcase.css
+          grep -Fq 'data-fs-pass-toggle' v2/loyalty.js
+          grep -Fq 'data-fs-pass-qr' v2/loyalty.js
           grep -Fq 'aria-modal' v2/notifications.js
           grep -Fq "event.key === 'Escape'" v2/notifications.js
 

@@ -1,175 +1,356 @@
-/* THE FRENCH STORE — R157 Rank Pass showcase.
-   Presentation only: stronger visual hierarchy for Gold and Diamond purchase cards.
-   The pass contract, Wallet purchase flow, prices, Rewards rules and membership data are unchanged. */
+/* FRENCH STORE — cyan Rank Pass showcase.
+   Presentation only. Prices and membership state remain backend-authoritative.
+   The payment controller decides Wallet vs QR after the customer opens a card. */
 
-/* A Rank Pass remains visually available while Rewards is in reserve. The previous
-   global prelaunch opacity made the purchasable pass itself look disabled. */
-.fs-pass-card.prelaunch{opacity:1}
+.fs-pass-card.prelaunch{opacity:1!important}
+
+.fs-pass-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  width:100%!important;
+  align-items:stretch!important;
+}
 
 .fs-pass-card.fs-pass-gold,
 .fs-pass-card.fs-pass-diamond{
   isolation:isolate;
-  min-height:100%;
-  padding:19px;
-  border-radius:22px;
-  box-shadow:0 18px 42px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,255,255,.08);
-  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+  box-sizing:border-box!important;
+  min-width:0!important;
+  min-height:100%!important;
+  padding:16px!important;
+  gap:11px!important;
+  border:1px solid rgba(93,232,255,.56)!important;
+  border-radius:20px!important;
+  background:
+    radial-gradient(circle at 86% 5%,rgba(83,226,255,.18),transparent 34%),
+    radial-gradient(circle at 6% 100%,rgba(23,134,190,.13),transparent 40%),
+    linear-gradient(145deg,rgba(7,42,59,.97),rgba(5,20,31,.99) 58%,rgba(8,29,43,.98))!important;
+  box-shadow:
+    0 16px 38px rgba(0,0,0,.25),
+    0 0 0 1px rgba(198,250,255,.035),
+    inset 0 1px 0 rgba(224,253,255,.09)!important;
+  overflow:hidden!important;
+}
+
+.fs-pass-card.fs-pass-diamond{
+  border-color:rgba(114,240,255,.72)!important;
+  background:
+    radial-gradient(circle at 88% 4%,rgba(121,240,255,.24),transparent 34%),
+    radial-gradient(circle at 8% 100%,rgba(49,129,255,.14),transparent 42%),
+    linear-gradient(145deg,rgba(6,52,70,.98),rgba(5,20,34,.99) 54%,rgba(11,34,55,.98))!important;
+  box-shadow:
+    0 18px 42px rgba(0,0,0,.27),
+    0 0 25px rgba(55,211,244,.08),
+    inset 0 1px 0 rgba(226,254,255,.11)!important;
 }
 
 .fs-pass-card.fs-pass-gold::before,
 .fs-pass-card.fs-pass-diamond::before{
-  inset:-1px;
-  opacity:1;
-  z-index:0;
-  transform:translate3d(-34%,0,0);
-  transition:transform .45s cubic-bezier(.2,.7,.2,1),opacity .2s ease;
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  opacity:1!important;
+  transform:none!important;
+  background:
+    linear-gradient(112deg,transparent 20%,rgba(219,253,255,.075) 39%,rgba(90,229,255,.035) 44%,transparent 58%)!important;
 }
 
 .fs-pass-card.fs-pass-gold::after,
 .fs-pass-card.fs-pass-diamond::after{
-  position:absolute;
-  top:12px;
-  right:13px;
-  z-index:1;
-  padding:4px 7px;
-  border-radius:999px;
-  font:700 8px Orbitron,sans-serif;
-  letter-spacing:.12em;
-  pointer-events:none;
+  content:none!important;
+  display:none!important;
 }
 
-/* GOLD — technological luxury, warmer and deeper than Base without becoming yellow-heavy. */
-.fs-pass-card.fs-pass-gold{
-  border:1px solid rgba(248,203,82,.72);
-  background:
-    radial-gradient(circle at 10% 4%,rgba(255,220,114,.18),transparent 34%),
-    radial-gradient(circle at 96% 92%,rgba(179,111,9,.12),transparent 38%),
-    linear-gradient(145deg,rgba(62,42,8,.95),rgba(13,25,35,.98) 58%,rgba(36,24,6,.95));
+.fs-pass-card.active{
+  border-color:rgba(158,249,255,.96)!important;
   box-shadow:
-    0 20px 46px rgba(0,0,0,.3),
-    0 0 0 1px rgba(255,217,111,.045),
-    0 0 28px rgba(208,147,22,.105),
-    inset 0 1px 0 rgba(255,239,181,.12);
-}
-.fs-pass-card.fs-pass-gold::before{
-  background:
-    linear-gradient(112deg,transparent 20%,rgba(255,237,170,.13) 39%,rgba(255,205,64,.07) 44%,transparent 59%),
-    linear-gradient(28deg,transparent 56%,rgba(255,213,83,.045) 57%,transparent 58%);
-}
-.fs-pass-card.fs-pass-gold::after{
-  content:"GOLD RANK";
-  color:#ffe6a0;
-  border:1px solid rgba(248,205,90,.5);
-  background:linear-gradient(135deg,rgba(128,87,9,.5),rgba(40,29,8,.74));
-  box-shadow:inset 0 1px 0 rgba(255,240,187,.09);
-}
-.fs-pass-gold .fs-pass-title>span{
-  width:46px;height:46px;display:grid;place-items:center;flex:0 0 46px;
-  border-radius:15px;border:1px solid rgba(250,209,101,.53);
-  background:linear-gradient(145deg,rgba(247,194,64,.2),rgba(61,40,5,.48));
-  box-shadow:0 8px 20px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,239,177,.12);
-  filter:drop-shadow(0 0 8px rgba(237,181,45,.24));
-}
-.fs-pass-gold .fs-pass-title b{color:#fff0bd;text-shadow:0 0 14px rgba(237,183,49,.14)}
-.fs-pass-gold .fs-pass-title small{color:#d4c39c}
-.fs-pass-gold .fs-pass-price strong{color:#ffe28a;font-size:1.52rem;text-shadow:0 0 15px rgba(238,177,35,.14)}
-.fs-pass-gold .fs-pass-price span{color:#c4b58d}
-.fs-pass-gold ul{color:#f0e6ca}
-.fs-pass-gold li::marker{color:#f5c959}
-.fs-pass-gold .fs-pass-reserve{
-  border-color:rgba(247,202,83,.4);background:rgba(86,58,8,.42);color:#ffe29a;
-}
-.fs-pass-gold .secondary-btn{
-  border-color:rgba(248,204,86,.58);
-  background:linear-gradient(135deg,rgba(215,154,31,.2),rgba(55,39,8,.55));
-  color:#ffe8a7;
-  box-shadow:inset 0 1px 0 rgba(255,236,171,.08),0 8px 18px rgba(0,0,0,.16);
+    0 0 0 1px rgba(218,254,255,.11),
+    0 0 30px rgba(55,214,245,.16),
+    0 18px 42px rgba(0,0,0,.28)!important;
 }
 
-/* DIAMOND — unmistakably above Gold: brighter crystal depth and cyan/ice reflections. */
-.fs-pass-card.fs-pass-diamond{
-  border:1px solid rgba(119,239,255,.84);
-  background:
-    radial-gradient(circle at 10% 2%,rgba(164,247,255,.24),transparent 32%),
-    radial-gradient(circle at 95% 92%,rgba(113,83,255,.16),transparent 40%),
-    linear-gradient(145deg,rgba(7,58,77,.98),rgba(5,20,35,.985) 54%,rgba(29,18,66,.95));
-  box-shadow:
-    0 22px 52px rgba(0,0,0,.32),
-    0 0 0 1px rgba(205,252,255,.08),
-    0 0 38px rgba(45,205,245,.18),
-    0 0 54px rgba(109,79,255,.055),
-    inset 0 1px 0 rgba(220,253,255,.16),
-    inset 0 0 34px rgba(72,220,255,.055);
-}
-.fs-pass-card.fs-pass-diamond::before{
-  background:
-    linear-gradient(111deg,transparent 18%,rgba(225,254,255,.18) 37%,rgba(118,237,255,.1) 43%,transparent 59%),
-    linear-gradient(31deg,transparent 48%,rgba(171,245,255,.075) 49%,transparent 50%),
-    linear-gradient(149deg,transparent 68%,rgba(168,127,255,.07) 69%,transparent 70%);
-}
-.fs-pass-card.fs-pass-diamond::after{
-  content:"DIAMOND RANK";
-  color:#d9fbff;
-  border:1px solid rgba(134,241,255,.68);
-  background:linear-gradient(135deg,rgba(27,151,187,.42),rgba(50,34,120,.46));
-  box-shadow:0 0 14px rgba(76,222,255,.13),inset 0 1px 0 rgba(230,254,255,.13);
-  text-shadow:0 0 9px rgba(121,239,255,.25);
-}
-.fs-pass-diamond .fs-pass-title>span{
-  width:50px;height:50px;display:grid;place-items:center;flex:0 0 50px;
-  border-radius:15px;border:1px solid rgba(153,246,255,.76);
-  background:
-    radial-gradient(circle at 30% 22%,rgba(222,254,255,.3),transparent 25%),
-    linear-gradient(145deg,rgba(76,224,255,.23),rgba(72,63,177,.22));
-  box-shadow:0 9px 24px rgba(0,0,0,.24),0 0 24px rgba(67,218,255,.2),inset 0 1px 0 rgba(229,254,255,.2);
-  filter:drop-shadow(0 0 10px rgba(78,224,255,.32));
-}
-.fs-pass-diamond .fs-pass-title b{color:#e2fcff;text-shadow:0 0 16px rgba(106,235,255,.27)}
-.fs-pass-diamond .fs-pass-title small{color:#b8dfe9}
-.fs-pass-diamond .fs-pass-price strong{color:#bdf7ff;font-size:1.58rem;text-shadow:0 0 18px rgba(81,225,255,.28)}
-.fs-pass-diamond .fs-pass-price span{color:#9ec7d4}
-.fs-pass-diamond ul{color:#e1f5f7}
-.fs-pass-diamond li::marker{color:#77eaff}
-.fs-pass-diamond .fs-pass-reserve{
-  border-color:rgba(122,236,255,.52);background:rgba(15,92,116,.38);color:#c9f8ff;
-  box-shadow:0 0 12px rgba(66,214,255,.08);
-}
-.fs-pass-diamond .primary-btn{
-  border-color:rgba(144,244,255,.68);
-  background:linear-gradient(135deg,#35cfe8,#78ebf6 53%,#9b86ff);
-  color:#05212c;
-  font-weight:800;
-  box-shadow:0 9px 24px rgba(36,190,224,.24),inset 0 1px 0 rgba(236,255,255,.4);
+.fs-pass-title,
+.fs-pass-card ul,
+.fs-pass-toggle,
+.fs-pass-checkout{
+  position:relative!important;
+  z-index:1!important;
 }
 
-.fs-pass-card.fs-pass-gold.active{
-  border-color:rgba(255,218,112,.9)!important;
-  box-shadow:0 0 0 1px rgba(255,232,159,.1),0 0 35px rgba(222,160,27,.16),0 20px 46px rgba(0,0,0,.3)!important;
+.fs-pass-title{
+  display:flex!important;
+  align-items:center!important;
+  gap:9px!important;
+  min-width:0!important;
 }
-.fs-pass-card.fs-pass-diamond.active{
-  border-color:rgba(162,247,255,.96)!important;
-  box-shadow:0 0 0 1px rgba(225,254,255,.12),0 0 48px rgba(55,211,247,.25),0 0 70px rgba(113,83,255,.07),0 22px 52px rgba(0,0,0,.32)!important;
+
+.fs-pass-title>span{
+  display:grid!important;
+  place-items:center!important;
+  flex:0 0 42px!important;
+  width:42px!important;
+  height:42px!important;
+  border:1px solid rgba(115,237,255,.48)!important;
+  border-radius:13px!important;
+  background:linear-gradient(145deg,rgba(65,216,245,.18),rgba(7,60,82,.38))!important;
+  box-shadow:inset 0 1px 0 rgba(231,255,255,.12),0 0 16px rgba(54,211,240,.09)!important;
+  font-size:25px!important;
+  line-height:1!important;
+  filter:drop-shadow(0 0 7px rgba(84,226,255,.24))!important;
 }
+
+.fs-pass-title>div{
+  display:grid!important;
+  gap:3px!important;
+  min-width:0!important;
+}
+
+.fs-pass-title b{
+  color:#effdff!important;
+  font:800 14px/1.06 'Orbitron','Exo 2',sans-serif!important;
+  letter-spacing:.01em!important;
+  text-shadow:0 0 13px rgba(80,225,255,.16)!important;
+  white-space:nowrap!important;
+}
+
+.fs-pass-title small{
+  color:#8fefff!important;
+  font-size:11px!important;
+  line-height:1.15!important;
+  font-weight:700!important;
+  white-space:nowrap!important;
+}
+
+.fs-pass-card ul{
+  list-style:none!important;
+  display:grid!important;
+  gap:7px!important;
+  margin:0!important;
+  padding:0!important;
+  color:#d9edf3!important;
+  font-size:11.5px!important;
+  line-height:1.28!important;
+}
+
+.fs-pass-card li{
+  position:relative!important;
+  min-width:0!important;
+  padding-left:20px!important;
+}
+
+.fs-pass-card li::before{
+  content:"✓"!important;
+  position:absolute!important;
+  left:0!important;
+  top:.02em!important;
+  display:grid!important;
+  place-items:center!important;
+  width:14px!important;
+  height:14px!important;
+  border:1px solid rgba(109,234,255,.65)!important;
+  border-radius:50%!important;
+  color:#8ff4ff!important;
+  font-size:9px!important;
+  font-weight:900!important;
+  line-height:1!important;
+}
+
+.fs-pass-toggle{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:42px!important;
+  margin-top:auto!important;
+  padding:9px 8px!important;
+  border:1px solid rgba(129,241,255,.72)!important;
+  border-radius:12px!important;
+  background:linear-gradient(180deg,#66e9f5,#27bed8)!important;
+  color:#05212c!important;
+  box-shadow:0 8px 20px rgba(24,184,214,.16),inset 0 1px 0 rgba(240,255,255,.44)!important;
+  font:800 12px/1.12 'Exo 2',system-ui,sans-serif!important;
+  text-align:center!important;
+  cursor:pointer!important;
+}
+
+.fs-pass-toggle:disabled{
+  opacity:.5!important;
+  cursor:not-allowed!important;
+  background:#123344!important;
+  color:#8faeb9!important;
+  border-color:#28576a!important;
+  box-shadow:none!important;
+}
+
+.fs-pass-checkout{
+  display:grid!important;
+  gap:8px!important;
+  padding-top:10px!important;
+  border-top:1px solid rgba(103,224,250,.18)!important;
+}
+
+.fs-pass-checkout[hidden]{
+  display:none!important;
+}
+
+.fs-pass-checkout .fs-pass-price{
+  display:flex!important;
+  align-items:baseline!important;
+  justify-content:center!important;
+  gap:5px!important;
+  min-width:0!important;
+}
+
+.fs-pass-checkout .fs-pass-price strong{
+  color:#baf8ff!important;
+  font:800 17px/1 'Orbitron','Exo 2',sans-serif!important;
+  text-shadow:0 0 13px rgba(73,222,248,.2)!important;
+  white-space:nowrap!important;
+}
+
+.fs-pass-checkout .fs-pass-price span{
+  color:#91adba!important;
+  font-size:9.5px!important;
+  white-space:nowrap!important;
+}
+
+.fs-pass-payments{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:7px!important;
+  min-width:0!important;
+}
+
+.fs-pass-payments button{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:38px!important;
+  padding:8px 6px!important;
+  border-radius:10px!important;
+  font-size:10.5px!important;
+  line-height:1.1!important;
+  font-weight:800!important;
+  white-space:normal!important;
+}
+
+.fs-pass-payments .secondary-btn{
+  border-color:rgba(78,194,226,.47)!important;
+  background:#0a2b3b!important;
+  color:#d9f9ff!important;
+  box-shadow:none!important;
+}
+
+.fs-pass-payments .primary-btn{
+  border-color:rgba(142,244,255,.72)!important;
+  background:linear-gradient(180deg,#6beaf6,#28bed8)!important;
+  color:#05212c!important;
+  box-shadow:0 7px 18px rgba(29,185,214,.14)!important;
+}
+
+.fs-pass-payment-note{
+  color:#809daa!important;
+  font-size:8.5px!important;
+  line-height:1.3!important;
+  text-align:center!important;
+}
+
+.fs-pass-reserve{display:none!important}
 
 @media(hover:hover) and (pointer:fine){
-  .fs-pass-card.fs-pass-gold:hover,.fs-pass-card.fs-pass-gold:focus-within{transform:translate3d(0,-3px,0);border-color:rgba(255,220,116,.92);box-shadow:0 24px 54px rgba(0,0,0,.34),0 0 34px rgba(214,151,23,.15),inset 0 1px 0 rgba(255,244,204,.14)}
-  .fs-pass-card.fs-pass-diamond:hover,.fs-pass-card.fs-pass-diamond:focus-within{transform:translate3d(0,-4px,0);border-color:rgba(170,249,255,1);box-shadow:0 26px 60px rgba(0,0,0,.36),0 0 48px rgba(48,211,248,.25),0 0 64px rgba(118,85,255,.08),inset 0 1px 0 rgba(235,255,255,.19)}
-  .fs-pass-card.fs-pass-gold:hover::before,.fs-pass-card.fs-pass-gold:focus-within::before,.fs-pass-card.fs-pass-diamond:hover::before,.fs-pass-card.fs-pass-diamond:focus-within::before{transform:translate3d(24%,0,0)}
+  .fs-pass-card.fs-pass-gold:hover,
+  .fs-pass-card.fs-pass-diamond:hover,
+  .fs-pass-card.fs-pass-gold:focus-within,
+  .fs-pass-card.fs-pass-diamond:focus-within{
+    transform:translate3d(0,-2px,0)!important;
+    border-color:rgba(150,247,255,.9)!important;
+    box-shadow:0 22px 48px rgba(0,0,0,.3),0 0 28px rgba(50,209,239,.12)!important;
+  }
 }
 
 @media(max-width:700px){
-  .fs-pass-card.fs-pass-gold,.fs-pass-card.fs-pass-diamond{padding:17px;border-radius:20px}
-  .fs-pass-card.fs-pass-gold::after,.fs-pass-card.fs-pass-diamond::after{top:10px;right:10px;font-size:7px;padding:3px 6px}
-  .fs-pass-gold .fs-pass-title>span{width:42px;height:42px;flex-basis:42px}
-  .fs-pass-diamond .fs-pass-title>span{width:44px;height:44px;flex-basis:44px}
-  .fs-pass-gold .fs-pass-price strong,.fs-pass-diamond .fs-pass-price strong{font-size:1.42rem}
+  .fs-pass-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+  .fs-pass-card.fs-pass-gold,
+  .fs-pass-card.fs-pass-diamond{
+    padding:12px 10px!important;
+    gap:9px!important;
+    border-radius:16px!important;
+  }
+  .fs-pass-title{
+    align-items:center!important;
+    gap:6px!important;
+  }
+  .fs-pass-title>span{
+    flex-basis:31px!important;
+    width:31px!important;
+    height:31px!important;
+    border-radius:10px!important;
+    font-size:19px!important;
+  }
+  .fs-pass-title b{
+    font-size:10.5px!important;
+  }
+  .fs-pass-title small{
+    font-size:9px!important;
+  }
+  .fs-pass-card ul{
+    gap:5px!important;
+    font-size:9px!important;
+    line-height:1.22!important;
+  }
+  .fs-pass-card li{
+    padding-left:16px!important;
+  }
+  .fs-pass-card li::before{
+    width:12px!important;
+    height:12px!important;
+    font-size:8px!important;
+  }
+  .fs-pass-toggle{
+    min-height:39px!important;
+    padding:8px 5px!important;
+    font-size:10px!important;
+  }
+  .fs-pass-checkout{
+    gap:7px!important;
+    padding-top:8px!important;
+  }
+  .fs-pass-checkout .fs-pass-price strong{
+    font-size:13px!important;
+  }
+  .fs-pass-checkout .fs-pass-price span{
+    font-size:8px!important;
+  }
+  .fs-pass-payments button{
+    min-height:36px!important;
+    font-size:9px!important;
+    padding:7px 4px!important;
+  }
+  .fs-pass-payment-note{
+    font-size:7.5px!important;
+  }
 }
 
-@media(max-width:420px){
-  .fs-pass-card.fs-pass-gold,.fs-pass-card.fs-pass-diamond{padding:15px}
-  .fs-pass-card.fs-pass-gold::after,.fs-pass-card.fs-pass-diamond::after{top:9px;right:9px;max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:360px){
+  .fs-pass-grid{gap:6px!important}
+  .fs-pass-card.fs-pass-gold,
+  .fs-pass-card.fs-pass-diamond{padding:10px 8px!important}
+  .fs-pass-title>span{flex-basis:28px!important;width:28px!important;height:28px!important;font-size:17px!important}
+  .fs-pass-title b{font-size:9.5px!important}
+  .fs-pass-title small{font-size:8px!important}
+  .fs-pass-card ul{font-size:8.5px!important}
+  .fs-pass-toggle{font-size:9px!important}
 }
 
 @media(prefers-reduced-motion:reduce){
-  .fs-pass-card.fs-pass-gold,.fs-pass-card.fs-pass-diamond,.fs-pass-card.fs-pass-gold::before,.fs-pass-card.fs-pass-diamond::before{transition:none!important;transform:none!important}
+  .fs-pass-card.fs-pass-gold,
+  .fs-pass-card.fs-pass-diamond{
+    transition:none!important;
+    transform:none!important;
+  }
 }

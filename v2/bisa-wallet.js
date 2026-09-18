@@ -10,6 +10,7 @@
   const MAX_POLL_ATTEMPTS = 24;
 
   let currentTopupId = null;
+  let currentTopupContext = null;
   let topupTimer = null;
   let topupAttempts = 0;
   let checking = false;
@@ -72,6 +73,18 @@
     return 'No se pudo completar la operación de pago en este momento. Intenta nuevamente.';
   }
 
+  function publishTopupStatus(data, credited) {
+    document.dispatchEvent(new CustomEvent('fs:wallet-topup-status', {
+      detail: {
+        requestId: data?.request_id || currentTopupId || null,
+        credited: credited === true,
+        requestStatus: String(data?.request_status || data?.status || '').toUpperCase(),
+        amount: Number(data?.amount || 0),
+        context: currentTopupContext
+      }
+    }));
+  }
+
   function ensureTopupUi() {
     const modal = $('topupQrModal');
     if (!modal) return null;
@@ -120,18 +133,26 @@
     currentTopupId = data?.request_id || currentTopupId;
     const credited = data?.credited === true || String(data?.request_status || '').toUpperCase() === 'APPROVED';
     const amount = Number(data?.amount || 0);
+    const rankPass = currentTopupContext?.kind === 'rank-pass';
 
-    $('topupQrAmount').textContent = `Carga de ${money(amount)}`;
+    $('topupQrAmount').textContent = rankPass
+      ? `${currentTopupContext.planName || 'Rank Pass'} · ${money(amount)}`
+      : `Carga de ${money(amount)}`;
     $('topupQrReference').textContent = `Solicitud: ${data?.payment_reference || '—'}`;
 
     if (credited) {
       ui.state.className = 'payment-state paid';
-      ui.state.textContent = '✓ Saldo acreditado automáticamente';
+      ui.state.textContent = rankPass ? '✓ Pago QR confirmado' : '✓ Saldo acreditado automáticamente';
       ui.box.classList.add('payment-complete-box');
-      ui.box.innerHTML = '<div class="payment-checkmark" aria-hidden="true">✓</div><b class="payment-complete-title">WALLET ACREDITADA</b>';
-      ui.meta.textContent = `${money(amount)} ya está disponible en tu French Wallet.`;
+      ui.box.innerHTML = rankPass
+        ? '<div class="payment-checkmark" aria-hidden="true">✓</div><b class="payment-complete-title">PAGO QR CONFIRMADO</b>'
+        : '<div class="payment-checkmark" aria-hidden="true">✓</div><b class="payment-complete-title">WALLET ACREDITADA</b>';
+      ui.meta.textContent = rankPass
+        ? 'El monto ya fue acreditado a French Wallet. Activando tu Rank Pass…'
+        : `${money(amount)} ya está disponible en tu French Wallet.`;
       ui.cancel.classList.add('hidden');
       stopTopupPolling();
+      publishTopupStatus(data, true);
       loadWallet().catch(() => {});
       return;
     }
@@ -149,7 +170,8 @@
     ui.state.className = 'payment-state pending';
     ui.state.textContent = status === 'CALLBACK_RECEIVED' ? 'Pago recibido · acreditando Wallet…' : 'Pendiente de pago';
     const expiry = data?.expires_at ? ` · Vence: ${dateFmt(data.expires_at)}` : '';
-    ui.meta.textContent = `${data?.alias ? `Referencia: ${data.alias}` : 'QR de carga'}${expiry}`;
+    ui.meta.textContent = `${data?.alias ? `Referencia: ${data.alias}` : (rankPass ? 'QR de Rank Pass' : 'QR de carga')}${expiry}`;
+    publishTopupStatus(data, false);
   }
 
   function setTopupError(message) {
@@ -190,15 +212,22 @@
     const requestId = data?.request_id || data?.id;
     if (!requestId) return;
     currentTopupId = requestId;
+    currentTopupContext = data?.fsContext === 'rank-pass'
+      ? { kind: 'rank-pass', planName: data?.fsPlanName || 'Rank Pass', planCode: data?.fsPlanCode || null }
+      : null;
     lastTopupRequest = { ...(lastTopupRequest || {}), ...data, request_id: requestId };
     const ui = ensureTopupUi();
     if (!ui) return;
 
-    $('topupQrAmount').textContent = data?.amount != null ? `Carga de ${money(data.amount)}` : 'Preparando carga';
+    $('topupQrAmount').textContent = currentTopupContext
+      ? `${currentTopupContext.planName} · ${money(data?.amount || 0)}`
+      : (data?.amount != null ? `Carga de ${money(data.amount)}` : 'Preparando carga');
     $('topupQrReference').textContent = `Solicitud: ${data?.payment_reference || '—'}`;
     ui.state.className = 'payment-state pending';
     ui.state.textContent = 'Generando QR…';
-    ui.meta.textContent = 'Espera unos segundos. El monto se obtiene directamente de tu solicitud de Wallet.';
+    ui.meta.textContent = currentTopupContext
+      ? 'Espera unos segundos. Este QR corresponde exactamente al precio de tu Rank Pass.'
+      : 'Espera unos segundos. El monto se obtiene directamente de tu solicitud de Wallet.';
     ui.img.removeAttribute('src');
     ui.cancel.classList.remove('hidden');
     openModal('topupQrModal');

@@ -8,6 +8,7 @@ const notify = read('v2/notifications.js');
 const premium = read('v2/rank-pass-premium.js');
 const ready = read('v2/rank-pass-premium-ready.js');
 const premiumCss = read('v2/rank-pass-premium.css');
+const bisaWallet = read('v2/bisa-wallet.js');
 const rewardsUi = read('v2/rewarded-ads-ui.js');
 const rewardsCss = read('v2/rewarded-ads.css');
 const cpx = read('v2/cpx-rewards-provider.js');
@@ -17,6 +18,7 @@ const isolatedJs = [
   'v2/notifications.js',
   'v2/rank-pass-premium.js',
   'v2/rank-pass-premium-ready.js',
+  'v2/bisa-wallet.js',
   'v2/rewarded-ads-ui.js',
   'v2/cpx-rewards-provider.js'
 ];
@@ -55,8 +57,16 @@ assert.equal(notify.includes('aria-modal'), true);
 assert.equal(notify.includes("event.key === 'Escape'"), true);
 assert.equal(premium.includes('window.FSNotify.confirm'), true);
 assert.equal(premium.includes('purchase_my_loyalty_pass'), true);
+assert.equal(premium.includes('request_loyalty_pass_qr'), true);
+assert.equal(premium.includes('finalize_loyalty_pass_qr'), true);
+assert.equal(premium.includes('fs:wallet-topup-status'), true);
+assert.equal(premium.includes('data-fs-pass-qr'), true);
 assert.equal(premium.includes('upgrade_my_loyalty_pass'), true);
 assert.equal(premium.includes('redeem_my_rewards'), true);
+assert.equal(premium.includes('/bisa-sip/'), false, 'Rank Pass controller must reuse the Wallet QR bridge instead of calling bank endpoints directly');
+assert.equal(bisaWallet.includes('fs:wallet-topup-status'), true);
+assert.equal(bisaWallet.includes("fsContext === 'rank-pass'"), true);
+assert.equal(bisaWallet.includes('PAGO QR CONFIRMADO'), true);
 assert.equal(premium.includes('window.alert('), false);
 assert.equal(premium.includes('window.confirm('), false);
 assert.equal(premium.includes('event.stopImmediatePropagation()'), true);
