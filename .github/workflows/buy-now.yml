@@ -40,7 +40,11 @@ jobs:
           grep -Fq "writing-mode:horizontal-tb!important" v2/buy-now.js
           grep -Fq "word-break:normal!important" v2/buy-now.js
           grep -Fq "overflow-wrap:normal!important" v2/buy-now.js
-          grep -Fq "./buy-now.js?v=20260917-r4" v2/index.html
+          grep -Fq "fs-buy-actions-contained" v2/buy-now.js
+          grep -Fq "legacyActions.insertAdjacentElement('afterend', actions)" v2/buy-now.js
+          grep -Fq "grid-column:1/-1!important" v2/buy-now.js
+          grep -Fq "overflow:hidden!important" v2/buy-now.js
+          grep -Fq "./buy-now.js?v=20260917-r5" v2/index.html
           ! grep -Eqi "service_role|SUPABASE_SERVICE|GAMERHUB|BONOXS|GAMETON|create_qr_order|create_wallet_order" v2/buy-now.js
       - name: Existing checkout boundaries still present
         run: |
