@@ -19,9 +19,9 @@
   <meta http-equiv="Expires" content="0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://jivaaripugjdpxjvjnsu.supabase.co wss://jivaaripugjdpxjvjnsu.supabase.co https://api.frenchstorebo.com; frame-src 'self' https://offers.cpx-research.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <link rel="canonical" href="https://frenchstorebo.com/v2/">
-    <link rel="icon" type="image/png" sizes="192x192" href="./assets/brand/icon-192.png?v=20260918-r223">
-  <link rel="apple-touch-icon" href="./assets/brand/icon-192.png?v=20260918-r223">
-  <link rel="manifest" href="./manifest.webmanifest?v=20260918-r224">
+    <link rel="icon" type="image/png" sizes="192x192" href="/v2/assets/brand/icon-192.png?v=20260918-r225">
+  <link rel="apple-touch-icon" href="/v2/assets/brand/icon-192.png?v=20260918-r225">
+  <link rel="manifest" href="/v2/manifest.webmanifest?v=20260918-r225">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_BO">
   <meta property="og:site_name" content="FRENCH STORE">
@@ -52,7 +52,7 @@
   <link rel="stylesheet" href="./rank-pass-premium.css?v=20260918-r160">
   <link rel="stylesheet" href="./cpx-rewards.css?v=20260825-r47">
   <link rel="stylesheet" href="./tiers/tier-base.css?v=20260911-r160">
-  <link rel="stylesheet" href="./tiers/owner-classic-r7.css?v=owner-classic-r7-v5-20260918">
+  <link rel="stylesheet" href="./tiers/owner-classic-r7.css?v=owner-classic-r7-v6-20260918">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -117,30 +117,30 @@
   </footer>
 
   <nav class="bottom-nav" aria-label="Navegación principal"><button class="active" data-nav="inicio"><span>⌂</span>Inicio</button><button data-nav="tienda"><span>▦</span>Tienda</button><button data-nav="wallet"><span>▣</span>Wallet</button><button data-nav="pedidos"><span>☷</span>Pedidos</button><button data-nav="perfil"><span>●</span>Perfil</button></nav>
-  <button id="floatingWhatsapp" class="floating-whatsapp" aria-label="WhatsApp">💬</button>
+  <button id="floatingWhatsapp" class="floating-whatsapp" aria-label="Abrir WhatsApp de FRENCH STORE"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" focusable="false"><path d="M12 2a9.8 9.8 0 0 0-8.4 14.9L2 22l5.2-1.5A9.9 9.9 0 1 0 12 2Zm0 17.8a7.8 7.8 0 0 1-4-1.1l-.3-.2-3 .9.9-2.9-.2-.3A7.8 7.8 0 1 1 12 19.8Zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5l-.7-1.7c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4-.2.2-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3 4.8 4.2 1.8.8 2.5.8 3.4.7 1-.2 1.4-.6 1.6-1.2.2-.6.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z"/></svg></button>
 
   <div id="cuentaModal" class="modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" aria-label="Cerrar diálogo" data-close="cuentaModal">×</button><span class="eyebrow">FRENCH STORE</span><h2 id="cuentaModalTitle">Cuenta en venta</h2><div id="cuentaModalBody"></div></div></div>
 
   <div id="authModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" aria-label="Cerrar diálogo" data-close="authModal">×</button><span class="eyebrow">FRENCH STORE</span><h2>Iniciar sesión</h2><p>Continúa con Google para acceder a FRENCH STORE.</p><!-- R160: campos de correo y contraseña retirados. El ingreso público es solo Google. --><label class="legal-check hidden"><input id="legalAccept" type="checkbox"><span>He leído y acepto los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.</span></label><button id="loginSubmit" class="primary-btn full hidden">Entrar</button><div id="loginMessage" class="notice hidden"></div></div></div>
 
-  <div id="cartModal" class="modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" aria-label="Cerrar diálogo" data-close="cartModal">×</button><span class="eyebrow">TU COMPRA</span><h2>Carrito</h2><div id="cartItems" class="record-list"></div><div class="cart-total"><span>Total del carrito</span><strong id="cartTotal">Bs 0,00</strong></div><p class="security-note">El total definitivo se valida de forma segura al crear el pedido.</p><p class="security-note">Antes de pagar, revisa producto, cantidad y datos del juego. Los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a> se aceptan al crear la cuenta o al continuar mediante un proveedor de autenticación habilitado.</p><div class="checkout-grid"><button id="checkoutWallet" class="primary-btn">Pagar con Wallet</button><button id="checkoutQR" class="secondary-btn">Pagar con QR</button></div><p id="checkoutProgress" class="security-note hidden" role="status"></p><div id="checkoutResult" class="notice hidden" role="alert"></div></div></div>
+  <div id="cartModal" class="modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" aria-label="Cerrar diálogo" data-close="cartModal">×</button><span class="eyebrow">TU COMPRA</span><h2>Carrito</h2><div id="cartItems" class="record-list"></div><div class="cart-total"><span>Total del carrito</span><strong id="cartTotal">Bs 0,00</strong></div><p class="security-note">El total definitivo se valida de forma segura al crear el pedido.</p><p class="security-note">Antes de pagar, revisa producto, cantidad y datos del juego. Los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a> se aceptan al crear la cuenta o al continuar mediante un proveedor de autenticación habilitado.</p><p class="security-note fs-delivery-delay"><b>⏱️ Importante:</b> algunas recargas y entregas pueden tardar algunos minutos. Si no respondemos de inmediato, tu pedido queda registrado y será atendido lo antes posible.</p><div class="checkout-grid"><button id="checkoutWallet" class="primary-btn">Pagar con Wallet</button><button id="checkoutQR" class="secondary-btn">Pagar con QR</button></div><p id="checkoutProgress" class="security-note hidden" role="status"></p><div id="checkoutResult" class="notice hidden" role="alert"></div></div></div>
 
-  <div id="qrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" aria-label="Cerrar diálogo" data-close="qrModal">×</button><span class="eyebrow">PAGO QR</span><h2 id="qrOrderCode">Pedido</h2><p id="qrOrderTotal"></p><div class="qr-box"><img alt="QR de pago del pedido" loading="eager" decoding="async"></div><p class="security-note">QR individual de pago. Verifica el monto exacto en tu banca antes de pagar.</p><button id="qrWhatsapp" class="secondary-btn full">Verificar pago</button></div></div>
+  <div id="qrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" aria-label="Cerrar diálogo" data-close="qrModal">×</button><span class="eyebrow">PAGO QR</span><h2 id="qrOrderCode">Pedido</h2><p id="qrOrderTotal"></p><div class="qr-box"><img alt="QR de pago del pedido" loading="eager" decoding="async"></div><p class="security-note">QR individual de pago. Verifica el monto exacto en tu banca antes de pagar.</p><p class="security-note fs-delivery-delay"><b>⏱️ Importante:</b> algunas recargas y entregas pueden tardar algunos minutos. Si no respondemos de inmediato, tu pedido queda registrado y será atendido lo antes posible.</p><button id="qrWhatsapp" class="secondary-btn full">Verificar pago</button></div></div>
 
   <div id="topupQrModal" class="modal" aria-hidden="true"><div class="modal-card small-modal"><button class="modal-close" aria-label="Cerrar diálogo" data-close="topupQrModal">×</button><span class="eyebrow">CARGA FRENCH WALLET</span><h2 id="topupQrAmount">Preparando carga</h2><div id="topupQrReference" class="notice success"></div><div class="qr-box"><img alt="QR de carga para French Wallet" loading="eager" decoding="async"></div><p class="security-note">Escanea el QR individual y verifica el monto exacto antes de pagar.</p><p class="security-note"><b>La acreditación es automática.</b> Cuando el pago sea confirmado, el saldo aparecerá en French Wallet sin que tengas que avisar por WhatsApp.</p><p class="security-note">Si todavía no pagaste, puedes cancelar la solicitud. <b>No la canceles mientras tu banca esté procesando el pago.</b></p><div class="checkout-grid"><button class="secondary-btn" data-close="topupQrModal">Cerrar</button><button id="cancelTopupRequest" class="danger-btn">Cancelar solicitud</button></div></div></div>
 
   <script src="./notifications.js?v=20260825-r47" defer></script>
   <script src="./bootstrap.js?v=20260918-r222" defer></script>
-    <script src="./rank-pass-premium.js?v=20260918-r160" defer></script>
+    <script src="./rank-pass-premium.js?v=20260918-r225" defer></script>
   <script src="./rank-pass-premium-ready.js?v=20260918-r160" defer></script>
   <script src="./cpx-rewards-provider.js?v=20260827-r101" defer></script>
   <script src="./auth-google.js?v=20260825-r55" defer></script>
   <script src="./legal-account.js?v=20260824-r44" defer></script>
   <script src="./player-verify.js?v=20260917-r5" defer></script>
   <script src="./buy-now.js?v=20260917-r5" defer></script>
-  <script src="./brand-ui.js?v=20260823-1" defer></script>
-  <script src="./pwa-init.js?v=20260918-r224" defer></script>
-  <script src="./pwa-install-ui.js?v=20260918-r224" defer></script>
+  <script src="./brand-ui.js?v=20260918-r225" defer></script>
+  <script src="/v2/pwa-init.js?v=20260918-r225" defer></script>
+  <script src="/v2/pwa-install-ui.js?v=20260918-r225" defer></script>
   <script src="./navigation-history.js?v=20260823-1" defer></script>
 </body>
 </html>

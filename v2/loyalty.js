@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'french-rank-pass-v4-20260918';
+  const VERSION = 'french-rank-pass-v5-20260918';
   const state = { summary: null, launch: null, loading: null, userId: null, revision: 0, mounted: false };
   const root = document.documentElement;
 
@@ -163,12 +163,10 @@
   function planBenefits(plan, isLaunched) {
     if (plan.code === 'DIAMANT_BLEU') return [
       'Máximas recompensas',
-      'Tema e insignia Diamond',
       '30 días · sin auto-renovación'
     ];
     return [
       'Más recompensas',
-      'Tema e insignia Gold',
       '30 días · sin auto-renovación'
     ];
   }
@@ -264,8 +262,8 @@
     return `<section class="fs-rank-intro">
       <div class="fs-rank-intro-icon">🎮</div>
       <div><span class="eyebrow">¿QUÉ ES FRENCH RANK PASS?</span><h3>Tu rango gamer dentro de FRENCH STORE</h3>
-      <p>Es una membresía opcional de 30 días pagada con French Wallet. Activa de inmediato un estilo exclusivo en tu cuenta y, cuando French Rewards esté disponible, el rango vigente aplica automáticamente su multiplicador y bonus.</p>
-      <div class="fs-rank-pills"><span>✓ Sin renovación automática</span><span>✓ Tema exclusivo inmediato</span><span>✓ Rewards limitado por margen</span></div>
+      <p>Es una membresía opcional de 30 días. Cuando French Rewards esté disponible, el rango vigente aplica automáticamente su multiplicador y bonus.</p>
+      <div class="fs-rank-pills"><span>✓ Sin renovación automática</span><span>✓ 30 días de vigencia</span><span>✓ Rewards limitado por margen</span></div>
       <small>Si Rewards todavía está en construcción, comprar un Rank Pass no crea puntos retroactivos. Si Rewards se activa mientras tu rango sigue vigente, sus beneficios de puntos empiezan desde ese momento.</small></div>
     </section>`;
   }
@@ -310,11 +308,11 @@
       : '<p class="fs-loyalty-muted">No tienes un French Rank Pass activo.</p>';
 
     panel.innerHTML = `
-      <div class="fs-loyalty-head"><div><span class="eyebrow">FRENCH RANK PASS</span><h3>Sube de rango. Personaliza tu cuenta.</h3></div><button class="icon-btn" data-fs-loyalty-refresh aria-label="Actualizar Rank Pass">↻</button></div>
+      <div class="fs-loyalty-head"><div><span class="eyebrow">FRENCH RANK PASS</span><h3>Sube de rango. Obtén más beneficios.</h3></div><button class="icon-btn" data-fs-loyalty-refresh aria-label="Actualizar Rank Pass">↻</button></div>
       ${renderRankIntro()}
       <div class="fs-cercle-section">${passStatus}
         <div class="fs-pass-grid">${(s.plans || []).map((plan) => planCard(plan, active, isLaunched)).join('')}</div>
-        <p class="fs-loyalty-fine">El Rank Pass puede pagarse con French Wallet o QR, dura 30 días y nunca se renueva automáticamente. Gold y Diamond cambian visualmente tu cuenta desde el momento de activación. Los multiplicadores y bonus de puntos solo operan cuando French Rewards está activo. <a href="./loyalty-terms.html" target="_blank" rel="noopener noreferrer">Ver condiciones.</a></p>
+        <p class="fs-loyalty-fine">El Rank Pass puede pagarse con French Wallet o QR, dura 30 días y nunca se renueva automáticamente. Los multiplicadores y bonus de puntos solo operan cuando French Rewards está activo. <a href="./loyalty-terms.html" target="_blank" rel="noopener noreferrer">Ver condiciones.</a></p>
       </div>
       <div class="fs-rewards-divider"></div>
       <div class="fs-loyalty-head"><div><span class="eyebrow">FRENCH REWARDS</span><h3>${isLaunched ? 'Tus puntos y beneficios' : 'Próximo programa de beneficios'}</h3></div></div>
@@ -336,7 +334,7 @@
     const verb = state.summary?.active_pass?.code === code ? 'renovar' : 'activar';
     const rewardsNote = launched()
       ? 'Los beneficios de Rewards se aplican mientras el rango esté vigente.'
-      : 'French Rewards aún está en construcción; el tema se activa ahora y los puntos solo empezarán si Rewards se lanza mientras este rango siga vigente.';
+      : 'French Rewards aún está en construcción; el Rank Pass se activa ahora y los puntos solo empezarán si Rewards se lanza mientras este rango siga vigente.';
     if (!window.confirm(`¿Quieres ${verb} ${plan.name} por ${bob(plan.price_bob)} usando French Wallet?\n\n${rewardsNote}\n\nNo hay renovación automática.`)) return;
     const old = button.textContent;
     button.disabled = true; button.textContent = 'Procesando…';

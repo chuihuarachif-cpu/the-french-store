@@ -129,6 +129,10 @@ jobs:
           grep -Fq '.fs-pass-checkout[hidden]' v2/rank-pass-showcase.css
           grep -Fq 'data-fs-pass-toggle' v2/loyalty.js
           grep -Fq 'data-fs-pass-qr' v2/loyalty.js
+          grep -Fq 'Sube de rango. Obtén más beneficios.' v2/loyalty.js
+          ! grep -Fq 'Tema e insignia' v2/loyalty.js
+          ! grep -Fq 'Tema exclusivo inmediato' v2/loyalty.js
+          ! grep -Fq 'cambian visualmente tu cuenta' v2/loyalty.js
           grep -Fq 'aria-modal' v2/notifications.js
           grep -Fq "event.key === 'Escape'" v2/notifications.js
 
