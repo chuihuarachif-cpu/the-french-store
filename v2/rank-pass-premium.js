@@ -5,11 +5,11 @@
 (() => {
   'use strict';
 
-  const VERSION = 'rank-pass-premium-v1-20260825';
+  const VERSION = 'rank-pass-premium-v2-20260918';
   const GOLD_CODE = 'ECLAT_OR';
   const DIAMOND_CODE = 'DIAMANT_BLEU';
   const root = document.documentElement;
-  const state = { summary: null, launch: null, syncing: null, userId: null, revision: 0, busy: false };
+  const state = { summary: null, launch: null, syncing: null, userId: null, revision: 0, busy: false, qrIntent: null, finalizingQr: false };
 
   const text = (value) => String(value ?? '').trim();
   const bob = (value) => `Bs ${Number(value || 0).toLocaleString('es-BO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -31,6 +31,8 @@
     state.userId = null;
     state.summary = null;
     state.launch = null;
+    state.qrIntent = null;
+    state.finalizingQr = false;
     delete root.dataset.fsMembership;
     removePremiumUi();
   }
@@ -49,6 +51,10 @@
     if (raw.includes('INSUFFICIENT_WALLET_BALANCE')) return 'No tienes saldo suficiente en French Wallet para completar esta operación.';
     if (raw.includes('WALLET_NOT_FOUND')) return 'Primero activa French Wallet en tu cuenta.';
     if (raw.includes('WALLET_BLOCKED')) return 'French Wallet no está disponible en este momento.';
+    if (raw.includes('TOPUP_NOT_APPROVED')) return 'El QR todavía no fue confirmado. Espera la validación automática del banco.';
+    if (raw.includes('LOYALTY_QR_INTENT_NOT_FOUND')) return 'No encontramos este pago de Rank Pass. Genera un nuevo QR.';
+    if (raw.includes('PASS_PRICE_CHANGED')) return 'El precio del Rank Pass cambió mientras el QR estaba pendiente. El dinero queda disponible en French Wallet y no se aplicó un cobro adicional.';
+    if (raw.includes('TOPUP_AMOUNT_MISMATCH')) return 'El monto confirmado no coincide con el Rank Pass. No se aplicó el rango automáticamente.';
     if (raw.includes('ACTIVE_PASS_CHANGE_AFTER_EXPIRY')) return 'Tu rango actual sigue vigente. Gold puede mejorarse a Diamond; otros cambios se hacen cuando vence el rango.';
     if (raw.includes('UPGRADE_NOT_AVAILABLE')) return 'La mejora a Diamond ya no está disponible con el estado actual de tu rango.';
     if (raw.includes('INSUFFICIENT_REWARD_POINTS')) return 'No tienes suficientes FRENCH Points disponibles para ese canje.';
@@ -238,6 +244,108 @@
     }
   }
 
+  async function finalizeQrIntent(requestId) {
+    if (!requestId || state.finalizingQr) return;
+    state.finalizingQr = true;
+    try {
+      let result = await sb.rpc('finalize_loyalty_pass_qr', { p_request_id: requestId });
+      if (result.error && text(result.error?.message || result.error).includes('TOPUP_NOT_APPROVED')) {
+        await new Promise((resolve) => setTimeout(resolve, 700));
+        result = await sb.rpc('finalize_loyalty_pass_qr', { p_request_id: requestId });
+      }
+      if (result.error) throw result.error;
+      const data = result.data || {};
+      try { closeModal('topupQrModal'); } catch {}
+      await refreshAll();
+      if (data.superseded === true) {
+        window.FSNotify?.toast?.({
+          tone: 'info',
+          icon: '💳',
+          title: 'Pago acreditado a French Wallet',
+          message: 'Tu Rank Pass cambió mientras el QR estaba pendiente. El dinero quedó en Wallet y no se renovó dos veces.',
+          duration: 7000
+        });
+      } else {
+        window.FSNotify?.toast?.({
+          tone: toneFor(state.summary?.active_pass?.theme),
+          icon: data.plan_code === DIAMOND_CODE ? '💎' : '👑',
+          title: `${data.plan_name || state.qrIntent?.planName || 'Rank Pass'} activado`,
+          message: `Vigencia hasta ${date(data.period_ends_at)}. Pago QR confirmado.`,
+          duration: 6500
+        });
+      }
+      state.qrIntent = null;
+    } catch (error) {
+      notifyError(error);
+    } finally {
+      state.finalizingQr = false;
+    }
+  }
+
+  async function payPassWithQr(code, button) {
+    if (state.busy) return;
+    state.busy = true;
+    const old = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Preparando QR…';
+    try {
+      const current = await readState();
+      const summary = current.summary;
+      const plan = summary?.plans?.find?.((item) => item.code === code);
+      if (!plan) throw new Error('PLAN_NOT_AVAILABLE');
+      const active = summary?.active_pass || null;
+      if (active?.code && active.code !== code) throw new Error('ACTIVE_PASS_CHANGE_AFTER_EXPIRY');
+
+      if (typeof window.FSFeatureLoader?.ensure === 'function') {
+        await window.FSFeatureLoader.ensure('wallet');
+      }
+      if (typeof showTopupPayment !== 'function') throw new Error('QR_PAYMENT_MODULE_UNAVAILABLE');
+
+      const { data, error } = await sb.rpc('request_loyalty_pass_qr', { p_plan_code: code });
+      if (error) throw error;
+      if (!data?.request_id) throw new Error('QR_REQUEST_FAILED');
+
+      state.qrIntent = {
+        requestId: data.request_id,
+        code,
+        planName: plan.name
+      };
+
+      if (String(data.request_status || '').toUpperCase() === 'APPROVED') {
+        await finalizeQrIntent(data.request_id);
+        return;
+      }
+
+      showTopupPayment({
+        ...data,
+        fsContext: 'rank-pass',
+        fsPlanName: plan.name,
+        fsPlanCode: code
+      });
+      window.FSNotify?.toast?.({
+        tone: toneFor(plan.theme),
+        icon: code === DIAMOND_CODE ? '💎' : '👑',
+        title: 'QR de Rank Pass listo',
+        message: `Paga exactamente ${bob(plan.price_bob)}. El rango se activará automáticamente al confirmarse.`,
+        duration: 5500
+      });
+    } catch (error) {
+      if (text(error?.message || error).includes('QR_PAYMENT_MODULE_UNAVAILABLE')) {
+        window.FSNotify?.error?.('No se pudo cargar el pago QR seguro. Recarga la página e inténtalo nuevamente.');
+      } else if (text(error?.message || error).includes('QR_REQUEST_FAILED')) {
+        window.FSNotify?.error?.('No se pudo crear el QR del Rank Pass.');
+      } else {
+        notifyError(error);
+      }
+    } finally {
+      state.busy = false;
+      if (button.isConnected) {
+        button.disabled = false;
+        button.textContent = old;
+      }
+    }
+  }
+
   async function upgradeToDiamond(button) {
     if (state.busy) return;
     state.busy = true;
@@ -325,13 +433,17 @@
 
   function intercept(event) {
     if (!window.FSNotify?.confirm) return;
-    const target = event.target.closest?.('[data-fs-pass-buy],[data-fs-rank-upgrade],[data-fs-redeem]');
+    const target = event.target.closest?.('[data-fs-pass-buy],[data-fs-pass-qr],[data-fs-rank-upgrade],[data-fs-redeem]');
     if (!target) return;
     event.preventDefault();
     event.stopImmediatePropagation();
 
     if (target.dataset.fsPassBuy) {
       purchasePass(target.dataset.fsPassBuy, target);
+      return;
+    }
+    if (target.dataset.fsPassQr) {
+      payPassWithQr(target.dataset.fsPassQr, target);
       return;
     }
     if (target.hasAttribute('data-fs-rank-upgrade')) {
@@ -342,6 +454,13 @@
   }
 
   document.addEventListener('click', intercept, true);
+  document.addEventListener('fs:wallet-topup-status', (event) => {
+    const detail = event.detail || {};
+    const requestId = detail.requestId || detail.request_id || null;
+    if (detail.credited !== true || !requestId || !state.qrIntent) return;
+    if (String(state.qrIntent.requestId) !== String(requestId)) return;
+    finalizeQrIntent(requestId);
+  });
   document.addEventListener('click', (event) => {
     if (event.target.closest?.('[data-nav="perfil"]')) window.setTimeout(() => sync(true), 180);
   });
