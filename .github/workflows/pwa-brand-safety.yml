@@ -103,7 +103,7 @@ jobs:
       - name: Check storefront wiring and safe network behavior
         run: |
           set -euo pipefail
-          grep -Fq 'rel="manifest" href="./manifest.webmanifest?v=20260918-r223"' v2/index.html
+          grep -Fq 'rel="manifest" href="./manifest.webmanifest?v=20260918-r224"' v2/index.html
           grep -Fq './assets/brand/icon-192.png?v=20260918-r223' v2/index.html
           grep -Fq '/v2/assets/brand/icon-192.png?v=20260918-r223' index.html
           grep -Fq 'https://frenchstorebo.com/v2/assets/brand/icon-192.png' v2/index.html
@@ -113,17 +113,19 @@ jobs:
           grep -Fq 'release=20260918-r223' index.html
           grep -Fq './brand-motion.css?v=20260823-1' v2/index.html
           grep -Fq './brand-ui.js?v=20260823-1' v2/index.html
-          grep -Fq './pwa-init.js?v=20260918-r2' v2/index.html
-          grep -Fq './pwa-install-ui.js?v=20260918-r2' v2/index.html
+          grep -Fq './pwa-init.js?v=20260918-r224' v2/index.html
+          grep -Fq './pwa-install-ui.js?v=20260918-r224' v2/index.html
           grep -Fq './pwa-install.css?v=20260823-1' v2/index.html
           grep -Fq './navigation-history.js?v=20260823-1' v2/index.html
           grep -q 'beforeinstallprompt' v2/pwa-install-ui.js
+          grep -q '!deferredPrompt' v2/pwa-install-ui.js
+          ! grep -q 'social-share-r223' v2/sw.js
           grep -q 'history.pushState' v2/navigation-history.js
           grep -q "addEventListener('popstate'" v2/navigation-history.js
           grep -q './assets/brand/french-store-mascot.webp' v2/brand-ui.js
           grep -q "addEventListener('fetch'" v2/sw.js
           grep -q "url.origin!==location.origin" v2/sw.js
-          grep -Fq "fs-store-r223-brand-20260918" v2/sw.js
+          grep -Fq "fs-store-r224-installfix-20260918" v2/sw.js
           ! grep -Eq 'api\.frenchstorebo\.com|supabase\.co|create_qr_order|create_wallet_order' v2/sw.js
           ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/pwa-install-ui.js v2/navigation-history.js v2/brand-ui.js v2/brand-motion.css v2/pwa-install.css v2/manifest.webmanifest
 
@@ -131,9 +133,12 @@ jobs:
         run: |
           python3 -m http.server 8080 >/tmp/fs-pwa-http.log 2>&1 &
           sleep 2
+          curl --fail http://127.0.0.1:8080/v2/ >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/index.html >/dev/null
           curl --fail http://127.0.0.1:8080/v2/manifest.webmanifest >/dev/null
           curl --fail http://127.0.0.1:8080/v2/sw.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/pwa-init.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/pwa-install-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.webp >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/tiers/owner-classic-r7.css >/dev/null
