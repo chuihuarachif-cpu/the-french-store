@@ -12,7 +12,7 @@
   const text=(v)=>String(v??'').trim();
   const html=(v)=>text(v).replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
-  function loadCss(){if(document.getElementById('fs-detail-layout-v2-css'))return;const link=document.createElement('link');link.id='fs-detail-layout-v2-css';link.rel='stylesheet';link.href='./detail-layout-v2.css?v=20260917-r4';document.head.appendChild(link)}
+  function loadCss(){if(document.getElementById('fs-detail-layout-v2-css'))return;const link=document.createElement('link');link.id='fs-detail-layout-v2-css';link.rel='stylesheet';link.href='./detail-layout-v2.css?v=20260917-r5';document.head.appendChild(link)}
   function cat(){try{return typeof category!=='undefined'?text(category):''}catch{return''}}
   function productGame(p){try{return typeof canonicalGame==='function'?canonicalGame(p?.juego):text(p?.juego)}catch{return text(p?.juego)}}
   function gameOf(detail){return text(detail?.dataset.fsGame||detail?.querySelector('.r6-hero-copy h3')?.textContent||detail?.querySelector('.fs-detail-description h3')?.textContent)}
