@@ -1,13 +1,29 @@
-/* FRENCH STORE — isolated PWA registration.
-   Additive only: if registration fails, the storefront continues as a normal web app. */
+/* FRENCH STORE — PWA registration only. No checkout, auth or wallet logic. */
 (() => {
   'use strict';
 
   if (!('serviceWorker' in navigator)) return;
+  const secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (!secure) return;
 
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/v2/sw.js', { scope: '/v2/', updateViaCache: 'none' }).catch((error) => {
+  async function registerPwa() {
+    try {
+      const registration = await navigator.serviceWorker.register('/v2/sw.js?v=20260918-r225', {
+        scope: '/v2/',
+        updateViaCache: 'none'
+      });
+      registration.update().catch(() => {});
+      navigator.serviceWorker.ready.then(() => {
+        document.documentElement.dataset.fsPwaReady = '1';
+      }).catch(() => {});
+    } catch (error) {
       console.warn('FRENCH STORE PWA registration skipped:', String(error?.message || error).slice(0, 120));
-    });
-  }, { once: true });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    window.addEventListener('load', registerPwa, { once: true });
+  } else {
+    registerPwa();
+  }
 })();
