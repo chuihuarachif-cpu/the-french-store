@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'owner-classic-r7-v1-20260918';
+  const VERSION = 'owner-classic-r7-v2-20260918';
   const root = document.documentElement;
   const STYLE_ID = 'fs-owner-classic-r7-css';
   const CATEGORY_ICONS = Object.freeze({
