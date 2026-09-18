@@ -655,3 +655,54 @@ html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.c
   }
 }
 
+
+
+/* R225 — normalize the floating WhatsApp button in the single public interface. */
+html[data-fs-owner-classic="1"] .floating-whatsapp{
+  box-sizing:border-box!important;
+  position:fixed!important;
+  right:16px!important;
+  bottom:calc(var(--nav-h) + 16px + env(safe-area-inset-bottom,0px))!important;
+  width:58px!important;
+  height:58px!important;
+  min-width:58px!important;
+  min-height:58px!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:2px solid rgba(255,255,255,.92)!important;
+  border-radius:50%!important;
+  background:#25d366!important;
+  color:#fff!important;
+  line-height:0!important;
+  overflow:hidden!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.38),0 0 0 1px rgba(37,211,102,.18)!important;
+  transform:none!important;
+  z-index:110!important;
+}
+html[data-fs-owner-classic="1"] .floating-whatsapp::before,
+html[data-fs-owner-classic="1"] .floating-whatsapp::after{content:none!important;display:none!important}
+html[data-fs-owner-classic="1"] .floating-whatsapp svg{
+  display:block!important;
+  position:static!important;
+  width:31px!important;
+  height:31px!important;
+  margin:0!important;
+  padding:0!important;
+  fill:currentColor!important;
+  transform:none!important;
+  flex:none!important;
+}
+@media(max-width:620px){
+  html[data-fs-owner-classic="1"] .floating-whatsapp{
+    right:14px!important;
+    bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom,0px))!important;
+    width:56px!important;
+    height:56px!important;
+    min-width:56px!important;
+    min-height:56px!important;
+  }
+}
