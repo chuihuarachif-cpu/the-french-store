@@ -213,7 +213,6 @@
         title: `${renew ? 'Renovar' : 'Activar'} ${plan.name}`,
         message: `Se cobrarán ${bob(plan.price_bob)} desde French Wallet.`,
         details: [
-          `Tema ${theme === 'diamond' ? 'Diamond' : 'Gold'} visible desde la activación`,
           `${multiplier} French Rewards mientras el rango esté vigente${launched ? '' : ' cuando Rewards esté disponible'}`,
           `${int(plan.duration_days || 30)} días por período`,
           'Sin renovación automática'
