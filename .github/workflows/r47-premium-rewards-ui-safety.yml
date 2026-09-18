@@ -14,6 +14,7 @@ on:
       - 'v2/rank-pass-showcase.css'
       - 'v2/bisa-wallet.js'
       - 'v2/loyalty.js'
+      - 'docs/sql/20260918_rank_pass_qr_payment_intents.sql'
       - 'v2/rewarded-ads-ui.js'
       - 'v2/rewarded-ads.css'
       - 'v2/cpx-rewards-provider.js'
@@ -33,6 +34,10 @@ on:
       - 'v2/rank-pass-premium.js'
       - 'v2/rank-pass-premium-ready.js'
       - 'v2/rank-pass-premium.css'
+      - 'v2/rank-pass-showcase.css'
+      - 'v2/bisa-wallet.js'
+      - 'v2/loyalty.js'
+      - 'docs/sql/20260918_rank_pass_qr_payment_intents.sql'
       - 'v2/rewarded-ads-ui.js'
       - 'v2/rewarded-ads.css'
       - 'v2/cpx-rewards-provider.js'
@@ -92,6 +97,9 @@ jobs:
           grep -Fq "fs:wallet-topup-status" v2/rank-pass-premium.js
           grep -Fq "fs:wallet-topup-status" v2/bisa-wallet.js
           ! grep -Fq "/bisa-sip/" v2/rank-pass-premium.js
+          grep -Fq "request_loyalty_pass_qr" docs/sql/20260918_rank_pass_qr_payment_intents.sql
+          grep -Fq "finalize_loyalty_pass_qr" docs/sql/20260918_rank_pass_qr_payment_intents.sql
+          grep -Fq "revoke all on table public.loyalty_pass_qr_intents from anon, authenticated" docs/sql/20260918_rank_pass_qr_payment_intents.sql
 
       - name: Guard voluntary third-party loading
         run: |
