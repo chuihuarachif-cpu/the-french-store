@@ -3,8 +3,8 @@
    authenticated loyalty feature without changing Auth, Wallet, BISA or Rewards data. */
 (() => {
   'use strict';
-  const VERSION = 'rank-premium-ready-v2-r157-20260907';
-  const SHOWCASE_REVISION = '20260907-r157';
+  const VERSION = 'rank-premium-ready-v3-r160-20260918';
+  const SHOWCASE_REVISION = '20260918-r160';
   let attempts = 0;
   let timer = null;
   let observer = null;
