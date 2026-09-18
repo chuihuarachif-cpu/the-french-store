@@ -34,15 +34,23 @@ jobs:
           test -s admin/r89-auth-fix.js
           test -s admin/manifest.webmanifest
           test -s admin/sw.js
+          test -s admin/pwa-install.js
           test -s v2/admin-oauth-return.js
       - name: Validate JavaScript and manifest
         run: |
           node --check admin/app.js
           node --check admin/r89-auth-fix.js
           node --check admin/sw.js
+          node --check admin/pwa-install.js
           node --check v2/admin-oauth-return.js
           node --check v2/storefront-safety-overlays.js
           python3 -m json.tool admin/manifest.webmanifest >/dev/null
+          python3 - <<'PY'
+          import json
+          d=json.load(open('admin/manifest.webmanifest'))
+          assert d['id']=='/admin/' and d['start_url']=='/admin/' and d['scope']=='/admin/'
+          assert d['display']=='standalone' and 'standalone' in d.get('display_override',[])
+          PY
       - name: Check private-admin security contracts
         run: |
           grep -q 'noindex,nofollow' admin/index.html
@@ -102,4 +110,5 @@ jobs:
           curl --fail http://127.0.0.1:8080/admin/r89-auth-fix.js >/dev/null
           curl --fail http://127.0.0.1:8080/admin/app.css >/dev/null
           curl --fail http://127.0.0.1:8080/admin/manifest.webmanifest >/dev/null
+          curl --fail http://127.0.0.1:8080/admin/pwa-install.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/admin-oauth-return.js >/dev/null

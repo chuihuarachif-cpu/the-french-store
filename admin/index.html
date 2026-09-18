@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="./r154-accessibility.css?v=20260907-r154">
   <link rel="stylesheet" href="./r167-seasonal-events.css?v=20260916-r167">
   <script defer src="./r154-dialog-focus.js?v=20260907-r154"></script>
+  <script defer src="./pwa-install.js?v=20260918-r1"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./r89-auth-fix.js?v=20260826-r91"></script>
   <script defer src="./app.js?v=20260907-r154"></script>
@@ -36,7 +37,7 @@
 <body>
   <header class="topbar">
     <div class="brand"><span class="gem">💎</span><div><b>FRENCH STORE</b><small>ADMIN PRIVADO</small></div></div>
-    <button id="logoutButton" class="ghost hidden" type="button">Salir</button>
+    <div class="top-actions"><button id="installAdminApp" class="ghost hidden" type="button">📲 Instalar app</button><button id="logoutButton" class="ghost hidden" type="button">Salir</button></div>
   </header>
 
   <main>

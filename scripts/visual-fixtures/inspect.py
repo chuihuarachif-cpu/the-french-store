@@ -55,10 +55,11 @@ elif data.get('world')=='nightfall':
     assert data['heroAnimation']=='none', 'Reading surface must stay still'
     assert data['worldAnimation']=='none', 'Unified atmosphere must stay still across ranks'
 elif data['rank']=='diamond':
-    # Historical fixtures use the old blue Diamond sweep; R171 current fixtures use
-    # the exact same Noir & Gold sweep as Gold. Both are valid in before/after comparisons.
-    assert data['heroAnimation'] in ('fsDiamondHeroSweep','fsPremiumGoldSweep'), 'Paid hero motion contract was lost'
-    assert data['ribbonAnimation'] in ('fsRankRibbonGlint','fsPremiumRankGlint'), 'Paid ribbon motion contract was lost'
+    # Historical before-fixtures may still carry the retired premium sweeps.
+    # The current R222 storefront intentionally uses the same static Classic R7
+    # surface for every rank, so "none" is the expected current state.
+    assert data['heroAnimation'] in ('none','fsPrismSweep','fsDiamondHeroSweep','fsPremiumGoldSweep'), 'Unexpected hero motion state'
+    assert data['ribbonAnimation'] in ('none','fsRankRibbonGlint','fsPremiumRankGlint'), 'Unexpected ribbon motion state'
 
 if len(sys.argv)>5 and sys.argv[5]=='r153' and data['view']=='pedidos':
     expected={'error':'error','empty':'empty','loading':'loading'}.get(data['scenario'],'ready')
