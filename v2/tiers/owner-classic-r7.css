@@ -128,6 +128,13 @@ html[data-fs-owner-classic="1"] .fs-rank-premium-ribbon::after{
   display:none!important;
   animation:none!important;
 }
+
+/* Loading state belongs to checkout behavior, not to any retired rank skin. */
+html[data-fs-owner-classic="1"] .checkout-grid button[aria-busy="true"],
+html[data-fs-owner-classic="1"] .checkout-grid button:disabled[aria-busy="true"]{
+  opacity:.65!important;
+  transition:none!important;
+}
 html[data-fs-owner-classic="1"] .fs-rank-premium-ribbon{
   position:relative!important;
   inset:auto!important;
