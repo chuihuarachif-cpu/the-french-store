@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r220-mlbb-order-details-20260918';
+  const VERSION = 'r221-classic-public-default-20260918';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -89,9 +89,9 @@
     await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260915-r214-muted');
     await loadScript('./tiers/tier-welcome.js', 'fs-tier-welcome-js', '20260911-r160');
     await loadScript('./tiers/tier-gate.js', 'fs-tier-gate-js', '20260911-r160');
-    // Owner-only visual preview of the pre-forest Classic R7 storefront.
-    // It trusts FSTierGate.isOwner() and never changes commerce or auth state.
-    await loadScript('./tiers/owner-classic-r7.js', 'fs-owner-classic-r7-js', '20260918-r3');
+    // Public/default Classic R7 storefront for every visitor and rank.
+    // Presentation only: rank/session state and commerce behavior remain unchanged.
+    await loadScript('./tiers/owner-classic-r7.js', 'fs-owner-classic-r7-js', '20260918-r4');
     // R167: calendario de eventos. Solo expone las claves activas; no dibuja
     // efectos ni altera el checkout, Wallet, catálogo, precios o niveles.
     await loadScript('./seasonal-events.js', 'fs-seasonal-events-js', '20260916-r167');
