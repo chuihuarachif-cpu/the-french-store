@@ -2,7 +2,7 @@
 <!-- The storefront uses one unified blue/cyan visual system for every account.
      data-fs-tier="base" is now only the stable presentation compatibility
      marker; Rank Pass status and benefits are resolved separately. -->
-<html lang="es" data-fs-tier="base" data-fs-world="nightfall" data-fs-interface="unified-blue">
+<html lang="es" data-fs-tier="base" data-fs-owner-classic="1">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -43,17 +43,8 @@
   <link rel="stylesheet" href="./notifications.css?v=20260825-r47">
   <link rel="stylesheet" href="./rank-pass-premium.css?v=20260918-r160">
   <link rel="stylesheet" href="./cpx-rewards.css?v=20260825-r47">
-  <link rel="stylesheet" href="./premium-surfaces.css?v=20260907-r153">
   <link rel="stylesheet" href="./tiers/tier-base.css?v=20260911-r160">
-  <link rel="stylesheet" href="./tiers/world-theme.css?v=20260915-nightfall">
-  <link rel="stylesheet" href="./tiers/world-screens.css?v=20260915-nightfall">
-  <style id="fs-unified-blue-css" data-fs-unified="unified-blue-r4-20260917">
-    @import url("./tiers/unified-blue.css?v=20260917-r5") layer(fs-world);
-    @import url("./tiers/unified-blue-mobile-fix.css?v=20260917-r4") layer(fs-world);
-    @import url("./tiers/unified-blue-reference-r4.css?v=20260917-r4") layer(fs-world);
-    @import url("./tiers/unified-blue-diamond-r5.css?v=20260917-r8") layer(fs-world);
-  </style>
-  <script src="./tiers/world-ui.js?v=20260917-r5" defer></script>
+  <link rel="stylesheet" href="./tiers/owner-classic-r7.css?v=owner-classic-r7-v5-20260918">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -132,8 +123,7 @@
 
   <script src="./notifications.js?v=20260825-r47" defer></script>
   <script src="./bootstrap.js?v=20260918-r221" defer></script>
-  <script src="./premium-release.js?v=20260917-unified-retired-r4" defer></script>
-  <script src="./rank-pass-premium.js?v=20260918-r160" defer></script>
+    <script src="./rank-pass-premium.js?v=20260918-r160" defer></script>
   <script src="./rank-pass-premium-ready.js?v=20260918-r160" defer></script>
   <script src="./cpx-rewards-provider.js?v=20260827-r101" defer></script>
   <script src="./auth-google.js?v=20260825-r55" defer></script>
@@ -141,8 +131,8 @@
   <script src="./player-verify.js?v=20260917-r5" defer></script>
   <script src="./buy-now.js?v=20260917-r5" defer></script>
   <script src="./brand-ui.js?v=20260823-1" defer></script>
-  <script src="./pwa-init.js?v=20260823-1" defer></script>
-  <script src="./pwa-install-ui.js?v=20260823-1" defer></script>
+  <script src="./pwa-init.js?v=20260918-r2" defer></script>
+  <script src="./pwa-install-ui.js?v=20260918-r2" defer></script>
   <script src="./navigation-history.js?v=20260823-1" defer></script>
 </body>
 </html>
