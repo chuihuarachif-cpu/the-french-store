@@ -38,11 +38,17 @@ jobs:
           # paso muere con codigo 124 sin haber fallado ninguna asercion. Nada
           # de esto hace falta para capturar 127.0.0.1. Mismo remedio que ya
           # usaba loyalty.yml, aplicado a todas las capturas.
-          CHROME_QUIET="--no-first-run --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection"
+          CHROME_QUIET="--no-first-run --no-default-browser-check --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-default-apps --disable-extensions --disable-dev-shm-usage --metrics-recording-only --disable-features=ServiceWorker,MediaRouter,OptimizationHints"
           for width in 360 390 412 768 1366; do
             for view in inicio tienda perfil wallet pedidos cart qr; do
               name="${QA_RANK}-${view}-${width}"
-              timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              profile="/tmp/fs-chrome-$name"
+              rm -rf "$profile"
+              timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr" || {
+                rm -rf "$profile"
+                timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              }
+              rm -rf "$profile"
               python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width" r151
             done
           done
@@ -50,7 +56,13 @@ jobs:
             flags=()
             if [ "$motion" = reduced ]; then flags+=(--force-prefers-reduced-motion); fi
             name="${QA_RANK}-inicio-360-${motion}"
-            timeout 45s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=1366,960 --virtual-time-budget=6000 "${flags[@]}" --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=inicio&state=$motion&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            profile="/tmp/fs-chrome-$name"
+            rm -rf "$profile"
+            timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 "${flags[@]}" --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=inicio&state=$motion&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr" || {
+              rm -rf "$profile"
+              timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 "${flags[@]}" --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8080/__qa-frame.html?rank=$QA_RANK&view=inicio&state=$motion&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            }
+            rm -rf "$profile"
             python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
           done
       - name: Upload screenshots and browser evidence
