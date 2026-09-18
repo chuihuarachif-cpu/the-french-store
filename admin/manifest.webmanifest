@@ -15,9 +15,9 @@
       "purpose": "any maskable"
     },
     {
-      "src": "/v2/assets/brand/icon-512.webp",
+      "src": "/v2/assets/brand/icon-512.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
