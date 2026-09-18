@@ -19,7 +19,7 @@ for(const [name,text] of Object.entries({index,bootstrap,classicJs,classicCss}))
 }
 
 ok(index.includes('data-fs-owner-classic="1"'),'Classic R7 must be active on first paint');
-ok(index.includes('owner-classic-r7.css?v=owner-classic-r7-v5-20260918'),'Classic stylesheet must load statically');
+ok(index.includes('owner-classic-r7.css?v=owner-classic-r7-v6-20260918'),'Classic stylesheet must load statically');
 ok(!index.includes('world-theme.css'),'Forest/Galaxy world theme must not load');
 ok(!index.includes('world-screens.css'),'Legacy world screens must not load');
 ok(!index.includes('unified-blue.css'),'Unified/galaxy skin must not load');
