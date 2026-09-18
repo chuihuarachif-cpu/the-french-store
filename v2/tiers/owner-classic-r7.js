@@ -6,8 +6,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'owner-classic-r7-v4-20260918';
-  const CLASSIC_R7_MODE = 'public-default';
+  const VERSION = 'owner-classic-r7-v5-20260918';
+  const CLASSIC_R7_MODE = 'single-interface';
   const root = document.documentElement;
   const STYLE_ID = 'fs-owner-classic-r7-css';
   const CATEGORY_ICONS = Object.freeze({
@@ -77,7 +77,10 @@
 
   function applyClassic() {
     ensureStyle();
+    root.dataset.fsTier = 'base';
     root.dataset.fsOwnerClassic = '1';
+    root.removeAttribute('data-fs-world');
+    root.removeAttribute('data-fs-interface');
     classicCopy();
     classicCategories();
     classicNav();
