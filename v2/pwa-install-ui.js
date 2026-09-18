@@ -26,7 +26,10 @@
     actions.appendChild(installButton);
 
     installButton.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
+      if (!deferredPrompt) {
+        alert('Para instalar FRENCH STORE como app: abre el menú del navegador y elige “Instalar aplicación”.');
+        return;
+      }
       installButton.disabled = true;
       const previousText = installButton.textContent;
       installButton.textContent = 'Abriendo instalación…';
@@ -70,4 +73,6 @@
   });
 
   if (isStandalone()) document.documentElement.dataset.fsPwaInstalled = '1';
+  else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showInstallButton, { once: true });
+  else showInstallButton();
 })();
