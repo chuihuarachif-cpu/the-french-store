@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 const css=readFileSync('v2/premium-surfaces.css','utf8');
 const index=readFileSync('v2/index.html','utf8');
 assert.doesNotMatch(index,/premium-surfaces\.css/,'Retired Gold/Diamond surface skin must not load');
-assert.match(index,/owner-classic-r7\.css\?v=owner-classic-r7-v5-20260918/,'Classic R7 must be the active surface');
+assert.match(index,/owner-classic-r7\.css\?v=owner-classic-r7-v6-20260918/,'Classic R7 must be the active surface');
 assert.ok(css.length<14000,'Surface refinement must stay lightweight');
 assert.equal(/url\(/.test(css),false,'Decorative assets must not add download weight');
 assert.equal(/(?:animation|filter|box-shadow)\s*:[^;}]*infinite/.test(css),false);
