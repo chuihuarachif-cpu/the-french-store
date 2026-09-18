@@ -53,6 +53,7 @@ jobs:
           icons={i['sizes']:i for i in d['icons']}
           assert icons['192x192']['src']=='/v2/assets/brand/icon-192.png'
           assert icons['512x512']['src']=='/v2/assets/brand/icon-512.webp'
+          assert icons['512x512']['type']=='image/webp'
           assert all('maskable' in icons[s]['purpose'] for s in ('192x192','512x512'))
           PY
       - name: Check private-admin security contracts
