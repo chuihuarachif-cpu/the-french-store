@@ -52,7 +52,7 @@ jobs:
           assert d['display']=='standalone' and 'standalone' in d.get('display_override',[])
           icons={i['sizes']:i for i in d['icons']}
           assert icons['192x192']['src']=='/v2/assets/brand/icon-192.png'
-          assert icons['512x512']['src']=='/v2/assets/brand/icon-512.png'
+          assert icons['512x512']['src']=='/v2/assets/brand/icon-512.webp'
           assert all('maskable' in icons[s]['purpose'] for s in ('192x192','512x512'))
           PY
       - name: Check private-admin security contracts
@@ -119,5 +119,5 @@ jobs:
           curl --fail http://127.0.0.1:8080/admin/manifest.webmanifest >/dev/null
           curl --fail http://127.0.0.1:8080/admin/pwa-install.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.png >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.webp >/dev/null
           curl --fail http://127.0.0.1:8080/v2/admin-oauth-return.js >/dev/null
