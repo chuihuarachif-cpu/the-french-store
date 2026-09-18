@@ -55,7 +55,7 @@ jobs:
           text=Path('v2/bootstrap.js').read_text()
           assert text.index("./bisa-checkout.js") < text.index("./fulfillment-inputs.js"), 'Fulfillment must load after final BISA checkout handler'
           PY
-          grep -q "mismo ID" v2/fulfillment-inputs.js
+          grep -q "mismos datos de destino" v2/fulfillment-inputs.js
           grep -q "Nunca te pediremos contraseña" v2/fulfillment-inputs.js
           grep -q "childList: true, subtree: false" v2/fulfillment-inputs.js
           ! grep -q "localStorage.setItem" v2/fulfillment-inputs.js
