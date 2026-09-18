@@ -46,6 +46,8 @@ jobs:
             grep -Fq 'application/ld+json' "$file"
             grep -Fq 'FRENCH STORE' "$file"
             grep -Fq 'Bolivia' "$file"
+            grep -Fq 'icon-192.png' "$file"
+            grep -Fq 'summary' "$file"
             ! grep -Fqi '<meta name="keywords"' "$file"
             ! grep -Eqi 'service[_ -]?role|SUPABASE_SERVICE_ROLE|client_secret|password\s*[:=]|secret\s*[:=]' "$file"
           done
@@ -68,6 +70,9 @@ jobs:
           grep -Fq './streaming.html' v2/index.html
           grep -Fq './gift-cards.html' v2/index.html
           grep -Fq 'og:site_name' v2/index.html
+          grep -Fq 'icon-192.png' v2/index.html
+          grep -Fq 'summary' v2/index.html
+          grep -Fq 'icon-192.png' index.html
           grep -Fq 'https://frenchstorebo.com/v2/' v2/index.html
           grep -Fq 'https://frenchstorebo.com/v2/' index.html
 
