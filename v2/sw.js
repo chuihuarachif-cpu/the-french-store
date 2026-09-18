@@ -6,7 +6,7 @@
 const CACHE='fs-store-r223-brand-20260918';
 const SHELL=[
   '/v2/','/v2/index.html','/v2/manifest.webmanifest',
-  '/v2/assets/brand/icon-192.png','/v2/assets/brand/icon-512.webp','/v2/assets/brand/social-share-r223.jpg',
+  '/v2/assets/brand/icon-192.png','/v2/assets/brand/icon-512.png','/v2/assets/brand/social-share-r223.jpg',
   '/v2/tiers/owner-classic-r7.css'
 ];
 
