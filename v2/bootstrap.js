@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r219-rank-pass-qr-20260918';
+  const VERSION = 'r220-mlbb-order-details-20260918';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -113,7 +113,7 @@
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
       await loadScript('./bisa-checkout.js', 'fs-bisa-checkout-js', '20260907-r153');
       await loadScript('./fulfillment-inputs.js', 'fs-fulfillment-inputs-js', '20260907-r153');
-      await loadScript('./paid-whatsapp.js?v=20260913-cleanup', 'fs-paid-whatsapp-js');
+      await loadScript('./paid-whatsapp.js?v=20260918-r220', 'fs-paid-whatsapp-js');
     },
     wallet: async () => {
       await loadStyle('./bisa-checkout.css', 'fs-bisa-checkout-css');
@@ -123,11 +123,11 @@
       await ensureFeature('checkout');
       await loadStyle('./order-cancel-ui.css', 'fs-order-cancel-css');
       await loadScript('./order-cancel-ui.js', 'fs-order-cancel-js');
-      await loadScript('./paid-whatsapp.js?v=20260913-cleanup', 'fs-paid-whatsapp-js');
+      await loadScript('./paid-whatsapp.js?v=20260918-r220', 'fs-paid-whatsapp-js');
       if (document.getElementById('view-pedidos')?.classList.contains('active') && session) loadOrders();
     },
     catalog: async () => {
-      await loadStyle('./weekly-pass-feature.css?v=20260825-r50', 'fs-weekly-pass-feature-css');
+      await loadStyle('./weekly-pass-feature.css?v=20260918-r220', 'fs-weekly-pass-feature-css');
       await loadScript('./catalog-order.js?v=20260917-r157', 'fs-catalog-order-js');
     },
     admin: async () => {
