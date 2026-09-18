@@ -126,10 +126,15 @@ jobs:
           grep -q './features/orders-admin.js' v2/bootstrap.js
           grep -q './core/ui.js' v2/bootstrap.js
           grep -q './tiers/owner-classic-r7.js' v2/bootstrap.js
-          grep -q "CLASSIC_R7_MODE = 'public-default'" v2/tiers/owner-classic-r7.js
+          grep -q "CLASSIC_R7_MODE = 'single-interface'" v2/tiers/owner-classic-r7.js
           ! grep -q 'FSTierGate?.isOwner' v2/tiers/owner-classic-r7.js
           ! grep -q 'chuihuarachif@gmail.com' v2/tiers/owner-classic-r7.js
           grep -q 'data-fs-owner-classic' v2/tiers/owner-classic-r7.css
+          ! grep -q './tiers/tier-gate.js' v2/bootstrap.js
+          ! grep -q './tiers/tier-welcome.js' v2/bootstrap.js
+          ! grep -q './tiers/tier-sound.js' v2/bootstrap.js
+          ! grep -q 'world-theme.css' v2/index.html
+          ! grep -q 'unified-blue.css' v2/index.html
           grep -q './bisa-checkout.js' v2/bootstrap.js
           grep -q './bisa-wallet.js' v2/bootstrap.js
           grep -q './fulfillment-inputs.js' v2/bootstrap.js
