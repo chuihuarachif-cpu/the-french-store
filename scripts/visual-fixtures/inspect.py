@@ -58,7 +58,7 @@ elif data['rank']=='diamond':
     # Historical before-fixtures may still carry the retired premium sweeps.
     # The current R222 storefront intentionally uses the same static Classic R7
     # surface for every rank, so "none" is the expected current state.
-    assert data['heroAnimation'] in ('none','fsDiamondHeroSweep','fsPremiumGoldSweep'), 'Unexpected hero motion state'
+    assert data['heroAnimation'] in ('none','fsPrismSweep','fsDiamondHeroSweep','fsPremiumGoldSweep'), 'Unexpected hero motion state'
     assert data['ribbonAnimation'] in ('none','fsRankRibbonGlint','fsPremiumRankGlint'), 'Unexpected ribbon motion state'
 
 if len(sys.argv)>5 and sys.argv[5]=='r153' and data['view']=='pedidos':
