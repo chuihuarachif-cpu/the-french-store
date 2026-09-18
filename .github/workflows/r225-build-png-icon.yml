@@ -27,7 +27,7 @@ jobs:
           else
             sudo apt-get update
             sudo apt-get install -y imagemagick
-            convert v2/assets/brand/icon-512.webp v2/assets/brand/icon-512.png
+            convert v2/assets/brand/icon-192.png -filter Lanczos -resize 512x512 v2/assets/brand/icon-512.png
           fi
           python3 - <<'PY'
           from pathlib import Path
