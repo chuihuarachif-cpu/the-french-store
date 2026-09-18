@@ -155,9 +155,11 @@ jobs:
           python3 -m pip install --quiet websocket-client
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME"
-          "$CHROME" --headless=new --no-sandbox --disable-gpu --remote-debugging-port=9222 --user-data-dir=/tmp/fs-pwa-profile http://127.0.0.1:8080/v2/ >/tmp/fs-pwa-chrome.log 2>&1 &
+          python3 -m http.server 8081 >/tmp/fs-pwa-install-http.log 2>&1 &
+          server_pid=$!
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --remote-allow-origins='*' --remote-debugging-port=9222 --user-data-dir=/tmp/fs-pwa-profile http://127.0.0.1:8081/v2/ >/tmp/fs-pwa-chrome.log 2>&1 &
           chrome_pid=$!
-          trap 'kill $chrome_pid || true' EXIT
+          trap 'kill $chrome_pid $server_pid || true' EXIT
           python3 - <<'PY'
           import json, time, urllib.request
           import websocket
