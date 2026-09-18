@@ -126,7 +126,8 @@ jobs:
           grep -q './features/orders-admin.js' v2/bootstrap.js
           grep -q './core/ui.js' v2/bootstrap.js
           grep -q './tiers/owner-classic-r7.js' v2/bootstrap.js
-          grep -q 'FSTierGate?.isOwner' v2/tiers/owner-classic-r7.js
+          grep -q "CLASSIC_R7_MODE = 'public-default'" v2/tiers/owner-classic-r7.js
+          ! grep -q 'FSTierGate?.isOwner' v2/tiers/owner-classic-r7.js
           ! grep -q 'chuihuarachif@gmail.com' v2/tiers/owner-classic-r7.js
           grep -q 'data-fs-owner-classic' v2/tiers/owner-classic-r7.css
           grep -q './bisa-checkout.js' v2/bootstrap.js
