@@ -1,0 +1,51 @@
+name: R225 Build PNG App Icon
+
+on:
+  push:
+    branches: [codex/r225-pwa-whatsapp-delivery-copy]
+    paths:
+      - '.github/workflows/r225-build-png-icon.yml'
+      - 'v2/assets/brand/icon-512.webp'
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/r225-pwa-whatsapp-delivery-copy
+      - name: Convert official WebP logo to PNG
+        run: |
+          set -euo pipefail
+          if command -v magick >/dev/null 2>&1; then
+            magick v2/assets/brand/icon-512.webp v2/assets/brand/icon-512.png
+          elif command -v convert >/dev/null 2>&1; then
+            convert v2/assets/brand/icon-512.webp v2/assets/brand/icon-512.png
+          else
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+            convert v2/assets/brand/icon-512.webp v2/assets/brand/icon-512.png
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          p=Path('v2/assets/brand/icon-512.png').read_bytes()
+          assert p[:8].hex()=='89504e470d0a1a0a'
+          assert struct.unpack('>II',p[16:24])==(512,512)
+          print('icon-512.png OK')
+          PY
+      - name: Commit PNG icon to branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v2/assets/brand/icon-512.png
+          if git diff --cached --quiet; then
+            echo "No icon change needed"
+            exit 0
+          fi
+          git commit -m "R225: generate official 512px PNG app icon"
+          git push origin HEAD:codex/r225-pwa-whatsapp-delivery-copy
