@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r221-classic-public-default-20260918';
+  const VERSION = 'r222-single-classic-pwa-20260918';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -79,19 +79,12 @@
     await loadScript('./auth-ease.js', 'fs-auth-ease-js');
     await loadScript('./auth-confirm.js', 'fs-auth-confirm-js');
     await loadScript('./storefront-safety-overlays.js', 'fs-storefront-safety-overlays-js');
-    // Visual tier layer (presentation only). Base ships statically in
-    // index.html; the gate only upgrades to Gold/Diamond by real rank and
-    // falls back to Base on any failure. All storefront sounds are disabled.
-    // Never gates checkout, Wallet or QR.
     // Nombre preferido del cliente en Perfil. Presentación pura: usa el nombre
     // que Google ya entrega y permite cambiarlo; no escribe en Supabase.
     await loadScript('./profile-name.js', 'fs-profile-name-js', '20260911-r160');
-    await loadScript('./tiers/tier-sound.js', 'fs-tier-sound-js', '20260915-r214-muted');
-    await loadScript('./tiers/tier-welcome.js', 'fs-tier-welcome-js', '20260911-r160');
-    await loadScript('./tiers/tier-gate.js', 'fs-tier-gate-js', '20260911-r160');
-    // Public/default Classic R7 storefront for every visitor and rank.
-    // Presentation only: rank/session state and commerce behavior remain unchanged.
-    await loadScript('./tiers/owner-classic-r7.js', 'fs-owner-classic-r7-js', '20260918-r4');
+    // Classic R7 is the only storefront interface. Rank Pass can still expose
+    // benefits/status inside loyalty, but it never selects another visual skin.
+    await loadScript('./tiers/owner-classic-r7.js', 'fs-owner-classic-r7-js', '20260918-r5');
     // R167: calendario de eventos. Solo expone las claves activas; no dibuja
     // efectos ni altera el checkout, Wallet, catálogo, precios o niveles.
     await loadScript('./seasonal-events.js', 'fs-seasonal-events-js', '20260916-r167');
