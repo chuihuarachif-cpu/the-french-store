@@ -53,12 +53,15 @@ jobs:
           grep -q 'unified-blue-reference-r4.css?v=20260917-r4' v2/index.html
           grep -q 'unified-blue-diamond-r5.css?v=20260917-r8' v2/index.html
           grep -q './tiers/owner-classic-r7.js' v2/bootstrap.js
-          grep -q 'owner-classic-r7-v2-20260918' v2/tiers/owner-classic-r7.js
+          grep -q 'owner-classic-r7-v3-20260918' v2/tiers/owner-classic-r7.js
           grep -q 'data-fs-owner-classic="1"' v2/tiers/owner-classic-r7.css
           grep -q 'Tu partida empieza aquí.' v2/tiers/owner-classic-r7.js
           grep -q 'white-space:nowrap!important' v2/tiers/owner-classic-r7.css
           grep -q 'justify-content:center!important' v2/tiers/owner-classic-r7.css
           grep -q 'opacity:1!important' v2/tiers/owner-classic-r7.css
+          grep -q 'content:none!important' v2/tiers/owner-classic-r7.css
+          grep -q 'height:86px!important' v2/tiers/owner-classic-r7.css
+          grep -q 'font-size:21px!important' v2/tiers/owner-classic-r7.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))!important' v2/tiers/owner-classic-r7.css
           ! grep -Eqi 'service_role|precio_proveedor|tipo_cambio|create_qr_order|create_wallet_order' v2/tiers/owner-classic-r7.js
 

@@ -549,3 +549,95 @@ html[data-fs-owner-classic="1"] .floating-whatsapp{
   html[data-fs-owner-classic="1"] *::before,
   html[data-fs-owner-classic="1"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+/* Owner Classic R7 — compact category tiles.
+   The unified reference layer paints ID/ACC/TV/GC through ::before; hide those
+   codes here so each tile shows only its emoji plus the real title/subtitle. */
+html[data-fs-owner-classic="1"][data-fs-interface="unified-blue"][data-fs-tier="base"] #view-inicio #categoryGrid .category-card>span:first-child::before,
+html[data-fs-owner-classic="1"][data-fs-interface="unified-blue"] #view-inicio #categoryGrid .category-card>span:first-child::before{
+  content:none!important;
+  display:none!important;
+}
+html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card>span:first-child::after,
+html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .world-category-icon,
+html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .world-chevron{
+  content:none!important;
+  display:none!important;
+}
+html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.cuentas-entry){
+  box-sizing:border-box!important;
+  min-height:96px!important;
+  height:96px!important;
+  padding:12px 13px!important;
+  border-radius:16px!important;
+  grid-template-columns:34px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  grid-template-areas:'icon title' 'icon sub'!important;
+  column-gap:10px!important;
+  row-gap:3px!important;
+  align-content:center!important;
+}
+html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.cuentas-entry)>span:first-child{
+  grid-area:icon!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  min-height:34px!important;
+  margin:0!important;
+  padding:0!important;
+  font-size:24px!important;
+  line-height:1!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.cuentas-entry)>b{
+  grid-area:title!important;
+  align-self:end!important;
+  min-width:0!important;
+  margin:0!important;
+  font-size:13px!important;
+  line-height:1.18!important;
+}
+html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.cuentas-entry)>small{
+  grid-area:sub!important;
+  align-self:start!important;
+  min-width:0!important;
+  margin:0!important;
+  font-size:10.5px!important;
+  line-height:1.25!important;
+}
+
+@media(max-width:620px){
+  html[data-fs-owner-classic="1"] #view-inicio #categoryGrid{
+    gap:8px!important;
+    margin:14px 0!important;
+  }
+  html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.cuentas-entry){
+    min-height:86px!important;
+    height:86px!important;
+    padding:10px 10px!important;
+    border-radius:14px!important;
+    grid-template-columns:30px minmax(0,1fr)!important;
+    column-gap:8px!important;
+    row-gap:2px!important;
+  }
+  html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.cuentas-entry)>span:first-child{
+    width:30px!important;
+    height:30px!important;
+    min-width:30px!important;
+    min-height:30px!important;
+    font-size:21px!important;
+  }
+  html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.cuentas-entry)>b{
+    font-size:11.5px!important;
+    line-height:1.16!important;
+  }
+  html[data-fs-owner-classic="1"] #view-inicio #categoryGrid .category-card:not(.cuentas-entry)>small{
+    font-size:9.5px!important;
+    line-height:1.22!important;
+  }
+}
+
