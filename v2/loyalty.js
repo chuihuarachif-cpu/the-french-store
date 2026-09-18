@@ -162,14 +162,14 @@
 
   function planBenefits(plan, isLaunched) {
     if (plan.code === 'DIAMANT_BLEU') return [
-      isLaunched ? 'x2 French Rewards en compras elegibles' : 'x2 French Rewards cuando Rewards esté disponible',
-      'Tema e insignia Diamond en tu cuenta',
-      '30 días · sin renovación automática'
+      'Máximas recompensas',
+      'Tema e insignia Diamond',
+      '30 días · sin auto-renovación'
     ];
     return [
-      isLaunched ? 'x1.5 French Rewards en compras elegibles' : 'x1.5 French Rewards cuando Rewards esté disponible',
-      'Tema e insignia Gold en tu cuenta',
-      '30 días · sin renovación automática'
+      'Más recompensas',
+      'Tema e insignia Gold',
+      '30 días · sin auto-renovación'
     ];
   }
 
