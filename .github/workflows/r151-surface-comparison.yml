@@ -40,12 +40,18 @@ jobs:
           # assertions identical, but give each deterministic local capture a
           # little more startup headroom so runner load is not reported as a
           # product regression.
-          CHROME_QUIET="--no-first-run --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection"
+          CHROME_QUIET="--no-first-run --no-default-browser-check --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-default-apps --disable-extensions --disable-dev-shm-usage --metrics-recording-only --disable-features=ServiceWorker,MediaRouter,OptimizationHints"
           for side in before after; do
             port=8081; if [ "$side" = after ]; then port=8082; fi
             for view in wallet pedidos cart qr; do
               name="${side}-${QA_RANK}-${view}-360"
-              timeout 60s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:$port/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              profile="/tmp/fs-chrome-$name"
+              rm -rf "$profile"
+              timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:$port/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr" || {
+                rm -rf "$profile"
+                timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:$port/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+              }
+              rm -rf "$profile"
               python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
             done
           done
@@ -55,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           CHROME="$(command -v google-chrome || command -v google-chrome-stable)"
-          CHROME_QUIET="--no-first-run --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection"
+          CHROME_QUIET="--no-first-run --no-default-browser-check --disable-background-networking --disable-sync --disable-component-update --disable-domain-reliability --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-default-apps --disable-extensions --disable-dev-shm-usage --metrics-recording-only --disable-features=ServiceWorker,MediaRouter,OptimizationHints"
           for width in 360 390 412 768 1366; do
           for pair in wallet:loading wallet:zero wallet:empty wallet:error wallet:transaction_error cart:empty cart:checkout_loading pedidos:loading pedidos:empty pedidos:error auth:normal topup:normal; do
             view="${pair%:*}"; state="${pair#*:}"
@@ -63,7 +69,13 @@ jobs:
               case "$pair" in cart:empty|cart:checkout_loading|pedidos:loading|pedidos:empty|pedidos:error) ;; *) continue ;; esac
             fi
             name="after-${QA_RANK}-${view}-${width}-${state}"
-            timeout 60s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            profile="/tmp/fs-chrome-$name"
+            rm -rf "$profile"
+            timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr" || {
+              rm -rf "$profile"
+              timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
+            }
+            rm -rf "$profile"
             python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width" r151 r153
           done
           done
