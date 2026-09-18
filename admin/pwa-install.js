@@ -4,20 +4,21 @@
   let promptEvent=null;
   const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
   const button=()=>document.getElementById('installAdminApp');
-  const sync=()=>{const b=button();if(b)b.classList.toggle('hidden',standalone());};
+  const sync=()=>{
+    const b=button();
+    if(!b)return;
+    b.classList.toggle('hidden',standalone()||!promptEvent);
+  };
   addEventListener('beforeinstallprompt',event=>{event.preventDefault();promptEvent=event;sync();});
   addEventListener('appinstalled',()=>{promptEvent=null;sync();});
   addEventListener('DOMContentLoaded',()=>{
     sync();
     button()?.addEventListener('click',async()=>{
-      const b=button(); if(!b||standalone())return;
-      if(promptEvent){
-        b.disabled=true;
-        try{await promptEvent.prompt();await promptEvent.userChoice.catch(()=>null);promptEvent=null;}
-        finally{b.disabled=false;sync();}
-        return;
-      }
-      alert('Para instalar Admin como app: abre el menú del navegador y elige “Instalar aplicación”.');
+      const b=button();
+      if(!b||standalone()||!promptEvent)return;
+      b.disabled=true;
+      try{await promptEvent.prompt();await promptEvent.userChoice.catch(()=>null);promptEvent=null;}
+      finally{b.disabled=false;sync();}
     });
   },{once:true});
 })();
