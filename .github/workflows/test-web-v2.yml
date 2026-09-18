@@ -170,7 +170,10 @@ jobs:
           grep -q "/bisa-sip/topup-status" v2/bisa-wallet.js
           grep -q "/bisa-sip/topup-cancel" v2/bisa-wallet.js
           grep -q "No \"Pagado\"/WhatsApp button" v2/bisa-wallet.js
-          grep -q "manual-paid-whatsapp-20260913" v2/paid-whatsapp.js
+          grep -q "manual-paid-whatsapp-20260918-r220" v2/paid-whatsapp.js
+          grep -q "Número de pedido:" v2/paid-whatsapp.js
+          ! grep -q "🔖 Ref:" v2/paid-whatsapp.js
+          ! grep -q "ref_code" v2/paid-whatsapp.js
           grep -q "get_my_paid_whatsapp_notice_status" v2/paid-whatsapp.js
           grep -q "claim_my_paid_whatsapp_notice" v2/paid-whatsapp.js
           grep -q "ALREADY_USED" v2/paid-whatsapp.js
