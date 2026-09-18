@@ -7,7 +7,7 @@
 3. Never put `service_role`, provider secrets, API secrets or private tokens in `v2/`.
 4. BISA/SIP verification and payment truth remain backend responsibilities.
 5. Gift Cards remain separate and manual.
-6. Public Recargas por ID request only the customer input required by the current ID-only contract; credentials are never requested.
+6. Public Recargas por ID request only the destination fields required by each product (for example player/user ID and, when needed, Zone ID/server/region); credentials are never requested.
 7. Optional animation failure must never block a sale.
 8. Payment/fulfillment module failure must fail closed.
 9. Supplier fulfillment is manual; there is no public automation-capability shim.
@@ -93,7 +93,7 @@ Edit `bisa-checkout.js`/CSS presentation only. Payment confirmation remains back
 
 ### Player input UI
 
-Edit `fulfillment-inputs.js`, `player-verify.js` or `detail-layout-v2.js` while preserving the current public ID-only contract.
+Edit `fulfillment-inputs.js`, `player-verify.js` or `detail-layout-v2.js` while preserving the data-driven destination-fields contract from `checkout_input_requirements`.
 
 ### Price
 

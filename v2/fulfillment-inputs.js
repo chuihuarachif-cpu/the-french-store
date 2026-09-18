@@ -181,7 +181,7 @@
     }
     box.classList.remove('hidden');
     box.innerHTML = `<div class="fs-fulfillment-head"><b>Datos para entregar tu recarga</b><small>Completa únicamente los datos del juego. Nunca te pediremos contraseña, código de acceso ni correo de tu cuenta del juego.</small></div>${groups.map((group) => {
-      const quantityNote = group.quantity > 1 ? `<p class="fs-fulfillment-note">Las ${group.quantity} unidades de este juego se enviarán al mismo ID. Para otro ID, realiza un pedido separado.</p>` : '';
+      const quantityNote = group.quantity > 1 ? `<p class="fs-fulfillment-note">Las ${group.quantity} unidades de este juego se enviarán a los mismos datos de destino. Para otro destino, realiza un pedido separado.</p>` : '';
       return `<div class="fs-fulfillment-group" data-fs-group="${html(group.scope)}"><div class="fs-fulfillment-game"><b>${html(group.game)}</b><small>${group.productIds.size} producto${group.productIds.size === 1 ? '' : 's'}</small></div><div class="fs-fulfillment-fields">${[...group.requirements.values()].map((req) => fieldMarkup(group.scope, req)).join('')}</div>${quantityNote}</div>`;
     }).join('')}<p class="fs-fulfillment-note">Usaremos estos identificadores solo para procesar/verificar la recarga y compartir con el proveedor autorizado únicamente lo necesario. Consulta la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.</p>`;
 

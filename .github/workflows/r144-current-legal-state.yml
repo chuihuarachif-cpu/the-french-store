@@ -1,4 +1,4 @@
-name: R144 Current Legal State Safety
+name: R220 Current Recharge Data Legal Safety
 
 on:
   pull_request:
@@ -40,15 +40,15 @@ jobs:
           test -s "$REFUNDS"
           test -s "$PLAYER"
 
-          grep -Fq 'solicita únicamente el <strong>ID de jugador</strong>' "$TERMS"
-          grep -Fq 'solicita solo el ID de jugador' "$PRIVACY"
-          grep -Fq 'solicita únicamente el <strong>ID de jugador</strong>' "$REFUNDS"
+          grep -Fq 'Mobile Legends: Bang Bang se solicitan el ID de usuario y el Zone ID' "$TERMS"
+          grep -Fq 'Mobile Legends: Bang Bang se solicitan ID de usuario y Zone ID' "$PRIVACY"
+          grep -Fq 'Mobile Legends: Bang Bang se solicitan ID de usuario y Zone ID' "$REFUNDS"
           grep -Fq 'método de inicio de sesión habilitado actualmente para clientes es <strong>Google</strong>' "$TERMS"
           grep -Fq 'método de inicio de sesión habilitado actualmente es <strong>Google</strong>' "$PRIVACY"
 
-          ! grep -Fq 'Zone ID' "$TERMS"
-          ! grep -Fq 'Zone ID' "$PRIVACY"
-          ! grep -Fq 'Zone ID' "$REFUNDS"
+          grep -Fq 'Zone ID' "$TERMS"
+          grep -Fq 'Zone ID' "$PRIVACY"
+          grep -Fq 'Zone ID' "$REFUNDS"
           ! grep -Fqi 'correo y contraseña' "$TERMS"
           ! grep -Fqi 'correo/contraseña' "$PRIVACY"
           ! grep -Fq 'mostrar el nombre o nickname' "$TERMS"
