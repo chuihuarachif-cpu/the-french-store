@@ -2,7 +2,7 @@
    The customer can open the prefilled paid-order WhatsApp notice only once per order.
    The one-time claim is enforced in Supabase, not localStorage, so refresh/new browser
    cannot regenerate it. Provider names are never returned to this module; only the
-   internal reference codes G / B / H are included in the customer message.
+   provider names and internal provider/reference codes are never included in the customer message.
 
    Payment is never marked by this button. It is enabled only after the backend has
    already confirmed paid_at. Supplier fulfillment remains manual.
@@ -10,7 +10,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'manual-paid-whatsapp-20260913';
+  const VERSION = 'manual-paid-whatsapp-20260918-r220';
   const AVAILABLE_TEXT = 'Ya pagué · Avisar por WhatsApp';
   const USED_TEXT = '✓ Aviso por WhatsApp utilizado';
 
@@ -109,8 +109,9 @@
 
   function buildPaidMessage(claim) {
     const lines = [
-      '✅ Pagado el pedido ' + text(claim?.order_code),
+      '✅ Pago confirmado',
       '💎 THE FRENCH STORE',
+      `🧾 Número de pedido: ${text(claim?.order_code) || '—'}`,
       `💳 Pago: ${text(claim?.payment_method) || 'Confirmado'}`,
       `💰 Total: ${moneyText(claim?.total_amount)}`
     ];
@@ -120,14 +121,16 @@
       lines.push('', `🎮 Producto ${index + 1}: ${text(item?.product_name) || 'Producto digital'}`);
       lines.push(`🔢 Cantidad: ${Math.max(1, Number(item?.quantity || 1))}`);
 
-      const refCode = text(item?.ref_code).toUpperCase();
-      if (['G', 'B', 'H'].includes(refCode)) lines.push(`🔖 Ref: ${refCode}`);
-
       const inputs = Array.isArray(item?.inputs) ? item.inputs : [];
       inputs.forEach((input) => {
+        const key = text(input?.field_key).toLowerCase();
         const label = text(input?.label);
         const value = text(input?.value);
-        if (label && value) lines.push(`👤 ${label}: ${value}`);
+        if (!label || !value) return;
+        const icon = key === 'zone_id' || /zone/i.test(label)
+          ? '🌐'
+          : (/^(user_id|player_id)$/.test(key) || /(usuario|player)/i.test(label) ? '👤' : '📝');
+        lines.push(`${icon} ${label}: ${value}`);
       });
     });
 
