@@ -1,6 +1,5 @@
-/* FRENCH STORE — isolated install prompt UI.
-   Shows an install button only when the browser confirms the PWA is installable.
-   No checkout, Auth, Wallet, pricing, catalog or payment logic is touched. */
+/* FRENCH STORE — install prompt UI.
+   The button is visible only after Chromium confirms the site is installable. */
 (() => {
   'use strict';
 
@@ -27,9 +26,10 @@
 
     installButton.addEventListener('click', async () => {
       if (!deferredPrompt) {
-        alert('Para instalar FRENCH STORE como app: abre el menú del navegador y elige “Instalar aplicación”.');
+        installButton.classList.add('hidden');
         return;
       }
+
       installButton.disabled = true;
       const previousText = installButton.textContent;
       installButton.textContent = 'Abriendo instalación…';
@@ -54,8 +54,8 @@
     return installButton;
   }
 
-  function showInstallButton() {
-    if (isStandalone()) return;
+  function revealInstallButton() {
+    if (isStandalone() || !deferredPrompt) return;
     const button = ensureButton();
     button?.classList.remove('hidden');
   }
@@ -63,7 +63,7 @@
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     deferredPrompt = event;
-    showInstallButton();
+    revealInstallButton();
   });
 
   window.addEventListener('appinstalled', () => {
@@ -73,6 +73,4 @@
   });
 
   if (isStandalone()) document.documentElement.dataset.fsPwaInstalled = '1';
-  else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showInstallButton, { once: true });
-  else showInstallButton();
 })();
