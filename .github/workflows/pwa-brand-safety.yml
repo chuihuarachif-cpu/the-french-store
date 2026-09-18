@@ -65,7 +65,8 @@ jobs:
               assert b[:8].hex()=='89504e470d0a1a0a', path
               return struct.unpack('>II',b[16:24])
           assert png_size('v2/assets/brand/icon-192.png')==(192,192)
-          webp512=Path('v2/assets/brand/icon-512.webp').read_bytes()\n          assert webp512[:4]==b'RIFF' and webp512[8:12]==b'WEBP'
+          webp512=Path('v2/assets/brand/icon-512.webp').read_bytes()
+          assert webp512[:4]==b'RIFF' and webp512[8:12]==b'WEBP'
           jpg=Path('v2/assets/brand/social-share-r223.jpg').read_bytes()
           assert jpg[:2].hex()=='ffd8' and jpg[-2:].hex()=='ffd9'
           webp=Path('v2/assets/brand/french-store-mascot.webp').read_bytes()
@@ -99,7 +100,7 @@ jobs:
           assert icons['192x192']['src']=='/v2/assets/brand/icon-192.png'
           assert icons['512x512']['src']=='/v2/assets/brand/icon-512.webp'
           assert icons['192x192']['type']=='image/png' and 'maskable' in icons['192x192']['purpose']
-          assert icons['512x512']['type']=='image/png' and 'maskable' in icons['512x512']['purpose']
+          assert icons['512x512']['type']=='image/webp' and 'maskable' in icons['512x512']['purpose']
           PY
 
       - name: Check storefront wiring and safe network behavior
