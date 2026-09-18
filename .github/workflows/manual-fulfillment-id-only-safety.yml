@@ -1,4 +1,4 @@
-name: Manual Fulfillment and ID Only Safety
+name: Manual Fulfillment Destination Safety
 
 on:
   pull_request:
@@ -65,10 +65,13 @@ jobs:
       - name: Manual paid flow remains available
         run: |
           set -euo pipefail
-          grep -Fq '✅ Pagado el pedido' v2/paid-whatsapp.js
+          grep -Fq '✅ Pago confirmado' v2/paid-whatsapp.js
+          grep -Fq '🧾 Número de pedido:' v2/paid-whatsapp.js
           grep -Fq 'Avisar pedido pagado por WhatsApp' v2/paid-whatsapp.js
           grep -Fq 'get_my_paid_whatsapp_notice_status' v2/paid-whatsapp.js
           grep -Fq 'claim_my_paid_whatsapp_notice' v2/paid-whatsapp.js
+          ! grep -Fq '🔖 Ref:' v2/paid-whatsapp.js
+          ! grep -Fq 'ref_code' v2/paid-whatsapp.js
 
       - name: Customer modules cannot expose privileged backend material
         run: |
