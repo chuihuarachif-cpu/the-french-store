@@ -82,6 +82,8 @@ jobs:
           assert data['start_url']=='/v2/'
           assert data['scope']=='/v2/'
           assert data['display']=='standalone'
+          assert 'standalone' in data.get('display_override',[])
+          assert data.get('launch_handler',{}).get('client_mode')=='navigate-existing'
           assert data['theme_color']=='#06111d'
           assert data.get('prefer_related_applications') is False
           icons={(i['sizes'], i['type'], i['purpose']) for i in data['icons']}
@@ -97,8 +99,8 @@ jobs:
           grep -q 'rel="icon" href="/favicon.ico"' index.html
           grep -q './brand-motion.css?v=20260823-1' v2/index.html
           grep -q './brand-ui.js?v=20260823-1' v2/index.html
-          grep -q './pwa-init.js?v=20260823-1' v2/index.html
-          grep -q './pwa-install-ui.js?v=20260823-1' v2/index.html
+          grep -q './pwa-init.js?v=20260918-r2' v2/index.html
+          grep -q './pwa-install-ui.js?v=20260918-r2' v2/index.html
           grep -q './pwa-install.css?v=20260823-1' v2/index.html
           grep -q './navigation-history.js?v=20260823-1' v2/index.html
           grep -q 'beforeinstallprompt' v2/pwa-install-ui.js
