@@ -258,11 +258,14 @@
       try { closeModal('topupQrModal'); } catch {}
       await refreshAll();
       if (data.superseded === true) {
+        const priceChanged = data.reason === 'PASS_PRICE_CHANGED';
         window.FSNotify?.toast?.({
           tone: 'info',
           icon: '💳',
           title: 'Pago acreditado a French Wallet',
-          message: 'Tu Rank Pass cambió mientras el QR estaba pendiente. El dinero quedó en Wallet y no se renovó dos veces.',
+          message: priceChanged
+            ? 'El precio cambió mientras el QR estaba pendiente. El dinero quedó en Wallet y no se activó el Pass con un precio distinto.'
+            : 'Tu Rank Pass cambió mientras el QR estaba pendiente. El dinero quedó en Wallet y no se renovó dos veces.',
           duration: 7000
         });
       } else {
