@@ -1,5 +1,5 @@
-/* FRENCH STORE — owner-only Classic R7 visual preview.
-   Reconstructs the pre-forest / pre-split storefront from pinned R6/R7 assets.
+/* FRENCH STORE — Classic R7 single public storefront.
+   Reconstructs the approved pre-forest / pre-split storefront from pinned R6/R7 assets.
    Presentation only: no pricing, checkout, Wallet, order, auth, reseller,
    fulfillment, loyalty authority or Supabase writes are changed. */
 
@@ -120,7 +120,7 @@ html[data-fs-owner-classic="1"] #cartButton{
   color:#61efff!important;
 }
 
-/* Bring back the historical Rank banner only for the owner preview. */
+/* Keep the existing Rank banner content without changing the page skin. */
 html[data-fs-owner-classic="1"] .fs-rank-premium-ribbon{
   position:relative!important;
   inset:auto!important;
