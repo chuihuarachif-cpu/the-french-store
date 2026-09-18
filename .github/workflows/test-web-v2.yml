@@ -52,6 +52,8 @@ jobs:
           test -s v2/legal-account.js
           test -s v2/player-verify.js
           test -s v2/detail-layout-v2.js
+          test -s v2/tiers/owner-classic-r7.js
+          test -s v2/tiers/owner-classic-r7.css
           test -s v2/buy-now.js
           test -s v2/bisa-checkout.css
           test -s v2/bisa-checkout.js
@@ -88,6 +90,7 @@ jobs:
           node --check v2/legal-account.js
           node --check v2/player-verify.js
           node --check v2/detail-layout-v2.js
+          node --check v2/tiers/owner-classic-r7.js
           node --check v2/buy-now.js
           node --check v2/auth-ease.js
           node --check v2/auth-confirm.js
@@ -122,6 +125,10 @@ jobs:
           grep -q './features/wallet.js' v2/bootstrap.js
           grep -q './features/orders-admin.js' v2/bootstrap.js
           grep -q './core/ui.js' v2/bootstrap.js
+          grep -q './tiers/owner-classic-r7.js' v2/bootstrap.js
+          grep -q 'FSTierGate?.isOwner' v2/tiers/owner-classic-r7.js
+          ! grep -q 'chuihuarachif@gmail.com' v2/tiers/owner-classic-r7.js
+          grep -q 'data-fs-owner-classic' v2/tiers/owner-classic-r7.css
           grep -q './bisa-checkout.js' v2/bootstrap.js
           grep -q './bisa-wallet.js' v2/bootstrap.js
           grep -q './fulfillment-inputs.js' v2/bootstrap.js
