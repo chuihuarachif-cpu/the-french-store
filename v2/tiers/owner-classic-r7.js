@@ -1,10 +1,13 @@
-/* FRENCH STORE — owner-only Classic R7 preview gate.
-   Uses the existing trusted FSTierGate owner decision; no email is duplicated
-   here and no commerce/auth/payment state is changed. */
+/* FRENCH STORE — Classic R7 public/default storefront.
+   Historical filename/data attribute are retained for compatibility with the
+   existing CSS and release checks. Presentation only: pricing, checkout,
+   Wallet, orders, auth, reseller, fulfillment, loyalty and Rank Pass state
+   remain unchanged. */
 (() => {
   'use strict';
 
-  const VERSION = 'owner-classic-r7-v3-20260918';
+  const VERSION = 'owner-classic-r7-v4-20260918';
+  const CLASSIC_R7_MODE = 'public-default';
   const root = document.documentElement;
   const STYLE_ID = 'fs-owner-classic-r7-css';
   const CATEGORY_ICONS = Object.freeze({
@@ -22,11 +25,6 @@
   });
   let scheduled = false;
   let observer = null;
-
-  function owner() {
-    try { return window.FSTierGate?.isResolved?.() === true && window.FSTierGate?.isOwner?.() === true; }
-    catch { return false; }
-  }
 
   function ensureStyle() {
     let node = document.getElementById(STYLE_ID);
@@ -86,24 +84,8 @@
     classicCatalog();
   }
 
-  function restoreUnified() {
-    delete root.dataset.fsOwnerClassic;
-    document.getElementById(STYLE_ID)?.remove();
-    const hero = document.querySelector('#view-inicio .hero');
-    const title = hero?.querySelector('h1');
-    const paragraph = hero?.querySelector('.hero-copy>p');
-    if (title && title.textContent.trim() === 'Tu partida empieza aquí.') {
-      title.textContent = 'Recargas, streaming y Gift Cards en Bolivia.';
-    }
-    if (paragraph && paragraph.textContent.trim() === 'Juegos, streaming y Gift Cards en una tienda simple, rápida y segura.') {
-      paragraph.textContent = 'Juegos y servicios digitales en una tienda simple, rápida y segura, con precios visibles en bolivianos.';
-    }
-    try { window.FSUnifiedWorld?.refresh?.(); } catch {}
-  }
-
   function reconcile() {
-    if (owner()) applyClassic();
-    else restoreUnified();
+    applyClassic();
   }
 
   function schedule() {
@@ -111,7 +93,7 @@
     scheduled = true;
     requestAnimationFrame(() => {
       scheduled = false;
-      if (owner()) applyClassic();
+      applyClassic();
     });
   }
 
@@ -132,7 +114,14 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) reconcile(); });
   }
 
-  window.FSOwnerClassicPreview = Object.freeze({version:VERSION,refresh:reconcile,isActive:() => root.dataset.fsOwnerClassic === '1'});
+  const api = Object.freeze({
+    version: VERSION,
+    mode: CLASSIC_R7_MODE,
+    refresh: reconcile,
+    isActive: () => root.dataset.fsOwnerClassic === '1'
+  });
+  window.FSClassicR7 = api;
+  window.FSOwnerClassicPreview = api;
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
