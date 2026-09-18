@@ -5,7 +5,7 @@ on:
     branches: [codex/r225-pwa-whatsapp-delivery-copy]
     paths:
       - '.github/workflows/r225-build-png-icon.yml'
-      - 'v2/assets/brand/icon-512.webp'
+      - 'v2/assets/brand/icon-192.png'
 
 permissions:
   contents: write
@@ -21,9 +21,9 @@ jobs:
         run: |
           set -euo pipefail
           if command -v magick >/dev/null 2>&1; then
-            magick v2/assets/brand/icon-512.webp v2/assets/brand/icon-512.png
+            magick v2/assets/brand/icon-192.png -filter Lanczos -resize 512x512 v2/assets/brand/icon-512.png
           elif command -v convert >/dev/null 2>&1; then
-            convert v2/assets/brand/icon-512.webp v2/assets/brand/icon-512.png
+            convert v2/assets/brand/icon-192.png -filter Lanczos -resize 512x512 v2/assets/brand/icon-512.png
           else
             sudo apt-get update
             sudo apt-get install -y imagemagick
