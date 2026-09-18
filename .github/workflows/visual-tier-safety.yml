@@ -40,12 +40,15 @@ jobs:
           node --check v2/premium-release.js
           node --check scripts/test-r167-tier-frames.mjs
           grep -q 'tier-gate-unified-ui-v1-20260917' v2/tiers/tier-gate.js
-          grep -q 'unified-blue-r3-20260917' v2/tiers/world-ui.js
+          grep -q 'unified-blue-r4-20260917' v2/tiers/world-ui.js
           grep -q 'unified-blue-mobile-fix.css' v2/tiers/world-ui.js
           grep -q 'layer(fs-world)' v2/tiers/world-ui.js
           grep -q 'data-fs-interface="unified-blue"' v2/index.html
-          grep -q 'world-ui.js?v=20260917-r4' v2/index.html
+          grep -q 'world-ui.js?v=20260917-r5' v2/index.html
           grep -q 'premium-release.js?v=20260917-unified-retired-r4' v2/index.html
+          grep -q 'unified-blue.css?v=20260917-r5' v2/index.html
+          grep -q 'padding:24px 20px 32px!important' v2/tiers/unified-blue.css
+          grep -q 'margin-bottom:calc(112px + env(safe-area-inset-bottom))!important' v2/tiers/unified-blue.css
           grep -q 'unified-blue-reference-r4.css?v=20260917-r4' v2/index.html
           grep -q 'unified-blue-diamond-r5.css?v=20260917-r8' v2/index.html
 

@@ -34,11 +34,12 @@ ok(base.includes(':focus-visible'), 'Base keyboard focus treatment is required')
 
 // First paint and cache contract: browsers must not keep the pre-unification UI.
 ok(index.includes('data-fs-interface="unified-blue"'), 'Unified interface marker must exist before JavaScript');
-ok(index.includes('world-ui.js?v=20260917-r4'), 'World UI must use the current cache-busting key');
+ok(index.includes('world-ui.js?v=20260917-r5'), 'World UI must use the current cache-busting key');
 ok(index.includes('premium-release.js?v=20260917-unified-retired-r4'), 'Retired premium cleanup must use a fresh cache key');
+ok(index.includes('unified-blue.css?v=20260917-r5'), 'Unified base stylesheet must use the current cache-busting key');
 ok(index.includes('unified-blue-reference-r4.css?v=20260917-r4'), 'Reference-match stylesheet must load on first paint');
 ok(index.includes('unified-blue-diamond-r5.css?v=20260917-r8'), 'Final unified cleanup must use the current cache-busting key');
-ok(index.includes('id="fs-unified-blue-css"') && index.includes('data-fs-unified="unified-blue-r3-20260917"'), 'Static unified style must stay compatible with the runtime bootstrap');
+ok(index.includes('id="fs-unified-blue-css"') && index.includes('data-fs-unified="unified-blue-r4-20260917"'), 'Static unified style must stay compatible with the runtime bootstrap');
 
 // One public visual system must exist and be responsive/accessibility aware.
 ok(unified.includes('data-fs-interface="unified-blue"'), 'Unified skin selector is missing');
@@ -94,7 +95,7 @@ ok(gate.includes('rankLevel:() => rankLevel'), 'Actual rank must remain observab
 // The public UI bootstrap must not be owner-only and must add approved details.
 ok(world.includes("root.dataset.fsInterface = 'unified-blue'"), 'Public UI bootstrap must set unified interface');
 ok(world.includes("layer(fs-world)"), 'Unified skin must be imported into the fs-world cascade layer');
-ok(world.includes("unified-blue-r3-20260917"), 'Unified skin release marker is stale');
+ok(world.includes("unified-blue-r4-20260917"), 'Unified skin release marker is stale');
 ok(world.includes('unified-blue-mobile-fix.css'), 'Mobile polish sheet is not loaded');
 ok(world.includes('node.dataset.fsUnified !== VERSION'), 'Unified style must refresh when release version changes');
 ok(!world.includes('reconcileOwnerPreview'), 'Unified interface must not be owner-gated');

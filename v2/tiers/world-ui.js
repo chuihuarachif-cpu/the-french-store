@@ -5,7 +5,7 @@
   'use strict';
 
   const root = document.documentElement;
-  const VERSION = 'unified-blue-r3-20260917';
+  const VERSION = 'unified-blue-r4-20260917';
   const WORLD = 'nightfall';
   let observersInstalled = false;
 

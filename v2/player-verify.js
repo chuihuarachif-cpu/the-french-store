@@ -236,7 +236,7 @@
     if (document.getElementById('fs-detail-layout-v2')) return;
     const script = document.createElement('script');
     script.id = 'fs-detail-layout-v2';
-    script.src = './detail-layout-v2.js?v=20260917-r4';
+    script.src = './detail-layout-v2.js?v=20260917-r5';
     script.defer = true;
     document.head.appendChild(script);
   }
