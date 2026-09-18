@@ -120,7 +120,14 @@ html[data-fs-owner-classic="1"] #cartButton{
   color:#61efff!important;
 }
 
-/* Keep the existing Rank banner content without changing the page skin. */
+/* Keep the existing Rank banner content without changing the page skin.
+   Rank can still be shown as account status, but no rank-specific glint/skin runs. */
+html[data-fs-owner-classic="1"] .fs-rank-premium-ribbon::before,
+html[data-fs-owner-classic="1"] .fs-rank-premium-ribbon::after{
+  content:none!important;
+  display:none!important;
+  animation:none!important;
+}
 html[data-fs-owner-classic="1"] .fs-rank-premium-ribbon{
   position:relative!important;
   inset:auto!important;
