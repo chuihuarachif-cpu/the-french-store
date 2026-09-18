@@ -3,19 +3,22 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r224-installfix-20260918';
+const CACHE='fs-store-r225-install-20260918';
 const SHELL=[
   '/v2/','/v2/index.html','/v2/manifest.webmanifest',
-  '/v2/assets/brand/icon-192.png','/v2/assets/brand/icon-512.webp',
+  '/v2/assets/brand/icon-192.png','/v2/assets/brand/icon-512.png',
   '/v2/tiers/owner-classic-r7.css'
 ];
 
 self.addEventListener('install',event=>{
-  event.waitUntil(
-    caches.open(CACHE)
-      .then(cache=>cache.addAll(SHELL))
-      .then(()=>self.skipWaiting())
-  );
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE);
+    await Promise.allSettled(SHELL.map(async path=>{
+      const response=await fetch(path,{cache:'reload'});
+      if(response.ok&&!response.redirected) await cache.put(path,response.clone());
+    }));
+    await self.skipWaiting();
+  })());
 });
 self.addEventListener('activate',event=>{
   event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('fs-store-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
