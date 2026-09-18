@@ -50,11 +50,13 @@ jobs:
           grep -Fq "@keyframes fs-weekly-pass-aura" v2/weekly-pass-feature.css
           grep -Fq "@media (prefers-reduced-motion: reduce)" v2/weekly-pass-feature.css
           grep -Fq "#catalogList .fs-popular-badge" v2/weekly-pass-feature.css
+          grep -Fq "#catalogList .r6-package-card.fs-featured-weekly-pass" v2/weekly-pass-feature.css
+          grep -Fq "padding-top: 34px !important" v2/weekly-pass-feature.css
 
       - name: Verify lazy loading and cache busting
         run: |
           set -euo pipefail
-          grep -Fq "weekly-pass-feature.css?v=20260825-r50" v2/bootstrap.js
+          grep -Fq "weekly-pass-feature.css?v=20260918-r220" v2/bootstrap.js
           grep -Fq "catalog-order.js?v=20260917-r157" v2/bootstrap.js
           node scripts/test-bootstrap-release.mjs
 
