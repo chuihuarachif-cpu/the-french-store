@@ -37,6 +37,7 @@ jobs:
         run: |
           node --check v2/tiers/tier-gate.js
           node --check v2/tiers/world-ui.js
+          node --check v2/tiers/owner-classic-r7.js
           node --check v2/premium-release.js
           node --check scripts/test-r167-tier-frames.mjs
           grep -q 'tier-gate-unified-ui-v1-20260917' v2/tiers/tier-gate.js
@@ -51,6 +52,12 @@ jobs:
           grep -q 'margin-bottom:calc(112px + env(safe-area-inset-bottom))!important' v2/tiers/unified-blue.css
           grep -q 'unified-blue-reference-r4.css?v=20260917-r4' v2/index.html
           grep -q 'unified-blue-diamond-r5.css?v=20260917-r8' v2/index.html
+          grep -q './tiers/owner-classic-r7.js' v2/bootstrap.js
+          grep -q 'owner-classic-r7-v1-20260918' v2/tiers/owner-classic-r7.js
+          grep -q 'data-fs-owner-classic="1"' v2/tiers/owner-classic-r7.css
+          grep -q 'Tu partida empieza aquí.' v2/tiers/owner-classic-r7.js
+          grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))!important' v2/tiers/owner-classic-r7.css
+          ! grep -Eqi 'service_role|precio_proveedor|tipo_cambio|create_qr_order|create_wallet_order' v2/tiers/owner-classic-r7.js
 
       - name: CSS structural and secret safety
         run: |
