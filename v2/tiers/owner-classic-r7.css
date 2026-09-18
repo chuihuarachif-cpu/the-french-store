@@ -207,7 +207,13 @@ html[data-fs-owner-classic="1"] #view-inicio .hero-gem{
   aspect-ratio:auto!important;margin:0!important;text-align:center!important;
   font-size:150px!important;line-height:1!important;opacity:1!important;filter:drop-shadow(0 0 28px rgba(44,218,252,.28))!important;
 }
-html[data-fs-owner-classic="1"] #view-inicio .hero-gem::before,
+html[data-fs-owner-classic="1"] #view-inicio .hero-gem::before{
+  content:"💎"!important;display:block!important;position:static!important;inset:auto!important;
+  width:auto!important;height:auto!important;aspect-ratio:auto!important;margin:0!important;
+  background:none!important;clip-path:none!important;border:0!important;border-radius:0!important;
+  color:initial!important;font-size:150px!important;line-height:1!important;
+  filter:drop-shadow(0 0 28px rgba(44,218,252,.28))!important;transform:none!important;
+}
 html[data-fs-owner-classic="1"] #view-inicio .hero-gem::after{content:none!important;display:none!important}
 html[data-fs-owner-classic="1"] #view-inicio .hero-gem img{display:none!important}
 
