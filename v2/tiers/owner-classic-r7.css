@@ -77,6 +77,8 @@ html[data-fs-owner-classic="1"] .brand>span{
   width:auto!important;height:auto!important;
   font-size:20px!important;
   line-height:1!important;
+  opacity:1!important;
+  visibility:visible!important;
   filter:drop-shadow(0 0 6px rgba(73,222,255,.55))!important;
 }
 html[data-fs-owner-classic="1"] .brand b{
@@ -86,6 +88,8 @@ html[data-fs-owner-classic="1"] .brand b{
   letter-spacing:.04em!important;
   text-shadow:none!important;
   white-space:normal!important;
+  opacity:1!important;
+  visibility:visible!important;
 }
 html[data-fs-owner-classic="1"] .top-actions{display:flex!important;align-items:center!important;gap:8px!important}
 html[data-fs-owner-classic="1"] :is(#authButton,#cartButton,.ghost-btn,.cart-btn,.icon-btn,.cart-inline){
@@ -198,8 +202,29 @@ html[data-fs-owner-classic="1"] #view-inicio .hero-actions{
   width:auto!important;max-width:none!important;margin-top:20px!important;
 }
 html[data-fs-owner-classic="1"] #view-inicio .hero-actions button{
-  width:auto!important;min-height:44px!important;padding:11px 16px!important;border-radius:12px!important;
-  font-size:14px!important;font-weight:700!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  grid-template-columns:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:0!important;
+  width:auto!important;
+  min-height:44px!important;
+  padding:11px 16px!important;
+  border-radius:12px!important;
+  font-size:14px!important;
+  font-weight:700!important;
+  line-height:1.15!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+html[data-fs-owner-classic="1"] #view-inicio .hero-actions button>span:not(.world-action-arrow){
+  display:inline!important;
+  flex:0 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  white-space:nowrap!important;
+  text-align:center!important;
 }
 html[data-fs-owner-classic="1"] :is(.world-action-icon,.world-action-arrow,.world-trust-strip){display:none!important}
 html[data-fs-owner-classic="1"] #view-inicio .hero-gem{
@@ -406,11 +431,26 @@ html[data-fs-owner-classic="1"] .floating-whatsapp{
   html[data-fs-owner-classic="1"] .topbar{
     height:58px!important;min-height:58px!important;padding:0 10px!important;
   }
-  html[data-fs-owner-classic="1"] .brand{max-width:138px!important;gap:5px!important}
-  html[data-fs-owner-classic="1"] .brand>span{font-size:16px!important}
-  html[data-fs-owner-classic="1"] .brand>span:last-child{display:none!important}
-  html[data-fs-owner-classic="1"] .brand b{font-size:12px!important;max-width:92px!important}
-  html[data-fs-owner-classic="1"] #authButton{max-width:44vw!important;font-size:11px!important;padding:8px 10px!important}
+  html[data-fs-owner-classic="1"] .brand{
+    flex:0 1 160px!important;
+    width:auto!important;
+    max-width:160px!important;
+    min-width:118px!important;
+    gap:5px!important;
+    overflow:visible!important;
+  }
+  html[data-fs-owner-classic="1"] .brand>span{font-size:16px!important;opacity:1!important;visibility:visible!important}
+  html[data-fs-owner-classic="1"] .brand>span:last-child{display:inline!important}
+  html[data-fs-owner-classic="1"] .brand b{
+    display:block!important;
+    opacity:1!important;
+    visibility:visible!important;
+    font-size:12px!important;
+    line-height:1.08!important;
+    max-width:98px!important;
+    white-space:normal!important;
+  }
+  html[data-fs-owner-classic="1"] #authButton{max-width:38vw!important;font-size:11px!important;padding:8px 10px!important}
   html[data-fs-owner-classic="1"] #cartButton{min-width:52px!important;padding:8px 10px!important}
   html[data-fs-owner-classic="1"] .fs-rank-premium-ribbon{
     min-height:70px!important;padding:10px 14px!important;grid-template-columns:auto minmax(0,1fr)!important;
@@ -428,9 +468,35 @@ html[data-fs-owner-classic="1"] .floating-whatsapp{
   }
   html[data-fs-owner-classic="1"] #view-inicio .hero p{max-width:100%!important;font-size:13px!important;line-height:1.6!important}
   html[data-fs-owner-classic="1"] #view-inicio .hero-actions{
-    display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:20px!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+    width:100%!important;
+    max-width:none!important;
+    margin-top:20px!important;
   }
-  html[data-fs-owner-classic="1"] #view-inicio .hero-actions button{width:100%!important;min-height:48px!important;font-size:15px!important}
+  html[data-fs-owner-classic="1"] #view-inicio .hero-actions button{
+    display:flex!important;
+    grid-template-columns:none!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:52px!important;
+    padding:10px 14px!important;
+    border-radius:14px!important;
+    font-size:15px!important;
+    line-height:1!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+  }
+  html[data-fs-owner-classic="1"] #view-inicio .hero-actions button>span:not(.world-action-arrow){
+    display:inline!important;
+    width:auto!important;
+    max-width:100%!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+  }
   html[data-fs-owner-classic="1"] #categoryGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:14px 0!important}
   html[data-fs-owner-classic="1"] #categoryGrid .category-card{
     min-height:104px!important;padding:13px 10px!important;border-radius:14px!important;
