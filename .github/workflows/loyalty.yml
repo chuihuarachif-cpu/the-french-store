@@ -41,6 +41,10 @@ jobs:
           grep -Fq "purchase_my_loyalty_pass" v2/loyalty.js
           grep -Fq "redeem_my_rewards" v2/loyalty.js
           grep -Fq "French Rank Pass" v2/loyalty.js
+          grep -Fq "data-fs-pass-toggle" v2/loyalty.js
+          grep -Fq "data-fs-pass-checkout" v2/loyalty.js
+          grep -Fq "data-fs-pass-qr" v2/loyalty.js
+          grep -Fq "Renovar +30 días" v2/loyalty.js
           grep -Fq "Gold Rank" v2/loyalty-terms.html
           grep -Fq "Diamond Rank" v2/loyalty-terms.html
           grep -Fq "renderPublicRewardsReserve" v2/loyalty.js
@@ -64,7 +68,7 @@ jobs:
           set -euo pipefail
           if grep -Eqi "gamerhub|bonoxs|gameton|precio_proveedor|tipo_cambio" v2/loyalty.js; then echo 'provider/pricing logic leaked into loyalty'; exit 1; fi
           if grep -Eqi "/bisa-sip/|create_qr_order|create_wallet_order" v2/loyalty.js; then echo 'payment core leaked into loyalty'; exit 1; fi
-          grep -Fq "Rank Pass se paga con French Wallet" v2/loyalty.js
+          grep -Fq "El Rank Pass puede pagarse con French Wallet o QR" v2/loyalty.js
           grep -Fq "Rewarded Ads" v2/loyalty-terms.html
 
       - name: Start local preview
