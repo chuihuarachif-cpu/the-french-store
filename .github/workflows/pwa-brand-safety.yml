@@ -105,10 +105,10 @@ jobs:
           grep -Fq 'rel="manifest" href="/v2/manifest.webmanifest?v=20260918-r225"' v2/index.html
           grep -Fq '/v2/assets/brand/icon-192.png?v=20260918-r225' v2/index.html
           grep -Fq '/v2/assets/brand/icon-192.png?v=20260918-r225' index.html
-          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/icon-192.png' v2/index.html
-          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/icon-192.png' index.html
-          grep -Fq 'twitter:card" content="summary"' v2/index.html
-          grep -Fq 'twitter:card" content="summary"' index.html
+          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/icon-512.png' v2/index.html
+          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/icon-512.png' index.html
+          grep -Fq 'twitter:card" content="summary_large_image"' v2/index.html
+          grep -Fq 'twitter:card" content="summary_large_image"' index.html
           grep -Fq 'release=20260918-r225' index.html
           grep -Fq './brand-motion.css?v=20260823-1' v2/index.html
           grep -Fq './brand-ui.js?v=20260918-r225' v2/index.html
@@ -117,7 +117,8 @@ jobs:
           grep -Fq './pwa-install.css?v=20260823-1' v2/index.html
           grep -Fq './navigation-history.js?v=20260823-1' v2/index.html
           grep -q 'beforeinstallprompt' v2/pwa-install-ui.js
-          grep -Fq "register('/v2/sw.js', { scope: '/v2/'" v2/pwa-init.js
+          grep -Fq "register('/v2/sw.js?v=20260918-r225'" v2/pwa-init.js
+          grep -Fq "scope: '/v2/'" v2/pwa-init.js
           grep -Fq 'Promise.allSettled' v2/sw.js
           grep -Fq 'icon-512.png' v2/sw.js
           grep -Fq 'fs-delivery-delay' v2/index.html
@@ -146,3 +147,65 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.png >/dev/null
           curl --fail http://127.0.0.1:8080/v2/tiers/owner-classic-r7.css >/dev/null
+
+
+      - name: Chromium installability contract
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet websocket-client
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME"
+          python3 -m http.server 8081 >/tmp/fs-pwa-install-http.log 2>&1 &
+          server_pid=$!
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --remote-allow-origins='*' --remote-debugging-port=9222 --user-data-dir=/tmp/fs-pwa-profile http://127.0.0.1:8081/v2/ >/tmp/fs-pwa-chrome.log 2>&1 &
+          chrome_pid=$!
+          trap 'kill $chrome_pid $server_pid || true' EXIT
+          python3 - <<'PY'
+          import json, time, urllib.request
+          import websocket
+
+          target=None
+          for _ in range(50):
+              try:
+                  targets=json.load(urllib.request.urlopen('http://127.0.0.1:9222/json/list', timeout=2))
+                  target=next((t for t in targets if '/v2/' in t.get('url','') and t.get('webSocketDebuggerUrl')), None)
+                  if target:
+                      break
+              except Exception:
+                  pass
+              time.sleep(.2)
+          assert target, 'No Chromium debug target for /v2/'
+
+          ws=websocket.create_connection(target['webSocketDebuggerUrl'], timeout=10)
+          seq=0
+          def call(method, params=None):
+              global seq
+              seq += 1
+              ws.send(json.dumps({'id':seq,'method':method,'params':params or {}}))
+              while True:
+                  msg=json.loads(ws.recv())
+                  if msg.get('id') == seq:
+                      if 'error' in msg:
+                          raise RuntimeError(msg['error'])
+                      return msg.get('result',{})
+
+          call('Page.enable')
+          deadline=time.time()+12
+          errors=[]
+          while time.time() < deadline:
+              try:
+                  result=call('Page.getInstallabilityErrors')
+                  errors=result.get('installabilityErrors',[])
+                  if not errors:
+                      break
+              except Exception as exc:
+                  errors=[{'errorId':'CDP_ERROR','errorArguments':[{'name':'message','value':str(exc)}]}]
+              time.sleep(.5)
+
+          manifest=call('Page.getAppManifest')
+          ws.close()
+          assert manifest.get('url','').endswith('/v2/manifest.webmanifest?v=20260918-r225'), manifest
+          assert not manifest.get('errors'), manifest.get('errors')
+          assert not errors, errors
+          print('Chromium reports the storefront as installable.')
+          PY

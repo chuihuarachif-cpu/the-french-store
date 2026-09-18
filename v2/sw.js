@@ -5,39 +5,51 @@
 
 const CACHE='fs-store-r225-install-20260918';
 const SHELL=[
-  '/v2/','/v2/index.html','/v2/manifest.webmanifest',
-  '/v2/assets/brand/icon-192.png','/v2/assets/brand/icon-512.png',
+  '/v2/',
+  '/v2/index.html',
+  '/v2/manifest.webmanifest',
+  '/v2/assets/brand/icon-192.png',
+  '/v2/assets/brand/icon-512.png',
   '/v2/tiers/owner-classic-r7.css'
 ];
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
     const cache=await caches.open(CACHE);
-    await Promise.allSettled(SHELL.map(async path=>{
-      const response=await fetch(path,{cache:'reload'});
-      if(response.ok&&!response.redirected) await cache.put(path,response.clone());
-    }));
+    await Promise.allSettled(SHELL.map(url=>cache.add(new Request(url,{cache:'reload'}))));
     await self.skipWaiting();
   })());
 });
+
 self.addEventListener('activate',event=>{
-  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('fs-store-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(k=>k.startsWith('fs-store-')&&k!==CACHE).map(k=>caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
+
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
   const url=new URL(event.request.url);
   if(url.origin!==location.origin)return;
+
   const navigation=event.request.mode==='navigate'&&url.pathname.startsWith('/v2/');
   const staticShell=SHELL.includes(url.pathname);
   if(!navigation&&!staticShell)return;
+
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE).catch(()=>null);
     try{
       const response=await fetch(event.request,{cache:'no-store'});
-      if(cache&&response.ok&&!response.redirected)event.waitUntil(cache.put(event.request,response.clone()).catch(()=>{}));
+      if(cache&&response.ok&&!response.redirected){
+        event.waitUntil(cache.put(event.request,response.clone()).catch(()=>{}));
+      }
       return response;
     }catch{
-      return (await cache?.match(event.request))||(navigation?await cache?.match('/v2/'):null)||Response.error();
+      return (await cache?.match(event.request))
+        ||(navigation?await cache?.match('/v2/'):null)
+        ||Response.error();
     }
   })());
 });
