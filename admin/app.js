@@ -280,7 +280,7 @@
 
   async function boot(){
     bindUi();
-    if('serviceWorker'in navigator)navigator.serviceWorker.register('/admin/sw.js?v=20260918-r225',{scope:'/admin/',updateViaCache:'none'}).catch(()=>{});
+    if('serviceWorker'in navigator)navigator.serviceWorker.register('/admin/sw.js?v=20260918-r225',{scope:'/admin/',updateViaCache:'none'}).then((registration)=>registration.update().catch(()=>{})).catch(()=>{});
     try{
       await verifyPrivateAccess();
       sb.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>{if(!session)showOnly('loginView');else verifyPrivateAccess().catch(()=>showOnly('deniedView'))},0)});
