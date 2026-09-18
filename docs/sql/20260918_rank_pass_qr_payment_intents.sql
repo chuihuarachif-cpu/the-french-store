@@ -140,7 +140,15 @@ begin
     raise exception 'TOPUP_AMOUNT_MISMATCH';
   end if;
   if round(v_plan.price_bob,2) <> round(v_intent.quoted_price_bob,2) then
-    raise exception 'PASS_PRICE_CHANGED';
+    v_result := jsonb_build_object(
+      'ok',true,'superseded',true,'reason','PASS_PRICE_CHANGED','wallet_kept',true,
+      'payment_method','QR','topup_request_id',p_request_id,'plan_code',v_intent.plan_code,
+      'quoted_price_bob',v_intent.quoted_price_bob,'current_price_bob',v_plan.price_bob
+    );
+    update public.loyalty_pass_qr_intents
+    set status='SUPERSEDED',result=v_result,completed_at=now()
+    where id=v_intent.id;
+    return v_result;
   end if;
 
   select * into v_member
@@ -160,9 +168,9 @@ begin
 
   if v_superseded then
     v_result := jsonb_build_object(
-      'ok',true,'superseded',true,'wallet_kept',true,'payment_method','QR',
-      'topup_request_id',p_request_id,'plan_code',v_intent.plan_code,
-      'message','PASS_ALREADY_CHANGED_AFTER_QR_REQUEST'
+      'ok',true,'superseded',true,'reason','PASS_ALREADY_CHANGED_AFTER_QR_REQUEST',
+      'wallet_kept',true,'payment_method','QR',
+      'topup_request_id',p_request_id,'plan_code',v_intent.plan_code
     );
     update public.loyalty_pass_qr_intents
     set status='SUPERSEDED',result=v_result,completed_at=now()
