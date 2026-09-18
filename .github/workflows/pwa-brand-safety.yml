@@ -4,7 +4,6 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'favicon.ico'
       - 'index.html'
       - 'v2/index.html'
       - 'v2/manifest.webmanifest'
@@ -20,7 +19,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'favicon.ico'
       - 'index.html'
       - 'v2/index.html'
       - 'v2/manifest.webmanifest'
@@ -44,10 +42,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check isolated PWA and brand files
+      - name: Check PWA and brand assets
         run: |
           set -euo pipefail
-          test -s favicon.ico
           test -s v2/manifest.webmanifest
           test -s v2/sw.js
           test -s v2/pwa-init.js
@@ -58,10 +55,11 @@ jobs:
           test -s v2/brand-motion.css
           test -s v2/assets/brand/icon-192.png
           test -s v2/assets/brand/icon-512.png
+          test -s v2/assets/brand/social-share-r223.jpg
           test -s v2/assets/brand/french-store-mascot.webp
-          file favicon.ico | grep -qi 'icon\|MS Windows'
           file v2/assets/brand/icon-192.png | grep -qi 'PNG image data, 192 x 192'
           file v2/assets/brand/icon-512.png | grep -qi 'PNG image data, 512 x 512'
+          file v2/assets/brand/social-share-r223.jpg | grep -qi 'JPEG image data'
           file v2/assets/brand/french-store-mascot.webp | grep -qi 'Web/P image'
 
       - name: Validate JavaScript syntax
@@ -86,43 +84,48 @@ jobs:
           assert data.get('launch_handler',{}).get('client_mode')=='navigate-existing'
           assert data['theme_color']=='#06111d'
           assert data.get('prefer_related_applications') is False
-          icons={(i['sizes'], i['type'], i['purpose']) for i in data['icons']}
-          assert ('192x192','image/png','any') in icons
-          assert ('512x512','image/png','any') in icons
+          icons={i['sizes']:i for i in data['icons']}
+          assert icons['192x192']['src']=='/v2/assets/brand/icon-192.png'
+          assert icons['512x512']['src']=='/v2/assets/brand/icon-512.png'
+          assert icons['192x192']['type']=='image/png' and 'maskable' in icons['192x192']['purpose']
+          assert icons['512x512']['type']=='image/png' and 'maskable' in icons['512x512']['purpose']
           PY
 
       - name: Check storefront wiring and safe network behavior
         run: |
           set -euo pipefail
-          grep -q 'rel="manifest" href="./manifest.webmanifest"' v2/index.html
-          grep -q 'rel="icon" href="/favicon.ico"' v2/index.html
-          grep -q 'rel="icon" href="/favicon.ico"' index.html
-          grep -q './brand-motion.css?v=20260823-1' v2/index.html
-          grep -q './brand-ui.js?v=20260823-1' v2/index.html
-          grep -q './pwa-init.js?v=20260918-r2' v2/index.html
-          grep -q './pwa-install-ui.js?v=20260918-r2' v2/index.html
-          grep -q './pwa-install.css?v=20260823-1' v2/index.html
-          grep -q './navigation-history.js?v=20260823-1' v2/index.html
+          grep -Fq 'rel="manifest" href="./manifest.webmanifest?v=20260918-r223"' v2/index.html
+          grep -Fq './assets/brand/icon-192.png?v=20260918-r223' v2/index.html
+          grep -Fq '/v2/assets/brand/icon-192.png?v=20260918-r223' index.html
+          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/social-share-r223.jpg' v2/index.html
+          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/social-share-r223.jpg' index.html
+          grep -Fq 'twitter:card" content="summary_large_image"' v2/index.html
+          grep -Fq 'twitter:card" content="summary_large_image"' index.html
+          grep -Fq 'release=20260918-r223' index.html
+          grep -Fq './brand-motion.css?v=20260823-1' v2/index.html
+          grep -Fq './brand-ui.js?v=20260823-1' v2/index.html
+          grep -Fq './pwa-init.js?v=20260918-r2' v2/index.html
+          grep -Fq './pwa-install-ui.js?v=20260918-r2' v2/index.html
+          grep -Fq './pwa-install.css?v=20260823-1' v2/index.html
+          grep -Fq './navigation-history.js?v=20260823-1' v2/index.html
           grep -q 'beforeinstallprompt' v2/pwa-install-ui.js
           grep -q 'history.pushState' v2/navigation-history.js
           grep -q "addEventListener('popstate'" v2/navigation-history.js
           grep -q './assets/brand/french-store-mascot.webp' v2/brand-ui.js
-          ! grep -Eq "addEventListener\(['\"]fetch|caches\.|CacheStorage" v2/sw.js
+          grep -q "addEventListener('fetch'" v2/sw.js
+          grep -q "url.origin!==location.origin" v2/sw.js
+          grep -Fq "fs-store-r223-brand-20260918" v2/sw.js
+          ! grep -Eq 'api\.frenchstorebo\.com|supabase\.co|create_qr_order|create_wallet_order' v2/sw.js
           ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/pwa-install-ui.js v2/navigation-history.js v2/brand-ui.js v2/brand-motion.css v2/pwa-install.css v2/manifest.webmanifest
 
       - name: Serve and fetch PWA resources locally
         run: |
           python3 -m http.server 8080 >/tmp/fs-pwa-http.log 2>&1 &
           sleep 2
-          curl --fail http://127.0.0.1:8080/favicon.ico >/dev/null
           curl --fail http://127.0.0.1:8080/v2/manifest.webmanifest >/dev/null
           curl --fail http://127.0.0.1:8080/v2/sw.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/pwa-init.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/pwa-install-ui.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/pwa-install.css >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/navigation-history.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/brand-ui.js >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/brand-motion.css >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.png >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/assets/brand/french-store-mascot.webp >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/brand/social-share-r223.jpg >/dev/null
