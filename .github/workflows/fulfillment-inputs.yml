@@ -65,9 +65,9 @@ jobs:
           grep -q "Datos de juego para Recargas por ID" v2/privacy.html
           grep -q "ID de jugador" v2/terms.html
           grep -q "ID de jugador" v2/refunds.html
-          ! grep -q "Zone ID" v2/privacy.html
-          ! grep -q "Zone ID" v2/terms.html
-          ! grep -q "Zone ID" v2/refunds.html
+          grep -q "Mobile Legends: Bang Bang se solicitan ID de usuario y Zone ID" v2/privacy.html
+          grep -q "Mobile Legends: Bang Bang se solicitan el ID de usuario y el Zone ID" v2/terms.html
+          grep -q "Mobile Legends: Bang Bang se solicitan ID de usuario y Zone ID" v2/refunds.html
 
       - name: Verify public requirements and private values
         run: |
