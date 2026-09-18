@@ -49,9 +49,6 @@
     if (paragraph && paragraph.textContent.trim() !== 'Juegos, streaming y Gift Cards en una tienda simple, rápida y segura.') {
       paragraph.textContent = 'Juegos, streaming y Gift Cards en una tienda simple, rápida y segura.';
     }
-    const gem = hero.querySelector('.hero-gem');
-    if (gem && gem.textContent.trim() !== '💎') gem.textContent = '💎';
-
     document.querySelectorAll('.hero-actions button').forEach((button) => {
       const wanted = button.id === 'whatsappQuote' ? 'Cotizar por WhatsApp' : button.dataset.nav === 'tienda' ? 'Explorar catálogo' : null;
       if (wanted && button.textContent.trim() !== wanted) button.textContent = wanted;
@@ -92,6 +89,15 @@
   function restoreUnified() {
     delete root.dataset.fsOwnerClassic;
     document.getElementById(STYLE_ID)?.remove();
+    const hero = document.querySelector('#view-inicio .hero');
+    const title = hero?.querySelector('h1');
+    const paragraph = hero?.querySelector('.hero-copy>p');
+    if (title && title.textContent.trim() === 'Tu partida empieza aquí.') {
+      title.textContent = 'Recargas, streaming y Gift Cards en Bolivia.';
+    }
+    if (paragraph && paragraph.textContent.trim() === 'Juegos, streaming y Gift Cards en una tienda simple, rápida y segura.') {
+      paragraph.textContent = 'Juegos y servicios digitales en una tienda simple, rápida y segura, con precios visibles en bolivianos.';
+    }
     try { window.FSUnifiedWorld?.refresh?.(); } catch {}
   }
 
