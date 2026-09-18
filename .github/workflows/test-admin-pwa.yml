@@ -50,10 +50,17 @@ jobs:
           d=json.load(open('admin/manifest.webmanifest'))
           assert d['id']=='/admin/' and d['start_url']=='/admin/' and d['scope']=='/admin/'
           assert d['display']=='standalone' and 'standalone' in d.get('display_override',[])
+          icons={i['sizes']:i for i in d['icons']}
+          assert icons['192x192']['src']=='/v2/assets/brand/icon-192.png'
+          assert icons['512x512']['src']=='/v2/assets/brand/icon-512.png'
+          assert all('maskable' in icons[s]['purpose'] for s in ('192x192','512x512'))
           PY
       - name: Check private-admin security contracts
         run: |
           grep -q 'noindex,nofollow' admin/index.html
+          grep -Fq 'rel="manifest" href="./manifest.webmanifest?v=20260918-r223"' admin/index.html
+          grep -Fq '../v2/assets/brand/icon-192.png?v=20260918-r223' admin/index.html
+          grep -Fq 'fs-admin-r223-brand-20260918' admin/sw.js
           grep -q "frame-ancestors 'none'" admin/index.html
           grep -q "admin_app_is_allowed" admin/app.js
           grep -q "admin_app_list_products" admin/app.js
@@ -111,4 +118,6 @@ jobs:
           curl --fail http://127.0.0.1:8080/admin/app.css >/dev/null
           curl --fail http://127.0.0.1:8080/admin/manifest.webmanifest >/dev/null
           curl --fail http://127.0.0.1:8080/admin/pwa-install.js >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
+          curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.png >/dev/null
           curl --fail http://127.0.0.1:8080/v2/admin-oauth-return.js >/dev/null
