@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'buy-now-v4-20260917';
+  const VERSION = 'buy-now-v5-20260917';
   let scheduled = false;
 
   function productIdFromAddButton(button) {
@@ -19,18 +19,20 @@
     const style = document.createElement('style');
     style.id = 'fsBuyNowStyle';
     style.textContent = `
-      .fs-buy-actions{display:grid;grid-template-columns:1fr;gap:8px;align-items:stretch;width:100%;min-width:0}
-      .fs-buy-now{box-sizing:border-box;border:1px solid rgba(75,218,255,.5);background:linear-gradient(135deg,rgba(13,115,154,.96),rgba(7,66,101,.98));color:#f3fcff;border-radius:10px;padding:9px 12px;font:inherit;font-weight:800;cursor:pointer;white-space:normal;overflow-wrap:anywhere;box-shadow:0 7px 18px rgba(0,0,0,.16)}
+      .fs-buy-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-items:stretch;width:100%;min-width:0;box-sizing:border-box}
+      .fs-buy-now{box-sizing:border-box;border:1px solid rgba(75,218,255,.5);background:linear-gradient(135deg,rgba(13,115,154,.96),rgba(7,66,101,.98));color:#f3fcff;border-radius:11px;padding:10px 12px;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 7px 18px rgba(0,0,0,.16)}
       .fs-buy-now:hover{filter:brightness(1.08)}
       .fs-buy-now:disabled{opacity:.55;cursor:wait}
-      .fs-buy-actions .add-btn{box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}
+      .fs-buy-actions .add-btn{box-sizing:border-box;white-space:nowrap}
       .package-row .fs-buy-actions,.r6-package-actions .fs-buy-actions{justify-content:stretch}
-      #catalogList .r6-package-card .r6-package-actions{width:100%!important;min-width:0!important;justify-items:stretch!important;flex:1 1 100%!important}
-      #catalogList .r6-package-card .fs-buy-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:7px!important}
-      #catalogList .r6-package-card .fs-buy-actions button{box-sizing:border-box;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:44px!important;padding:10px 9px!important;font-size:12px!important;line-height:1.2!important;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;hyphens:none!important;writing-mode:horizontal-tb!important;text-orientation:mixed!important;text-align:center!important}
+      #catalogList .r6-package-card.fs-buy-actions-contained{box-sizing:border-box!important;min-width:0!important;overflow:hidden!important;grid-template-columns:minmax(0,1fr)!important}
+      #catalogList .r6-package-card .r6-package-copy,#catalogList .r6-package-card .r6-package-actions{min-width:0!important;max-width:100%!important}
+      #catalogList .r6-package-card .r6-package-actions{width:100%!important;justify-items:stretch!important;flex:1 1 100%!important}
+      #catalogList .r6-package-card>.fs-buy-actions{display:grid!important;grid-column:1/-1!important;grid-template-columns:minmax(0,1fr)!important;justify-self:stretch!important;align-self:end!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:7px!important;margin:0!important;padding:0!important;box-sizing:border-box!important}
+      #catalogList .r6-package-card>.fs-buy-actions button{box-sizing:border-box;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:44px!important;padding:10px 8px!important;font-size:12px!important;line-height:1.15!important;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;hyphens:none!important;writing-mode:horizontal-tb!important;text-orientation:mixed!important;text-align:center!important;overflow:hidden!important}
       #cartModal.fs-buy-now-mode .modal-card{box-shadow:0 22px 70px rgba(0,0,0,.48),0 0 0 1px rgba(54,206,255,.16)}
-      @media(max-width:900px){#catalogList .r6-package-card{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}#catalogList .r6-package-card .r6-package-copy{min-width:0!important}#catalogList .r6-package-card .r6-package-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important}#catalogList .r6-package-card .fs-buy-actions button{writing-mode:horizontal-tb!important;word-break:normal!important;overflow-wrap:normal!important}}
-      @media(max-width:560px){.fs-buy-actions{width:100%}.fs-buy-actions .add-btn,.fs-buy-actions .fs-buy-now{min-width:0;padding:10px 8px}}
+      @media(max-width:900px){#catalogList .r6-package-card.fs-buy-actions-contained{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}#catalogList .r6-package-card .r6-package-copy{min-width:0!important}#catalogList .r6-package-card .r6-package-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important}#catalogList .r6-package-card>.fs-buy-actions button{writing-mode:horizontal-tb!important;word-break:normal!important;overflow-wrap:normal!important}}
+      @media(max-width:560px){#catalogList .r6-package-card>.fs-buy-actions{width:100%!important}#catalogList .r6-package-card>.fs-buy-actions .add-btn,#catalogList .r6-package-card>.fs-buy-actions .fs-buy-now{min-width:0!important;padding:10px 7px!important;font-size:11.5px!important}}
     `;
     document.head.appendChild(style);
   }
@@ -141,12 +143,24 @@
     const parent = addButton.parentElement;
     if (!parent) return;
 
+    const card = addButton.closest('.r6-package-card');
     let actions = addButton.closest('.fs-buy-actions');
     if (!actions) {
-      actions = document.createElement('span');
+      actions = document.createElement('div');
       actions.className = 'fs-buy-actions';
-      parent.insertBefore(actions, addButton);
+
+      if (card) {
+        card.classList.add('fs-buy-actions-contained');
+        const legacyActions = addButton.closest('.r6-package-actions');
+        if (legacyActions && legacyActions.parentElement === card) legacyActions.insertAdjacentElement('afterend', actions);
+        else card.appendChild(actions);
+      } else {
+        parent.insertBefore(actions, addButton);
+      }
+
       actions.appendChild(addButton);
+    } else if (card) {
+      card.classList.add('fs-buy-actions-contained');
     }
 
     const buy = document.createElement('button');
