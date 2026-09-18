@@ -55,7 +55,6 @@ jobs:
           test -s v2/brand-motion.css
           test -s v2/assets/brand/icon-192.png
           test -s v2/assets/brand/icon-512.webp
-          test -s v2/assets/brand/social-share-r223.jpg
           test -s v2/assets/brand/french-store-mascot.webp
           python3 - <<'PY'
           from pathlib import Path
@@ -67,8 +66,6 @@ jobs:
           assert png_size('v2/assets/brand/icon-192.png')==(192,192)
           webp512=Path('v2/assets/brand/icon-512.webp').read_bytes()
           assert webp512[:4]==b'RIFF' and webp512[8:12]==b'WEBP'
-          jpg=Path('v2/assets/brand/social-share-r223.jpg').read_bytes()
-          assert jpg[:2].hex()=='ffd8' and jpg[-2:].hex()=='ffd9'
           webp=Path('v2/assets/brand/french-store-mascot.webp').read_bytes()
           assert webp[:4]==b'RIFF' and webp[8:12]==b'WEBP'
           print('Brand asset headers and dimensions OK')
@@ -109,10 +106,10 @@ jobs:
           grep -Fq 'rel="manifest" href="./manifest.webmanifest?v=20260918-r223"' v2/index.html
           grep -Fq './assets/brand/icon-192.png?v=20260918-r223' v2/index.html
           grep -Fq '/v2/assets/brand/icon-192.png?v=20260918-r223' index.html
-          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/social-share-r223.jpg' v2/index.html
-          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/social-share-r223.jpg' index.html
-          grep -Fq 'twitter:card" content="summary_large_image"' v2/index.html
-          grep -Fq 'twitter:card" content="summary_large_image"' index.html
+          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/icon-192.png' v2/index.html
+          grep -Fq 'https://frenchstorebo.com/v2/assets/brand/icon-192.png' index.html
+          grep -Fq 'twitter:card" content="summary"' v2/index.html
+          grep -Fq 'twitter:card" content="summary"' index.html
           grep -Fq 'release=20260918-r223' index.html
           grep -Fq './brand-motion.css?v=20260823-1' v2/index.html
           grep -Fq './brand-ui.js?v=20260823-1' v2/index.html
@@ -140,4 +137,3 @@ jobs:
           curl --fail http://127.0.0.1:8080/v2/pwa-install-ui.js >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-192.png >/dev/null
           curl --fail http://127.0.0.1:8080/v2/assets/brand/icon-512.webp >/dev/null
-          curl --fail http://127.0.0.1:8080/v2/assets/brand/social-share-r223.jpg >/dev/null
