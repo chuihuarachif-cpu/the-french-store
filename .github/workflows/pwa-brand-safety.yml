@@ -57,10 +57,21 @@ jobs:
           test -s v2/assets/brand/icon-512.png
           test -s v2/assets/brand/social-share-r223.jpg
           test -s v2/assets/brand/french-store-mascot.webp
-          file v2/assets/brand/icon-192.png | grep -qi 'PNG image data, 192 x 192'
-          file v2/assets/brand/icon-512.png | grep -qi 'PNG image data, 512 x 512'
-          file v2/assets/brand/social-share-r223.jpg | grep -qi 'JPEG image data'
-          file v2/assets/brand/french-store-mascot.webp | grep -qi 'Web/P image'
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          def png_size(path):
+              b=Path(path).read_bytes()
+              assert b[:8]==b'\\x89PNG\\r\\n\\x1a\\n', path
+              return struct.unpack('>II',b[16:24])
+          assert png_size('v2/assets/brand/icon-192.png')==(192,192)
+          assert png_size('v2/assets/brand/icon-512.png')==(512,512)
+          jpg=Path('v2/assets/brand/social-share-r223.jpg').read_bytes()
+          assert jpg[:2]==b'\\xff\\xd8' and jpg[-2:]==b'\\xff\\xd9'
+          webp=Path('v2/assets/brand/french-store-mascot.webp').read_bytes()
+          assert webp[:4]==b'RIFF' and webp[8:12]==b'WEBP'
+          print('Brand asset headers and dimensions OK')
+          PY
 
       - name: Validate JavaScript syntax
         run: |
