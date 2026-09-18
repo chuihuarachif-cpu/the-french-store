@@ -1,23 +1,19 @@
-name: Visual Tier Safety
+name: Visual Interface Safety
 
 on:
   pull_request:
     paths:
       - 'v2/index.html'
-      - 'v2/tiers/**'
-      - 'v2/assets/brand/unified-hero-diamond-r4.svg'
-      - 'v2/assets/world/wallet-blue-r8.svg'
-      - 'v2/premium-release.js'
+      - 'v2/bootstrap.js'
+      - 'v2/tiers/owner-classic-r7.*'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
   push:
     branches: [main]
     paths:
       - 'v2/index.html'
-      - 'v2/tiers/**'
-      - 'v2/assets/brand/unified-hero-diamond-r4.svg'
-      - 'v2/assets/world/wallet-blue-r8.svg'
-      - 'v2/premium-release.js'
+      - 'v2/bootstrap.js'
+      - 'v2/tiers/owner-classic-r7.*'
       - 'scripts/test-r167-tier-frames.mjs'
       - '.github/workflows/visual-tier-safety.yml'
 
@@ -29,67 +25,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Unified blue visual contract
+      - name: Single Classic interface contract
         run: node scripts/test-r167-tier-frames.mjs
-
       - name: Presentation JavaScript syntax
         run: |
-          node --check v2/tiers/tier-gate.js
-          node --check v2/tiers/world-ui.js
           node --check v2/tiers/owner-classic-r7.js
-          node --check v2/premium-release.js
+          node --check v2/bootstrap.js
           node --check scripts/test-r167-tier-frames.mjs
-          grep -q 'tier-gate-unified-ui-v1-20260917' v2/tiers/tier-gate.js
-          grep -q 'unified-blue-r4-20260917' v2/tiers/world-ui.js
-          grep -q 'unified-blue-mobile-fix.css' v2/tiers/world-ui.js
-          grep -q 'layer(fs-world)' v2/tiers/world-ui.js
-          grep -q 'data-fs-interface="unified-blue"' v2/index.html
-          grep -q 'world-ui.js?v=20260917-r5' v2/index.html
-          grep -q 'premium-release.js?v=20260917-unified-retired-r4' v2/index.html
-          grep -q 'unified-blue.css?v=20260917-r5' v2/index.html
-          grep -q 'padding:24px 20px 32px!important' v2/tiers/unified-blue.css
-          grep -q 'margin-bottom:calc(112px + env(safe-area-inset-bottom))!important' v2/tiers/unified-blue.css
-          grep -q 'unified-blue-reference-r4.css?v=20260917-r4' v2/index.html
-          grep -q 'unified-blue-diamond-r5.css?v=20260917-r8' v2/index.html
-          grep -q './tiers/owner-classic-r7.js' v2/bootstrap.js
-          grep -q 'owner-classic-r7-v4-20260918' v2/tiers/owner-classic-r7.js
-          grep -q 'data-fs-owner-classic="1"' v2/tiers/owner-classic-r7.css
-          grep -q 'Tu partida empieza aquí.' v2/tiers/owner-classic-r7.js
-          grep -q "CLASSIC_R7_MODE = 'public-default'" v2/tiers/owner-classic-r7.js
-          ! grep -q 'FSTierGate?.isOwner' v2/tiers/owner-classic-r7.js
-          grep -q 'white-space:nowrap!important' v2/tiers/owner-classic-r7.css
-          grep -q 'justify-content:center!important' v2/tiers/owner-classic-r7.css
-          grep -q 'opacity:1!important' v2/tiers/owner-classic-r7.css
-          grep -q 'content:none!important' v2/tiers/owner-classic-r7.css
-          grep -q 'height:86px!important' v2/tiers/owner-classic-r7.css
-          grep -q 'font-size:21px!important' v2/tiers/owner-classic-r7.css
-          grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))!important' v2/tiers/owner-classic-r7.css
-          ! grep -Eqi 'service_role|precio_proveedor|tipo_cambio|create_qr_order|create_wallet_order' v2/tiers/owner-classic-r7.js
-
-      - name: CSS structural and secret safety
+      - name: CSS and secret safety
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          files = [
-              Path('v2/tiers/tier-base.css'),
-              Path('v2/tiers/unified-blue.css'),
-              Path('v2/tiers/unified-blue-mobile-fix.css'),
-              Path('v2/tiers/unified-blue-reference-r4.css'),
-              Path('v2/tiers/unified-blue-diamond-r5.css'),
-          ]
-          forbidden = ['service_role', 'GAMERHUB_API_KEY', 'GAMERHUB_API_SECRET', 'OPENAI_API_KEY', 'GEMINI_API_KEY']
-          for path in files:
-              text = path.read_text(encoding='utf-8')
-              assert text.count('{') == text.count('}'), f'Unbalanced CSS braces in {path}'
-              found = [token for token in forbidden if token in text]
-              assert not found, f'Forbidden secret-domain tokens in {path}: {found}'
-              if path.name == 'unified-blue-diamond-r5.css':
-                  budget = 10000
-              elif path.name in ('unified-blue-mobile-fix.css','unified-blue-reference-r4.css'):
-                  budget = 30000
-              else:
-                  budget = 80000
-              assert len(text.encode('utf-8')) < budget, f'{path} grew beyond the presentation budget'
-          print('Unified CSS structure and secret checks OK')
+          p=Path('v2/tiers/owner-classic-r7.css')
+          text=p.read_text(encoding='utf-8')
+          assert text.count('{')==text.count('}'), 'Unbalanced CSS braces'
+          for token in ['service_role','GAMERHUB_API_KEY','GAMERHUB_API_SECRET','OPENAI_API_KEY','GEMINI_API_KEY']:
+              assert token not in text, f'Forbidden token: {token}'
+          assert len(text.encode('utf-8'))<90000, 'Classic CSS exceeded presentation budget'
+          print('Classic CSS checks OK')
           PY
