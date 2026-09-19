@@ -27,6 +27,38 @@
     el.textContent = message;
   }
 
+  function selectedOrder(selectId) {
+    const id = text($(selectId)?.value);
+    return recentOrders.find((row) => String(row.order_id) === id) || null;
+  }
+
+  function renderOrderOptions() {
+    const options = ['<option value="">Sin vincular · solo recordatorio Admin</option>']
+      .concat(recentOrders.map((row) => {
+        const label = [row.order_code, row.products, row.customer_email].filter(Boolean).join(' · ');
+        return `<option value="${esc(row.order_id)}">${esc(label)}</option>`;
+      })).join('');
+    ['deliveryReminderOrder','manualReminderOrder'].forEach((id) => {
+      const select = $(id);
+      if (!select) return;
+      const current = select.value;
+      select.innerHTML = options;
+      if ([...select.options].some((option) => option.value === current)) select.value = current;
+    });
+  }
+
+  async function loadRecentOrders() {
+    try {
+      const { data, error } = await sb.rpc('admin_app_recent_streaming_orders');
+      if (error) throw error;
+      recentOrders = Array.isArray(data) ? data : [];
+      renderOrderOptions();
+    } catch {
+      recentOrders = [];
+      renderOrderOptions();
+    }
+  }
+
   function parseDeliveryDate(value) {
     const raw = text(value);
     const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -96,6 +128,7 @@
     const profile = text($('deliveryProfile')?.value) || text($('deliveryHolder')?.value);
     const email = text($('deliveryEmail')?.value);
     const expiresOn = parseDeliveryDate($('deliveryEnd')?.value);
+    const order = selectedOrder('deliveryReminderOrder');
 
     if (!service || !expiresOn) {
       setStatus('No guardé recordatorio: falta servicio o una fecha de vencimiento válida.', 'warn');
@@ -113,11 +146,13 @@
         fingerprint,
         notify_days_before: [3, 1, 0],
         active: true,
-        last_notified_on: null
+        last_notified_on: null,
+        order_id: order?.order_id || null,
+        customer_user_id: order?.customer_user_id || null
       };
       const { error } = await sb.from('streaming_reminders').upsert(row, { onConflict: 'fingerprint' });
       if (error) throw error;
-      setStatus(`Recordatorio guardado: ${service} · ${profile || 'sin perfil'} · vence ${formatDate(expiresOn)}.`, 'ok');
+      setStatus(`Recordatorio guardado: ${service} · ${profile || 'sin perfil'} · vence ${formatDate(expiresOn)}.${order ? ' Cliente vinculado para Push.' : ' Sin pedido vinculado: solo recibirás el aviso Admin.'}`, 'ok');
       await loadReminders();
       return true;
     } catch (error) {
@@ -131,6 +166,7 @@
     const profile = text($('manualReminderProfile')?.value);
     const expiresOn = text($('manualReminderDate')?.value);
     const note = text($('manualReminderNote')?.value);
+    const order = selectedOrder('manualReminderOrder');
 
     if (!service || !/^\d{4}-\d{2}-\d{2}$/.test(expiresOn)) {
       setStatus('Para el recordatorio manual necesito plataforma y fecha de corte.', 'warn');
@@ -146,11 +182,13 @@
         source: 'MANUAL',
         fingerprint: `manual:${crypto.randomUUID()}`,
         notify_days_before: [3, 1, 0],
-        active: true
+        active: true,
+        order_id: order?.order_id || null,
+        customer_user_id: order?.customer_user_id || null
       };
       const { error } = await sb.from('streaming_reminders').insert(row);
       if (error) throw error;
-      ['manualReminderService', 'manualReminderProfile', 'manualReminderDate', 'manualReminderNote']
+      ['manualReminderService', 'manualReminderProfile', 'manualReminderDate', 'manualReminderNote', 'manualReminderOrder']
         .forEach((id) => { const el = $(id); if (el) el.value = ''; });
       setStatus(`Recordatorio manual creado para ${service}.`, 'ok');
       await loadReminders();
@@ -215,7 +253,7 @@
           <div class="r169-reminder-main">
             <div>
               <strong>${esc(row.service)}</strong>
-              <span>${esc(row.profile_name || 'Sin perfil/usuario')} · ${row.source === 'DELIVERY' ? 'Desde Entregas' : 'Manual'}</span>
+              <span>${esc(row.profile_name || 'Sin perfil/usuario')} · ${row.source === 'DELIVERY' ? 'Desde Entregas' : 'Manual'} · ${row.customer_user_id ? 'Push cliente ✓' : 'Solo Admin'}</span>
             </div>
             <b class="r169-countdown">${esc(countdownLabel(row.expires_on))}</b>
           </div>
@@ -246,7 +284,7 @@
     host.innerHTML = '<div class="r169-empty">Cargando vencimientos…</div>';
     try {
       const { data, error } = await sb.from('streaming_reminders')
-        .select('id,service,profile_name,expires_on,note,source,active,last_notified_on,created_at')
+        .select('id,service,profile_name,expires_on,note,source,active,last_notified_on,created_at,order_id,customer_user_id')
         .order('active', { ascending: false })
         .order('expires_on', { ascending: true });
       if (error) throw error;
@@ -267,6 +305,10 @@
         </div>
       </div>
       <div id="streamingReminderStatus" class="r168-status">No se guardan contraseñas ni PIN. El correo solo se usa localmente para evitar duplicados.</div>
+      <div class="r169-customer-link">
+        <label class="r168-label"><span>Pedido del cliente · para avisarle por Push</span><select id="deliveryReminderOrder"><option value="">Cargando pedidos Streaming…</option></select></label>
+        <small>Selecciona el pedido correspondiente antes de copiar la entrega. Si lo dejas sin vincular, el recordatorio seguirá funcionando solo para tu Telegram/Admin.</small>
+      </div>
       <div class="r169-manual">
         <h4>Agregar recordatorio independiente</h4>
         <div class="r168-fields">
@@ -274,6 +316,7 @@
           <label class="r168-label"><span>Perfil / usuario</span><input id="manualReminderProfile" type="text" autocomplete="off" placeholder="YEISON, Familiar 2…"></label>
           <label class="r168-label"><span>Fecha de corte</span><input id="manualReminderDate" type="date"></label>
           <label class="r168-label"><span>Nota opcional</span><input id="manualReminderNote" type="text" maxlength="500" autocomplete="off" placeholder="Proveedor, cuenta propia, renovar tarjeta…"></label>
+          <label class="r168-label wide"><span>Pedido del cliente · opcional</span><select id="manualReminderOrder"><option value="">Sin vincular · solo recordatorio Admin</option></select></label>
         </div>
         <div class="r168-actions"><button id="manualReminderSave" class="primary" type="button">🔔 Guardar recordatorio</button></div>
       </div>
@@ -294,10 +337,11 @@
     panel.insertBefore(section, preview || null);
 
     $('manualReminderSave')?.addEventListener('click', saveManualReminder);
-    $('streamingReminderRefresh')?.addEventListener('click', loadReminders);
+    $('streamingReminderRefresh')?.addEventListener('click', () => { loadRecentOrders().catch(() => {}); loadReminders().catch(() => {}); });
     $('deliveryCopy')?.addEventListener('click', () => { saveDeliveryReminder().catch(() => {}); });
     document.querySelector('[data-tab="deliveries"]')?.addEventListener('click', () => { loadReminders().catch(() => {}); });
 
+    loadRecentOrders().catch(() => {});
     loadReminders().catch(() => {});
   }
 
