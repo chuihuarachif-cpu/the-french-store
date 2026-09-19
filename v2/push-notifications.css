@@ -1,4 +1,4 @@
-/* R170 — preferencias Push, misma paleta azul/cian del storefront. */
+/* R226 — Push simple, misma paleta azul/cian del storefront. */
 .fs-push-card{
   margin-top:18px;
   padding:16px;
@@ -7,7 +7,7 @@
   background:linear-gradient(180deg,rgba(7,29,42,.96),rgba(4,18,28,.96));
   box-shadow:0 16px 38px rgba(0,0,0,.18);
 }
-.fs-push-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.fs-push-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .fs-push-icon{
   width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
   background:linear-gradient(180deg,#0f4c61,#0a3547);
@@ -15,31 +15,30 @@
 }
 .fs-push-head b{display:block;color:#effcff;font-size:1rem}
 .fs-push-head small{display:block;margin-top:3px;color:#8fb3c2;font-size:.76rem}
+.fs-push-copy{
+  margin:0 0 13px;
+  color:#a9c5d1;
+  font-size:.8rem;
+  line-height:1.5;
+}
 .fs-push-main-btn{
-  width:100%;min-height:46px;border:1px solid #49dff2;border-radius:13px;
+  width:100%;min-height:48px;border:1px solid #49dff2;border-radius:13px;
   background:linear-gradient(180deg,#0f586f,#0a4055);color:#fff;font-weight:800;
   box-shadow:0 8px 22px rgba(0,0,0,.2)
 }
-.fs-push-main-btn:disabled{opacity:.55;cursor:not-allowed}
-.fs-push-options{display:grid;gap:9px;margin-top:12px}
-.fs-push-options label{
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:11px 12px;border:1px solid #173d50;border-radius:13px;background:#061923
+.fs-push-main-btn:disabled{opacity:.58;cursor:not-allowed}
+.fs-push-install-note{
+  display:grid;gap:4px;
+  margin-top:12px;padding:10px 11px;border:1px solid rgba(73,223,242,.16);
+  border-radius:12px;background:#061923;color:#91adba;font-size:.73rem;line-height:1.42
 }
-.fs-push-options span{min-width:0}
-.fs-push-options b{display:block;color:#eaf9ff;font-size:.84rem}
-.fs-push-options small{display:block;margin-top:3px;color:#88a5b3;font-size:.72rem;line-height:1.35}
-.fs-push-options input{
-  width:20px;height:20px;flex:0 0 auto;accent-color:#42d8ec
-}
+.fs-push-install-note b{color:#dff8ff;font-size:.76rem}
 .fs-push-status{
-  margin-top:11px;padding:9px 10px;border-radius:11px;
+  margin-top:10px;padding:9px 10px;border-radius:11px;
   background:#082434;color:#a7c3d0;font-size:.75rem;line-height:1.4
 }
 .fs-push-status.ok{background:#0a3c30;color:#a5edcc}
 .fs-push-status.warn{background:#4a3513;color:#ffe0a0}
 @media(max-width:520px){
   .fs-push-card{padding:14px;border-radius:16px}
-  .fs-push-options label{align-items:flex-start}
-  .fs-push-options input{margin-top:2px}
 }
