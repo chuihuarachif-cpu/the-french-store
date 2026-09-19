@@ -62,8 +62,8 @@
     $('fsResellerMetrics').innerHTML=[
       ['Compras del mes',money(summary.month_spend)],
       ['Pedidos',String(summary.order_count||0)],
-      ['Para siguiente nivel',summary.next_level_target==null?'—':money(summary.remaining_to_next)],
-      ['Objetivo',target]
+      ['Ahorro registrado',money(summary.tracked_savings)],
+      ['Para siguiente nivel',summary.next_level_target==null?'—':money(summary.remaining_to_next)]
     ].map(([label,value])=>`<div class="fs-growth-metric"><small>${esc(label)}</small><b>${esc(value)}</b></div>`).join('');
 
     const best=(Array.isArray(prices)?prices:[]).filter(row=>Number(row.savings)>0).slice(0,5);
@@ -79,7 +79,7 @@
     card.hidden=false;
     $('fsReferralCode').textContent=state.code||'—';
     $('fsReferralMetrics').innerHTML=[
-      ['Premio',`${Number(state.reward_points||0).toLocaleString('es-BO')} pts`],
+      ['Premio máximo',`Hasta ${Number(state.reward_points_max||0).toLocaleString('es-BO')} pts`],
       ['Compra mínima',money(state.qualifying_min_total)],
       ['Pendientes',String(state.pending_count||0)],
       ['Calificados',String(state.qualified_count||0)]
@@ -87,7 +87,10 @@
     const hours=Number(state.hold_hours||0);
     const days=Math.round(hours/24);
     const status=$('fsReferralStatus');
-    if(status&&!status.textContent.trim())status.textContent=`El código debe aplicarse antes de la primera compra. Los puntos quedan en espera ${days} día${days===1?'':'s'} por seguridad.`;
+    if(status&&!status.textContent.trim()){
+      const share=Math.round(Number(state.reward_margin_share||0)*100);
+      status.textContent=`El código debe aplicarse antes de la primera compra pagada. El premio se limita al ${share}% del margen elegible, nunca supera el máximo mostrado y queda en espera ${days} día${days===1?'':'s'} por seguridad.`;
+    }
   }
 
   function referralLink(){
