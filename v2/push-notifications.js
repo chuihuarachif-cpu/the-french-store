@@ -6,7 +6,6 @@
 
   const SUPABASE_URL='https://jivaaripugjdpxjvjnsu.supabase.co';
   const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppdmFhcmlwdWdqZHB4anZqbnN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NDY3MzIsImV4cCI6MjEwMTIyMjczMn0.N60Xb1PqqPo12HdKEzPc4qCp1aFvVzwZz4VG04q_Es4';
-  const VAPID_PUBLIC_FALLBACK='BE7hIaOapB_vJtzIWsV1-PVG4wUkSEhlpVzzWow-G7sPnpE9keUoqKiroHyqy4qZzxJbOvLRFmUBPpa5agv87w8';
   let cachedVapidPublicKey='';
   const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{
     auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
@@ -35,7 +34,7 @@
       if(error||!key)throw error||new Error('VAPID_PUBLIC_KEY_MISSING');
       cachedVapidPublicKey=key;
     }catch{
-      cachedVapidPublicKey=VAPID_PUBLIC_FALLBACK;
+      throw new Error('VAPID_PUBLIC_KEY_UNAVAILABLE');
     }
     return cachedVapidPublicKey;
   }
@@ -142,16 +141,18 @@
 
     let subscription=await currentSubscription();
     if(subscription&&Notification.permission==='granted'){
-      const publicKey=await currentVapidPublicKey();
-      if(!sameApplicationServerKey(subscription,publicKey)){
-        await client.rpc('storefront_remove_push_subscription',{p_endpoint:subscription.endpoint}).catch(()=>{});
-        await subscription.unsubscribe().catch(()=>{});
-        const registration=await navigator.serviceWorker.ready;
-        subscription=await registration.pushManager.subscribe({
-          userVisibleOnly:true,
-          applicationServerKey:vapidKey(publicKey)
-        }).catch(()=>null);
-      }
+      try{
+        const publicKey=await currentVapidPublicKey();
+        if(!sameApplicationServerKey(subscription,publicKey)){
+          await client.rpc('storefront_remove_push_subscription',{p_endpoint:subscription.endpoint}).catch(()=>{});
+          await subscription.unsubscribe().catch(()=>{});
+          const registration=await navigator.serviceWorker.ready;
+          subscription=await registration.pushManager.subscribe({
+            userVisibleOnly:true,
+            applicationServerKey:vapidKey(publicKey)
+          }).catch(()=>null);
+        }
+      }catch{}
     }
     if(subscription){
       await saveSubscription(subscription).catch(()=>{});
