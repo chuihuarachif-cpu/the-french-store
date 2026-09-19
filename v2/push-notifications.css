@@ -16,10 +16,7 @@
 .fs-push-head b{display:block;color:#effcff;font-size:1rem}
 .fs-push-head small{display:block;margin-top:3px;color:#8fb3c2;font-size:.76rem}
 .fs-push-copy{
-  margin:0 0 13px;
-  color:#a9c5d1;
-  font-size:.8rem;
-  line-height:1.5;
+  margin:0 0 13px;color:#a9c5d1;font-size:.8rem;line-height:1.5;
 }
 .fs-push-main-btn{
   width:100%;min-height:48px;border:1px solid #49dff2;border-radius:13px;
@@ -28,9 +25,9 @@
 }
 .fs-push-main-btn:disabled{opacity:.58;cursor:not-allowed}
 .fs-push-install-note{
-  display:grid;gap:4px;
-  margin-top:12px;padding:10px 11px;border:1px solid rgba(73,223,242,.16);
-  border-radius:12px;background:#061923;color:#91adba;font-size:.73rem;line-height:1.42
+  display:grid;gap:4px;margin-top:12px;padding:10px 11px;
+  border:1px solid rgba(73,223,242,.16);border-radius:12px;background:#061923;
+  color:#91adba;font-size:.73rem;line-height:1.42
 }
 .fs-push-install-note b{color:#dff8ff;font-size:.76rem}
 .fs-push-status{
@@ -39,6 +36,51 @@
 }
 .fs-push-status.ok{background:#0a3c30;color:#a5edcc}
 .fs-push-status.warn{background:#4a3513;color:#ffe0a0}
-@media(max-width:520px){
-  .fs-push-card{padding:14px;border-radius:16px}
+
+.fs-auth-loading{
+  position:fixed;inset:0;z-index:10050;display:grid;place-items:center;
+  padding:24px;background:radial-gradient(circle at 50% 43%,rgba(32,190,255,.12),transparent 34%),#020b12;
+  opacity:1;visibility:visible;transition:opacity .22s ease,visibility .22s ease;
+}
+.fs-auth-loading[hidden]{display:none}
+.fs-auth-loading.is-leaving{opacity:0;visibility:hidden}
+.fs-auth-loading-card{width:min(82vw,310px);display:grid;justify-items:center;text-align:center;color:#effcff}
+.fs-auth-loading-mark{position:relative;width:154px;height:154px;display:grid;place-items:center}
+.fs-auth-loading-mark::before,.fs-auth-loading-mark::after{
+  content:"";position:absolute;inset:-12px;border-radius:50%;pointer-events:none
+}
+.fs-auth-loading-mark::before{
+  border:1px solid rgba(78,220,255,.22);
+  box-shadow:0 0 34px rgba(33,189,255,.16),inset 0 0 28px rgba(33,189,255,.08)
+}
+.fs-auth-loading-mark::after{
+  inset:-4px;border:2px solid transparent;border-top-color:#5de8ff;border-right-color:rgba(65,202,255,.45);
+  animation:fs-auth-orbit 1.15s linear infinite
+}
+.fs-auth-loading-logo{
+  width:138px;height:138px;object-fit:cover;border-radius:22px;
+  box-shadow:0 16px 48px rgba(0,0,0,.42),0 0 32px rgba(37,188,255,.12);
+  animation:fs-auth-pulse 1.7s ease-in-out infinite
+}
+.fs-auth-loading-title{
+  margin-top:28px;font-family:Orbitron,system-ui,sans-serif;font-size:1rem;
+  letter-spacing:.08em;color:#effcff
+}
+.fs-auth-loading-copy{margin:8px 0 0;color:#8fb3c2;font:600 .82rem/1.45 "Exo 2",system-ui,sans-serif}
+.fs-auth-loading-dots{display:flex;gap:6px;margin-top:16px}
+.fs-auth-loading-dots i{
+  width:6px;height:6px;border-radius:50%;background:#55e5ff;
+  animation:fs-auth-dot 1s ease-in-out infinite
+}
+.fs-auth-loading-dots i:nth-child(2){animation-delay:.14s}
+.fs-auth-loading-dots i:nth-child(3){animation-delay:.28s}
+@keyframes fs-auth-orbit{to{transform:rotate(360deg)}}
+@keyframes fs-auth-pulse{50%{transform:scale(1.025);filter:brightness(1.08)}}
+@keyframes fs-auth-dot{0%,100%{opacity:.28;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+
+@media(max-width:520px){.fs-push-card{padding:14px;border-radius:16px}}
+@media(prefers-reduced-motion:reduce){
+  .fs-auth-loading,.fs-auth-loading-mark::after,.fs-auth-loading-logo,.fs-auth-loading-dots i{
+    animation:none!important;transition:none!important
+  }
 }
