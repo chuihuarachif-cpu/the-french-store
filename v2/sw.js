@@ -3,7 +3,7 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r170-push-20260918';
+const CACHE='fs-store-r171-icons-20260918';
 const SHELL=[
   '/v2/',
   '/v2/index.html',
@@ -12,7 +12,8 @@ const SHELL=[
   '/v2/assets/brand/icon-512.png',
   '/v2/tiers/owner-classic-r7.css',
   '/v2/push-notifications.css',
-  '/v2/push-notifications.js'
+  '/v2/push-notifications.js',
+  '/v2/official-icons.js'
 ];
 
 self.addEventListener('install',event=>{

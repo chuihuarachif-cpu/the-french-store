@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r226-approved-hero-copy-20260918';
+  const VERSION = 'r171-auto-official-icons-20260918';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -56,6 +56,7 @@
   async function loadCore() {
     const files = [
       './config/storefront.js?v=20260829-r124',
+      './official-icons.js?v=20260918-r171',
       './core/runtime.js',
       './core/navigation.js',
       './features/catalog.js',
@@ -65,8 +66,16 @@
       './features/orders-admin.js',
       './core/ui.js'
     ];
-    const revisions = {'./core/runtime.js':'20260907-r153','./features/cart.js':'20260907-r153','./features/orders-admin.js':'20260907-r153','./features/wallet.js':'20260907-r151','./core/ui.js':'20260907-r153'};
-    for (const file of files) await loadScript(file, undefined, revisions[file]);
+    const revisions = {'./core/runtime.js':'20260918-r171','./features/cart.js':'20260907-r153','./features/orders-admin.js':'20260907-r153','./features/wallet.js':'20260907-r151','./core/ui.js':'20260907-r153'};
+    for (const file of files) {
+      await loadScript(file, undefined, revisions[file]);
+      if (file.startsWith('./official-icons.js')) {
+        await Promise.race([
+          window.FSOfficialIconsReady || Promise.resolve(),
+          new Promise((resolve) => setTimeout(resolve, 1200))
+        ]);
+      }
+    }
 
     const customerOrders = loadOrders;
     await loadScript('https://cdn.jsdelivr.net/gh/chuihuarachif-cpu/the-french-store@e886e90ef48bf24cdbed8e4388b4d4849b24aac1/v2/r6.js', 'fs-r6-js');
