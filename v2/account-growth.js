@@ -77,7 +77,9 @@
     if(!card)return;
     if(!state?.active){card.hidden=true;return}
     card.hidden=false;
-    $('fsReferralCode').textContent=state.code||'—';
+    $('fsReferralCode').textContent=state.code||'Código aún no generado';
+    const copyButton=$('fsReferralCopy');
+    if(copyButton)copyButton.textContent=state.code?'Copiar enlace':'Generar enlace';
     $('fsReferralMetrics').innerHTML=[
       ['Premio máximo',`Hasta ${Number(state.reward_points_max||0).toLocaleString('es-BO')} pts`],
       ['Compra mínima',money(state.qualifying_min_total)],
@@ -95,16 +97,28 @@
 
   function referralLink(){
     const code=$('fsReferralCode')?.textContent?.trim();
-    if(!code||code==='—')return '';
+    if(!code||code==='—'||code==='Código aún no generado')return '';
     const url=new URL('/v2/',location.origin);
     url.searchParams.set('ref',code);
     return url.href;
   }
 
   async function copyReferral(){
-    const link=referralLink();
     const status=$('fsReferralStatus');
-    if(!link)return;
+    let link=referralLink();
+    if(!link){
+      try{
+        const code=await rpc('ensure_my_referral_code');
+        if(!code)throw new Error('REFERRAL_CODE_NOT_CREATED');
+        $('fsReferralCode').textContent=String(code);
+        const button=$('fsReferralCopy');
+        if(button)button.textContent='Copiar enlace';
+        link=referralLink();
+      }catch{
+        if(status)status.textContent='No se pudo generar el enlace de referido.';
+        return;
+      }
+    }
     try{
       await navigator.clipboard.writeText(link);
       if(status)status.textContent='Enlace de referido copiado.';
