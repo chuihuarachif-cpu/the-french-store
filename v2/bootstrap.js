@@ -296,6 +296,9 @@
         }
       } catch {}
       ensureFeature('loyalty').catch(() => {});
+      try {
+        if (localStorage.getItem('fs_pending_referral')) ensureFeature('accountGrowth').catch(() => {});
+      } catch {}
     };
     try {
       sb.auth.getSession().then(({ data }) => loadForSession(data?.session || null)).catch(() => {});
