@@ -49,6 +49,7 @@
   <link rel="stylesheet" href="./brand-motion.css?v=20260823-1">
   <link rel="stylesheet" href="./pwa-install.css?v=20260823-1">
   <link rel="stylesheet" href="./notifications.css?v=20260825-r47">\n  <link rel="stylesheet" href="./push-notifications.css?v=20260918-r170">
+  <link rel="stylesheet" href="./web-services.css?v=20260919-r1">
   <link rel="stylesheet" href="./rank-pass-premium.css?v=20260918-r160">
   <link rel="stylesheet" href="./cpx-rewards.css?v=20260825-r47">
   <link rel="stylesheet" href="./tiers/tier-base.css?v=20260911-r160">
@@ -65,6 +66,11 @@
     <section id="view-inicio" class="view active">
       <div class="hero"><div class="hero-copy"><span class="eyebrow">RECARGAS Y CÓDIGOS DIGITALES</span><h1>Recargas, streaming y Gift Cards en Bolivia.</h1><p>Juegos y servicios digitales en una tienda simple, rápida y segura, con precios visibles en bolivianos.</p><div class="hero-actions"><button class="primary-btn" data-nav="tienda">Explorar catálogo</button><button class="secondary-btn" id="whatsappQuote">Cotizar por WhatsApp</button></div></div><div class="hero-gem fs-brand-ready" data-fs-brand-init="1" aria-hidden="true"><img class="fs-hero-mascot" src="./assets/brand/membership-premium-logo.webp" alt="" width="384" height="384" fetchpriority="high" decoding="async"></div></div>
       <div class="category-grid" id="categoryGrid"><button class="category-card blue" data-category="Recargas por ID"><span>🎮</span><b>Recargas por ID</b><small>Diamantes, monedas y pases</small></button><button class="category-card navy" data-category="Recargas por Cuenta"><span>👤</span><b>Recargas por Cuenta</b><small>Productos con atención asistida</small></button><button class="category-card purple" data-category="Streaming"><span>📺</span><b>Streaming</b><small>Entretenimiento y música</small></button><button class="category-card gold" data-category="Gift Cards"><span>🎁</span><b>Gift Cards</b><small>Códigos digitales · entrega manual</small></button><button class="category-card cuentas-entry" id="cuentasEntry" type="button"><span>🧾</span><b>Venta de Cuentas</b><small>Cuentas avanzadas de <b>Free Fire</b> y <b>Clash of Clans</b>. Fotos reales y entrega personal.</small><em class="cuentas-entry-cta">Ver cuentas disponibles →</em></button></div>
+      <button class="web-services-home-card" type="button" data-nav="web-services" aria-label="Ver servicio de creación de páginas web">
+        <span class="web-services-home-icon" aria-hidden="true">💻</span>
+        <span class="web-services-home-copy"><b>Creación de páginas web</b><small>Landing pages, webs para negocios y sistemas completos a medida.</small></span>
+        <em class="web-services-home-cta">Ver planes →</em>
+      </button>
       <section class="panel compact-panel"><div class="panel-head"><div><span class="eyebrow">SELECCIÓN RÁPIDA</span><h2>Productos destacados</h2></div><button type="button" class="world-view-all" data-nav="tienda">Ver todo ›</button></div><div id="featuredList" class="game-grid skeleton-area"></div></section>
     </section>
 
@@ -75,6 +81,103 @@
         </div>
         <div class="cv-grid" id="cuentasVentaGrid"></div>
         <p class="cv-vacio" id="cuentasVacio" hidden>Todavía no hay cuentas publicadas. Escríbenos por WhatsApp y te avisamos cuando entren.</p>
+      </section>
+      <section id="view-web-services" class="view">
+        <div class="web-services-shell">
+          <section class="web-services-hero">
+            <span class="web-services-kicker">FRENCH STORE · DESARROLLO WEB</span>
+            <h2>Páginas web para negocios y emprendimientos</h2>
+            <p>Elige una base según lo que necesitas. Los precios están expresados en USD para mantener una cotización estable; proyectos con funciones especiales se cotizan según alcance.</p>
+          </section>
+
+          <div class="web-services-grid">
+            <article class="web-service-card">
+              <div class="web-service-top"><h3>Landing Esencial</h3><span class="web-service-badge">PARA EMPEZAR</span></div>
+              <div class="web-service-price"><strong>USD 99</strong><span>pago único</span></div>
+              <p class="web-service-summary">Una página clara y rápida para presentar tu negocio y llevar al cliente directamente a WhatsApp.</p>
+              <details>
+                <summary>Más información</summary>
+                <div class="web-service-detail">
+                  <ul>
+                    <li>1 página de hasta 5 secciones.</li>
+                    <li>Diseño responsive para celular, tablet y PC.</li>
+                    <li>Colores, logo, textos e imágenes del negocio.</li>
+                    <li>Botón de compra o consulta directo a WhatsApp.</li>
+                    <li>Enlaces a redes sociales y datos de contacto.</li>
+                    <li>SEO técnico básico, SSL y publicación.</li>
+                    <li>Hasta 2 rondas de ajustes.</li>
+                    <li>Entrega estimada: 3 a 5 días hábiles.</li>
+                  </ul>
+                  <p><b>No incluye:</b> base de datos, inicio de sesión, carrito, panel administrativo ni pagos automatizados.</p>
+                </div>
+              </details>
+              <div class="web-service-actions"><a class="web-service-buy" href="https://wa.me/59177057379?text=Hola%2C%20quiero%20la%20Landing%20Esencial%20de%20USD%2099.%20Quiero%20contarte%20mi%20idea." target="_blank" rel="noopener noreferrer">Comprar por WhatsApp</a></div>
+            </article>
+
+            <article class="web-service-card featured">
+              <div class="web-service-top"><h3>Web Negocio</h3><span class="web-service-badge">RECOMENDADO</span></div>
+              <div class="web-service-price"><strong>USD 299</strong><span>desde</span></div>
+              <p class="web-service-summary">Para negocios que necesitan más contenido, catálogo y una presencia profesional lista para captar clientes.</p>
+              <details>
+                <summary>Más información</summary>
+                <div class="web-service-detail">
+                  <ul>
+                    <li>Hasta 5 páginas o secciones principales.</li>
+                    <li>Catálogo de hasta 30 productos o servicios.</li>
+                    <li>Botón de WhatsApp por producto o servicio.</li>
+                    <li>Formulario de contacto o cotización.</li>
+                    <li>Diseño personalizado y adaptable.</li>
+                    <li>SEO básico, sitemap, SSL y publicación.</li>
+                    <li>Integración con redes y mapa cuando corresponda.</li>
+                    <li>Hasta 2 rondas de ajustes.</li>
+                    <li>Entrega estimada: 5 a 10 días hábiles.</li>
+                  </ul>
+                  <p>Funciones como panel de administración, usuarios, inventario sincronizado o automatizaciones se cotizan aparte.</p>
+                </div>
+              </details>
+              <div class="web-service-actions"><a class="web-service-buy" href="https://wa.me/59177057379?text=Hola%2C%20quiero%20cotizar%20la%20Web%20Negocio%20desde%20USD%20299.%20Quiero%20contarte%20mi%20idea." target="_blank" rel="noopener noreferrer">Comprar por WhatsApp</a></div>
+            </article>
+
+            <article class="web-service-card">
+              <div class="web-service-top"><h3>Sistema Completo</h3><span class="web-service-badge">A MEDIDA</span></div>
+              <div class="web-service-price"><strong>USD 799</strong><span>desde</span></div>
+              <p class="web-service-summary">Una web con lógica de negocio: usuarios, catálogo, pedidos, administración, base de datos y automatizaciones.</p>
+              <details>
+                <summary>Más información</summary>
+                <div class="web-service-detail">
+                  <ul>
+                    <li>Diseño completo y responsive.</li>
+                    <li>Base de datos independiente para el cliente.</li>
+                    <li>Inicio de sesión y perfiles cuando el proyecto lo necesite.</li>
+                    <li>Catálogo, carrito, pedidos e historial.</li>
+                    <li>Panel administrativo y gestión de contenido.</li>
+                    <li>PWA, notificaciones o automatizaciones según alcance.</li>
+                    <li>Integraciones con APIs y servicios externos.</li>
+                    <li>Repositorio, despliegue y estructura separada del resto de clientes.</li>
+                    <li>Entrega base estimada: 2 a 4 semanas.</li>
+                  </ul>
+                  <p><b>QR dinámico:</b> integración desde <b>+USD 150</b> cuando el banco o proveedor del cliente dispone de API compatible. Los costos de alta, mensualidad o comisión del proveedor de pagos no están incluidos.</p>
+                </div>
+              </details>
+              <div class="web-service-qr-note"><b>Pagos seguros:</b> cada cliente utiliza su propia cuenta bancaria, credenciales y proveedor. Nunca se reutilizan las claves de FRENCH STORE ni las de otro proyecto.</div>
+              <div class="web-service-actions"><a class="web-service-buy" href="https://wa.me/59177057379?text=Hola%2C%20quiero%20cotizar%20un%20Sistema%20Completo%20desde%20USD%20799.%20Necesito%20explicarte%20las%20funciones%20que%20quiero." target="_blank" rel="noopener noreferrer">Comprar por WhatsApp</a></div>
+            </article>
+          </div>
+
+          <section class="web-services-terms">
+            <h3>Cómo trabajamos</h3>
+            <div class="web-services-terms-grid">
+              <div class="web-services-term"><b>Pago</b>50% para iniciar y 50% al aprobar la entrega. Los precios se cotizan en USD; si se paga en Bs, se usa el tipo de cambio acordado el día del pago.</div>
+              <div class="web-services-term"><b>Propiedad</b>El dominio, cuentas de hosting, base de datos y servicios de pago pueden quedar a nombre del cliente. Al finalizar se entregan accesos y código según el alcance contratado.</div>
+              <div class="web-services-term"><b>Costos externos</b>Dominio, planes de hosting de pago, APIs, pasarelas, comisiones bancarias y otros servicios de terceros se pagan aparte salvo que la cotización indique lo contrario.</div>
+              <div class="web-services-term"><b>IA y desarrollo</b>Las herramientas que usamos para construir la web están incluidas en el precio. Si la web del cliente consume una API de IA, ese consumo se cotiza y factura por separado.</div>
+              <div class="web-services-term"><b>Cambios</b>Los planes incluyen hasta 2 rondas de ajustes dentro del alcance acordado. Funciones nuevas o cambios grandes se cotizan antes de desarrollarlos.</div>
+              <div class="web-services-term"><b>Mantenimiento</b>Es opcional. Puede contratarse desde USD 20/mes para soporte y cambios menores; sistemas complejos se cotizan según uso e infraestructura.</div>
+            </div>
+          </section>
+
+          <button type="button" class="secondary-btn web-services-back" data-nav="inicio">← Volver al inicio</button>
+        </div>
       </section>
       <section id="view-tienda" class="view"><section class="panel catalog-panel"><div class="panel-head catalog-heading"><div><span class="eyebrow" id="categoryEyebrow">CATÁLOGO</span><h2>Catálogo de juegos</h2><p id="catalogMeta">Cargando productos…</p></div><button id="cartInline" class="cart-inline">🛒 Carrito <span id="cartInlineCount">0</span></button></div><div id="categoryTabs" class="category-tabs" aria-label="Categorías"></div><div id="catalogList" class="game-list skeleton-area"></div></section></section>
 
