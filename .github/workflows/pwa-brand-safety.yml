@@ -112,12 +112,12 @@ jobs:
           grep -Fq 'release=20260918-r225' index.html
           grep -Fq './brand-motion.css?v=20260823-1' v2/index.html
           grep -Fq './brand-ui.js?v=20260918-r225' v2/index.html
-          grep -Fq '/v2/pwa-init.js?v=20260919-r172' v2/index.html
+          grep -Fq '/v2/pwa-init.js?v=20260919-r173' v2/index.html
           grep -Fq '/v2/pwa-install-ui.js?v=20260918-r225' v2/index.html
           grep -Fq './pwa-install.css?v=20260823-1' v2/index.html
           grep -Fq './navigation-history.js?v=20260823-1' v2/index.html
           grep -q 'beforeinstallprompt' v2/pwa-install-ui.js
-          grep -Fq "register('/v2/sw.js?v=20260919-r172'" v2/pwa-init.js
+          grep -Fq "register('/v2/sw.js?v=20260919-r173'" v2/pwa-init.js
           grep -Fq "scope: '/v2/'" v2/pwa-init.js
           grep -Fq 'Promise.allSettled' v2/sw.js
           grep -Fq 'icon-512.png' v2/sw.js
@@ -130,7 +130,7 @@ jobs:
           grep -q './assets/brand/french-store-mascot.webp' v2/brand-ui.js
           grep -q "addEventListener('fetch'" v2/sw.js
           grep -q "url.origin!==location.origin" v2/sw.js
-          grep -Fq "fs-store-r172-growth-20260919" v2/sw.js
+          grep -Fq "fs-store-r173-webservices-20260919" v2/sw.js
           ! grep -Eq 'api\.frenchstorebo\.com|supabase\.co|create_qr_order|create_wallet_order' v2/sw.js
           ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/pwa-install-ui.js v2/navigation-history.js v2/brand-ui.js v2/brand-motion.css v2/pwa-install.css v2/manifest.webmanifest
 
