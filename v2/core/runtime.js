@@ -101,6 +101,8 @@ function cartVisualTotal(){return cart.reduce((a,i)=>{const p=currentProduct(i.p
 function canonicalGame(name){const k=normalize(name);if(k==='magicchessgogo'||k==='magicchess')return'Magic Chess';if(k==='mobilelegendsbangbang'||k==='mobilelegends')return'Mobile Legends: Bang Bang';return String(name||'Sin nombre').trim()}
 function logoUrl(name){
   const k=normalize(name);
+  const official=window.FSOfficialIconFor?.(name)||window.FSOfficialIconMap?.[k]||'';
+  if(official)return official;
   if(k.includes('clashofclansclashroyale')) return PLAY_ICONS.clashofclans;
   if(PLAY_ICONS[k]) return PLAY_ICONS[k];
   const found=Object.entries(PLAY_ICONS).find(([key])=>k.includes(key)||key.includes(k));
