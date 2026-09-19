@@ -27,3 +27,11 @@
   .r169-reminder-actions{grid-template-columns:1fr 1fr}
   .r169-reminder-actions input{grid-column:1/-1}
 }
+
+.r169-customer-link{margin-top:14px;padding:12px;border:1px solid #1c4b60;border-radius:14px;background:#061923}
+.r169-customer-link small{display:block;margin-top:7px;color:#89a7b5;font-size:.74rem;line-height:1.4}
+.r169-reminders select{
+  width:100%;border:1px solid #214b61;border-radius:12px;background:#03141f;color:#fff;
+  padding:11px 12px;outline:none
+}
+.r169-reminders select:focus{border-color:#42d8ec;box-shadow:0 0 0 2px rgba(66,216,236,.08)}
