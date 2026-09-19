@@ -50,7 +50,7 @@
   <link rel="stylesheet" href="./pwa-install.css?v=20260823-1">
   <link rel="stylesheet" href="./notifications.css?v=20260825-r47">
   <link rel="stylesheet" href="./push-notifications.css?v=20260918-r170">
-  <link rel="stylesheet" href="./web-services.css?v=20260919-r2">
+  <link rel="stylesheet" href="./web-services.css?v=20260919-r3">
   <link rel="stylesheet" href="./rank-pass-premium.css?v=20260918-r160">
   <link rel="stylesheet" href="./cpx-rewards.css?v=20260825-r47">
   <link rel="stylesheet" href="./tiers/tier-base.css?v=20260911-r160">
@@ -154,10 +154,19 @@
                     <li>Integraciones con APIs y servicios externos.</li>
                     <li>Repositorio, despliegue y estructura separada del resto de clientes.</li>
                   </ul>
-                  <p><b>QR dinámico:</b> integración desde <b>+USD 150</b> cuando el banco o proveedor del cliente dispone de API compatible. Los costos de alta, mensualidad o comisión del proveedor de pagos no están incluidos.</p>
+                  <p><b>Pagos automáticos / QR dinámico:</b> integración desde <b>+USD 150</b>, sujeta al banco o proveedor de pagos y al alcance técnico. Si tu banco ofrece una API oficial para comercios, podemos integrarla con las credenciales que ese banco te entregue. Si no ofrece una integración adecuada, podemos evaluar una pasarela como <b>Libélula</b> para generar cobros y QR dinámicos.</p>
+                  <div class="web-service-payment-info">
+                    <b>¿Qué necesitamos para integrar pagos?</b>
+                    <ul>
+                      <li><b>Opción banco:</b> acceso a la API para comercios y las credenciales de integración que te entregue tu banco o proveedor, por ejemplo API key, identificador de comercio, ambiente de pruebas/producción y datos de webhook o callback, según corresponda.</li>
+                      <li><b>Opción Libélula:</b> el negocio debe afiliarse directamente con Libélula. Una vez habilitado, Libélula entrega la información de integración del comercio, incluido su <b>appkey</b> único y los datos necesarios para pruebas y producción.</li>
+                      <li><b>Si todavía no tienes integración:</b> te indicamos qué debes solicitar a tu banco o pasarela antes de comenzar. Si no existe API compatible, podemos dejar un QR con verificación manual en lugar de confirmación automática.</li>
+                    </ul>
+                    <p><b>Seguridad:</b> las claves, API keys y credenciales no se publican en la web ni se envían en mensajes abiertos. Se configuran como secretos privados del proyecto del cliente.</p>
+                  </div>
                 </div>
               </details>
-              <div class="web-service-qr-note"><b>Pagos seguros:</b> cada cliente utiliza su propia cuenta bancaria, credenciales y proveedor. Nunca se reutilizan las claves de FRENCH STORE ni las de otro proyecto.</div>
+              <div class="web-service-qr-note"><b>Pagos seguros:</b> cada cliente utiliza su propia cuenta bancaria, cuenta de pasarela y credenciales. Si usa Libélula, la afiliación y el appkey corresponden a su propio negocio. Nunca se reutilizan las claves de FRENCH STORE ni las de otro proyecto.</div>
               <div class="web-service-actions"><a class="web-service-buy" href="https://wa.me/59177057379?text=Hola%2C%20quiero%20cotizar%20un%20Sistema%20Completo%20desde%20USD%20799.%20Necesito%20explicarte%20las%20funciones%20que%20quiero." target="_blank" rel="noopener noreferrer">Comprar por WhatsApp</a></div>
             </article>
           </div>
