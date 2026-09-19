@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r171-auto-official-icons-20260918';
+  const VERSION = 'r172-security-growth-20260919';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -51,6 +51,13 @@
     });
     stylePromises.set(url, promise);
     return promise;
+  }
+
+  function captureReferralParam() {
+    try {
+      const code=String(new URL(location.href).searchParams.get('ref')||'').trim().toUpperCase();
+      if (/^[A-Z0-9]{8,16}$/.test(code)) localStorage.setItem('fs_pending_referral',code);
+    } catch {}
   }
 
   async function loadCore() {
@@ -131,6 +138,19 @@
     catalog: async () => {
       await loadStyle('./weekly-pass-feature.css?v=20260918-r220', 'fs-weekly-pass-feature-css');
       await loadScript('./catalog-order.js?v=20260917-r157', 'fs-catalog-order-js');
+    },
+    catalogAssist: async () => {
+      await ensureFeature('catalog');
+      await loadStyle('./commerce-enhancements.css?v=20260919-r172', 'fs-commerce-enhancements-css');
+      await loadScript('./smart-catalog.js', 'fs-smart-catalog-js', '20260919-r172');
+    },
+    accountGrowth: async () => {
+      await loadStyle('./commerce-enhancements.css?v=20260919-r172', 'fs-commerce-enhancements-css');
+      await loadScript('./account-growth.js', 'fs-account-growth-js', '20260919-r172');
+    },
+    recovery: async () => {
+      await loadStyle('./commerce-enhancements.css?v=20260919-r172', 'fs-commerce-enhancements-css');
+      await loadScript('./cart-recovery.js', 'fs-cart-recovery-js', '20260919-r172');
     },
     admin: async () => {
       await loadScript('./admin-order-ui.js', 'fs-admin-order-js');
@@ -239,9 +259,12 @@
       }
 
       if (target.dataset.nav === 'wallet') ensureFeature('wallet').catch(() => {});
-      if (target.dataset.nav === 'perfil') ensureFeature('loyalty').catch(() => {});
+      if (target.dataset.nav === 'perfil') {
+        ensureFeature('loyalty').catch(() => {});
+        ensureFeature('accountGrowth').catch(() => {});
+      }
       if (target.dataset.nav === 'tienda' || target.dataset.category || target.dataset.r6Game || target.dataset.r6Feature || target.dataset.r6Back !== undefined) {
-        ensureFeature('catalog').catch(() => {});
+        ensureFeature('catalog').then(()=>ensureFeature('catalogAssist')).catch(() => {});
         ensureFeature('motion').catch(() => {});
       }
 
@@ -283,9 +306,21 @@
   async function boot() {
     document.documentElement.dataset.fsBootstrap = 'loading';
     try {
+      captureReferralParam();
       await loadCore();
       installLazyTriggers();
       installLoyaltyAuthGate();
+
+      const warmRecovery=()=>ensureFeature('recovery').catch(()=>{});
+      if ('requestIdleCallback' in window) requestIdleCallback(warmRecovery,{timeout:1800});
+      else setTimeout(warmRecovery,500);
+
+      try {
+        const params=new URL(location.href).searchParams;
+        if (params.get('renew')) ensureFeature('catalogAssist').catch(()=>{});
+        if (params.get('view')==='perfil') ensureFeature('accountGrowth').catch(()=>{});
+      } catch {}
+
       document.documentElement.dataset.fsBootstrap = 'ready';
       window.FSFeatureLoader = Object.freeze({
         version: VERSION,
