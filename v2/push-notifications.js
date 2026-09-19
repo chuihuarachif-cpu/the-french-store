@@ -230,15 +230,25 @@
   async function refreshSession(){
     const {data}=await client.auth.getSession();
     currentSession=data?.session||null;
+    if(!currentSession&&supported()){
+      const stale=await currentSubscription().catch(()=>null);
+      if(stale)await stale.unsubscribe().catch(()=>{});
+    }
     await render().catch(()=>{});
   }
 
   async function boot(){
     installUi();
     await refreshSession();
-    client.auth.onAuthStateChange((_event,newSession)=>{
+    client.auth.onAuthStateChange((event,newSession)=>{
       currentSession=newSession||null;
-      setTimeout(()=>render().catch(()=>{}),0);
+      setTimeout(async()=>{
+        if(event==='SIGNED_OUT'&&supported()){
+          const stale=await currentSubscription().catch(()=>null);
+          if(stale)await stale.unsubscribe().catch(()=>{});
+        }
+        await render().catch(()=>{});
+      },0);
     });
   }
 
