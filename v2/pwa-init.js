@@ -8,7 +8,7 @@
 
   async function registerPwa() {
     try {
-      const registration = await navigator.serviceWorker.register('/v2/sw.js?v=20260919-r172', {
+      const registration = await navigator.serviceWorker.register('/v2/sw.js?v=20260919-r173', {
         scope: '/v2/',
         updateViaCache: 'none'
       });
