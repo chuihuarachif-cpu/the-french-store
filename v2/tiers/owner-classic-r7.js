@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'owner-classic-r7-v5-20260918';
+  const VERSION = 'owner-classic-r7-v6-20260918';
   const CLASSIC_R7_MODE = 'single-interface';
   const root = document.documentElement;
   const STYLE_ID = 'fs-owner-classic-r7-css';
@@ -43,9 +43,9 @@
     if (!hero) return;
     const title = hero.querySelector('h1');
     const paragraph = hero.querySelector('.hero-copy>p');
-    if (title && title.textContent.trim() !== 'Tu partida empieza aquí.') title.textContent = 'Tu partida empieza aquí.';
-    if (paragraph && paragraph.textContent.trim() !== 'Juegos, streaming y Gift Cards en una tienda simple, rápida y segura.') {
-      paragraph.textContent = 'Juegos, streaming y Gift Cards en una tienda simple, rápida y segura.';
+    if (title && title.textContent.trim() !== 'Recargas, streaming y Gift Cards en Bolivia.') title.textContent = 'Recargas, streaming y Gift Cards en Bolivia.';
+    if (paragraph && paragraph.textContent.trim() !== 'Juegos y servicios digitales en una tienda simple, rápida y segura, con precios visibles en bolivianos.') {
+      paragraph.textContent = 'Juegos y servicios digitales en una tienda simple, rápida y segura, con precios visibles en bolivianos.';
     }
     document.querySelectorAll('.hero-actions button').forEach((button) => {
       const wanted = button.id === 'whatsappQuote' ? 'Cotizar por WhatsApp' : button.dataset.nav === 'tienda' ? 'Explorar catálogo' : null;
