@@ -107,6 +107,7 @@ jobs:
           node --check v2/account-growth.js
           node --check v2/sw.js
           node --check v2/pwa-init.js
+          node --check v2/push-notifications.js
           node --check v2/admin-order-ui.js
           node --check v2/admin-fulfillment-ui.js
           node --check v2/paid-whatsapp.js
