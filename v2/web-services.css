@@ -72,6 +72,15 @@
   padding:13px;border-radius:13px;background:rgba(47,190,231,.07);
   border:1px solid rgba(78,211,247,.15);font-size:12px;color:#9fc0d0;line-height:1.45
 }
+.web-service-payment-info{
+  margin-top:12px;padding:13px;border-radius:13px;background:rgba(47,190,231,.045);
+  border:1px solid rgba(78,211,247,.14);color:#a9bdcb;font-size:12.5px;line-height:1.5
+}
+.web-service-payment-info>b{display:block;color:#e8faff;margin-bottom:6px}
+.web-service-payment-info ul{margin:6px 0 0;padding-left:18px}
+.web-service-payment-info li+li{margin-top:7px}
+.web-service-payment-info p{margin:10px 0 0}
+
 .web-services-terms{
   padding:18px;border:1px solid rgba(89,209,244,.16);border-radius:18px;background:rgba(8,23,36,.76)
 }
