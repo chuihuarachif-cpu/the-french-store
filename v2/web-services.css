@@ -18,7 +18,7 @@
 .web-services-home-copy small{color:#9eb7c8;line-height:1.35}
 .web-services-home-cta{font-style:normal;font-weight:800;color:#67ddff;white-space:nowrap}
 
-.web-services-shell{display:grid;gap:16px}
+.web-services-shell{display:grid;gap:16px;padding-bottom:calc(var(--nav-h,72px) + env(safe-area-inset-bottom,0px) + 36px);box-sizing:border-box}
 .web-services-hero{
   padding:22px;border:1px solid rgba(73,215,255,.22);border-radius:20px;
   background:
