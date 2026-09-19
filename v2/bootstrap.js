@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r222-single-classic-pwa-20260918';
+  const VERSION = 'r226-approved-hero-copy-20260918';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -84,7 +84,7 @@
     await loadScript('./profile-name.js', 'fs-profile-name-js', '20260911-r160');
     // Classic R7 is the only storefront interface. Rank Pass can still expose
     // benefits/status inside loyalty, but it never selects another visual skin.
-    await loadScript('./tiers/owner-classic-r7.js', 'fs-owner-classic-r7-js', '20260918-r5');
+    await loadScript('./tiers/owner-classic-r7.js', 'fs-owner-classic-r7-js', '20260918-r6');
     // R167: calendario de eventos. Solo expone las claves activas; no dibuja
     // efectos ni altera el checkout, Wallet, catálogo, precios o niveles.
     await loadScript('./seasonal-events.js', 'fs-seasonal-events-js', '20260916-r167');
