@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06111d">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://jivaaripugjdpxjvjnsu.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+  <title>Solicitud de proyecto web | FRENCH STORE</title>
+  <link rel="icon" type="image/png" href="/v2/assets/brand/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./web-project-form.css?v=20260919-r1">
+</head>
+<body>
+  <header class="form-topbar">
+    <a class="form-brand" href="/v2/" aria-label="Volver a French Store"><span>💎</span><b>FRENCH STORE</b><span>💎</span></a>
+    <a class="form-back" href="/v2/">Volver a la tienda</a>
+  </header>
+
+  <main class="form-page">
+    <section class="form-hero">
+      <span class="form-kicker">SOLICITUD DE PROYECTO WEB</span>
+      <h1>Cuéntanos todo lo necesario para construir tu página</h1>
+      <p>El formulario cambia según el plan que elijas. Reúne aquí textos, enlaces, referencias, productos, requisitos técnicos y datos de integración para evitar pedirte la información por partes.</p>
+      <div class="security-box"><b>🔐 No envíes secretos.</b> No escribas contraseñas, PIN bancario, códigos SMS/2FA, API keys, tokens, appkeys de producción, service role keys ni claves privadas. Cuando una integración los necesite, te indicaremos cómo configurarlos directamente como secretos privados del proyecto.</div>
+    </section>
+
+    <form id="webProjectForm" novalidate>
+      <input class="hp-field" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <section class="form-section">
+        <div class="section-head"><span>1</span><div><h2>Cliente y negocio</h2><p>Información básica para identificar el proyecto.</p></div></div>
+        <div class="field-grid two">
+          <label>Nombre completo del responsable *
+            <input name="full_name" required maxlength="160" autocomplete="name">
+          </label>
+          <label>Nombre del negocio / proyecto *
+            <input name="business_name" required maxlength="200" autocomplete="organization">
+          </label>
+          <label>Correo principal *
+            <input type="email" name="email" required maxlength="200" autocomplete="email">
+          </label>
+          <label>WhatsApp principal *
+            <input name="whatsapp" required maxlength="40" autocomplete="tel" placeholder="+591 ...">
+          </label>
+          <label>País y ciudad *
+            <input name="location" required maxlength="160" placeholder="Ej. Tarija, Bolivia">
+          </label>
+          <label>Correo que será propietario de las cuentas del proyecto
+            <input type="email" name="owner_email" maxlength="200" placeholder="Idealmente correo del negocio">
+          </label>
+        </div>
+        <label>Describe el negocio y qué vende u ofrece *
+          <textarea name="business_description" required maxlength="3000" rows="4"></textarea>
+        </label>
+        <div class="field-grid two">
+          <label>Público objetivo
+            <textarea name="target_audience" maxlength="1800" rows="3" placeholder="Tipo de cliente, edad aproximada, ciudad/país, B2B/B2C..."></textarea>
+          </label>
+          <label>Objetivo principal de la web *
+            <textarea name="website_goal" required maxlength="1800" rows="3" placeholder="Ej. mostrar catálogo y recibir pedidos por WhatsApp"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <div class="section-head"><span>2</span><div><h2>Plan contratado</h2><p>Solo verás las preguntas que correspondan a tu proyecto.</p></div></div>
+        <label>Selecciona el plan *
+          <select name="plan" id="planSelect" required>
+            <option value="">Seleccionar…</option>
+            <option value="landing_99">Landing Esencial — USD 99</option>
+            <option value="business_299">Web Negocio — desde USD 299</option>
+            <option value="full_799">Sistema Completo — desde USD 799</option>
+            <option value="custom">Cotización personalizada</option>
+          </select>
+        </label>
+        <div id="planHint" class="plan-hint">Selecciona un plan para mostrar su alcance.</div>
+      </section>
+
+      <section class="form-section">
+        <div class="section-head"><span>3</span><div><h2>Marca y referencias</h2><p>Todo lo necesario para acertar con el diseño desde el principio.</p></div></div>
+        <div class="field-grid two">
+          <label>¿Tienes logo?
+            <select name="has_logo">
+              <option value="si_vector">Sí, SVG/vector</option>
+              <option value="si_png">Sí, PNG/JPG</option>
+              <option value="mejorar">Sí, pero necesita mejora</option>
+              <option value="no">No tengo</option>
+            </select>
+          </label>
+          <label>Colores de marca
+            <input name="brand_colors" maxlength="500" placeholder="Ej. azul #0A84FF, blanco, negro">
+          </label>
+          <label>Tipografías existentes
+            <input name="brand_fonts" maxlength="500">
+          </label>
+          <label>Estilo deseado
+            <select name="visual_style">
+              <option>Moderno</option><option>Minimalista</option><option>Premium</option>
+              <option>Corporativo</option><option>Gamer</option><option>Elegante</option>
+              <option>Colorido</option><option>Otro</option>
+            </select>
+          </label>
+        </div>
+        <label>Referencias visuales / páginas que te gustan
+          <textarea name="visual_references" maxlength="3000" rows="4" placeholder="Pega enlaces y explica qué te gusta de cada uno: colores, menú, tarjetas, animaciones, estructura…"></textarea>
+        </label>
+        <label>Estilos o cosas que NO quieres
+          <textarea name="visual_dislikes" maxlength="1800" rows="3"></textarea>
+        </label>
+      </section>
+
+      <section class="form-section">
+        <div class="section-head"><span>4</span><div><h2>Textos, fotos y archivos</h2><p>Reúne los materiales en una sola carpeta y pega el enlace.</p></div></div>
+        <label>Enlace a carpeta de materiales (Google Drive, Dropbox, OneDrive, etc.)
+          <input type="url" name="materials_folder_url" placeholder="https://drive.google.com/..." maxlength="1000">
+          <small>Incluye logo, fotos, videos, catálogos PDF, menús, listas de precios, documentos y cualquier archivo que deba usarse.</small>
+        </label>
+        <label>Textos que deben aparecer en la web
+          <textarea name="website_copy" maxlength="8000" rows="6" placeholder="Título principal, quiénes somos, servicios, beneficios, preguntas frecuentes, políticas, etc."></textarea>
+        </label>
+        <div class="field-grid two">
+          <label>WhatsApp público
+            <input name="public_whatsapp" maxlength="40">
+          </label>
+          <label>Correo público
+            <input type="email" name="public_email" maxlength="200">
+          </label>
+          <label>Dirección física
+            <input name="public_address" maxlength="500">
+          </label>
+          <label>Horario de atención
+            <input name="business_hours" maxlength="500">
+          </label>
+        </div>
+        <label>Redes sociales
+          <textarea name="social_links" maxlength="2500" rows="3" placeholder="Instagram, Facebook, TikTok, YouTube, LinkedIn, Telegram, etc."></textarea>
+        </label>
+        <label>Enlace de Google Maps, si aplica
+          <input type="url" name="maps_url" maxlength="1000">
+        </label>
+      </section>
+
+      <section class="form-section plan-only" data-plans="landing_99">
+        <div class="section-head"><span>5</span><div><h2>Landing Esencial — USD 99</h2><p>1 página de hasta 5 secciones. Sin base de datos, login, carrito, panel administrativo ni pagos automáticos.</p></div></div>
+        <fieldset>
+          <legend>Elige hasta 5 secciones</legend>
+          <div class="check-grid">
+            <label><input type="checkbox" name="landing_sections" value="Inicio"> Inicio</label>
+            <label><input type="checkbox" name="landing_sections" value="Quienes somos"> Quiénes somos</label>
+            <label><input type="checkbox" name="landing_sections" value="Servicios"> Servicios</label>
+            <label><input type="checkbox" name="landing_sections" value="Productos destacados"> Productos destacados</label>
+            <label><input type="checkbox" name="landing_sections" value="Beneficios"> Beneficios</label>
+            <label><input type="checkbox" name="landing_sections" value="Galeria"> Galería</label>
+            <label><input type="checkbox" name="landing_sections" value="Testimonios"> Testimonios</label>
+            <label><input type="checkbox" name="landing_sections" value="FAQ"> Preguntas frecuentes</label>
+            <label><input type="checkbox" name="landing_sections" value="Contacto"> Contacto</label>
+            <label><input type="checkbox" name="landing_sections" value="Ubicacion"> Ubicación</label>
+          </div>
+        </fieldset>
+        <label>Contenido de cada sección elegida
+          <textarea name="landing_section_content" maxlength="7000" rows="6"></textarea>
+        </label>
+        <label>Texto y destino del botón principal
+          <textarea name="landing_primary_cta" maxlength="1500" rows="3" placeholder="Ej. “Cotizar ahora” → WhatsApp +591... con mensaje: Hola, quiero cotizar..."></textarea>
+        </label>
+        <label>Precios/promociones que deben mostrarse
+          <textarea name="landing_prices" maxlength="2500" rows="3"></textarea>
+        </label>
+      </section>
+
+      <section class="form-section plan-only" data-plans="business_299,full_799,custom">
+        <div class="section-head"><span>5</span><div><h2>Catálogo y estructura comercial</h2><p>Para Web Negocio el alcance base es de hasta 5 páginas/secciones y hasta 30 productos/servicios.</p></div></div>
+        <label>Páginas/secciones necesarias
+          <textarea name="business_pages" maxlength="3500" rows="4" placeholder="Inicio, Nosotros, Catálogo, Servicios, Contacto…"></textarea>
+        </label>
+        <div class="field-grid two">
+          <label>Cantidad aproximada de productos/servicios
+            <input type="number" name="product_count" min="0" max="100000" step="1">
+          </label>
+          <label>¿Cómo se muestran los precios?
+            <select name="price_display">
+              <option value="fijo">Precio fijo</option>
+              <option value="desde">Desde…</option>
+              <option value="cotizacion">Bajo cotización</option>
+              <option value="oculto">No mostrar precios</option>
+              <option value="mixto">Mixto</option>
+            </select>
+          </label>
+        </div>
+        <label>Categorías del catálogo
+          <textarea name="catalog_categories" maxlength="2500" rows="3"></textarea>
+        </label>
+        <label>¿Qué datos debe pedir cada producto al comprador?
+          <textarea name="buyer_data_requirements" maxlength="3500" rows="4" placeholder="Ej. nombre, ID de jugador, servidor, talla, dirección, referencia…"></textarea>
+        </label>
+        <label>Enlace a tu archivo/lista de productos
+          <input type="url" name="catalog_file_url" maxlength="1000" placeholder="Pega una hoja de cálculo o documento">
+        </label>
+        <div class="template-box">
+          <b>Plantilla recomendada</b>
+          <p>Para catálogos grandes, copia esta hoja y completa una fila por producto.</p>
+          <a href="https://docs.google.com/spreadsheets/d/10B3yl3yOC0POIiKWuQPy47u8lAjl_WUvfTG2cs-c8BU/edit" target="_blank" rel="noopener noreferrer">Abrir plantilla de productos ↗</a>
+        </div>
+        <label>Buscador, filtros o clasificación que necesitas
+          <textarea name="catalog_search_filters" maxlength="2500" rows="3"></textarea>
+        </label>
+        <label>¿Quieres poder editar productos tú mismo después? Explica qué necesitas modificar.
+          <textarea name="catalog_editing_needs" maxlength="2500" rows="3"></textarea>
+        </label>
+      </section>
+
+      <section class="form-section plan-only" data-plans="full_799,custom">
+        <div class="section-head"><span>6</span><div><h2>Módulos del Sistema Completo</h2><p>Marca todo lo que necesitas. Cada módulo se define antes de cerrar la cotización final.</p></div></div>
+        <div class="check-grid modules">
+          <label><input type="checkbox" name="needs_auth" data-controls="authModule"> Usuarios / inicio de sesión</label>
+          <label><input type="checkbox" name="needs_admin" data-controls="adminModule"> Panel administrativo</label>
+          <label><input type="checkbox" name="needs_orders" data-controls="ordersModule"> Carrito / pedidos</label>
+          <label><input type="checkbox" name="needs_payments" data-controls="paymentsModule"> Pagos / QR dinámico</label>
+          <label><input type="checkbox" name="needs_notifications" data-controls="notificationsModule"> Notificaciones</label>
+          <label><input type="checkbox" name="needs_pwa" data-controls="pwaModule"> PWA / app instalable</label>
+          <label><input type="checkbox" name="needs_integrations" data-controls="integrationsModule"> APIs / integraciones externas</label>
+          <label><input type="checkbox" name="needs_multi_branch"> Varias sucursales</label>
+          <label><input type="checkbox" name="needs_inventory"> Inventario / stock</label>
+          <label><input type="checkbox" name="needs_discounts"> Cupones / descuentos</label>
+          <label><input type="checkbox" name="needs_loyalty"> Puntos / fidelidad</label>
+          <label><input type="checkbox" name="needs_reports"> Reportes / exportaciones</label>
+        </div>
+        <label>Describe cualquier flujo especial paso a paso
+          <textarea name="custom_business_flow" maxlength="7000" rows="6" placeholder="Ej. Cliente elige producto → pone ID → paga → sistema confirma → admin recibe aviso → entrega..."></textarea>
+        </label>
+      </section>
+
+      <section id="authModule" class="form-section conditional-module" hidden>
+        <div class="section-head"><span>7</span><div><h2>Usuarios y acceso</h2></div></div>
+        <label>Tipos de usuarios/roles
+          <textarea name="user_roles" maxlength="3000" rows="4" placeholder="Cliente, administrador, vendedor, revendedor... y qué puede hacer cada uno."></textarea>
+        </label>
+        <div class="field-grid two">
+          <label>Métodos de inicio de sesión
+            <textarea name="auth_methods" maxlength="1200" rows="3" placeholder="Google, correo, Apple, teléfono..."></textarea>
+          </label>
+          <label>Datos del perfil
+            <textarea name="profile_fields" maxlength="2000" rows="3"></textarea>
+          </label>
+        </div>
+        <label>Reglas de registro, verificación, recuperación de cuenta o restricciones
+          <textarea name="auth_rules" maxlength="3000" rows="4"></textarea>
+        </label>
+      </section>
+
+      <section id="adminModule" class="form-section conditional-module" hidden>
+        <div class="section-head"><span>8</span><div><h2>Panel administrativo</h2></div></div>
+        <label>¿Qué debe poder ver y modificar el administrador?
+          <textarea name="admin_capabilities" maxlength="6000" rows="6" placeholder="Productos, precios, pedidos, usuarios, stock, banners, descuentos, notificaciones, reportes..."></textarea>
+        </label>
+        <label>¿Necesitas varios administradores con permisos diferentes?
+          <textarea name="admin_roles" maxlength="3000" rows="4"></textarea>
+        </label>
+        <label>Estadísticas/reportes necesarios
+          <textarea name="admin_reports" maxlength="3500" rows="4"></textarea>
+        </label>
+      </section>
+
+      <section id="ordersModule" class="form-section conditional-module" hidden>
+        <div class="section-head"><span>9</span><div><h2>Carrito y pedidos</h2></div></div>
+        <label>Estados que debe tener un pedido
+          <textarea name="order_statuses" maxlength="2000" rows="3" placeholder="Pendiente, esperando pago, pagado, procesando, enviado, entregado, cancelado..."></textarea>
+        </label>
+        <label>Información que debe guardar cada pedido
+          <textarea name="order_fields" maxlength="3500" rows="4"></textarea>
+        </label>
+        <label>Reglas de compra, cancelación, devolución, entrega, envío o garantía
+          <textarea name="order_rules" maxlength="4500" rows="5"></textarea>
+        </label>
+      </section>
+
+      <section id="paymentsModule" class="form-section conditional-module" hidden>
+        <div class="section-head"><span>10</span><div><h2>Pagos automáticos / QR dinámico</h2><p>No escribas secretos. Solo necesitamos conocer qué integración tienes disponible.</p></div></div>
+        <div class="field-grid two">
+          <label>Banco principal
+            <input name="bank_name" maxlength="160" placeholder="Ej. Banco Unión, BISA, BCP...">
+          </label>
+          <label>Proveedor/pasarela preferida
+            <input name="payment_provider" maxlength="160" placeholder="Ej. Libélula">
+          </label>
+          <label>¿Tu banco/proveedor tiene API para comercios?
+            <select name="has_payment_api">
+              <option value="no_se">No sé</option><option value="si">Sí</option><option value="no">No</option>
+            </select>
+          </label>
+          <label>¿Tienes ambiente de pruebas/sandbox?
+            <select name="has_payment_sandbox">
+              <option value="no_se">No sé</option><option value="si">Sí</option><option value="no">No</option>
+            </select>
+          </label>
+          <label>¿Está habilitado webhook/callback?
+            <select name="has_payment_webhook">
+              <option value="no_se">No sé</option><option value="si">Sí</option><option value="no">No</option>
+            </select>
+          </label>
+          <label>¿Ya estás afiliado a Libélula?
+            <select name="libelula_status">
+              <option value="no_aplica">No aplica</option><option value="no">No</option>
+              <option value="tramite">En trámite</option><option value="si">Sí</option>
+            </select>
+          </label>
+        </div>
+        <label>Documentación pública de la API / pasarela
+          <input type="url" name="payment_docs_url" maxlength="1000">
+        </label>
+        <label>Identificador público de comercio / Merchant ID, si corresponde
+          <input name="merchant_public_id" maxlength="300">
+          <small>No pegues API keys, appkeys privadas, contraseñas ni tokens.</small>
+        </label>
+        <label>¿Qué debe suceder automáticamente cuando el pago se confirme?
+          <textarea name="after_payment_flow" maxlength="3500" rows="4"></textarea>
+        </label>
+        <div class="field-grid two">
+          <label>¿El QR debe vencer?
+            <input name="qr_expiration" maxlength="300" placeholder="Ej. 15 minutos / no sé">
+          </label>
+          <label>¿Debe poder regenerarse?
+            <select name="qr_regeneration"><option>No sé</option><option>Sí</option><option>No</option></select>
+          </label>
+        </div>
+        <label>Si no existe API compatible, ¿aceptas QR normal con verificación manual?
+          <select name="manual_qr_fallback"><option value="si">Sí</option><option value="no">No</option><option value="evaluar">Quiero evaluarlo</option></select>
+        </label>
+      </section>
+
+      <section id="notificationsModule" class="form-section conditional-module" hidden>
+        <div class="section-head"><span>11</span><div><h2>Notificaciones</h2></div></div>
+        <label>Canales necesarios
+          <textarea name="notification_channels" maxlength="1800" rows="3" placeholder="Push web, email, WhatsApp API, SMS, notificación interna..."></textarea>
+        </label>
+        <label>Eventos que deben generar avisos
+          <textarea name="notification_events" maxlength="4000" rows="5" placeholder="Pedido creado, pago confirmado, entrega, vencimiento, stock, promociones..."></textarea>
+        </label>
+      </section>
+
+      <section id="pwaModule" class="form-section conditional-module" hidden>
+        <div class="section-head"><span>12</span><div><h2>PWA / aplicación instalable</h2></div></div>
+        <div class="field-grid two">
+          <label>Nombre de la app
+            <input name="pwa_name" maxlength="120">
+          </label>
+          <label>Nombre corto
+            <input name="pwa_short_name" maxlength="30">
+          </label>
+        </div>
+        <label>¿Qué debe funcionar o verse de forma especial al instalar la app?
+          <textarea name="pwa_requirements" maxlength="3000" rows="4"></textarea>
+        </label>
+      </section>
+
+      <section id="integrationsModule" class="form-section conditional-module" hidden>
+        <div class="section-head"><span>13</span><div><h2>APIs e integraciones externas</h2></div></div>
+        <label>Lista todas las integraciones necesarias
+          <textarea name="integration_list" maxlength="5000" rows="6" placeholder="ERP, CRM, proveedor, WhatsApp API, facturación, Google, mapas, inventario, etc."></textarea>
+        </label>
+        <label>Enlaces de documentación técnica
+          <textarea name="integration_docs" maxlength="5000" rows="5"></textarea>
+        </label>
+        <label>¿Las cuentas de esos servicios ya están creadas y pertenecen al cliente?
+          <textarea name="integration_account_status" maxlength="3000" rows="4"></textarea>
+        </label>
+      </section>
+
+      <section class="form-section plan-only" data-plans="business_299,full_799,custom">
+        <div class="section-head"><span>14</span><div><h2>SEO, analítica y alcance geográfico</h2></div></div>
+        <div class="field-grid two">
+          <label>Ciudades/países objetivo
+            <textarea name="seo_locations" maxlength="1800" rows="3"></textarea>
+          </label>
+          <label>Palabras que crees que buscarán tus clientes
+            <textarea name="seo_keywords" maxlength="2500" rows="3"></textarea>
+          </label>
+        </div>
+        <label>Competidores o páginas que aparecen en Google
+          <textarea name="seo_competitors" maxlength="2500" rows="3"></textarea>
+        </label>
+        <fieldset>
+          <legend>Herramientas ya disponibles</legend>
+          <div class="check-grid">
+            <label><input type="checkbox" name="has_google_business"> Google Business Profile</label>
+            <label><input type="checkbox" name="has_search_console"> Search Console</label>
+            <label><input type="checkbox" name="has_analytics"> Google Analytics</label>
+            <label><input type="checkbox" name="has_meta_pixel"> Meta Pixel</label>
+            <label><input type="checkbox" name="has_tiktok_pixel"> TikTok Pixel</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="form-section">
+        <div class="section-head"><span>15</span><div><h2>Dominio, cuentas y propiedad</h2><p>La modalidad recomendada es que el cliente sea propietario y French Store trabaje como colaborador.</p></div></div>
+        <div class="field-grid two">
+          <label>¿Ya tienes dominio?
+            <select name="has_domain"><option value="no">No</option><option value="si">Sí</option></select>
+          </label>
+          <label>Dominio actual
+            <input name="domain_name" maxlength="253" placeholder="ejemplo.com">
+          </label>
+          <label>¿Tienes GitHub?
+            <select name="has_github"><option>No</option><option>Sí</option></select>
+          </label>
+          <label>Usuario de GitHub
+            <input name="github_username" maxlength="160">
+          </label>
+          <label>¿Tienes Cloudflare?
+            <select name="has_cloudflare"><option>No</option><option>Sí</option></select>
+          </label>
+          <label>Correo propietario de Cloudflare
+            <input type="email" name="cloudflare_owner_email" maxlength="200">
+          </label>
+          <label>¿Tienes Supabase?
+            <select name="has_supabase"><option>No</option><option>Sí</option><option>No sé si lo necesito</option></select>
+          </label>
+          <label>¿Quién debe poseer el proyecto al finalizar?
+            <select name="ownership_model">
+              <option value="client">Cliente propietario de las cuentas</option>
+              <option value="managed">Administrado por French Store</option>
+              <option value="discuss">Quiero discutirlo</option>
+            </select>
+          </label>
+        </div>
+        <label>Información de una web/código existente que debamos migrar
+          <textarea name="existing_system" maxlength="5000" rows="5" placeholder="URL, repositorio, plataforma actual, base de datos, usuarios/productos/pedidos que deban conservarse..."></textarea>
+        </label>
+      </section>
+
+      <section class="form-section">
+        <div class="section-head"><span>16</span><div><h2>Legal, revisiones y mantenimiento</h2></div></div>
+        <label>Políticas o requisitos legales del negocio
+          <textarea name="legal_requirements" maxlength="4500" rows="5" placeholder="Términos, privacidad, devoluciones, entregas, garantías, restricciones de edad/región..."></textarea>
+        </label>
+        <label>¿Quién aprobará diseños y cambios?
+          <input name="approval_contact" maxlength="300">
+        </label>
+        <label>¿Quieres mantenimiento después de la entrega?
+          <select name="maintenance_interest">
+            <option value="no">No por ahora</option>
+            <option value="yes_base">Sí, soporte/cambios menores</option>
+            <option value="quote">Sí, quiero cotizar mantenimiento</option>
+          </select>
+        </label>
+        <label>Fecha/evento ideal y cualquier restricción de calendario
+          <textarea name="preferred_timing" maxlength="2000" rows="3" placeholder="Orientativo. La fecha final se coordina después de revisar alcance, materiales y carga de trabajo."></textarea>
+        </label>
+        <label>Comentarios finales / requisitos que no preguntamos
+          <textarea name="final_notes" maxlength="6000" rows="6"></textarea>
+        </label>
+      </section>
+
+      <section class="form-section final-section">
+        <div class="section-head"><span>✓</span><div><h2>Confirmación</h2></div></div>
+        <div class="confirm-list">
+          <label><input type="checkbox" name="confirm_information" required> Confirmo que la información entregada es correcta.</label>
+          <label><input type="checkbox" name="confirm_assets_rights" required> Confirmo que tengo derecho o autorización para utilizar los logos, textos, fotos y archivos enviados.</label>
+          <label><input type="checkbox" name="confirm_external_costs" required> Comprendo que dominio, servicios externos, APIs, pasarelas y comisiones de terceros pueden tener costos independientes.</label>
+          <label><input type="checkbox" name="confirm_no_secrets" required> Confirmo que no he escrito contraseñas, PINs, API keys, tokens ni otros secretos en este formulario.</label>
+          <label><input type="checkbox" name="confirm_scope_changes" required> Comprendo que funciones fuera del alcance acordado se cotizan aparte y que el plan incluye hasta 2 rondas de ajustes dentro del alcance.</label>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="saveDraft" class="secondary-action">Guardar borrador en este dispositivo</button>
+          <button type="button" id="clearDraft" class="ghost-action">Borrar borrador</button>
+          <button type="submit" id="submitForm" class="primary-action">Enviar solicitud</button>
+        </div>
+        <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+      </section>
+    </form>
+
+    <section id="successPanel" class="success-panel" hidden>
+      <span class="success-icon">✓</span>
+      <h2>Solicitud recibida</h2>
+      <p>Tu información quedó registrada. Guarda este código de referencia:</p>
+      <strong id="referenceCode">—</strong>
+      <div class="success-actions">
+        <button id="copyReference" type="button">Copiar código</button>
+        <a id="whatsappFollowup" href="#" target="_blank" rel="noopener noreferrer">Avisar por WhatsApp</a>
+        <a href="/v2/">Volver a French Store</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="./web-project-form.js?v=20260919-r1" defer></script>
+</body>
+</html>
