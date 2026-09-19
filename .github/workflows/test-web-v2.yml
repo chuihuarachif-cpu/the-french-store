@@ -61,6 +61,10 @@ jobs:
           test -s v2/order-cancel-ui.js
           test -s v2/bisa-wallet.js
           test -s v2/catalog-order.js
+          test -s v2/smart-catalog.js
+          test -s v2/cart-recovery.js
+          test -s v2/account-growth.js
+          test -s v2/commerce-enhancements.css
           test -s v2/admin-order-ui.js
           test -s v2/admin-fulfillment-ui.js
           test -s v2/paid-whatsapp.js
@@ -98,6 +102,12 @@ jobs:
           node --check v2/order-cancel-ui.js
           node --check v2/bisa-wallet.js
           node --check v2/catalog-order.js
+          node --check v2/smart-catalog.js
+          node --check v2/cart-recovery.js
+          node --check v2/account-growth.js
+          node --check v2/sw.js
+          node --check v2/pwa-init.js
+          node --check v2/push-notifications.js
           node --check v2/admin-order-ui.js
           node --check v2/admin-fulfillment-ui.js
           node --check v2/paid-whatsapp.js
@@ -141,6 +151,9 @@ jobs:
           grep -q './admin-order-ui.js' v2/bootstrap.js
           grep -q './admin-fulfillment-ui.js' v2/bootstrap.js
           grep -q './r8.js' v2/bootstrap.js
+          grep -q './smart-catalog.js' v2/bootstrap.js
+          grep -q './cart-recovery.js' v2/bootstrap.js
+          grep -q './account-growth.js' v2/bootstrap.js
           ! grep -q './legal.js' v2/bootstrap.js
           ! grep -q 'automation-capabilities.js' v2/bootstrap.js
           ! grep -q 'automatic-order-ui.js' v2/bootstrap.js

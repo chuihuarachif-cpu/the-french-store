@@ -3,7 +3,7 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r171-icons-20260918';
+const CACHE='fs-store-r172-growth-20260919';
 const SHELL=[
   '/v2/',
   '/v2/index.html',
@@ -41,12 +41,14 @@ self.addEventListener('push',event=>{
     const title=String(data.title||'💎 FRENCH STORE 💎').slice(0,120);
     const body=String(data.body||'').slice(0,300);
     const url=String(data.url||'/v2/');
+    const renewal=/[?&]renew=/.test(url);
     await self.registration.showNotification(title,{
       body,
       icon:data.icon||'/v2/assets/brand/icon-192.png',
       badge:data.badge||'/v2/assets/brand/icon-192.png',
       tag:data.tag||'fs-notification',
       data:{url},
+      actions:renewal?[{action:'renew',title:'Renovar ahora'}]:[],
       renotify:false,
       requireInteraction:false
     });
