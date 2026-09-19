@@ -36,6 +36,10 @@
 | Admin private fulfillment viewer | `admin-fulfillment-ui.js` |
 | Paid-order manual WhatsApp helper | `paid-whatsapp.js` |
 | Package presentation ordering | `catalog-order.js` |
+| Smart search + local/account favorites | `smart-catalog.js` + `commerce-enhancements.css` |
+| Safe cart recovery | `cart-recovery.js` (product IDs/quantities only) |
+| Reseller self-service + referrals | `account-growth.js` + protected Supabase RPCs |
+| Push renewal deep links | `push-notifications.js` + `sw.js` + backend notification RPC |
 | Game/catalog motion | `r8.js` + `r8.css` |
 | Official/fallback icon presentation | `r8-icons.js` + `r8-icons.css` |
 | Account confirmation/legal acceptance | `auth-ease.js`, `auth-confirm.js`, `legal-account.js` |
@@ -71,6 +75,9 @@
 - **Orders**: ensures Checkout first, then cancellation/WhatsApp helpers.
 - **Admin**: `admin-order-ui.js` → `admin-fulfillment-ui.js` only when Admin is used.
 - **Catalog ordering**: `catalog-order.js` on catalog interaction.
+- **Catalog assist**: smart search/favorites load only after Store interaction; favorites may live locally without auth and sync through own-row RLS after sign-in.
+- **Account growth**: reseller/referral UI loads only for Profile; authoritative reseller economics and referral qualification remain server-side.
+- **Cart recovery**: loaded during browser idle time; persists only product IDs and quantities already used by the core cart, never fulfillment credentials.
 - **Motion**: R8 CSS/JS only when catalog/detail content exists.
 
 ## Common edit map
@@ -115,6 +122,9 @@ Rollback through Git history by reverting the exact bad commit/PR. The repositor
 - Checkout RPC contracts remain `create_qr_order` and `create_wallet_order`.
 - Required customer inputs remain backend-driven and private.
 - Admin fulfillment remains admin-only.
+- Internal Push service RPCs and VAPID private material remain service-role-only; browsers may use only authenticated subscription-preference RPCs.
+- Referral rewards are idempotent, first-purchase qualified, capped server-side and reversible on cancellation.
+- Reseller customer-facing RPCs derive identity from auth.uid() and never expose supplier costs/internal margin formulas.
 - QR MutationObserver loop test passes.
 - Responsive checks stay mobile-first.
 - Production BISA storefront smoke passes after merge.
