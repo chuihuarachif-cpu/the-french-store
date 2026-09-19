@@ -60,13 +60,21 @@
         payload[key]=value;
       }
     }
-    form.querySelectorAll('input[type="checkbox"]:not([disabled])').forEach(box=>{
-      if(!box.name) return;
-      if(!Object.prototype.hasOwnProperty.call(payload,box.name)&&!document.querySelectorAll(`input[name="${CSS.escape(box.name)}"][type="checkbox"]`).length>1){
-        payload[box.name]=false;
+
+    const checkboxNames=new Set(
+      [...form.querySelectorAll('input[type="checkbox"]:not([disabled])')]
+        .map(box=>box.name)
+        .filter(Boolean)
+    );
+    checkboxNames.forEach(name=>{
+      const boxes=[...form.querySelectorAll(`input[type="checkbox"][name="${CSS.escape(name)}"]:not([disabled])`)];
+      if(boxes.length===1 && !Object.prototype.hasOwnProperty.call(payload,name)){
+        payload[name]=false;
       }
-      if(box.dataset.controls) payload[box.name]=box.checked;
+      const controller=boxes.find(box=>box.dataset.controls);
+      if(controller) payload[name]=controller.checked;
     });
+
     payload.form_version='2026-09-19-r1';
     payload.product_template_url='https://docs.google.com/spreadsheets/d/10B3yl3yOC0POIiKWuQPy47u8lAjl_WUvfTG2cs-c8BU/edit';
     return payload;
