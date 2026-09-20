@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es" data-device="desktop" data-role="visitor">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#06111d">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'self';">
+  <title>French Store · Design Lab</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="lab-shell">
+    <aside class="lab-panel" aria-label="Herramientas del laboratorio">
+      <div class="lab-brand">
+        <span class="lab-brand-mark">✦</span>
+        <div><b>DESIGN LAB</b><small>French Store · UI aislada</small></div>
+      </div>
+
+      <div class="safety-card">
+        <span class="safety-dot"></span>
+        <div><b>Modo seguro</b><small>Sin Supabase, pagos, QR real, Push ni backend.</small></div>
+      </div>
+
+      <label class="control">
+        <span>Dispositivo</span>
+        <select id="deviceSelect">
+          <option value="desktop">PC</option>
+          <option value="tablet">Tablet</option>
+          <option value="mobile">Móvil</option>
+        </select>
+      </label>
+
+      <label class="control">
+        <span>Estado simulado</span>
+        <select id="roleSelect">
+          <option value="visitor">Visitante</option>
+          <option value="user">Usuario</option>
+          <option value="reseller">Reseller</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+
+      <div class="lab-menu" id="labMenu">
+        <button class="active" data-lab-view="inicio">Inicio</button>
+        <button data-lab-view="catalogo">Catálogo</button>
+        <button data-lab-view="producto">Producto</button>
+        <button data-lab-view="checkout">Checkout</button>
+        <button data-lab-view="cuenta">Mi cuenta</button>
+        <button data-lab-view="admin">Admin</button>
+      </div>
+
+      <div class="lab-note">
+        <b>Regla del laboratorio</b>
+        <p>Aquí primero aprobamos diseño, navegación y animaciones. Recién después se migra a producción y se conectan reglas reales.</p>
+      </div>
+    </aside>
+
+    <main class="preview-stage">
+      <div class="preview-toolbar">
+        <div>
+          <span class="preview-kicker">PREVIEW</span>
+          <b id="previewTitle">Inicio</b>
+        </div>
+        <div class="preview-actions">
+          <button id="motionToggle" class="tool-btn" type="button">Animaciones: ON</button>
+          <span class="demo-pill">DATOS FICTICIOS</span>
+        </div>
+      </div>
+
+      <div class="device-frame">
+        <div class="store-app">
+          <header class="store-header">
+            <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio">
+              <span>💎</span><b>FRENCH STORE</b><span>💎</span>
+            </button>
+            <nav class="desktop-nav" aria-label="Navegación de demostración">
+              <button data-nav-view="inicio" class="active">Inicio</button>
+              <button data-nav-view="catalogo">Tienda</button>
+              <button data-nav-view="cuenta">Cuenta</button>
+            </nav>
+            <div class="header-actions">
+              <button class="icon-button" type="button" aria-label="Buscar">⌕</button>
+              <button class="cart-button" type="button" data-nav-view="checkout">🛒 <span id="cartCount">2</span></button>
+            </div>
+          </header>
+
+          <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
+
+          <section class="store-view active" data-view="inicio">
+            <div class="hero reveal">
+              <div class="hero-copy">
+                <span class="eyebrow">EXPERIENCIA DIGITAL</span>
+                <h1>Una nueva forma de descubrir y comprar.</h1>
+                <p>Este espacio existe únicamente para experimentar con la futura interfaz de French Store sin tocar la tienda real.</p>
+                <div class="hero-actions">
+                  <button class="primary" type="button" data-nav-view="catalogo">Explorar diseño</button>
+                  <button class="secondary" type="button" data-demo-action="safe">Probar interacción</button>
+                </div>
+              </div>
+              <div class="hero-art" aria-hidden="true">
+                <div class="orb orb-a"></div>
+                <div class="orb orb-b"></div>
+                <div class="gem">◆</div>
+              </div>
+            </div>
+
+            <section class="section reveal">
+              <div class="section-head"><div><span class="eyebrow">CATEGORÍAS</span><h2>Explora por mundo</h2></div><button class="text-button" data-nav-view="catalogo">Ver todo →</button></div>
+              <div id="categoryGrid" class="category-grid"></div>
+            </section>
+
+            <section class="section reveal">
+              <div class="section-head"><div><span class="eyebrow">DESTACADOS</span><h2>Productos para probar la UI</h2></div></div>
+              <div id="featuredGrid" class="product-grid"></div>
+            </section>
+          </section>
+
+          <section class="store-view" data-view="catalogo">
+            <div class="page-head reveal">
+              <span class="eyebrow">CATÁLOGO DEMO</span>
+              <h1>Encuentra lo que buscas.</h1>
+              <p>Todos los productos y precios de esta pantalla son ejemplos locales.</p>
+            </div>
+            <div class="search-shell reveal">
+              <span>⌕</span><input id="catalogSearch" type="search" placeholder="Buscar Free Fire, Netflix, ML..." autocomplete="off">
+            </div>
+            <div id="filterRow" class="filter-row reveal"></div>
+            <div id="catalogGrid" class="product-grid reveal"></div>
+          </section>
+
+          <section class="store-view" data-view="producto">
+            <div class="product-detail reveal">
+              <div class="product-visual">
+                <div class="detail-badge">DEMO</div>
+                <div class="detail-symbol">◇</div>
+              </div>
+              <div class="product-info">
+                <span class="eyebrow">RECARGA POR ID</span>
+                <h1>Diamantes Nova · 500</h1>
+                <p>Ejemplo visual para diseñar jerarquía, precio, información y controles del futuro detalle de producto.</p>
+                <div class="price-line"><strong>Bs 49,90</strong><small>precio ficticio</small></div>
+                <div class="fake-fields">
+                  <label><span>ID de jugador</span><input value="123456789" readonly></label>
+                  <label><span>Zona</span><input value="1234" readonly></label>
+                </div>
+                <button class="primary full" type="button" data-nav-view="checkout">Continuar al checkout demo</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="checkout">
+            <div class="checkout-layout reveal">
+              <div class="checkout-main">
+                <span class="eyebrow">CHECKOUT DEMO</span>
+                <h1>Revisa tu compra</h1>
+                <div id="checkoutItems" class="checkout-items"></div>
+                <div class="fake-payment">
+                  <div class="fake-qr" aria-hidden="true"><span>QR</span></div>
+                  <div><b>QR visual de prueba</b><p>No genera cobros, no contiene datos bancarios y no consulta ningún servicio.</p></div>
+                </div>
+              </div>
+              <aside class="order-summary">
+                <h3>Resumen</h3>
+                <div><span>Subtotal</span><b>Bs 74,80</b></div>
+                <div><span>Comisión</span><b>Bs 0,00</b></div>
+                <hr>
+                <div class="total"><span>Total</span><strong>Bs 74,80</strong></div>
+                <button class="primary full" type="button" data-demo-action="safe">Simular pago</button>
+                <small>Acción bloqueada por el laboratorio.</small>
+              </aside>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="cuenta">
+            <div class="account-layout reveal">
+              <div class="profile-card">
+                <div class="avatar">FS</div>
+                <div><span class="eyebrow">CUENTA DEMO</span><h2 id="profileRole">Visitante</h2><p>demo@frenchstore.local</p></div>
+              </div>
+              <div class="metric-grid">
+                <article><span>Pedidos</span><strong>12</strong><small>ficticios</small></article>
+                <article><span>Favoritos</span><strong>8</strong><small>locales</small></article>
+                <article><span>Wallet</span><strong>Bs 125</strong><small>simulado</small></article>
+              </div>
+              <div class="account-menu">
+                <button type="button">Mis pedidos <span>→</span></button>
+                <button type="button">Favoritos <span>→</span></button>
+                <button type="button">Notificaciones <span>→</span></button>
+                <button type="button">Configuración <span>→</span></button>
+              </div>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="admin">
+            <div class="page-head reveal">
+              <span class="eyebrow">ADMIN DEMO</span>
+              <h1>Panel visual aislado.</h1>
+              <p>Sirve para rediseñar administración sin leer ni modificar información real.</p>
+            </div>
+            <div class="metric-grid reveal">
+              <article><span>Ventas del mes</span><strong>Bs 8.420</strong><small>dato ficticio</small></article>
+              <article><span>Gastos del mes</span><strong>Bs 5.130</strong><small>dato ficticio</small></article>
+              <article><span>Ganancia</span><strong>Bs 3.290</strong><small>dato ficticio</small></article>
+            </div>
+            <div class="admin-demo-table reveal">
+              <div class="table-head"><span>Movimiento</span><span>Tipo</span><span>Monto</span></div>
+              <div><b>Pedido #FS-DEMO-102</b><span class="tag income">Ingreso</span><strong>+ Bs 120</strong></div>
+              <div><b>Compra de saldo proveedor</b><span class="tag expense">Gasto</span><strong>- Bs 80</strong></div>
+              <div><b>Pedido #FS-DEMO-103</b><span class="tag income">Ingreso</span><strong>+ Bs 55</strong></div>
+            </div>
+          </section>
+
+          <nav class="mobile-nav" aria-label="Navegación inferior">
+            <button class="active" data-nav-view="inicio"><span>⌂</span>Inicio</button>
+            <button data-nav-view="catalogo"><span>▦</span>Tienda</button>
+            <button data-nav-view="checkout"><span>🛒</span>Carrito</button>
+            <button data-nav-view="cuenta"><span>●</span>Cuenta</button>
+          </nav>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./mock-data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
