@@ -376,7 +376,6 @@
         return '<article class="x-package-card" data-x-package-index="'+index+'">'+
           '<button class="x-package-select" type="button" data-x-select-package="'+index+'" aria-pressed="false">'+
             '<span class="x-package-name">'+escapeHtml(product.package)+'</span>'+
-            '<small class="x-package-availability">Producto disponible</small>'+
             '<strong class="x-package-price">'+escapeHtml(priceLabel(product))+'</strong>'+
           '</button>'+
           '<button class="x-package-cart" type="button" data-x-add-package="'+index+'">Añadir al carrito</button>'+
