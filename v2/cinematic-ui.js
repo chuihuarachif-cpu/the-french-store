@@ -14,7 +14,7 @@
     '#view-tienda .catalog-panel > .panel-head',
     '#categoryTabs',
     '#featuredList > *',
-    '#catalogList > *',
+    '#catalogList > .r6-game-card',
     '#view-wallet .panel > .panel-head',
     '#view-wallet .balance-card',
     '#view-wallet .topup-box',
@@ -73,7 +73,8 @@
   }
 
   function revealDirection(el,index){
-    if(el.matches('#categoryGrid > .category-card,#featuredList > *,#catalogList > *,.web-service-card,.web-services-term,.record-list > *')){
+    if(window.matchMedia?.('(max-width: 700px)').matches) return 'up';
+    if(el.matches('#categoryGrid > .category-card,#featuredList > *,#catalogList > .r6-game-card,.web-service-card,.web-services-term,.record-list > *')){
       return index%2===0?'left':'right';
     }
     if(el.matches('.balance-card,.topup-box,.profile-card,.profile-actions')){
@@ -96,7 +97,7 @@
 
     el.dataset.fsReveal='1';
     el.dataset.fsRevealDir=revealDirection(el,index);
-    el.style.setProperty('--fs-reveal-delay',Math.min(index%5,4)*70+'ms');
+    el.style.setProperty('--fs-reveal-delay',Math.min(index%4,3)*40+'ms');
 
     if(alreadyVisible){
       revealAfterPaint(el);
