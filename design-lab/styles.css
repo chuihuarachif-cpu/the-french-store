@@ -1022,3 +1022,129 @@ html[data-device="mobile"] .loading-brand-lockup-text-only strong{
 html[data-device="mobile-landscape"] .loading-brand-lockup-text-only strong{
   font-size:1.75rem
 }
+
+
+/* r237 · mobile performance pass + corrected fox spacing */
+.loading-percentage-text{
+  margin-bottom:145px!important
+}
+.loading-fox-character{
+  width:138px!important;
+  height:138px!important;
+  bottom:16px!important;
+  transform:translate3d(-50%,0,0)!important;
+  will-change:transform
+}
+.loading-fox-image{
+  image-rendering:auto;
+  transform:translateZ(0)
+}
+
+/* Real-phone performance mode, independent of the simulated device selector. */
+@media (max-width:700px){
+  .category-arena{
+    box-shadow:none!important
+  }
+  .category-arena-viewport{
+    contain:layout paint style!important
+  }
+  .category-arena-card{
+    transform:
+      translate3d(calc(-50% + var(--roulette-x)),var(--roulette-y),0)
+      scale(var(--roulette-scale))!important;
+    transition:
+      transform .22s cubic-bezier(.22,.72,.2,1),
+      opacity .18s linear,
+      border-color .18s linear!important;
+    box-shadow:none!important;
+    filter:none!important;
+    will-change:transform,opacity!important;
+    backface-visibility:hidden
+  }
+  .category-arena-card.active{
+    box-shadow:0 0 0 1px rgba(var(--accent-rgb),.16)!important
+  }
+  .category-arena-card:before{
+    box-shadow:none!important;
+    transition:none!important
+  }
+  .category-card-grid{
+    display:none!important
+  }
+  .category-icon-orbit{
+    box-shadow:none!important;
+    background:radial-gradient(circle,rgba(var(--accent-rgb),.10),transparent 62%)!important
+  }
+  .category-icon-stage .icon{
+    filter:none!important;
+    transition:transform .2s ease!important
+  }
+  .category-arena-floor{
+    filter:none!important;
+    opacity:.72
+  }
+  .category-arena-floor:before{
+    box-shadow:none!important
+  }
+  .category-arena-dots button{
+    transition:width .18s ease,background .18s ease!important;
+    box-shadow:none!important
+  }
+  .loading-demo-backdrop{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:
+      radial-gradient(circle at 50% 24%,rgba(18,146,255,.13),transparent 30%),
+      linear-gradient(180deg,rgba(1,6,14,.94),rgba(1,7,16,.97))!important;
+    transform:none!important
+  }
+  .loading-demo-glow{
+    display:none!important
+  }
+  .loading-brand-intro,.loading-run-phase{
+    filter:none!important;
+    transition:opacity .22s ease,transform .26s ease!important
+  }
+  .loading-brand-lockup-text-only{
+    filter:none!important
+  }
+  .loading-fox-image{
+    filter:none!important
+  }
+  .loading-percentage-text{
+    margin-bottom:122px!important
+  }
+  .loading-fox-character{
+    width:112px!important;
+    height:112px!important;
+    bottom:14px!important
+  }
+}
+
+/* Simulated mobile stays lightweight even when opened on desktop. */
+html[data-device="mobile"] .category-arena-card,
+html[data-device="mobile-landscape"] .category-arena-card{
+  box-shadow:none!important;
+  filter:none!important
+}
+html[data-device="mobile"] .category-arena-card{
+  transform:
+    translate3d(calc(-50% + var(--roulette-x)),var(--roulette-y),0)
+    scale(var(--roulette-scale))!important;
+  transition:transform .22s cubic-bezier(.22,.72,.2,1),opacity .18s linear!important
+}
+html[data-device="mobile"] .category-card-grid,
+html[data-device="mobile-landscape"] .category-card-grid{
+  display:none!important
+}
+html[data-device="mobile"] .category-icon-stage .icon,
+html[data-device="mobile-landscape"] .category-icon-stage .icon{
+  filter:none!important;
+  transition:transform .2s ease!important
+}
+html[data-device="mobile"] .loading-percentage-text{
+  margin-bottom:122px!important
+}
+html[data-device="mobile-landscape"] .loading-percentage-text{
+  margin-bottom:96px!important
+}
