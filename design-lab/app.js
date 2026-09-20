@@ -353,120 +353,74 @@
 
 
   let loadingHideTimer = 0;
-  let loadingPhaseTimer = 0;
   let loadingProgressInterval = 0;
 
   function stopLoadingTimers(){
     clearTimeout(loadingHideTimer);
-    clearTimeout(loadingPhaseTimer);
     clearInterval(loadingProgressInterval);
     loadingHideTimer = 0;
-    loadingPhaseTimer = 0;
     loadingProgressInterval = 0;
   }
 
   function finishLoadingDemo(overlay, button, reduced){
+    overlay.classList.add("loading-complete");
     loadingHideTimer = setTimeout(() => {
       overlay.classList.add("leaving");
       loadingHideTimer = setTimeout(() => {
-        overlay.classList.remove("active","leaving","brand-phase","run-phase");
+        overlay.classList.remove("active","leaving","run-phase","loading-complete");
         overlay.setAttribute("aria-hidden","true");
         if (button) button.textContent = "▶ Probar carga";
-      }, reduced ? 40 : 480);
-    }, reduced ? 180 : 720);
-  }
-
-  function prepareLoadingFox(){
-    const fox = $("#loadingFox");
-    const foxImage = $("#loadingFoxImage");
-    if (!fox || !foxImage) return;
-    const markReady = () => {
-      if (foxImage.naturalWidth > 0) {
-        fox.classList.add("fox-ready");
-        fox.classList.remove("fox-failed");
-      }
-    };
-    const markFailed = () => {
-      fox.classList.remove("fox-ready");
-      fox.classList.add("fox-failed");
-    };
-    foxImage.addEventListener("load", markReady);
-    foxImage.addEventListener("error", markFailed);
-    if (foxImage.complete) {
-      if (foxImage.naturalWidth > 0) markReady();
-      else markFailed();
-    }
+      }, reduced ? 40 : 360);
+    }, reduced ? 180 : 520);
   }
 
   function runLoadingDemo(){
     const overlay = $("#loadingDemo");
-    const fox = $("#loadingFox");
-    const foxImage = $("#loadingFoxImage");
     const fill = $("#loadingProgressBar");
     const percent = $("#loadingPercent");
     const message = $("#loadingMessage");
     const button = $("#loadingDemoButton");
-    if (!overlay || !fox || !foxImage || !fill || !percent || !message) return;
+    if (!overlay || !fill || !percent || !message) return;
 
     stopLoadingTimers();
-    overlay.classList.remove("leaving","run-phase");
-    overlay.classList.add("active","brand-phase");
+    overlay.classList.remove("leaving","loading-complete");
+    overlay.classList.add("active","run-phase");
     overlay.setAttribute("aria-hidden","false");
 
     let progress = 0;
-    fox.style.left = "0%";
-    const foxSrc = foxImage.getAttribute("src");
-    fox.classList.remove("fox-failed");
-    foxImage.removeAttribute("src");
-    requestAnimationFrame(() => {
-      if (!foxSrc) return;
-      foxImage.setAttribute("src", foxSrc);
-      if (foxImage.complete && foxImage.naturalWidth > 0) fox.classList.add("fox-ready");
-    });
     fill.style.width = "0%";
     percent.textContent = "0%";
-    message.textContent = "Estamos corriendo para actualizar precios...";
+    message.textContent = "Preparando French Store...";
     if (button) button.textContent = "↻ Reiniciar carga";
 
     const reduced = document.documentElement.classList.contains("motion-off") ||
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    const device = document.documentElement.dataset.device || "desktop";
-    const compactMobile = device === "mobile" || device === "mobile-landscape";
-    const brandDuration = reduced ? 350 : (compactMobile ? 900 : 1050);
 
-    loadingPhaseTimer = setTimeout(() => {
-      overlay.classList.remove("brand-phase");
-      overlay.classList.add("run-phase");
+    loadingProgressInterval = setInterval(() => {
+      progress += reduced ? 8 : (0.75 + Math.random() * 2.15);
 
-      loadingProgressInterval = setInterval(() => {
-        const increment = reduced ? 8 : Math.random() * 2.5;
-        progress += increment;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(loadingProgressInterval);
+        loadingProgressInterval = 0;
+        fill.style.width = "100%";
+        percent.textContent = "100%";
+        message.textContent = "¡Todo listo! Entrando a French Store...";
+        finishLoadingDemo(overlay, button, reduced);
+        return;
+      }
 
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(loadingProgressInterval);
-          loadingProgressInterval = 0;
-          percent.textContent = "¡CARGA COMPLETADA!";
-          message.textContent = "¡Llegamos! French Store está listo.";
-          fill.style.width = "100%";
-          fox.style.left = "100%";
-          finishLoadingDemo(overlay, button, reduced);
-          return;
-        }
+      const visible = Math.floor(progress);
+      fill.style.width = progress + "%";
+      percent.textContent = visible + "%";
 
-        const displayProgress = Math.floor(progress);
-        percent.textContent = displayProgress + "%";
-        fill.style.width = progress + "%";
-        fox.style.left = progress + "%";
-
-        if (displayProgress < 38) message.textContent = "Estamos corriendo para actualizar precios...";
-        else if (displayProgress < 76) message.textContent = "Un sprint más: ordenando ofertas y recargas...";
-        else message.textContent = "Últimos metros: dejando todo listo...";
-      }, 80);
-    }, brandDuration);
+      if (visible < 30) message.textContent = "Preparando French Store...";
+      else if (visible < 65) message.textContent = "Cargando bloques, accesos y animaciones...";
+      else if (visible < 90) message.textContent = "Ordenando ofertas y recargas...";
+      else message.textContent = "Últimos detalles...";
+    }, 80);
   }
 
-  prepareLoadingFox();
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
   $("#settingsMotionShortcut")?.addEventListener("click", () => $("#motionToggle")?.click());
 
