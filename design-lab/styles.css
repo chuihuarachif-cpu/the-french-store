@@ -545,3 +545,63 @@ html[data-device="mobile"] .pass-grid,html[data-device="mobile"] .settings-grid{
 html[data-device="mobile"] .pass-card{min-height:215px}
 html[data-device="tablet"] .pass-grid{grid-template-columns:1fr 1fr}
 @media (prefers-reduced-motion:reduce){.info-hub,.info-hub-backdrop,.xarena-dock button,.settings-grid button{transition:none!important}}
+
+
+/* r232 · infinite arena + reliable mascot loading */
+.loading-brand-gem{
+  transform:none!important;
+  color:inherit!important;
+  font-size:clamp(1.45rem,3.25cqw,2.55rem)!important;
+  filter:drop-shadow(0 0 8px rgba(77,222,255,.65)) drop-shadow(0 0 24px rgba(29,128,255,.42));
+  text-shadow:none!important
+}
+.brand-button>span{
+  display:inline-block;
+  filter:drop-shadow(0 0 7px rgba(98,231,255,.45))
+}
+.category-arena-viewport{
+  overscroll-behavior-x:none
+}
+.category-arena-card{
+  contain:layout paint style
+}
+.arena-arrow:disabled{
+  opacity:1!important;
+  cursor:pointer!important;
+  pointer-events:auto!important
+}
+.loading-run-phase{
+  overflow:visible!important
+}
+.loading-runner-zone{
+  min-height:clamp(210px,32cqw,330px)!important;
+  overflow:visible!important;
+  z-index:6
+}
+.loading-runner{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+  z-index:12!important;
+  width:clamp(180px,27cqw,245px)!important;
+  min-width:150px;
+  max-height:82%;
+  object-fit:contain;
+  object-position:left bottom
+}
+.loading-demo.run-phase .loading-runner{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important
+}
+.loading-runner-fallback{
+  width:clamp(150px,22cqw,205px)!important
+}
+html[data-device="mobile"] .loading-runner{
+  width:172px!important;
+  min-width:172px
+}
+html[data-device="mobile-landscape"] .loading-runner{
+  width:185px!important;
+  min-width:185px
+}
