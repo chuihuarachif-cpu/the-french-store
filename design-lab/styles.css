@@ -316,7 +316,7 @@ html[data-device="mobile"] .admin-demo-table>div strong{grid-column:1/-1}
   -webkit-mask-image:radial-gradient(ellipse 72% 72% at 58% 55%,#000 46%,rgba(0,0,0,.98) 63%,transparent 95%);
   mask-image:radial-gradient(ellipse 72% 72% at 58% 55%,#000 46%,rgba(0,0,0,.98) 63%,transparent 95%);
   filter:drop-shadow(0 18px 18px rgba(0,0,0,.45)) drop-shadow(0 0 12px rgba(32,205,255,.18));
-  will-change:left,transform;
+  will-change:transform;
 }
 
 .loading-progress-shell{
@@ -353,7 +353,7 @@ html[data-device="mobile"] .admin-demo-table>div strong{grid-column:1/-1}
     repeating-linear-gradient(120deg,rgba(255,255,255,.18) 0 9px,transparent 9px 18px),
     linear-gradient(90deg,#0aa6ff,#64efff);
   box-shadow:0 0 16px rgba(76,229,255,.75),0 0 40px rgba(12,151,255,.34);
-  will-change:width;
+  will-change:transform;
 }
 .loading-demo-copy{
   justify-self:center;
