@@ -115,7 +115,7 @@
 
   function categoryCard(item, index){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
-    return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Explorar <i>→</i></span></button>';
+    return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Seleccionar <i>→</i></span></button>';
   }
 
   function renderCategoryArena(){
