@@ -971,3 +971,54 @@ html.motion-off .loading-fox-character{
 @media (prefers-reduced-motion:reduce){
   .loading-exact-fill,.loading-fox-character{transition:none!important}
 }
+
+
+/* r236 · text-only brand intro + reliable animated fox image */
+.loading-brand-mascot-shell,
+.loading-brand-halo,
+.loading-brand-mascot{
+  display:none!important
+}
+.loading-brand-intro-text-only{
+  display:grid!important;
+  place-content:center!important;
+  justify-items:center!important
+}
+.loading-brand-lockup-text-only{
+  display:block!important;
+  filter:drop-shadow(0 12px 20px rgba(0,0,0,.65))!important
+}
+.loading-brand-lockup-text-only strong{
+  display:block;
+  color:#fff;
+  font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+  font-size:clamp(2rem,5.8cqw,4.4rem);
+  line-height:1;
+  font-weight:900;
+  letter-spacing:-.035em;
+  white-space:nowrap;
+  -webkit-text-stroke:0;
+  text-shadow:0 0 22px rgba(44,194,255,.24)
+}
+.loading-fox-sprite{
+  display:none!important
+}
+.loading-fox-image{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  background:transparent!important;
+  filter:drop-shadow(0 0 10px rgba(0,229,255,.34))!important
+}
+.loading-fox-character{
+  overflow:visible!important;
+  opacity:1!important;
+  visibility:visible!important
+}
+html[data-device="mobile"] .loading-brand-lockup-text-only strong{
+  font-size:2.05rem
+}
+html[data-device="mobile-landscape"] .loading-brand-lockup-text-only strong{
+  font-size:1.75rem
+}
