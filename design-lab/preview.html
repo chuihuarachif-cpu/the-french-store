@@ -1518,6 +1518,675 @@ html.motion-off .x-phone-arrow{
   .x-phone-body,.x-phone-arrow{animation:none!important}
 }
 
+
+/* r244 · XArena-inspired French Store shell, dark-blue + glass, no counters */
+.store-app{
+  background:
+    radial-gradient(circle at 50% 30%,rgba(0,131,255,.08),transparent 35%),
+    linear-gradient(180deg,#031020 0%,#04111f 46%,#020914 100%)!important;
+}
+.store-app:before{
+  background-image:
+    linear-gradient(rgba(68,202,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(68,202,255,.02) 1px,transparent 1px)!important;
+  background-size:52px 52px!important;
+  opacity:.32!important;
+}
+.fs-command-header{
+  position:sticky;
+  top:0;
+  z-index:30;
+  display:grid!important;
+  grid-template-columns:auto minmax(150px,220px) minmax(210px,1fr) minmax(170px,280px) auto!important;
+  gap:10px;
+  align-items:center;
+  padding:12px 18px!important;
+  border-bottom:1px solid rgba(73,210,255,.2)!important;
+  background:rgba(3,13,25,.94)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.22);
+}
+.brand-button{
+  min-width:max-content;
+  color:#f4fdff!important;
+  font-size:clamp(.82rem,1.45cqw,1.08rem)!important;
+  text-shadow:0 0 14px rgba(68,220,255,.24)
+}
+.header-profile{
+  min-width:0;
+  height:44px;
+  border:1px solid rgba(80,217,255,.18);
+  border-radius:14px;
+  padding:5px 9px;
+  background:linear-gradient(180deg,rgba(10,33,53,.92),rgba(5,19,33,.92));
+  color:#e9fbff;
+  display:grid;
+  grid-template-columns:32px minmax(0,1fr);
+  gap:8px;
+  align-items:center;
+  cursor:pointer
+}
+.header-profile-avatar{
+  width:30px;height:30px;
+  display:grid;place-items:center;
+  border-radius:9px;
+  color:#78ebff;
+  background:rgba(60,199,255,.12);
+  border:1px solid rgba(81,220,255,.2)
+}
+.header-profile-copy{min-width:0;display:grid;text-align:left;gap:1px}
+.header-profile-copy b{font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-profile-copy small{font-size:.49rem;color:#7f9dab;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info-hub-button{
+  justify-self:stretch!important;
+  min-width:0!important;
+  height:46px!important;
+  border-color:rgba(72,225,255,.32)!important;
+  border-radius:17px!important;
+  background:linear-gradient(180deg,rgba(9,38,60,.98),rgba(5,22,38,.96))!important;
+  box-shadow:inset 0 0 0 1px rgba(72,225,255,.05),0 0 24px rgba(30,199,255,.08)!important
+}
+.info-hub-button>span:nth-child(2){display:grid!important}
+.info-hub-button small{font-size:.5rem!important}
+.info-hub-button b{font-size:.7rem!important}
+.header-search{
+  min-width:0;
+  height:42px;
+  border:1px solid rgba(85,214,255,.16);
+  border-radius:14px;
+  padding:0 13px;
+  background:rgba(6,23,39,.82);
+  color:#7f9ba9;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer
+}
+.header-search-copy{font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-actions{display:flex!important;gap:7px!important}
+.notification-button{position:relative}
+.notification-button i{
+  position:absolute;right:3px;top:2px;
+  min-width:13px;height:13px;padding:0 3px;
+  border-radius:999px;background:#ff345d;color:#fff;
+  font-size:.46rem;font-style:normal;display:grid;place-items:center
+}
+.icon-button,.cart-button{
+  min-width:42px;height:42px!important;
+  border:1px solid rgba(86,219,255,.18)!important;
+  border-radius:13px!important;
+  background:rgba(7,27,44,.86)!important;
+  color:#dffaff!important
+}
+.cart-button span{color:#6eeaff;font-weight:950}
+
+.welcome-ticker{
+  position:sticky;
+  top:70px;
+  z-index:27;
+  height:34px;
+  overflow:hidden;
+  border-top:1px solid rgba(69,207,255,.08);
+  border-bottom:1px solid rgba(69,207,255,.17);
+  background:linear-gradient(90deg,#06182a,#08223a 50%,#06182a);
+  box-shadow:inset 0 0 20px rgba(27,187,255,.04)
+}
+.welcome-ticker:before,.welcome-ticker:after{
+  content:"›››";
+  position:absolute;z-index:2;top:50%;transform:translateY(-50%);
+  color:#28dfff;font-weight:950;letter-spacing:.08em
+}
+.welcome-ticker:before{left:12px}.welcome-ticker:after{right:12px}
+.welcome-ticker-track{
+  width:max-content;
+  height:100%;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding-left:100%;
+  color:#9cc5d7;
+  font-size:.61rem;
+  animation:fsWelcomeTicker 20s linear infinite
+}
+.welcome-ticker-track i{font-style:normal;color:#23dcff}
+@keyframes fsWelcomeTicker{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-50%,0,0)}
+}
+.role-banner{display:none!important}
+
+.store-view[data-view="inicio"]{
+  padding-top:18px!important;
+  background:transparent!important
+}
+.home-intro{
+  max-width:1000px!important;
+  margin:0 auto 10px!important;
+  padding:5px 22px 0!important;
+  text-align:center!important
+}
+.home-intro h1{
+  margin:7px 0 5px!important;
+  font-size:clamp(1.8rem,4.5cqw,3.6rem)!important;
+  line-height:.98!important;
+  letter-spacing:-.045em!important;
+  color:#f4fdff;
+  text-shadow:0 0 22px rgba(52,205,255,.12)
+}
+.home-intro p{margin:0 auto!important;max-width:62ch;color:#83a3b1!important;font-size:.76rem!important}
+.category-arena-section{margin-top:8px!important}
+.category-arena{
+  min-height:404px!important;
+  padding:10px 52px 22px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important
+}
+.category-arena:before,.category-arena:after{display:none!important}
+.category-arena-viewport{height:348px!important}
+.category-arena-track{--arena-card-width:clamp(260px,28cqw,380px)!important}
+.category-arena-card{
+  top:8px!important;
+  min-height:316px!important;
+  padding:0!important;
+  border-radius:24px!important;
+  overflow:hidden!important;
+  border:1px solid rgba(var(--accent-rgb),.34)!important;
+  background:
+    linear-gradient(180deg,rgba(var(--accent-rgb),.07),transparent 42%),
+    radial-gradient(circle at 50% 32%,rgba(var(--accent-rgb),.20),transparent 36%),
+    linear-gradient(160deg,rgba(9,31,50,.985),rgba(4,15,28,.995))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.03),0 18px 45px rgba(0,0,0,.28)!important
+}
+.category-arena-card.active{
+  border-color:rgba(var(--accent-rgb),.78)!important;
+  box-shadow:inset 0 0 0 1px rgba(var(--accent-rgb),.15),0 0 26px rgba(var(--accent-rgb),.12),0 22px 55px rgba(0,0,0,.32)!important
+}
+.category-card-grid{
+  position:absolute!important;inset:0!important;
+  background:
+    linear-gradient(115deg,transparent 0 60%,rgba(var(--accent-rgb),.05) 60.4% 61%,transparent 61.4%),
+    linear-gradient(45deg,transparent 0 72%,rgba(var(--accent-rgb),.04) 72.4% 73%,transparent 73.4%)!important;
+  background-size:110px 110px!important;
+  opacity:.8!important
+}
+.category-card-top{
+  position:absolute!important;left:16px;right:16px;top:14px!important;
+  display:flex!important;justify-content:flex-end!important;z-index:4
+}
+.category-code{display:none!important}
+.category-tag{
+  border:1px solid rgba(var(--accent-rgb),.28)!important;
+  border-radius:999px!important;
+  padding:5px 10px!important;
+  background:rgba(4,14,25,.64)!important;
+  color:#dffaff!important;
+  font-size:.55rem!important;
+  letter-spacing:.08em!important
+}
+.category-icon-stage{
+  min-height:196px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:38px 20px 12px!important;
+  overflow:hidden!important
+}
+.category-icon-orbit{
+  width:152px!important;height:152px!important;
+  border:1px solid rgba(var(--accent-rgb),.2)!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle,rgba(var(--accent-rgb),.16),transparent 66%)!important
+}
+.category-icon-stage .icon{
+  position:relative!important;
+  z-index:2!important;
+  font-size:5.3rem!important;
+  filter:drop-shadow(0 0 20px rgba(var(--accent-rgb),.28))!important
+}
+.category-visual-lines{
+  position:absolute;
+  left:10%;right:10%;bottom:7px;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(var(--accent-rgb),.62),transparent);
+  box-shadow:0 0 16px rgba(var(--accent-rgb),.22)
+}
+.category-copy{
+  position:relative!important;
+  z-index:3!important;
+  display:grid!important;
+  text-align:center!important;
+  padding:0 18px 8px!important;
+  gap:4px!important
+}
+.category-copy b{
+  order:1!important;
+  font-size:1.25rem!important;
+  line-height:1.05!important;
+  color:#f4fdff!important
+}
+.category-copy small{
+  order:2!important;
+  color:#8fa8b6!important;
+  font-size:.66rem!important
+}
+.category-enter{
+  position:relative!important;
+  z-index:4!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:9px!important;
+  width:calc(100% - 36px)!important;
+  min-height:42px!important;
+  margin:3px auto 14px!important;
+  border:1px solid rgba(var(--accent-rgb),.68)!important;
+  border-radius:13px!important;
+  background:linear-gradient(100deg,rgba(var(--accent-rgb),.26),rgba(var(--accent-rgb),.12))!important;
+  color:#f1fdff!important;
+  font-size:.82rem!important;
+  font-weight:950!important;
+  cursor:pointer!important;
+  box-shadow:inset 0 0 18px rgba(var(--accent-rgb),.05),0 0 20px rgba(var(--accent-rgb),.08)!important
+}
+.category-enter i{font-style:normal;color:rgb(var(--accent-rgb));font-size:1.05rem}
+.category-enter:hover{filter:brightness(1.08)!important}
+.category-arena-floor{bottom:5px!important;opacity:.65!important}
+.arena-arrow{
+  width:46px!important;height:46px!important;
+  border:1px solid rgba(82,220,255,.3)!important;
+  background:rgba(5,21,37,.92)!important;
+  color:#72eaff!important;
+  box-shadow:0 0 18px rgba(42,207,255,.06)!important
+}
+
+.info-hub-backdrop{
+  z-index:60!important;
+  background:rgba(0,5,12,.68)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important
+}
+.info-hub{
+  position:absolute!important;
+  z-index:61!important;
+  inset:7% 7% 10%!important;
+  width:auto!important;
+  padding:14px!important;
+  border:1px solid rgba(74,225,255,.36)!important;
+  border-radius:26px!important;
+  background:
+    radial-gradient(circle at 48% 0,rgba(40,165,255,.12),transparent 34%),
+    linear-gradient(180deg,rgba(5,24,42,.985),rgba(3,14,26,.995))!important;
+  box-shadow:0 0 0 1px rgba(57,209,255,.06),0 0 42px rgba(0,156,255,.1),0 28px 80px rgba(0,0,0,.48)!important;
+  transform:translate3d(0,18px,0) scale(.985)!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  overflow:hidden!important;
+  transition:opacity .2s ease,transform .22s ease,visibility 0s linear .22s!important
+}
+.info-hub.open{
+  transform:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+  transition-delay:0s!important
+}
+.info-hub-head{
+  min-height:64px!important;
+  display:grid!important;
+  grid-template-columns:44px 1fr 42px!important;
+  gap:10px!important;
+  align-items:center!important;
+  padding:4px 4px 10px!important;
+  border-bottom:1px solid rgba(81,217,255,.12)
+}
+.info-hub-titlemark{
+  width:42px;height:42px;border-radius:13px;
+  display:grid;place-items:center;
+  background:rgba(57,207,255,.09);
+  border:1px solid rgba(86,224,255,.2);
+  color:#68ebff;font-size:1.1rem
+}
+.info-hub-head h2{font-size:1.25rem!important;margin:1px 0 0!important}
+.info-hub-head p{margin:2px 0 0;color:#829fac;font-size:.62rem}
+.info-hub-head button{justify-self:end!important}
+.info-hub-layout{
+  height:calc(100% - 76px);
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(160px,22%) minmax(0,1fr) minmax(190px,25%);
+  gap:12px;
+  padding-top:12px
+}
+.info-hub-nav{
+  min-height:0;
+  display:grid;
+  align-content:start;
+  gap:7px;
+  padding:2px 8px 2px 2px;
+  border-right:1px solid rgba(86,217,255,.1)
+}
+.info-hub-nav button{
+  min-width:0;
+  min-height:44px;
+  border:1px solid transparent;
+  border-radius:12px;
+  padding:7px 9px;
+  background:transparent;
+  color:#9bb2be;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) auto;
+  align-items:center;
+  gap:7px;
+  text-align:left;
+  cursor:pointer
+}
+.info-hub-nav button span{
+  width:28px;height:28px;border-radius:8px;
+  display:grid;place-items:center;
+  color:#85eaff;background:rgba(60,202,255,.06)
+}
+.info-hub-nav button b{font-size:.67rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info-hub-nav button i{font-style:normal;color:#507485}
+.info-hub-nav button.active{
+  border-color:rgba(74,225,255,.52);
+  background:linear-gradient(90deg,rgba(34,160,255,.24),rgba(39,228,255,.13));
+  color:#f0fdff;
+  box-shadow:inset 0 0 16px rgba(61,215,255,.05)
+}
+.info-hub-signature{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(80,210,255,.08);
+  display:grid;gap:3px;text-align:center
+}
+.info-hub-signature strong{color:#63e8ff;font-size:.56rem;letter-spacing:.16em}
+.info-hub-signature small{font-size:.45rem;color:#547384;letter-spacing:.12em}
+.info-hub-content{
+  min-width:0;
+  min-height:0;
+  overflow:auto;
+  scrollbar-width:thin
+}
+.info-panel{display:none;min-height:100%;padding:4px 2px}
+.info-panel.active{display:block}
+.info-panel-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px
+}
+.info-panel-head h3,.info-panel h3{margin:2px 0 3px;font-size:1rem}
+.info-panel-head p,.info-panel>p{margin:0;color:#829eac;font-size:.64rem;line-height:1.4}
+.info-panel-symbol{
+  width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(67,225,255,.28);color:#65eaff;font-size:1.25rem
+}
+.social-card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px
+}
+.social-card{
+  min-width:0;
+  min-height:112px;
+  border:1px solid rgba(80,214,255,.2);
+  border-radius:14px;
+  padding:10px;
+  background:linear-gradient(145deg,rgba(10,36,56,.88),rgba(5,21,37,.94));
+  color:#eefcff;
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  gap:5px 8px;
+  text-align:left;
+  cursor:pointer
+}
+.social-card>span{
+  grid-row:1/3;
+  width:36px;height:36px;border-radius:10px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.06);
+  font-size:1.1rem;font-weight:950
+}
+.social-card div{display:grid;gap:2px}
+.social-card b{font-size:.72rem}
+.social-card small{font-size:.55rem;color:#89a5b2}
+.social-card i{
+  grid-column:2;
+  align-self:end;
+  font-style:normal;
+  color:#8aefff;
+  font-size:.55rem;
+  font-weight:850
+}
+.social-card.tiktok{border-color:rgba(255,77,213,.32)}
+.social-card.facebook{border-color:rgba(70,164,255,.36)}
+.social-card.youtube{border-color:rgba(255,68,91,.36)}
+.social-card.whatsapp{border-color:rgba(44,234,143,.36)}
+.social-card.instagram{border-color:rgba(195,92,255,.36)}
+.info-important{margin-top:10px;display:grid;gap:7px}
+.info-important>span{font-size:.65rem;font-weight:900;color:#eafcff}
+.info-important>div{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.info-important button{
+  min-width:0;
+  border:1px solid rgba(76,210,255,.13);
+  border-radius:11px;
+  padding:8px 9px;
+  background:rgba(8,29,47,.7);
+  color:#e8faff;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:2px 6px;
+  text-align:left;
+  cursor:pointer
+}
+.info-important b{font-size:.58rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info-important small{font-size:.49rem;color:#7893a2}
+.info-important i{grid-column:2;grid-row:1/3;align-self:center;font-style:normal;color:#6eeaff}
+.info-panel:not([data-info-panel-view="social"]){
+  align-content:center;
+  place-content:center;
+  text-align:center;
+  border:1px solid rgba(79,215,255,.1);
+  border-radius:16px;
+  background:rgba(7,27,43,.5);
+  padding:24px
+}
+.info-panel:not([data-info-panel-view="social"]).active{display:grid}
+.info-panel:not([data-info-panel-view="social"]) button{
+  justify-self:center;
+  margin-top:12px;
+  border:1px solid rgba(80,222,255,.26);
+  border-radius:11px;
+  padding:9px 13px;
+  background:rgba(42,189,237,.08);
+  color:#bdf7ff;
+  cursor:pointer
+}
+.info-hub-aside{
+  min-width:0;
+  border:1px solid rgba(81,219,255,.16);
+  border-radius:16px;
+  padding:14px;
+  background:linear-gradient(180deg,rgba(7,31,51,.86),rgba(4,18,31,.92));
+  display:grid;
+  align-content:center;
+  justify-items:center;
+  text-align:center;
+  gap:9px
+}
+.info-aside-symbol{
+  width:58px;height:58px;border-radius:50%;
+  display:grid;place-items:center;
+  border:2px solid rgba(72,228,255,.46);
+  color:#6feeff;font-size:1.6rem;
+  box-shadow:0 0 20px rgba(59,217,255,.12)
+}
+.info-hub-aside h3{margin:0;font-size:1rem}
+.info-hub-aside p{margin:0;color:#849eac;font-size:.62rem;line-height:1.45}
+.info-hub-aside>div{
+  width:100%;
+  padding-top:9px;
+  border-top:1px solid rgba(82,214,255,.1);
+  display:flex;align-items:center;justify-content:center;gap:8px
+}
+.info-hub-aside>div span{width:22px;height:3px;background:#27dfff;transform:skewX(-30deg)}
+.info-hub-aside small{color:#527588;font-size:.48rem;letter-spacing:.12em}
+
+.xarena-dock{
+  gap:5px!important;
+  padding:5px!important;
+  bottom:13px!important;
+  background:rgba(5,18,30,.94)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important
+}
+.xarena-dock button{min-width:74px!important;padding:6px 10px!important}
+.whatsapp-float{
+  position:absolute;
+  z-index:25;
+  right:18px;
+  bottom:18px;
+  min-width:178px;
+  height:48px;
+  border:1px solid rgba(44,235,144,.46);
+  border-radius:999px;
+  padding:5px 13px 5px 6px;
+  background:linear-gradient(90deg,rgba(22,183,100,.96),rgba(18,118,77,.94));
+  color:#fff;
+  display:grid;
+  grid-template-columns:38px 1fr;
+  grid-template-rows:auto auto;
+  column-gap:8px;
+  text-align:left;
+  cursor:pointer;
+  box-shadow:0 12px 30px rgba(0,0,0,.28)
+}
+.whatsapp-float>span{
+  grid-row:1/3;
+  width:36px;height:36px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#19dd7d;
+  font-size:1.05rem;
+  border:1px solid rgba(255,255,255,.45)
+}
+.whatsapp-float b{font-size:.62rem;align-self:end}
+.whatsapp-float small{font-size:.49rem;color:#d5f9e8;align-self:start}
+
+html[data-device="mobile-landscape"] .fs-command-header{
+  grid-template-columns:auto minmax(105px,150px) minmax(150px,1fr) auto!important;
+  padding:7px 10px!important;
+  gap:6px!important
+}
+html[data-device="mobile-landscape"] .header-profile{height:36px!important;grid-template-columns:25px 1fr!important;padding:4px 6px!important}
+html[data-device="mobile-landscape"] .header-profile-avatar{width:23px;height:23px}
+html[data-device="mobile-landscape"] .header-profile-copy b{font-size:.55rem}
+html[data-device="mobile-landscape"] .header-profile-copy small{display:none}
+html[data-device="mobile-landscape"] .header-search{display:none}
+html[data-device="mobile-landscape"] .info-hub-button{height:36px!important}
+html[data-device="mobile-landscape"] .info-hub-button small{display:none}
+html[data-device="mobile-landscape"] .info-hub-button b{font-size:.58rem!important}
+html[data-device="mobile-landscape"] .icon-button,
+html[data-device="mobile-landscape"] .cart-button{min-width:34px!important;height:34px!important}
+html[data-device="mobile-landscape"] .welcome-ticker{top:50px;height:25px}
+html[data-device="mobile-landscape"] .welcome-ticker-track{font-size:.5rem}
+html[data-device="mobile-landscape"] .home-intro h1{font-size:1.72rem!important}
+html[data-device="mobile-landscape"] .home-intro p{display:none}
+html[data-device="mobile-landscape"] .category-arena{min-height:285px!important;padding:4px 42px 14px!important}
+html[data-device="mobile-landscape"] .category-arena-viewport{height:258px!important}
+html[data-device="mobile-landscape"] .category-arena-track{--arena-card-width:235px!important}
+html[data-device="mobile-landscape"] .category-arena-card{min-height:232px!important;border-radius:18px!important}
+html[data-device="mobile-landscape"] .category-icon-stage{min-height:126px!important;padding:26px 12px 5px!important}
+html[data-device="mobile-landscape"] .category-icon-orbit{width:96px!important;height:96px!important}
+html[data-device="mobile-landscape"] .category-icon-stage .icon{font-size:3.3rem!important}
+html[data-device="mobile-landscape"] .category-copy{padding:0 10px 5px!important}
+html[data-device="mobile-landscape"] .category-copy b{font-size:.86rem!important}
+html[data-device="mobile-landscape"] .category-copy small{font-size:.52rem!important}
+html[data-device="mobile-landscape"] .category-enter{min-height:31px!important;margin:2px auto 8px!important;font-size:.61rem!important;width:calc(100% - 24px)!important}
+html[data-device="mobile-landscape"] .info-hub{inset:4% 3% 7%!important;padding:9px!important;border-radius:18px!important}
+html[data-device="mobile-landscape"] .info-hub-head{min-height:50px!important;grid-template-columns:34px 1fr 34px!important}
+html[data-device="mobile-landscape"] .info-hub-titlemark{width:32px;height:32px}
+html[data-device="mobile-landscape"] .info-hub-head h2{font-size:.9rem!important}
+html[data-device="mobile-landscape"] .info-hub-head p{display:none}
+html[data-device="mobile-landscape"] .info-hub-layout{height:calc(100% - 55px);grid-template-columns:20% minmax(0,1fr) 22%;gap:7px;padding-top:7px}
+html[data-device="mobile-landscape"] .info-hub-nav{gap:4px;padding-right:5px}
+html[data-device="mobile-landscape"] .info-hub-nav button{min-height:31px;padding:4px 5px;grid-template-columns:22px 1fr auto;gap:4px}
+html[data-device="mobile-landscape"] .info-hub-nav button span{width:20px;height:20px;font-size:.62rem}
+html[data-device="mobile-landscape"] .info-hub-nav button b{font-size:.48rem}
+html[data-device="mobile-landscape"] .info-hub-signature{display:none}
+html[data-device="mobile-landscape"] .social-card-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+html[data-device="mobile-landscape"] .social-card{min-height:70px;padding:6px;grid-template-columns:26px 1fr;gap:3px 5px}
+html[data-device="mobile-landscape"] .social-card>span{width:24px;height:24px;font-size:.75rem}
+html[data-device="mobile-landscape"] .social-card b{font-size:.52rem}
+html[data-device="mobile-landscape"] .social-card small{font-size:.42rem}
+html[data-device="mobile-landscape"] .social-card i{font-size:.42rem}
+html[data-device="mobile-landscape"] .info-panel-head{margin-bottom:5px}
+html[data-device="mobile-landscape"] .info-panel-head h3{font-size:.72rem}
+html[data-device="mobile-landscape"] .info-panel-head p{font-size:.46rem}
+html[data-device="mobile-landscape"] .info-panel-symbol{width:30px;height:30px;font-size:.85rem}
+html[data-device="mobile-landscape"] .info-important{margin-top:5px;gap:4px}
+html[data-device="mobile-landscape"] .info-important>span{font-size:.5rem}
+html[data-device="mobile-landscape"] .info-important button{padding:5px 6px}
+html[data-device="mobile-landscape"] .info-important b{font-size:.44rem}
+html[data-device="mobile-landscape"] .info-important small{font-size:.38rem}
+html[data-device="mobile-landscape"] .info-hub-aside{padding:8px;gap:5px}
+html[data-device="mobile-landscape"] .info-aside-symbol{width:36px;height:36px;font-size:1rem}
+html[data-device="mobile-landscape"] .info-hub-aside h3{font-size:.62rem}
+html[data-device="mobile-landscape"] .info-hub-aside p{font-size:.45rem}
+html[data-device="mobile-landscape"] .whatsapp-float{right:12px;bottom:12px;min-width:42px;width:42px;height:42px;padding:3px;border-radius:50%}
+html[data-device="mobile-landscape"] .whatsapp-float>span{width:34px;height:34px}
+html[data-device="mobile-landscape"] .whatsapp-float b,
+html[data-device="mobile-landscape"] .whatsapp-float small{display:none}
+
+html[data-device="mobile"] .fs-command-header{
+  grid-template-columns:1fr auto auto!important;
+  padding:8px 9px!important;
+  gap:5px!important
+}
+html[data-device="mobile"] .header-profile,
+html[data-device="mobile"] .header-search{display:none!important}
+html[data-device="mobile"] .info-hub-button{justify-self:end!important;width:38px!important;min-width:38px!important;height:36px!important;padding:3px!important}
+html[data-device="mobile"] .info-hub-button>span:nth-child(2),
+html[data-device="mobile"] .info-hub-button i{display:none!important}
+html[data-device="mobile"] .info-hub-icon{width:28px;height:28px}
+html[data-device="mobile"] .header-actions{gap:4px!important}
+html[data-device="mobile"] .icon-button,
+html[data-device="mobile"] .cart-button{min-width:36px!important;height:36px!important}
+html[data-device="mobile"] .welcome-ticker{top:52px;height:27px}
+html[data-device="mobile"] .welcome-ticker-track{font-size:.5rem}
+html[data-device="mobile"] .store-view[data-view="inicio"]{padding:11px 8px 88px!important}
+html[data-device="mobile"] .home-intro{padding:4px 8px 0!important;margin-bottom:6px!important}
+html[data-device="mobile"] .home-intro h1{font-size:1.58rem!important}
+html[data-device="mobile"] .home-intro p{font-size:.62rem!important}
+html[data-device="mobile"] .category-arena{min-height:390px!important;padding:4px 32px 10px!important}
+html[data-device="mobile"] .category-arena-viewport{height:355px!important}
+html[data-device="mobile"] .category-arena-track{--arena-card-width:270px!important}
+html[data-device="mobile"] .category-arena-card{min-height:326px!important;border-radius:20px!important}
+html[data-device="mobile"] .category-icon-stage{min-height:188px!important}
+html[data-device="mobile"] .category-icon-stage .icon{font-size:4.4rem!important}
+html[data-device="mobile"] .category-copy b{font-size:1.02rem!important}
+html[data-device="mobile"] .category-copy small{font-size:.61rem!important}
+html[data-device="mobile"] .category-enter{min-height:40px!important;font-size:.75rem!important}
+html[data-device="mobile"] .arena-arrow{width:38px!important;height:38px!important}
+html[data-device="mobile"] .info-hub{inset:3% 3% 6%!important;padding:10px!important}
+html[data-device="mobile"] .info-hub-layout{grid-template-columns:1fr!important;height:calc(100% - 62px);overflow:auto}
+html[data-device="mobile"] .info-hub-nav{grid-template-columns:repeat(3,1fr);border-right:0;border-bottom:1px solid rgba(86,217,255,.1);padding:0 0 8px}
+html[data-device="mobile"] .info-hub-nav button{min-height:48px;grid-template-columns:1fr;text-align:center;justify-items:center;padding:5px}
+html[data-device="mobile"] .info-hub-nav button span{display:none}
+html[data-device="mobile"] .info-hub-nav button b{font-size:.5rem;white-space:normal}
+html[data-device="mobile"] .info-hub-nav button i{display:none}
+html[data-device="mobile"] .info-hub-signature{display:none}
+html[data-device="mobile"] .info-hub-content{overflow:visible}
+html[data-device="mobile"] .social-card-grid{grid-template-columns:1fr 1fr}
+html[data-device="mobile"] .info-important>div{grid-template-columns:1fr}
+html[data-device="mobile"] .info-hub-aside{display:none}
+html[data-device="mobile"] .whatsapp-float{right:11px;bottom:11px;min-width:42px;width:42px;height:42px;padding:3px;border-radius:50%}
+html[data-device="mobile"] .whatsapp-float>span{width:34px;height:34px}
+html[data-device="mobile"] .whatsapp-float b,
+html[data-device="mobile"] .whatsapp-float small{display:none}
+
+html.perf-lite .welcome-ticker-track{animation-duration:26s}
+@media (prefers-reduced-motion:reduce){
+  .welcome-ticker-track{animation:none!important;padding-left:12px!important}
+}
+
 </style>
 </head>
 <body>
@@ -1620,34 +2289,56 @@ html.motion-off .x-phone-arrow{
               </div>
             </div>
           </div>
-          <header class="store-header">
-            <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio">
+          <header class="store-header fs-command-header">
+            <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio de French Store">
               <b>💎 French Store 💎</b>
             </button>
+
+            <button class="header-profile" type="button" data-nav-view="perfil" aria-label="Abrir perfil">
+              <span class="header-profile-avatar">●</span>
+              <span class="header-profile-copy">
+                <b id="headerRoleName">Hola, Visitante</b>
+                <small>Inicia sesión para más beneficios</small>
+              </span>
+            </button>
+
             <button class="info-hub-button" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub">
               <span class="info-hub-icon">⌘</span>
-              <span><small>FRENCH HUB</small><b>Redes e información</b></span>
+              <span><small>FRENCH HUB</small><b>Centro de información</b></span>
               <i>＋</i>
             </button>
+
+            <button class="header-search" type="button" data-open-search aria-label="Buscar en French Store">
+              <span>⌕</span><span class="header-search-copy">Buscar en French Store...</span>
+            </button>
+
             <div class="header-actions">
-              <button class="icon-button" type="button" data-open-search aria-label="Buscar">⌕</button>
-              <button class="cart-button" type="button" data-nav-view="checkout">🛒 <span id="cartCount">2</span></button>
+              <button class="icon-button notification-button" type="button" data-account-action="Notificaciones" aria-label="Notificaciones">♢<i>1</i></button>
+              <button class="cart-button" type="button" data-nav-view="checkout" aria-label="Carrito">🛒 <span id="cartCount">2</span></button>
             </div>
           </header>
+
+          <div class="welcome-ticker" aria-label="Mensajes de French Store">
+            <div class="welcome-ticker-track">
+              <span>Bienvenido a French Store</span><i>•</i>
+              <span>Disfruta tu estancia</span><i>•</i>
+              <span>Gracias por tu compra</span><i>•</i>
+              <span>Explora nuestras recargas, servicios y beneficios</span><i>•</i>
+              <span>Bienvenido a French Store</span><i>•</i>
+              <span>Disfruta tu estancia</span>
+            </div>
+          </div>
 
           <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
 
           <section class="store-view active" data-view="inicio">
             <div class="home-intro reveal">
               <span class="eyebrow">FRENCH STORE · CENTRO DE ACCESO</span>
-              <h1>Todo empieza desde tus bloques.</h1>
-              <p>Desliza, elige una categoría y entra directamente. Ya no dependemos de una barra de “Tienda”: los bloques son la navegación principal.</p>
+              <h1>Tu mundo digital, en un solo lugar.</h1>
+              <p>Desliza entre tus servicios y entra directamente al bloque que necesitas.</p>
             </div>
             <section class="section category-arena-section reveal" aria-labelledby="categoryArenaTitle">
-              <div class="section-head category-arena-head">
-                <div><span class="eyebrow">CENTRO DE CATEGORÍAS</span><h2 id="categoryArenaTitle">Todo French Store en un solo lugar</h2></div>
-                <span class="category-arena-hint">GIRA · TOCA · EXPLORA</span>
-              </div>
+
               <div class="category-arena">
                 <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
                 <div class="category-arena-viewport" id="categoryArenaViewport" tabindex="0" aria-label="Categorías de French Store">
@@ -1655,14 +2346,6 @@ html.motion-off .x-phone-arrow{
                 </div>
                 <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
                 <div class="category-arena-floor" aria-hidden="true"><span></span></div>
-                <div class="category-enter-dock">
-                  <button id="categoryEnterButton" class="category-enter-button" type="button">Ingresar</button>
-                </div>
-                <div class="category-arena-status">
-                  <strong id="categoryArenaCounter">01 / 06</strong>
-                  <div class="category-arena-dots" id="categoryArenaDots" aria-label="Posición de categoría"></div>
-                  <span class="category-arena-swipe">Bucle circular</span>
-                </div>
               </div>
             </section>
           </section>
@@ -1880,28 +2563,67 @@ html.motion-off .x-phone-arrow{
           </section>
 
           <div class="info-hub-backdrop" id="infoHubBackdrop" data-info-close></div>
-          <aside class="info-hub" id="infoHub" aria-hidden="true" aria-label="Redes sociales e información">
-            <div class="info-hub-head">
-              <div><span class="eyebrow">FRENCH HUB</span><h2>Redes e información</h2></div>
+          <section class="info-hub" id="infoHub" aria-hidden="true" aria-label="Centro de información">
+            <header class="info-hub-head">
+              <div class="info-hub-titlemark"><span>⌘</span></div>
+              <div><span class="eyebrow">FRENCH STORE</span><h2>Centro de información</h2><p>Todo lo que necesitas saber, en un solo lugar.</p></div>
               <button type="button" data-info-close aria-label="Cerrar">×</button>
+            </header>
+
+            <div class="info-hub-layout">
+              <nav class="info-hub-nav" aria-label="Secciones de información">
+                <button class="active" type="button" data-info-panel="social"><span>⌘</span><b>Redes oficiales</b><i>›</i></button>
+                <button type="button" data-info-panel="terms"><span>▤</span><b>Términos y condiciones</b><i>›</i></button>
+                <button type="button" data-info-panel="privacy"><span>♢</span><b>Política de privacidad</b><i>›</i></button>
+                <button type="button" data-info-panel="cookies"><span>◌</span><b>Cookies</b><i>›</i></button>
+                <button type="button" data-info-panel="support"><span>◈</span><b>Ayuda y soporte</b><i>›</i></button>
+                <button type="button" data-info-panel="buy"><span>🛒</span><b>Cómo comprar</b><i>›</i></button>
+                <div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
+              </nav>
+
+              <div class="info-hub-content">
+                <section class="info-panel active" data-info-panel-view="social">
+                  <div class="info-panel-head"><div><span class="eyebrow">REDES OFICIALES</span><h3>Nuestras redes oficiales</h3><p>Síguenos para novedades, promociones y atención.</p></div><span class="info-panel-symbol">ⓘ</span></div>
+                  <div class="social-card-grid">
+                    <button class="social-card tiktok" type="button" data-info-action="TikTok"><span>♪</span><div><b>TikTok</b><small>Contenido exclusivo</small></div><i>Seguir →</i></button>
+                    <button class="social-card facebook" type="button" data-info-action="Facebook"><span>f</span><div><b>Facebook</b><small>Noticias y comunidad</small></div><i>Seguir →</i></button>
+                    <button class="social-card youtube" type="button" data-info-action="YouTube"><span>▶</span><div><b>YouTube</b><small>Guías y novedades</small></div><i>Suscribirse →</i></button>
+                    <button class="social-card whatsapp" type="button" data-info-action="WhatsApp"><span>◉</span><div><b>WhatsApp</b><small>Atención al cliente</small></div><i>Contactar →</i></button>
+                    <button class="social-card instagram" type="button" data-info-action="Instagram"><span>◎</span><div><b>Instagram</b><small>Promociones y sorteos</small></div><i>Seguir →</i></button>
+                  </div>
+                  <div class="info-important">
+                    <span>Información importante</span>
+                    <div>
+                      <button type="button" data-info-panel="terms"><b>▤ Términos y condiciones</b><small>Lee nuestros términos</small><i>›</i></button>
+                      <button type="button" data-info-panel="privacy"><b>♢ Política de privacidad</b><small>Tu información segura</small><i>›</i></button>
+                      <button type="button" data-info-panel="cookies"><b>◌ Cookies</b><small>Preferencias de uso</small><i>›</i></button>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="info-panel" data-info-panel-view="terms"><span class="eyebrow">LEGAL</span><h3>Términos y condiciones</h3><p>Consulta las reglas de uso, compra, entrega y responsabilidades de French Store.</p><button type="button" data-info-action="Términos y condiciones">Abrir términos →</button></section>
+                <section class="info-panel" data-info-panel-view="privacy"><span class="eyebrow">PRIVACIDAD</span><h3>Política de privacidad</h3><p>Información sobre datos, cuentas, seguridad y tratamiento de información personal.</p><button type="button" data-info-action="Política de privacidad">Abrir política →</button></section>
+                <section class="info-panel" data-info-panel-view="cookies"><span class="eyebrow">PREFERENCIAS</span><h3>Cookies</h3><p>Revisa las preferencias y tecnologías utilizadas para mejorar tu experiencia.</p><button type="button" data-info-action="Cookies">Ver cookies →</button></section>
+                <section class="info-panel" data-info-panel-view="support"><span class="eyebrow">SOPORTE</span><h3>Ayuda y soporte</h3><p>Encuentra asistencia para pedidos, garantías, pagos y dudas frecuentes.</p><button type="button" data-info-action="Soporte">Contactar soporte →</button></section>
+                <section class="info-panel" data-info-panel-view="buy"><span class="eyebrow">GUÍA</span><h3>Cómo comprar</h3><p>Elige una categoría, selecciona el producto, completa los datos necesarios y agrégalo al carrito.</p><button type="button" data-info-close>Volver a la tienda →</button></section>
+              </div>
+
+              <aside class="info-hub-aside">
+                <span class="info-aside-symbol">ⓘ</span>
+                <h3>Siempre conectados contigo</h3>
+                <p>Aquí encontrarás redes oficiales, políticas, condiciones y formas de contacto para una experiencia segura dentro de French Store.</p>
+                <div><span></span><small>LA MISMA PASIÓN<br>EN TODAS PARTES</small></div>
+              </aside>
             </div>
-            <p class="info-hub-copy">Todo lo secundario vive aquí para que la tienda principal se mantenga limpia.</p>
-            <div class="info-hub-grid">
-              <button type="button" data-info-action="TikTok"><span>♪</span><b>TikTok</b><small>Videos y novedades</small></button>
-              <button type="button" data-info-action="YouTube"><span>▶</span><b>YouTube</b><small>Guías y contenido</small></button>
-              <button type="button" data-info-action="Facebook"><span>f</span><b>Facebook</b><small>Comunidad y avisos</small></button>
-              <button type="button" data-info-action="Privacidad"><span>⌾</span><b>Privacidad</b><small>Cómo cuidamos tus datos</small></button>
-              <button type="button" data-info-action="Cookies"><span>◌</span><b>Cookies</b><small>Preferencias del sitio</small></button>
-              <button type="button" data-info-action="Términos"><span>≡</span><b>Términos</b><small>Condiciones de uso</small></button>
-            </div>
-            <button class="info-support" type="button" data-info-action="Soporte"><span>◈</span><div><b>Ayuda y soporte</b><small>Contacto, garantías y preguntas frecuentes</small></div><i>→</i></button>
-          </aside>
+          </section>
 
           <nav class="xarena-dock" aria-label="Accesos principales">
-            <button type="button" data-nav-view="perfil"><span>●</span><small>Perfil</small></button>
             <button type="button" data-nav-view="pases"><span>◇</span><small>Pases</small></button>
             <button type="button" data-nav-view="ajustes"><span>⚙</span><small>Ajustes</small></button>
           </nav>
+          <button class="whatsapp-float" type="button" data-info-action="WhatsApp" aria-label="Contactar por WhatsApp">
+            <span>◉</span><b>¿Necesitas ayuda?</b><small>Escríbenos por WhatsApp</small>
+          </button>
         </div>
       </div>
       </div>
@@ -2047,6 +2769,13 @@ window.FS_LAB_DATA = Object.freeze({
     backdrop?.classList.toggle("open", isOpen);
     hub?.setAttribute("aria-hidden", isOpen ? "false" : "true");
     toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    if (isOpen) setInfoPanel("social");
+  }
+
+  function setInfoPanel(name){
+    const target=String(name||"social");
+    all("[data-info-panel]").forEach(button=>button.classList.toggle("active",button.dataset.infoPanel===target));
+    all("[data-info-panel-view]").forEach(panel=>panel.classList.toggle("active",panel.dataset.infoPanelView===target));
   }
 
   function wrapCategoryIndex(index){
@@ -2066,7 +2795,13 @@ window.FS_LAB_DATA = Object.freeze({
 
   function categoryCard(item, index){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
-    return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Seleccionar <i>→</i></span></button>';
+    return '<article class="category-card category-arena-card" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + escapeHtml(item.name) + '" role="group">'+
+      '<span class="category-card-grid" aria-hidden="true"></span>'+
+      '<span class="category-card-top"><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
+      '<span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span><span class="category-visual-lines"></span></span>'+
+      '<span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
+      '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
+      '</article>';
   }
 
   function renderCategoryArena(){
@@ -2074,8 +2809,6 @@ window.FS_LAB_DATA = Object.freeze({
     const count = data.categories.length;
     if (!grid || !count) return;
     grid.innerHTML = data.categories.map(categoryCard).join("");
-    const dots = $("#categoryArenaDots");
-    if (dots) dots.innerHTML = data.categories.map((_, index) => '<button type="button" data-arena-dot="' + index + '" aria-label="Ir a categoría ' + (index + 1) + '"></button>').join("");
     activeCategoryIndex = wrapCategoryIndex(activeCategoryIndex);
     requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, false, true));
   }
@@ -2104,13 +2837,6 @@ window.FS_LAB_DATA = Object.freeze({
     });
 
     if (instant) requestAnimationFrame(() => cards.forEach(card => card.classList.remove("roulette-instant")));
-
-    all("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
-    const counter = $("#categoryArenaCounter");
-    if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(count).padStart(2, "0");
-
-    const enterButton = $("#categoryEnterButton");
-    if (enterButton) enterButton.textContent = "Ingresar · " + (data.categories[next]?.name || "French Store");
 
     const prev = $(".arena-arrow-prev");
     const nextButton = $(".arena-arrow-next");
@@ -2594,6 +3320,8 @@ window.FS_LAB_DATA = Object.freeze({
     if (banner) banner.textContent = "Vista simulada: " + label;
     const profile = $("#profileRole");
     if (profile) profile.textContent = label;
+    const headerRole = $("#headerRoleName");
+    if (headerRole) headerRole.textContent = "Hola, " + label;
     if (safeRole !== "admin" && currentView === "admin") setView("inicio");
     toast("Estado simulado: " + label + ". No se consultó ninguna cuenta real.");
   }
@@ -2615,6 +3343,12 @@ window.FS_LAB_DATA = Object.freeze({
       return;
     }
 
+    const infoPanel = event.target.closest("[data-info-panel]");
+    if (infoPanel) {
+      setInfoPanel(infoPanel.dataset.infoPanel);
+      return;
+    }
+
     const infoAction = event.target.closest("[data-info-action]");
     if (infoAction) {
       toast(infoAction.dataset.infoAction + " se abrirá aquí cuando conectemos la versión real.");
@@ -2627,17 +3361,21 @@ window.FS_LAB_DATA = Object.freeze({
     const arenaDot = event.target.closest("[data-arena-dot]");
     if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
 
-    const categoryEnter = event.target.closest("#categoryEnterButton");
+    const categoryEnter = event.target.closest("[data-category-enter]");
     if (categoryEnter) {
-      const selected=data.categories[activeCategoryIndex];
-      if (selected) openExperience(selected.id);
+      const index=wrapCategoryIndex(Number(categoryEnter.dataset.categoryEnter));
+      const selected=data.categories[index];
+      if (selected) {
+        setCategoryActive(index,true);
+        openExperience(selected.id);
+      }
       return;
     }
 
     const category = event.target.closest("[data-category-index]");
     if (category) {
       const index = wrapCategoryIndex(Number(category.dataset.categoryIndex));
-      setCategoryActive(index, true);
+      if (index !== activeCategoryIndex) setCategoryActive(index, true);
       return;
     }
 
