@@ -174,6 +174,80 @@
     event.currentTarget.textContent = "Animaciones: " + (disabled ? "OFF" : "ON");
   });
 
+
+  let loadingRaf = 0;
+  let loadingHideTimer = 0;
+
+  function runLoadingDemo(){
+    const overlay = $("#loadingDemo");
+    const runner = $("#loadingRunner");
+    const zone = $("#loadingRunnerZone");
+    const fill = $("#loadingProgressBar");
+    const percent = $("#loadingPercent");
+    const message = $("#loadingMessage");
+    const button = $("#loadingDemoButton");
+    if (!overlay || !runner || !zone || !fill || !percent || !message) return;
+
+    cancelAnimationFrame(loadingRaf);
+    clearTimeout(loadingHideTimer);
+    overlay.classList.remove("leaving");
+    overlay.classList.add("active");
+    overlay.setAttribute("aria-hidden","false");
+    fill.style.width = "0%";
+    percent.textContent = "0%";
+    runner.style.left = "0px";
+    runner.style.setProperty("--runner-bob","0px");
+    message.textContent = "Estamos corriendo para actualizar precios...";
+    if (button) button.textContent = "↻ Reiniciar carga";
+
+    const reduced = document.documentElement.classList.contains("motion-off") ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const device = document.documentElement.dataset.device || "desktop";
+    const duration = reduced ? 1100 : (device === "mobile" ? 4600 : device === "tablet" ? 4350 : 4100);
+    const start = performance.now();
+
+    function tick(now){
+      const raw = Math.min(1, Math.max(0, (now - start) / duration));
+      const eased = 1 - Math.pow(1 - raw, 2.05);
+      const value = Math.round(eased * 100);
+      const zoneWidth = zone.clientWidth;
+      const runnerWidth = runner.getBoundingClientRect().width / (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--device-scale")) || 1);
+      const travel = Math.max(0, zoneWidth - Math.min(runnerWidth, zoneWidth * .58));
+      runner.style.left = (travel * eased) + "px";
+      runner.style.setProperty("--runner-bob", reduced ? "0px" : (Math.sin(raw * Math.PI * 18) * 3.8) + "px");
+      fill.style.width = value + "%";
+      percent.textContent = value + "%";
+
+      if (value < 38) {
+        message.textContent = "Estamos corriendo para actualizar precios...";
+      } else if (value < 76) {
+        message.textContent = "Un sprint más: ordenando ofertas y recargas...";
+      } else if (value < 100) {
+        message.textContent = "Últimos metros: dejando todo listo...";
+      } else {
+        message.textContent = "¡Llegamos! Precios listos para revisar.";
+      }
+
+      if (raw < 1) {
+        loadingRaf = requestAnimationFrame(tick);
+        return;
+      }
+
+      loadingHideTimer = setTimeout(() => {
+        overlay.classList.add("leaving");
+        loadingHideTimer = setTimeout(() => {
+          overlay.classList.remove("active","leaving");
+          overlay.setAttribute("aria-hidden","true");
+          if (button) button.textContent = "▶ Probar carga";
+        }, reduced ? 40 : 480);
+      }, reduced ? 220 : 650);
+    }
+
+    loadingRaf = requestAnimationFrame(tick);
+  }
+
+  $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
+
   setDevice(document.documentElement.dataset.device || "desktop");
   const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(updateDeviceScale) : null;
   if (frameObserver) frameObserver.observe($("#deviceFrame"));
