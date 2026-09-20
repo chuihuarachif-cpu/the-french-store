@@ -3,7 +3,7 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r173-webservices-20260919';
+const CACHE='fs-store-r226-cinematic-20260919';
 const SHELL=[
   '/v2/',
   '/v2/index.html',
@@ -11,6 +11,8 @@ const SHELL=[
   '/v2/assets/brand/icon-192.png',
   '/v2/assets/brand/icon-512.png',
   '/v2/tiers/owner-classic-r7.css',
+  '/v2/cinematic-ui.css',
+  '/v2/cinematic-ui.js',
   '/v2/push-notifications.css',
   '/v2/push-notifications.js',
   '/v2/official-icons.js'
