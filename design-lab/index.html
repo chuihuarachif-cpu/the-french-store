@@ -26,6 +26,7 @@
         <span>Vista de prueba</span>
         <div class="device-preview-buttons" id="devicePreviewButtons">
           <button type="button" data-device-preview="mobile">Celular</button>
+          <button type="button" data-device-preview="mobile-landscape">Cel. horizontal</button>
           <button type="button" data-device-preview="tablet">Tablet</button>
           <button type="button" data-device-preview="laptop">Laptop</button>
           <button type="button" data-device-preview="desktop" class="active">PC</button>
@@ -49,6 +50,8 @@
         <button data-lab-view="wallet">Wallet</button>
         <button data-lab-view="pedidos">Pedidos</button>
         <button data-lab-view="perfil">Perfil</button>
+        <button data-lab-view="pases">Pases</button>
+        <button data-lab-view="ajustes">Ajustes</button>
         <button data-lab-view="producto">Producto</button>
         <button data-lab-view="checkout">Checkout</button>
         <button data-lab-view="admin">Admin</button>
@@ -111,11 +114,11 @@
             <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio">
               <span>💎</span><b>FRENCH STORE</b><span>💎</span>
             </button>
-            <nav class="desktop-nav" aria-label="Navegación de demostración">
-              <button data-nav-view="inicio" class="active">Inicio</button>
-              <button data-nav-view="catalogo">Tienda</button>
-              <button data-nav-view="perfil">Perfil</button>
-            </nav>
+            <button class="info-hub-button" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub">
+              <span class="info-hub-icon">⌘</span>
+              <span><small>FRENCH HUB</small><b>Redes e información</b></span>
+              <i>＋</i>
+            </button>
             <div class="header-actions">
               <button class="icon-button" type="button" data-open-search aria-label="Buscar">⌕</button>
               <button class="cart-button" type="button" data-nav-view="checkout">🛒 <span id="cartCount">2</span></button>
@@ -126,9 +129,9 @@
 
           <section class="store-view active" data-view="inicio">
             <div class="home-intro reveal">
-              <span class="eyebrow">FRENCH STORE · CATEGORÍAS</span>
-              <h1>Elige dónde quieres entrar.</h1>
-              <p>Desliza entre las categorías. La tarjeta central queda activa y las laterales se apartan con profundidad, brillo y movimiento suave.</p>
+              <span class="eyebrow">FRENCH STORE · CENTRO DE ACCESO</span>
+              <h1>Todo empieza desde tus bloques.</h1>
+              <p>Desliza, elige una categoría y entra directamente. Ya no dependemos de una barra de “Tienda”: los bloques son la navegación principal.</p>
             </div>
             <section class="section category-arena-section reveal" aria-labelledby="categoryArenaTitle">
               <div class="section-head category-arena-head">
@@ -148,10 +151,6 @@
                   <span class="category-arena-swipe">Desliza horizontalmente</span>
                 </div>
               </div>
-            </section>
-            <section class="section featured-section reveal">
-              <div class="section-head"><div><span class="eyebrow">DESTACADOS</span><h2>Productos para probar la UI</h2></div><button class="text-button" data-nav-view="catalogo">Ver tienda →</button></div>
-              <div id="featuredGrid" class="product-grid"></div>
             </section>
           </section>
 
@@ -247,6 +246,33 @@
             </div>
           </section>
 
+          <section class="store-view" data-view="pases">
+            <div class="page-head reveal">
+              <span class="eyebrow">FRENCH PASSES · DEMO</span>
+              <h1>Beneficios, no otra interfaz.</h1>
+              <p>Los pases pueden dar ventajas comerciales sin cambiar el diseño general de French Store.</p>
+            </div>
+            <div class="pass-grid reveal">
+              <article class="pass-card"><span>BASE</span><strong>French Base</strong><p>Acceso normal a la tienda, promociones y beneficios estándar.</p><button type="button" data-demo-action="pass-base">Ver beneficios</button></article>
+              <article class="pass-card pass-card-gold"><span>GOLD</span><strong>French Gold</strong><p>Beneficios superiores, promociones especiales y prioridad en campañas seleccionadas.</p><button type="button" data-demo-action="pass-gold">Ver beneficios</button></article>
+              <article class="pass-card pass-card-diamond"><span>DIAMOND</span><strong>French Diamond</strong><p>Nivel premium con los mejores beneficios, manteniendo la misma interfaz para todos.</p><button type="button" data-demo-action="pass-diamond">Ver beneficios</button></article>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="ajustes">
+            <div class="page-head reveal">
+              <span class="eyebrow">AJUSTES · DEMO</span>
+              <h1>Controles claros y útiles.</h1>
+              <p>En vez de llenar la pantalla principal de botones, las opciones secundarias viven aquí.</p>
+            </div>
+            <div class="settings-grid reveal">
+              <button type="button" data-demo-action="install"><span>⬇</span><div><b>Instalar French Store</b><small>PWA y acceso rápido</small></div><i>→</i></button>
+              <button type="button" data-demo-action="notifications"><span>◉</span><div><b>Notificaciones</b><small>Vencimientos, novedades y avisos</small></div><i>→</i></button>
+              <button type="button" id="settingsMotionShortcut"><span>✦</span><div><b>Animaciones</b><small>Reducir efectos en equipos modestos</small></div><i>→</i></button>
+              <button type="button" data-demo-action="help"><span>?</span><div><b>Ayuda y soporte</b><small>Preguntas, garantías y contacto</small></div><i>→</i></button>
+            </div>
+          </section>
+
           <section class="store-view" data-view="admin">
             <div class="page-head reveal">
               <span class="eyebrow">ADMIN DEMO</span>
@@ -266,12 +292,28 @@
             </div>
           </section>
 
-          <nav class="mobile-nav" aria-label="Navegación principal">
-            <button class="active" data-nav-view="inicio"><span>⌂</span>Inicio</button>
-            <button data-nav-view="catalogo"><span>▦</span>Tienda</button>
-            <button data-nav-view="wallet"><span>▣</span>Wallet</button>
-            <button data-nav-view="pedidos"><span>☷</span>Pedidos</button>
-            <button data-nav-view="perfil"><span>●</span>Perfil</button>
+          <div class="info-hub-backdrop" id="infoHubBackdrop" data-info-close></div>
+          <aside class="info-hub" id="infoHub" aria-hidden="true" aria-label="Redes sociales e información">
+            <div class="info-hub-head">
+              <div><span class="eyebrow">FRENCH HUB</span><h2>Redes e información</h2></div>
+              <button type="button" data-info-close aria-label="Cerrar">×</button>
+            </div>
+            <p class="info-hub-copy">Todo lo secundario vive aquí para que la tienda principal se mantenga limpia.</p>
+            <div class="info-hub-grid">
+              <button type="button" data-info-action="TikTok"><span>♪</span><b>TikTok</b><small>Videos y novedades</small></button>
+              <button type="button" data-info-action="YouTube"><span>▶</span><b>YouTube</b><small>Guías y contenido</small></button>
+              <button type="button" data-info-action="Facebook"><span>f</span><b>Facebook</b><small>Comunidad y avisos</small></button>
+              <button type="button" data-info-action="Privacidad"><span>⌾</span><b>Privacidad</b><small>Cómo cuidamos tus datos</small></button>
+              <button type="button" data-info-action="Cookies"><span>◌</span><b>Cookies</b><small>Preferencias del sitio</small></button>
+              <button type="button" data-info-action="Términos"><span>≡</span><b>Términos</b><small>Condiciones de uso</small></button>
+            </div>
+            <button class="info-support" type="button" data-info-action="Soporte"><span>◈</span><div><b>Ayuda y soporte</b><small>Contacto, garantías y preguntas frecuentes</small></div><i>→</i></button>
+          </aside>
+
+          <nav class="xarena-dock" aria-label="Accesos principales">
+            <button type="button" data-nav-view="perfil"><span>●</span><small>Perfil</small></button>
+            <button type="button" data-nav-view="pases"><span>◇</span><small>Pases</small></button>
+            <button type="button" data-nav-view="ajustes"><span>⚙</span><small>Ajustes</small></button>
           </nav>
         </div>
       </div>
