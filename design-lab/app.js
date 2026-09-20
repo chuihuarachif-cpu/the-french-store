@@ -251,6 +251,21 @@
       '<small>'+String(game.packages.length).padStart(2,"0")+' opciones</small></button>';
   }
 
+  function wrapExperienceIndex(index){
+    const count=experienceGames.length;
+    if (!count) return 0;
+    return ((Number(index)%count)+count)%count;
+  }
+
+  function experienceCircularDifference(cardIndex,activeIndex){
+    const count=experienceGames.length;
+    if (!count) return 0;
+    let diff=cardIndex-activeIndex;
+    if (diff>count/2) diff-=count;
+    if (diff<-count/2) diff+=count;
+    return diff;
+  }
+
   function renderExperienceWheel(instant=false){
     const wheel=$("#xGameWheel");
     if (!wheel) return;
@@ -260,26 +275,29 @@
 
   function setExperienceGame(index, instant=false){
     if (!experienceGames.length) return;
-    const next=Math.max(0,Math.min(experienceGames.length-1,Number(index)||0));
+    const next=wrapExperienceIndex(index);
     activeExperienceGame=next;
     selectedExperienceProduct=null;
     experienceFieldValues={};
 
     all(".x-game-card").forEach((card,cardIndex)=>{
-      const diff=cardIndex-next;
+      const diff=experienceCircularDifference(cardIndex,next);
+      const distance=Math.abs(diff);
       card.dataset.xSlot=String(diff);
+      card.dataset.xDistance=String(distance);
       card.classList.toggle("active",diff===0);
-      card.classList.toggle("x-hidden",Math.abs(diff)>2);
-      card.setAttribute("aria-hidden",Math.abs(diff)>2?"true":"false");
-      card.tabIndex=Math.abs(diff)<=1?0:-1;
+      card.classList.toggle("x-hidden",distance>2);
+      card.setAttribute("aria-current",diff===0?"true":"false");
+      card.setAttribute("aria-hidden",distance>2?"true":"false");
+      card.tabIndex=distance<=1?0:-1;
       card.classList.toggle("x-instant",Boolean(instant));
     });
     if (instant) requestAnimationFrame(()=>all(".x-game-card").forEach(card=>card.classList.remove("x-instant")));
 
     const up=$('[data-x-game-step="-1"]');
     const down=$('[data-x-game-step="1"]');
-    if (up) up.disabled=next===0;
-    if (down) down.disabled=next===experienceGames.length-1;
+    if (up) up.disabled=false;
+    if (down) down.disabled=false;
     renderExperienceDetail();
   }
 
@@ -335,10 +353,13 @@
     const list=$("#xPackageList");
     if (list) {
       list.innerHTML=game.packages.map((product,index)=>{
-        const desc=product.description?'<small>'+escapeHtml(product.description)+'</small>':'';
         return '<article class="x-package-card" data-x-package-index="'+index+'">'+
-          '<button class="x-package-main" type="button" data-x-select-package="'+index+'"><span>'+escapeHtml(product.package)+'</span>'+desc+'<b>'+escapeHtml(priceLabel(product))+'</b></button>'+
-          '<button class="x-package-cart" type="button" data-x-add-package="'+index+'">＋ carrito</button>'+
+          '<button class="x-package-select" type="button" data-x-select-package="'+index+'" aria-pressed="false">'+
+            '<span class="x-package-name">'+escapeHtml(product.package)+'</span>'+
+            '<small class="x-package-availability">Producto disponible</small>'+
+            '<strong class="x-package-price">'+escapeHtml(priceLabel(product))+'</strong>'+
+          '</button>'+
+          '<button class="x-package-cart" type="button" data-x-add-package="'+index+'">Añadir al carrito</button>'+
           '</article>';
       }).join("");
     }
@@ -364,10 +385,15 @@
 
   function selectExperiencePackage(index){
     const game=activeExperience();
-    const product=game?.packages?.[Number(index)];
+    const selectedIndex=Number(index);
+    const product=game?.packages?.[selectedIndex];
     if (!product) return;
     selectedExperienceProduct=product;
-    all(".x-package-card").forEach((card,cardIndex)=>card.classList.toggle("active",cardIndex===Number(index)));
+    all(".x-package-card").forEach((card,cardIndex)=>{
+      const active=cardIndex===selectedIndex;
+      card.classList.toggle("active",active);
+      card.querySelector("[data-x-select-package]")?.setAttribute("aria-pressed",active?"true":"false");
+    });
     updateExperienceBuyState();
   }
 
@@ -585,7 +611,6 @@
     if (gameCard) { setExperienceGame(Number(gameCard.dataset.xGameIndex)); return; }
 
     if (event.target.closest("[data-x-back]")) { closeExperience(false); return; }
-    if (event.target.closest("[data-x-exit]")) { closeExperience(true); return; }
     if (event.target.closest("[data-x-favorite]")) { toggleExperienceFavorite(); return; }
     if (event.target.closest("[data-x-cart]")) { setCartDrawer(true); return; }
     if (event.target.closest("[data-x-cart-close]")) { setCartDrawer(false); return; }
