@@ -105,6 +105,13 @@
     backdrop?.classList.toggle("open", isOpen);
     hub?.setAttribute("aria-hidden", isOpen ? "false" : "true");
     toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    if (isOpen) setInfoPanel("social");
+  }
+
+  function setInfoPanel(name){
+    const target=String(name||"social");
+    all("[data-info-panel]").forEach(button=>button.classList.toggle("active",button.dataset.infoPanel===target));
+    all("[data-info-panel-view]").forEach(panel=>panel.classList.toggle("active",panel.dataset.infoPanelView===target));
   }
 
   function wrapCategoryIndex(index){
@@ -124,7 +131,13 @@
 
   function categoryCard(item, index){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
-    return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Seleccionar <i>→</i></span></button>';
+    return '<article class="category-card category-arena-card" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + escapeHtml(item.name) + '" role="group">'+
+      '<span class="category-card-grid" aria-hidden="true"></span>'+
+      '<span class="category-card-top"><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
+      '<span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span><span class="category-visual-lines"></span></span>'+
+      '<span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
+      '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
+      '</article>';
   }
 
   function renderCategoryArena(){
@@ -132,8 +145,6 @@
     const count = data.categories.length;
     if (!grid || !count) return;
     grid.innerHTML = data.categories.map(categoryCard).join("");
-    const dots = $("#categoryArenaDots");
-    if (dots) dots.innerHTML = data.categories.map((_, index) => '<button type="button" data-arena-dot="' + index + '" aria-label="Ir a categoría ' + (index + 1) + '"></button>').join("");
     activeCategoryIndex = wrapCategoryIndex(activeCategoryIndex);
     requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, false, true));
   }
@@ -162,13 +173,6 @@
     });
 
     if (instant) requestAnimationFrame(() => cards.forEach(card => card.classList.remove("roulette-instant")));
-
-    all("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
-    const counter = $("#categoryArenaCounter");
-    if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(count).padStart(2, "0");
-
-    const enterButton = $("#categoryEnterButton");
-    if (enterButton) enterButton.textContent = "Ingresar · " + (data.categories[next]?.name || "French Store");
 
     const prev = $(".arena-arrow-prev");
     const nextButton = $(".arena-arrow-next");
@@ -652,6 +656,8 @@
     if (banner) banner.textContent = "Vista simulada: " + label;
     const profile = $("#profileRole");
     if (profile) profile.textContent = label;
+    const headerRole = $("#headerRoleName");
+    if (headerRole) headerRole.textContent = "Hola, " + label;
     if (safeRole !== "admin" && currentView === "admin") setView("inicio");
     toast("Estado simulado: " + label + ". No se consultó ninguna cuenta real.");
   }
@@ -673,6 +679,12 @@
       return;
     }
 
+    const infoPanel = event.target.closest("[data-info-panel]");
+    if (infoPanel) {
+      setInfoPanel(infoPanel.dataset.infoPanel);
+      return;
+    }
+
     const infoAction = event.target.closest("[data-info-action]");
     if (infoAction) {
       toast(infoAction.dataset.infoAction + " se abrirá aquí cuando conectemos la versión real.");
@@ -685,17 +697,21 @@
     const arenaDot = event.target.closest("[data-arena-dot]");
     if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
 
-    const categoryEnter = event.target.closest("#categoryEnterButton");
+    const categoryEnter = event.target.closest("[data-category-enter]");
     if (categoryEnter) {
-      const selected=data.categories[activeCategoryIndex];
-      if (selected) openExperience(selected.id);
+      const index=wrapCategoryIndex(Number(categoryEnter.dataset.categoryEnter));
+      const selected=data.categories[index];
+      if (selected) {
+        setCategoryActive(index,true);
+        openExperience(selected.id);
+      }
       return;
     }
 
     const category = event.target.closest("[data-category-index]");
     if (category) {
       const index = wrapCategoryIndex(Number(category.dataset.categoryIndex));
-      setCategoryActive(index, true);
+      if (index !== activeCategoryIndex) setCategoryActive(index, true);
       return;
     }
 
