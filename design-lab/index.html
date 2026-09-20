@@ -96,14 +96,16 @@
                 </div>
               </div>
               <div class="loading-run-phase" id="loadingRunPhase">
-                <div class="loading-runner-zone" id="loadingRunnerZone" aria-hidden="true">
-                  <img id="loadingRunner" class="loading-runner" src="./assets/fox-run-cycle.webp" alt="Mascota de French Store corriendo" width="220" height="220" decoding="sync" fetchpriority="high">
+                <div class="loading-exact-wrapper">
+                  <div class="loading-percentage-text" id="loadingPercent">0%</div>
+                  <div class="loading-exact-track" aria-label="Progreso de carga">
+                    <div class="loading-fox-character" id="loadingFox" aria-hidden="true">
+                      <span class="loading-fox-sprite" id="loadingFoxSprite"></span>
+                    </div>
+                    <div class="loading-exact-fill" id="loadingProgressBar"></div>
+                  </div>
                 </div>
-                <div class="loading-progress-shell">
-                  <div class="loading-progress-meta"><span>Actualizando French Store</span><b id="loadingPercent">0%</b></div>
-                  <div class="loading-progress-track" aria-hidden="true"><div class="loading-progress-fill" id="loadingProgressBar"></div></div>
-                </div>
-                <div class="loading-demo-copy">
+                <div class="loading-demo-copy loading-exact-copy">
                   <strong id="loadingMessage">Estamos corriendo para actualizar precios...</strong>
                   <span>Preparando ofertas, recargas y novedades.</span>
                 </div>
