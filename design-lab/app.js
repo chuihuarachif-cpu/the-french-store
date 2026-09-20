@@ -11,7 +11,7 @@
   const data = window.FS_LAB_DATA || { categories: [], products: [], checkout: [] };
   const $ = (s, root = document) => root.querySelector(s);
   const $$ = (s, root = document) => [...root.querySelectorAll(s)];
-  const titleMap = { inicio: "Inicio", catalogo: "Catálogo", producto: "Producto", checkout: "Checkout", cuenta: "Mi cuenta", admin: "Admin" };
+  const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", producto: "Producto", checkout: "Checkout", admin: "Admin" };
   const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
   let currentView = "inicio";
   let activeFilter = "Todos";
