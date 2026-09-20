@@ -159,7 +159,7 @@
     motion: async () => {
       await loadStyle('./r8.css', 'fs-r8-css');
       await loadStyle('./r8-icons.css?v=20260829-r124', 'fs-r8-icons-css');
-      await loadScript('./r8.js', 'fs-r8-js');
+      await loadScript('./r8.js', 'fs-r8-js', '20260919-r230');
       await loadScript('./r8-icons.js?v=20260829-r124', 'fs-r8-icons-js');
     },
     loyalty: async () => {
