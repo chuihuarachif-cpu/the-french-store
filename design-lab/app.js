@@ -251,7 +251,7 @@
   }
 
   function gameCardMarkup(game,index){
-    const image = game.icon ? '<img class="x-game-thumb" src="'+escapeHtml(game.icon)+'" alt="" loading="lazy" decoding="async" fetchpriority="low">' : '';
+    const image = game.icon ? '<img class="x-game-thumb" data-src="'+escapeHtml(game.icon)+'" alt="" decoding="async" fetchpriority="low">' : '';
     return '<button class="x-game-card" type="button" data-x-game-index="'+index+'" aria-label="'+escapeHtml(game.name)+'">'+
       '<span class="x-game-thumb-shell">'+image+'<i>'+escapeHtml(initials(game.name))+'</i></span>'+
       '<span class="x-game-name">'+escapeHtml(game.name)+'</span>'+
@@ -298,7 +298,12 @@
       card.setAttribute("aria-hidden",distance>2?"true":"false");
       card.tabIndex=distance<=1?0:-1;
       const thumb=card.querySelector(".x-game-thumb");
-      if (thumb) thumb.fetchPriority=distance<=1?"high":"low";
+      if (thumb) {
+        thumb.fetchPriority=distance<=1?"high":"low";
+        if (distance<=2 && !thumb.getAttribute("src") && thumb.dataset.src) {
+          thumb.setAttribute("src",thumb.dataset.src);
+        }
+      }
       card.classList.toggle("x-instant",Boolean(instant));
     });
     if (instant) requestAnimationFrame(()=>all(".x-game-card").forEach(card=>card.classList.remove("x-instant")));
