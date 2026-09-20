@@ -338,7 +338,11 @@
     setDevice(button.dataset.devicePreview);
   });
 
-  window.addEventListener("resize", updateDeviceScale);
+  let resizeTimer = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(updateDeviceScale, 80);
+  }, {passive:true});
 
   $("#roleSelect")?.addEventListener("change", (event) => setRole(event.target.value));
 
@@ -438,7 +442,8 @@
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
   $("#settingsMotionShortcut")?.addEventListener("click", () => $("#motionToggle")?.click());
 
-  setDevice(document.documentElement.dataset.device || "desktop");
+  const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
+  setDevice(initialDevice);
   const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(updateDeviceScale) : null;
   if (frameObserver) frameObserver.observe($("#deviceFrame"));
   render();
