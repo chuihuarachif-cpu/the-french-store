@@ -36,6 +36,13 @@
     "cuentas": "Venta de Cuentas",
     "paginas": "Venta de Páginas"
   };
+  const prefersLitePerformance = Boolean(
+    window.matchMedia?.("(max-width: 700px)")?.matches ||
+    (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
+  );
+  document.documentElement.classList.toggle("perf-lite", prefersLitePerformance);
+
   const favoriteStorageKey = "fs-design-lab-favorite-games-v1";
   const cartStorageKey = "fs-design-lab-cart-v1";
   let experienceCategoryId = "recargas-id";
@@ -244,7 +251,7 @@
   }
 
   function gameCardMarkup(game,index){
-    const image = game.icon ? '<img class="x-game-thumb" src="'+escapeHtml(game.icon)+'" alt="">' : '';
+    const image = game.icon ? '<img class="x-game-thumb" src="'+escapeHtml(game.icon)+'" alt="" loading="lazy" decoding="async" fetchpriority="low">' : '';
     return '<button class="x-game-card" type="button" data-x-game-index="'+index+'" aria-label="'+escapeHtml(game.name)+'">'+
       '<span class="x-game-thumb-shell">'+image+'<i>'+escapeHtml(initials(game.name))+'</i></span>'+
       '<span class="x-game-name">'+escapeHtml(game.name)+'</span>'+
@@ -290,6 +297,8 @@
       card.setAttribute("aria-current",diff===0?"true":"false");
       card.setAttribute("aria-hidden",distance>2?"true":"false");
       card.tabIndex=distance<=1?0:-1;
+      const thumb=card.querySelector(".x-game-thumb");
+      if (thumb) thumb.fetchPriority=distance<=1?"high":"low";
       card.classList.toggle("x-instant",Boolean(instant));
     });
     if (instant) requestAnimationFrame(()=>all(".x-game-card").forEach(card=>card.classList.remove("x-instant")));
@@ -486,7 +495,7 @@
     document.body.classList.add("experience-open");
     renderExperienceWheel(true);
     updateCartBadges();
-    requestAnimationFrame(updateDeviceScale);
+    scheduleDeviceScale();
   }
 
   function closeExperience(goHome=false){
@@ -496,7 +505,7 @@
     overlay?.setAttribute("aria-hidden","true");
     document.body.classList.remove("experience-open");
     if (goHome) setView("inicio");
-    requestAnimationFrame(updateDeviceScale);
+    scheduleDeviceScale();
   }
 
   function moveExperienceGame(direction){
@@ -773,6 +782,8 @@
     desktop: { width: 1440, height: 900, label: "PC" }
   };
 
+  let scaleFrame = 0;
+  let lastScaleKey = "";
   function updateDeviceScale(){
     const root = document.documentElement;
     const viewport = $("#deviceViewport");
@@ -781,11 +792,22 @@
     const preset = devicePresets[root.dataset.device] || devicePresets.desktop;
     const available = Math.max(1, viewport.clientWidth);
     const scale = Math.min(1, available / preset.width);
+    const frameHeight = frame.scrollHeight;
+    const targetHeight = Math.ceil(frameHeight * scale);
+    const key = preset.width+"|"+preset.height+"|"+available+"|"+frameHeight+"|"+scale.toFixed(4);
+    if (key===lastScaleKey) return;
+    lastScaleKey=key;
     root.style.setProperty("--device-width", preset.width + "px");
     root.style.setProperty("--device-height", preset.height + "px");
     root.style.setProperty("--device-scale", scale.toFixed(4));
-    requestAnimationFrame(() => {
-      viewport.style.height = Math.ceil(frame.scrollHeight * scale) + "px";
+    if (viewport.style.height !== targetHeight + "px") viewport.style.height = targetHeight + "px";
+  }
+
+  function scheduleDeviceScale(){
+    if (scaleFrame) return;
+    scaleFrame=requestAnimationFrame(()=>{
+      scaleFrame=0;
+      updateDeviceScale();
     });
   }
 
@@ -795,7 +817,8 @@
     document.querySelectorAll("#devicePreviewButtons [data-device-preview]").forEach(el => {
       el.classList.toggle("active", el.dataset.devicePreview === safeDevice);
     });
-    updateDeviceScale();
+    lastScaleKey="";
+    scheduleDeviceScale();
     requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, false, true));
   }
 
@@ -808,7 +831,10 @@
   let resizeTimer = 0;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(updateDeviceScale, 80);
+    resizeTimer = setTimeout(() => {
+      lastScaleKey="";
+      scheduleDeviceScale();
+    }, 100);
   }, {passive:true});
 
   $("#roleSelect")?.addEventListener("change", (event) => setRole(event.target.value));
@@ -890,7 +916,7 @@
 
   const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
   setDevice(initialDevice);
-  const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(updateDeviceScale) : null;
+  const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(scheduleDeviceScale) : null;
   if (frameObserver) frameObserver.observe($("#deviceFrame"));
   render();
   const initial = location.hash.replace("#", "");
