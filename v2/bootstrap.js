@@ -101,9 +101,8 @@
     // Classic R7 is the only storefront interface. Rank Pass can still expose
     // benefits/status inside loyalty, but it never selects another visual skin.
     await loadScript('./tiers/owner-classic-r7.js', 'fs-owner-classic-r7-js', '20260918-r6');
-    // R167: calendario de eventos. Solo expone las claves activas; no dibuja
-    // efectos ni altera el checkout, Wallet, catálogo, precios o niveles.
-    await loadScript('./seasonal-events.js', 'fs-seasonal-events-js', '20260916-r167');
+    // Seasonal visual calendars were retired. Special-date communication now
+    // lives in the private Admin scheduled-message system and Web Push backend.
     // R163: vitrina "Cuentas en Venta", debajo de las 4 categorías públicas.
     // Presentación pura y fail-closed: si no puede leer, la sección no se
     // muestra y el resto de la tienda sigue igual. No toca catálogo, precios,
