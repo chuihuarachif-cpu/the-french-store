@@ -196,6 +196,8 @@
     fill.style.transform = "scaleX(0)";
     percent.textContent = "0%";
     runner.style.setProperty("--runner-x","0px");
+    runner.style.opacity = "1";
+    runner.style.visibility = "visible";
     runner.style.setProperty("--runner-bob","0px");
     message.textContent = "Estamos corriendo para actualizar precios...";
     if (button) button.textContent = "↻ Reiniciar carga";
@@ -204,6 +206,7 @@
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     const device = document.documentElement.dataset.device || "desktop";
     const duration = reduced ? 1100 : (device === "mobile" ? 4600 : device === "tablet" ? 4350 : 4100);
+    runner.dataset.ready = "1";
     const start = performance.now();
 
     function tick(now){
