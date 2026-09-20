@@ -1148,3 +1148,22 @@ html[data-device="mobile"] .loading-percentage-text{
 html[data-device="mobile-landscape"] .loading-percentage-text{
   margin-bottom:96px!important
 }
+
+
+/* r238 · fail-safe fox rendering */
+.loading-fox-character{
+  opacity:0!important;
+  visibility:hidden!important
+}
+.loading-fox-character.fox-ready{
+  opacity:1!important;
+  visibility:visible!important
+}
+.loading-fox-character.fox-failed{
+  display:none!important
+}
+.loading-fox-image{
+  border:0!important;
+  outline:0!important;
+  color:transparent!important
+}
