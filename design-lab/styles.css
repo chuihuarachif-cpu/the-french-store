@@ -125,3 +125,9 @@ html[data-device="mobile"] .admin-demo-table>div{grid-template-columns:1fr auto}
   .preview-toolbar{align-items:flex-start;flex-direction:column}.preview-actions{width:100%;justify-content:space-between}
   .lab-menu{grid-template-columns:repeat(2,1fr)}
 }
+
+.device-preview-control small{color:var(--muted);font-size:.72rem;line-height:1.4}
+.device-preview-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.device-preview-buttons button{border:1px solid var(--line);background:#0a1723;color:var(--muted);border-radius:10px;padding:9px 8px;cursor:pointer}
+.device-preview-buttons button.active{background:#e9f9ff;color:#06111d;border-color:#e9f9ff;font-weight:800}
+html[data-device="laptop"] .device-frame{max-width:1120px}
