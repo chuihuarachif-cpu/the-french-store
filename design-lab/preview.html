@@ -2268,6 +2268,130 @@ html[data-device="mobile"] .x-experience.force-landscape .x-config-note{
   font-size:.5rem!important
 }
 
+
+/* r246 · mobile/GPU performance pass */
+.loading-progress-fill-bottom{
+  width:100%!important;
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform .08s linear!important;
+  will-change:transform
+}
+
+/* Do not paint/animate the storefront behind modal experiences. */
+body.info-center-open .store-view{
+  visibility:hidden!important;
+  pointer-events:none!important
+}
+body.info-center-open .welcome-ticker-track,
+body.info-center-open .reveal,
+body.experience-open .welcome-ticker-track,
+html.page-hidden .welcome-ticker-track,
+html.page-hidden .loading-square-wave span,
+html.page-hidden .x-phone-body,
+html.page-hidden .x-phone-arrow{
+  animation-play-state:paused!important
+}
+
+/* Promote the single continuous ticker rather than repainting text each frame. */
+.welcome-ticker-track{
+  will-change:transform;
+  backface-visibility:hidden
+}
+
+/* Mobile/lower-resource roulette: transform + opacity only. */
+html.perf-lite .category-arena-card{
+  filter:none!important;
+  box-shadow:none!important;
+  transition:
+    transform .19s cubic-bezier(.22,.72,.2,1),
+    opacity .14s linear,
+    border-color .14s linear!important;
+  will-change:auto!important;
+  backface-visibility:hidden
+}
+html.perf-lite .category-arena-card:not(.roulette-hidden){
+  will-change:transform,opacity!important
+}
+html.perf-lite .category-arena-card.roulette-hidden{
+  visibility:hidden!important;
+  content-visibility:hidden!important;
+  pointer-events:none!important
+}
+html.perf-lite .category-arena-card[data-distance="1"]{
+  filter:none!important
+}
+html.perf-lite .category-arena-card[data-distance="2"]{
+  filter:none!important
+}
+html.perf-lite .category-icon-orbit,
+html.perf-lite .category-visual-lines,
+html.perf-lite .category-arena-card:before{
+  box-shadow:none!important
+}
+html.perf-lite .category-icon-stage .icon{
+  filter:none!important;
+  transition:transform .18s ease!important
+}
+html.perf-lite .category-card-grid{
+  display:none!important
+}
+html.perf-lite .info-hub,
+html.perf-lite .social-card,
+html.perf-lite .info-hub-aside,
+html.perf-lite .whatsapp-float{
+  box-shadow:none!important
+}
+html.perf-lite .info-hub{
+  transition:opacity .16s linear,transform .18s ease,visibility 0s linear .18s!important
+}
+html.perf-lite .social-card{
+  contain:layout paint style
+}
+
+/* Product selector keeps only nearby wheel items composited. */
+.x-game-card.x-hidden{
+  transform:none!important
+}
+.x-game-card:not(.x-hidden){
+  backface-visibility:hidden
+}
+
+/* Lab-only scaling should not animate on phone; it causes a second transform
+   animation around the already animated storefront. */
+html.perf-lite .device-viewport,
+html.perf-lite .device-frame{
+  transition:none!important
+}
+
+@media (max-width:700px){
+  .welcome-ticker-track{will-change:transform}
+  .category-arena-card{
+    transition:
+      transform .19s cubic-bezier(.22,.72,.2,1),
+      opacity .14s linear,
+      border-color .14s linear!important
+  }
+  .category-arena-card,
+  .category-arena-card.active{
+    box-shadow:none!important
+  }
+  .category-icon-stage .icon{
+    filter:none!important
+  }
+  .category-icon-orbit,
+  .category-visual-lines{
+    box-shadow:none!important
+  }
+  .info-hub{box-shadow:none!important}
+  .whatsapp-float{box-shadow:none!important}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .welcome-ticker-track{animation:none!important;will-change:auto!important}
+  .loading-progress-fill-bottom{transition:none!important;will-change:auto!important}
+}
+
 </style>
 </head>
 <body>
@@ -2850,7 +2974,9 @@ window.FS_LAB_DATA = Object.freeze({
     backdrop?.classList.toggle("open", isOpen);
     hub?.setAttribute("aria-hidden", isOpen ? "false" : "true");
     toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    document.body.classList.toggle("info-center-open", isOpen);
     if (isOpen) setInfoPanel("social");
+    scheduleDeviceScale();
   }
 
   function setInfoPanel(name){
@@ -3377,6 +3503,7 @@ window.FS_LAB_DATA = Object.freeze({
     });
     const grid = $("#catalogGrid");
     if (grid) grid.innerHTML = items.length ? items.map(productCard).join("") : '<div class="lab-note"><b>Sin resultados</b><p>Prueba otra búsqueda. Estos datos son ficticios.</p></div>';
+    scheduleDeviceScale();
   }
 
   function setView(view){
@@ -3390,6 +3517,7 @@ window.FS_LAB_DATA = Object.freeze({
     if (stage) stage.scrollTop = 0;
     setInfoHub(false);
     history.replaceState(null, "", "#" + currentView);
+    scheduleDeviceScale();
   }
 
   function setRole(role){
@@ -3729,7 +3857,7 @@ window.FS_LAB_DATA = Object.freeze({
     overlay.setAttribute("aria-hidden","false");
 
     let progress = 0;
-    fill.style.width = "0%";
+    fill.style.transform = "scaleX(0)";
     percent.textContent = "0%";
     message.textContent = "Preparando French Store...";
     if (button) button.textContent = "↻ Reiniciar carga";
@@ -3744,7 +3872,7 @@ window.FS_LAB_DATA = Object.freeze({
         progress = 100;
         clearInterval(loadingProgressInterval);
         loadingProgressInterval = 0;
-        fill.style.width = "100%";
+        fill.style.transform = "scaleX(1)";
         percent.textContent = "100%";
         message.textContent = "¡Todo listo! Entrando a French Store...";
         finishLoadingDemo(overlay, button, reduced);
@@ -3752,7 +3880,7 @@ window.FS_LAB_DATA = Object.freeze({
       }
 
       const visible = Math.floor(progress);
-      fill.style.width = progress + "%";
+      fill.style.transform = "scaleX(" + (progress / 100) + ")";
       percent.textContent = visible + "%";
 
       message.textContent = visible < 70 ? "Preparando French Store..." : "Últimos detalles...";
@@ -3762,6 +3890,10 @@ window.FS_LAB_DATA = Object.freeze({
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
   $("#settingsMotionShortcut")?.addEventListener("click", () => $("#motionToggle")?.click());
 
+  document.addEventListener("visibilitychange", () => {
+    document.documentElement.classList.toggle("page-hidden", document.hidden);
+  }, {passive:true});
+
   const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
   setDevice(initialDevice);
   window.addEventListener("orientationchange", () => {
@@ -3769,8 +3901,9 @@ window.FS_LAB_DATA = Object.freeze({
     setTimeout(syncExperienceOrientation,120);
   }, {passive:true});
 
-  const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(scheduleDeviceScale) : null;
-  if (frameObserver) frameObserver.observe($("#deviceFrame"));
+  // The Lab recalculates scale only after real UI/device changes.
+  // Avoid observing the whole frame continuously: on mobile it can cause
+  // repeated layout reads while cards, drawers and orientation states change.
   render();
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
