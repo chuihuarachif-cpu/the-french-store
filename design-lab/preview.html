@@ -417,7 +417,7 @@ window.FS_LAB_DATA = Object.freeze({
 
   const data = window.FS_LAB_DATA || { categories: [], products: [], checkout: [] };
   const $ = (s, root = document) => root.querySelector(s);
-  const $ = (s, root = document) => [...root.querySelectorAll(s)];
+  const all = (s, root = document) => [...root.querySelectorAll(s)];
   const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", producto: "Producto", checkout: "Checkout", admin: "Admin" };
   const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
   let currentView = "inicio";
@@ -473,9 +473,9 @@ window.FS_LAB_DATA = Object.freeze({
 
   function setView(view){
     currentView = titleMap[view] ? view : "inicio";
-    $(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
-    $("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
-    $("#labMenu [data-lab-view]").forEach(el => el.classList.toggle("active", el.dataset.labView === currentView));
+    all(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
+    all("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
+    all("#labMenu [data-lab-view]").forEach(el => el.classList.toggle("active", el.dataset.labView === currentView));
     const title = $("#previewTitle");
     if (title) title.textContent = titleMap[currentView];
     const stage = $(".store-app");
