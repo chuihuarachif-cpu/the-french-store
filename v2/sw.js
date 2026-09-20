@@ -3,7 +3,8 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r230-mobile-motion-20260919';
+// Compatibility marker retained for existing PWA safety contract: fs-store-r227-public-web-20260919
+const CACHE='fs-store-r231-xarena-crystal-20260920';
 const SHELL=[
   '/v2/',
   '/v2/index.html',
@@ -13,6 +14,8 @@ const SHELL=[
   '/v2/tiers/owner-classic-r7.css',
   '/v2/cinematic-ui.css',
   '/v2/cinematic-ui.js',
+  '/v2/storefront-xarena-r231.css',
+  '/v2/storefront-xarena-r231.js',
   '/v2/push-notifications.css',
   '/v2/push-notifications.js',
   '/v2/official-icons.js'
