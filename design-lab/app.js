@@ -350,25 +350,15 @@
 
   let loadingHideTimer = 0;
   let loadingPhaseTimer = 0;
-  let loadingRunInterval = 0;
   let loadingProgressInterval = 0;
 
   function stopLoadingTimers(){
     clearTimeout(loadingHideTimer);
     clearTimeout(loadingPhaseTimer);
-    clearInterval(loadingRunInterval);
     clearInterval(loadingProgressInterval);
     loadingHideTimer = 0;
     loadingPhaseTimer = 0;
-    loadingRunInterval = 0;
     loadingProgressInterval = 0;
-  }
-
-  function setFoxFrame(frame){
-    const sprite = $("#loadingFoxSprite");
-    if (!sprite) return;
-    const positions = ["0%","33.333%","66.667%","100%"];
-    sprite.style.backgroundPosition = positions[frame % positions.length] + " 0";
   }
 
   function finishLoadingDemo(overlay, button, reduced){
@@ -385,21 +375,23 @@
   function runLoadingDemo(){
     const overlay = $("#loadingDemo");
     const fox = $("#loadingFox");
+    const foxImage = $("#loadingFoxImage");
     const fill = $("#loadingProgressBar");
     const percent = $("#loadingPercent");
     const message = $("#loadingMessage");
     const button = $("#loadingDemoButton");
-    if (!overlay || !fox || !fill || !percent || !message) return;
+    if (!overlay || !fox || !foxImage || !fill || !percent || !message) return;
 
     stopLoadingTimers();
     overlay.classList.remove("leaving","run-phase");
     overlay.classList.add("active","brand-phase");
     overlay.setAttribute("aria-hidden","false");
 
-    let currentFrame = 0;
     let progress = 0;
-    setFoxFrame(0);
     fox.style.left = "0%";
+    const foxSrc = foxImage.getAttribute("src");
+    foxImage.removeAttribute("src");
+    requestAnimationFrame(() => { if (foxSrc) foxImage.setAttribute("src", foxSrc); });
     fill.style.width = "0%";
     percent.textContent = "0%";
     message.textContent = "Estamos corriendo para actualizar precios...";
@@ -415,13 +407,6 @@
       overlay.classList.remove("brand-phase");
       overlay.classList.add("run-phase");
 
-      if (!reduced) {
-        loadingRunInterval = setInterval(() => {
-          currentFrame = (currentFrame + 1) % 4;
-          setFoxFrame(currentFrame);
-        }, 100);
-      }
-
       loadingProgressInterval = setInterval(() => {
         const increment = reduced ? 8 : Math.random() * 2.5;
         progress += increment;
@@ -429,11 +414,7 @@
         if (progress >= 100) {
           progress = 100;
           clearInterval(loadingProgressInterval);
-          clearInterval(loadingRunInterval);
           loadingProgressInterval = 0;
-          loadingRunInterval = 0;
-          currentFrame = 0;
-          setFoxFrame(0);
           percent.textContent = "¡CARGA COMPLETADA!";
           message.textContent = "¡Llegamos! French Store está listo.";
           fill.style.width = "100%";
