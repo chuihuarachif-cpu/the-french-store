@@ -970,7 +970,7 @@ html.fs-xarena-production :is(.panel,.web-service-card,.web-services-hero,.web-s
 }
 
 /* Lite mode for low-power devices: keep design, remove costly blur/continuous animation. */
-html.fs-xarena-lite body::after{display:none}
+html.fs-xarena-lite body::after{display:none;animation:none!important}
 html.fs-xarena-lite .fs-border-moon{animation:none!important}
 html.fs-xarena-lite .fs-welcome-track{animation-duration:34s}
 html.fs-xarena-lite #categoryGrid>.category-card,
