@@ -127,8 +127,12 @@
 
   $("#catalogSearch")?.addEventListener("input", renderCatalog);
 
-  $("#deviceSelect")?.addEventListener("change", (event) => {
-    document.documentElement.dataset.device = event.target.value;
+  $("#devicePreviewButtons")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-device-preview]");
+    if (!button) return;
+    const device = button.dataset.devicePreview;
+    document.documentElement.dataset.device = device;
+    $("#devicePreviewButtons [data-device-preview]").forEach(el => el.classList.toggle("active", el === button));
   });
 
   $("#roleSelect")?.addEventListener("change", (event) => setRole(event.target.value));
