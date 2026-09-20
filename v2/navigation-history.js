@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const VALID_VIEWS = new Set(['inicio', 'tienda', 'wallet', 'pedidos', 'perfil', 'admin']);
+  const VALID_VIEWS = new Set(['inicio', 'tienda', 'wallet', 'pedidos', 'perfil', 'admin', 'web-services', 'cuentas']);
   let installed = false;
   let applyingPopState = false;
 
@@ -19,6 +19,13 @@
     installed = true;
 
     const baseNavigate = window.navigate;
+    let requestedView = '';
+    try {
+      requestedView = new URL(location.href).searchParams.get('view') || '';
+    } catch {}
+    if (VALID_VIEWS.has(requestedView) && requestedView !== activeView()) {
+      baseNavigate(requestedView);
+    }
     const initialView = activeView();
     const currentState = history.state && typeof history.state === 'object' ? history.state : {};
     history.replaceState({ ...currentState, fsView: initialView, fsInternal: true }, '', location.href);
