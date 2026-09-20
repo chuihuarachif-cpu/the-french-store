@@ -911,7 +911,7 @@ window.FS_LAB_DATA = Object.freeze({
 
   const data = window.FS_LAB_DATA || { categories: [], products: [], checkout: [] };
   const $ = (s, root = document) => root.querySelector(s);
-  const $ = (s, root = document) => [...root.querySelectorAll(s)];
+  const $$ = (s, root = document) => [...root.querySelectorAll(s)];
   const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", pases: "Pases", ajustes: "Ajustes", producto: "Producto", checkout: "Checkout", admin: "Admin" };
   const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
   let currentView = "inicio";
@@ -965,7 +965,7 @@ window.FS_LAB_DATA = Object.freeze({
   }
 
   function setCategoryActive(index, shouldScroll = true, instant = false){
-    const cards = $(".category-arena-card");
+    const cards = $$(".category-arena-card");
     const viewport = $("#categoryArenaViewport");
     if (!cards.length || !viewport) return;
     const next = Math.max(0, Math.min(cards.length - 1, Number(index) || 0));
@@ -977,7 +977,7 @@ window.FS_LAB_DATA = Object.freeze({
       card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
     });
-    $("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
+    $$("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
     const counter = $("#categoryArenaCounter");
     if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(cards.length).padStart(2, "0");
     const prev = $(".arena-arrow-prev");
@@ -995,7 +995,7 @@ window.FS_LAB_DATA = Object.freeze({
   function syncCategoryFromScroll(){
     categoryScrollRaf = 0;
     const viewport = $("#categoryArenaViewport");
-    const cards = $(".category-arena-card");
+    const cards = $$(".category-arena-card");
     if (!viewport || !cards.length) return;
     const viewportBox = viewport.getBoundingClientRect();
     const center = viewportBox.left + viewportBox.width / 2;
@@ -1042,9 +1042,9 @@ window.FS_LAB_DATA = Object.freeze({
 
   function setView(view){
     currentView = titleMap[view] ? view : "inicio";
-    $(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
-    $("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
-    $("#labMenu [data-lab-view]").forEach(el => el.classList.toggle("active", el.dataset.labView === currentView));
+    $$(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
+    $$("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
+    $$("#labMenu [data-lab-view]").forEach(el => el.classList.toggle("active", el.dataset.labView === currentView));
     const title = $("#previewTitle");
     if (title) title.textContent = titleMap[currentView];
     const stage = $(".store-app");
