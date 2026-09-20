@@ -376,6 +376,28 @@
     }, reduced ? 180 : 720);
   }
 
+  function prepareLoadingFox(){
+    const fox = $("#loadingFox");
+    const foxImage = $("#loadingFoxImage");
+    if (!fox || !foxImage) return;
+    const markReady = () => {
+      if (foxImage.naturalWidth > 0) {
+        fox.classList.add("fox-ready");
+        fox.classList.remove("fox-failed");
+      }
+    };
+    const markFailed = () => {
+      fox.classList.remove("fox-ready");
+      fox.classList.add("fox-failed");
+    };
+    foxImage.addEventListener("load", markReady);
+    foxImage.addEventListener("error", markFailed);
+    if (foxImage.complete) {
+      if (foxImage.naturalWidth > 0) markReady();
+      else markFailed();
+    }
+  }
+
   function runLoadingDemo(){
     const overlay = $("#loadingDemo");
     const fox = $("#loadingFox");
@@ -394,8 +416,13 @@
     let progress = 0;
     fox.style.left = "0%";
     const foxSrc = foxImage.getAttribute("src");
+    fox.classList.remove("fox-failed");
     foxImage.removeAttribute("src");
-    requestAnimationFrame(() => { if (foxSrc) foxImage.setAttribute("src", foxSrc); });
+    requestAnimationFrame(() => {
+      if (!foxSrc) return;
+      foxImage.setAttribute("src", foxSrc);
+      if (foxImage.complete && foxImage.naturalWidth > 0) fox.classList.add("fox-ready");
+    });
     fill.style.width = "0%";
     percent.textContent = "0%";
     message.textContent = "Estamos corriendo para actualizar precios...";
@@ -439,6 +466,7 @@
     }, brandDuration);
   }
 
+  prepareLoadingFox();
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
   $("#settingsMotionShortcut")?.addEventListener("click", () => $("#motionToggle")?.click());
 
