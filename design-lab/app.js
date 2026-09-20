@@ -16,8 +16,11 @@
   let currentView = "inicio";
   let activeFilter = "Todos";
   let toastTimer;
-  let activeCategoryIndex = 0;
+  const categoryLoopCopies = 3;
+  let activeCategoryIndex = Math.max(0, data.categories.length);
   let categoryScrollRaf = 0;
+  let categoryLoopTimer = 0;
+  let categoryLoopRecentering = false;
   const categoryFilterMap = {
     "recargas-id": "Recargas",
     "recargas-cuenta": "Recargas",
@@ -49,25 +52,66 @@
     toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
-  function categoryCard(item, index){
+  function logicalCategoryIndex(index){
+    const count = data.categories.length;
+    if (!count) return 0;
+    return ((Number(index) % count) + count) % count;
+  }
+
+  function closestLoopIndex(logicalIndex){
+    const count = data.categories.length;
+    if (!count) return 0;
+    const logical = logicalCategoryIndex(logicalIndex);
+    const candidates = [logical, logical + count, logical + count * 2];
+    return candidates.reduce((best, candidate) =>
+      Math.abs(candidate - activeCategoryIndex) < Math.abs(best - activeCategoryIndex) ? candidate : best
+    , candidates[1]);
+  }
+
+  function categoryCard(item, renderIndex, logicalIndex){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
-    return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Explorar <i>→</i></span></button>';
+    return '<button class="category-card category-arena-card" type="button" data-category-index="' + renderIndex + '" data-logical-index="' + logicalIndex + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(logicalIndex + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Explorar <i>→</i></span></button>';
   }
 
   function renderCategoryArena(){
     const grid = $("#categoryGrid");
-    if (!grid) return;
-    grid.innerHTML = data.categories.map(categoryCard).join("");
+    const count = data.categories.length;
+    if (!grid || !count) return;
+    const looped = Array.from({length:categoryLoopCopies}, (_, copyIndex) =>
+      data.categories.map((item, logicalIndex) => ({item, logicalIndex, renderIndex:copyIndex * count + logicalIndex}))
+    ).flat();
+    grid.innerHTML = looped.map(entry => categoryCard(entry.item, entry.renderIndex, entry.logicalIndex)).join("");
     const dots = $("#categoryArenaDots");
     if (dots) dots.innerHTML = data.categories.map((_, index) => '<button type="button" data-arena-dot="' + index + '" aria-label="Ir a categoría ' + (index + 1) + '"></button>').join("");
-    requestAnimationFrame(() => setCategoryActive(Math.min(activeCategoryIndex, Math.max(0, data.categories.length - 1)), false, true));
+    const maxIndex = count * categoryLoopCopies - 1;
+    if (activeCategoryIndex < count || activeCategoryIndex >= count * 2) activeCategoryIndex = count + logicalCategoryIndex(activeCategoryIndex);
+    requestAnimationFrame(() => setCategoryActive(Math.min(activeCategoryIndex, maxIndex), true, true, true));
   }
 
-  function setCategoryActive(index, shouldScroll = true, instant = false){
-    const cards = $$(".category-arena-card");
+  function scheduleCategoryLoopNormalize(){
+    clearTimeout(categoryLoopTimer);
+    categoryLoopTimer = setTimeout(normalizeCategoryLoop, 110);
+  }
+
+  function normalizeCategoryLoop(){
+    const count = data.categories.length;
+    if (!count || categoryLoopRecentering) return;
+    let target = activeCategoryIndex;
+    if (activeCategoryIndex < count) target = activeCategoryIndex + count;
+    else if (activeCategoryIndex >= count * 2) target = activeCategoryIndex - count;
+    if (target === activeCategoryIndex) return;
+    categoryLoopRecentering = true;
+    setCategoryActive(target, true, true, true);
+    requestAnimationFrame(() => { categoryLoopRecentering = false; });
+  }
+
+  function setCategoryActive(index, shouldScroll = true, instant = false, skipNormalize = false){
+    const cards = $(".category-arena-card");
     const viewport = $("#categoryArenaViewport");
-    if (!cards.length || !viewport) return;
+    const count = data.categories.length;
+    if (!cards.length || !viewport || !count) return;
     const next = Math.max(0, Math.min(cards.length - 1, Number(index) || 0));
+    const logical = logicalCategoryIndex(next);
     activeCategoryIndex = next;
     cards.forEach((card, cardIndex) => {
       const diff = cardIndex - next;
@@ -76,25 +120,26 @@
       card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
     });
-    $$("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
+    $("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === logical));
     const counter = $("#categoryArenaCounter");
-    if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(cards.length).padStart(2, "0");
+    if (counter) counter.textContent = String(logical + 1).padStart(2, "0") + " / " + String(count).padStart(2, "0");
     const prev = $(".arena-arrow-prev");
     const nextButton = $(".arena-arrow-next");
-    if (prev) prev.disabled = next === 0;
-    if (nextButton) nextButton.disabled = next === cards.length - 1;
+    if (prev) prev.disabled = false;
+    if (nextButton) nextButton.disabled = false;
     if (shouldScroll) {
       const card = cards[next];
       const target = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2;
       const reduced = instant || document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
       viewport.scrollTo({left:Math.max(0,target),behavior:reduced ? "auto" : "smooth"});
     }
+    if (!skipNormalize) scheduleCategoryLoopNormalize();
   }
 
   function syncCategoryFromScroll(){
     categoryScrollRaf = 0;
     const viewport = $("#categoryArenaViewport");
-    const cards = $$(".category-arena-card");
+    const cards = $(".category-arena-card");
     if (!viewport || !cards.length) return;
     const viewportBox = viewport.getBoundingClientRect();
     const center = viewportBox.left + viewportBox.width / 2;
@@ -105,7 +150,8 @@
       const distance = Math.abs((box.left + box.width / 2) - center);
       if (distance < bestDistance) { bestDistance = distance; bestIndex = index; }
     });
-    if (bestIndex !== activeCategoryIndex) setCategoryActive(bestIndex, false);
+    if (bestIndex !== activeCategoryIndex) setCategoryActive(bestIndex, false, false, true);
+    scheduleCategoryLoopNormalize();
   }
 
   function productCard(item){
@@ -191,13 +237,14 @@
     if (arenaArrow) { setCategoryActive(activeCategoryIndex + Number(arenaArrow.dataset.arenaDirection || 0), true); return; }
 
     const arenaDot = event.target.closest("[data-arena-dot]");
-    if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
+    if (arenaDot) { setCategoryActive(closestLoopIndex(Number(arenaDot.dataset.arenaDot)), true); return; }
 
     const category = event.target.closest("[data-category-index]");
     if (category) {
       const index = Number(category.dataset.categoryIndex);
+      const logicalIndex = Number(category.dataset.logicalIndex);
       if (index === activeCategoryIndex) {
-        const selected = data.categories[index];
+        const selected = data.categories[logicalCategoryIndex(logicalIndex)];
         activeFilter = categoryFilterMap[selected?.id] || "Todos";
         render();
         setView("catalogo");
@@ -345,6 +392,8 @@
     runner.style.setProperty("--runner-bob","0px");
     runner.style.opacity = "1";
     runner.style.visibility = "visible";
+    runner.style.display = "block";
+    runner.removeAttribute("hidden");
     message.textContent = "Estamos corriendo para actualizar precios...";
     if (button) button.textContent = "↻ Reiniciar carga";
 
@@ -389,6 +438,14 @@
       }
       loadingRaf = requestAnimationFrame(tick);
     }, brandDuration);
+  }
+
+  const runnerImage = $("#loadingRunner");
+  if (runnerImage) {
+    runnerImage.addEventListener("error", () => {
+      runnerImage.src = "../v2/assets/brand/french-store-mascot.webp";
+      runnerImage.classList.add("loading-runner-fallback");
+    }, {once:true});
   }
 
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
