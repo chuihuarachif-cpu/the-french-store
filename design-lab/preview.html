@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="es" data-device="desktop" data-role="visitor">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#06111d">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none';">
+  <title>French Store · Design Lab Preview</title>
+  <style>
+:root{
+  color-scheme:dark;
+  --bg:#050b12;
+  --panel:#09131f;
+  --panel-2:#0d1b2a;
+  --line:rgba(126,218,255,.14);
+  --line-strong:rgba(126,218,255,.3);
+  --text:#edfaff;
+  --muted:#8ea7b5;
+  --cyan:#62e7ff;
+  --cyan-2:#16b9ff;
+  --violet:#8a7dff;
+  --good:#64f2b0;
+  --bad:#ff7f9a;
+  --shadow:0 28px 80px rgba(0,0,0,.45);
+  --radius:22px;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 20% 0%,#0e2336 0,#050b12 36%,#03070c 100%);color:var(--text)}
+button,input,select{font:inherit}
+button{color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.lab-shell{min-height:100vh;display:grid;grid-template-columns:280px 1fr}
+.lab-panel{position:sticky;top:0;height:100vh;padding:22px;border-right:1px solid var(--line);background:rgba(4,10,17,.88);backdrop-filter:blur(20px);display:flex;flex-direction:column;gap:18px;z-index:20}
+.lab-brand{display:flex;align-items:center;gap:12px}
+.lab-brand-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#031019;box-shadow:0 0 28px rgba(98,231,255,.22)}
+.lab-brand b,.lab-brand small{display:block}.lab-brand small{color:var(--muted);margin-top:3px}
+.safety-card{display:flex;align-items:flex-start;gap:10px;padding:13px;border:1px solid rgba(100,242,176,.18);background:rgba(100,242,176,.06);border-radius:16px}
+.safety-card b,.safety-card small{display:block}.safety-card small{color:var(--muted);line-height:1.35;margin-top:2px}
+.safety-dot{width:9px;height:9px;border-radius:999px;background:var(--good);box-shadow:0 0 14px var(--good);margin-top:6px;flex:0 0 auto}
+.control{display:grid;gap:8px}.control span{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.control select{width:100%;border:1px solid var(--line);border-radius:12px;background:#0a1723;color:var(--text);padding:11px 12px}
+.lab-menu{display:grid;gap:7px}.lab-menu button{border:1px solid transparent;background:transparent;text-align:left;padding:11px 12px;border-radius:12px;cursor:pointer;color:var(--muted);transition:.22s ease}
+.lab-menu button:hover,.lab-menu button.active{background:linear-gradient(90deg,rgba(98,231,255,.12),rgba(138,125,255,.06));border-color:var(--line);color:var(--text);transform:translateX(2px)}
+.lab-note{margin-top:auto;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(13,27,42,.65)}
+.lab-note b{font-size:.86rem}.lab-note p{margin:7px 0 0;color:var(--muted);font-size:.8rem;line-height:1.5}
+.preview-stage{min-width:0;padding:22px}
+.preview-toolbar{max-width:1400px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.preview-kicker{display:block;color:var(--cyan);font-size:.7rem;letter-spacing:.18em;font-weight:900}.preview-toolbar b{font-size:1.1rem}
+.preview-actions{display:flex;align-items:center;gap:9px}.tool-btn,.demo-pill{border:1px solid var(--line);background:#0b1722;border-radius:999px;padding:8px 12px;font-size:.75rem}
+.tool-btn{cursor:pointer}.demo-pill{color:var(--good);font-weight:900;letter-spacing:.05em}
+.device-frame{max-width:1400px;margin:auto;transition:max-width .35s ease}
+html[data-device="tablet"] .device-frame{max-width:860px}
+html[data-device="mobile"] .device-frame{max-width:430px}
+.store-app{position:relative;min-height:calc(100vh - 92px);overflow:hidden;border:1px solid var(--line-strong);border-radius:28px;background:
+radial-gradient(circle at 84% 8%,rgba(98,231,255,.11),transparent 30%),
+radial-gradient(circle at 14% 22%,rgba(138,125,255,.12),transparent 25%),
+linear-gradient(180deg,#06111d,#07101a 40%,#050a11);
+box-shadow:var(--shadow)}
+.store-app:before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.01) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(to bottom,black,transparent 80%)}
+.store-header{position:sticky;top:0;z-index:12;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:17px 22px;border-bottom:1px solid var(--line);background:rgba(5,12,20,.77);backdrop-filter:blur(22px)}
+.brand-button,.desktop-nav button,.header-actions button,.mobile-nav button{border:0;background:transparent;cursor:pointer}
+.brand-button{display:flex;align-items:center;gap:6px;justify-self:start;font-weight:900;letter-spacing:.03em}
+.desktop-nav{display:flex;gap:5px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(13,27,42,.5)}
+.desktop-nav button{padding:8px 13px;border-radius:999px;color:var(--muted)}
+.desktop-nav button.active{background:rgba(98,231,255,.12);color:var(--text)}
+.header-actions{display:flex;justify-self:end;gap:8px}.icon-button,.cart-button{border:1px solid var(--line)!important;border-radius:12px!important;background:rgba(13,27,42,.72)!important;padding:8px 11px}
+.role-banner{padding:7px 18px;text-align:center;background:linear-gradient(90deg,rgba(98,231,255,.07),rgba(138,125,255,.08));border-bottom:1px solid var(--line);font-size:.72rem;color:var(--muted)}
+.store-view{display:none;padding:40px 42px 98px;position:relative;z-index:1}.store-view.active{display:block}
+.hero{min-height:470px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:40px;padding:34px;border:1px solid var(--line);border-radius:30px;background:linear-gradient(135deg,rgba(16,38,56,.74),rgba(9,19,31,.45));overflow:hidden}
+.hero-copy{max-width:720px}.eyebrow{display:block;color:var(--cyan);font-size:.72rem;font-weight:900;letter-spacing:.18em;margin-bottom:10px}
+h1,h2,h3,p{margin-top:0}.hero h1,.page-head h1,.product-info h1{font-size:clamp(2.2rem,5vw,5.2rem);line-height:.94;letter-spacing:-.055em;margin-bottom:20px}
+.hero p,.page-head p,.product-info p{max-width:660px;color:var(--muted);font-size:1.03rem;line-height:1.65}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}.primary,.secondary,.text-button{border:0;cursor:pointer}
+.primary{background:linear-gradient(135deg,var(--cyan),#26b5ff);color:#041019;font-weight:900;border-radius:14px;padding:13px 17px;box-shadow:0 12px 38px rgba(22,185,255,.18)}
+.secondary{background:rgba(11,25,39,.7);border:1px solid var(--line)!important;border-radius:14px;padding:13px 17px}.full{width:100%}
+.hero-art{position:relative;min-height:350px;display:grid;place-items:center}.gem{position:relative;z-index:3;font-size:10rem;line-height:1;color:#b6f5ff;text-shadow:0 0 45px rgba(98,231,255,.7);filter:drop-shadow(0 25px 30px rgba(0,0,0,.4));animation:float 5s ease-in-out infinite}
+.orb{position:absolute;border-radius:999px;filter:blur(2px)}.orb-a{width:260px;height:260px;background:rgba(98,231,255,.14);box-shadow:0 0 90px rgba(98,231,255,.2)}.orb-b{width:150px;height:150px;transform:translate(90px,-80px);background:rgba(138,125,255,.22);box-shadow:0 0 70px rgba(138,125,255,.25)}
+.section{margin-top:34px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:16px}.section-head h2{font-size:clamp(1.5rem,3vw,2.4rem);margin:0}.text-button{background:none;color:var(--cyan)}
+.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.category-card{position:relative;min-height:150px;padding:18px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,rgba(15,34,50,.8),rgba(9,19,29,.65));overflow:hidden;cursor:pointer;text-align:left;transition:.25s ease}
+.category-card:hover{transform:translateY(-4px);border-color:var(--line-strong)}.category-card .icon{font-size:2rem}.category-card b,.category-card small{display:block}.category-card b{margin-top:26px}.category-card small{color:var(--muted);margin-top:4px}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.product-card{border:1px solid var(--line);border-radius:20px;background:rgba(9,20,31,.78);padding:12px;cursor:pointer;transition:.25s ease}.product-card:hover{transform:translateY(-4px);border-color:var(--line-strong)}
+.product-thumb{height:170px;border-radius:15px;display:grid;place-items:center;font-size:3.2rem;background:linear-gradient(135deg,rgba(98,231,255,.09),rgba(138,125,255,.13));border:1px solid rgba(255,255,255,.04)}
+.product-meta{padding:13px 4px 4px}.product-meta small,.product-meta span{color:var(--muted)}.product-meta b{display:block;margin:4px 0 10px}.product-price{display:flex;justify-content:space-between;align-items:center}.product-price strong{color:var(--cyan)}
+.page-head{max-width:850px;margin-bottom:28px}.search-shell{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:16px;background:rgba(9,21,33,.74);padding:0 14px;margin-bottom:14px}.search-shell input{width:100%;border:0;background:transparent;color:var(--text);padding:14px 0;outline:0}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.filter-row button{border:1px solid var(--line);background:rgba(13,27,42,.7);color:var(--muted);border-radius:999px;padding:8px 13px;cursor:pointer}.filter-row button.active{color:#041019;background:var(--cyan);border-color:var(--cyan)}
+.product-detail{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center}.product-visual{position:relative;min-height:520px;border-radius:28px;border:1px solid var(--line);display:grid;place-items:center;background:radial-gradient(circle,rgba(98,231,255,.15),transparent 42%),linear-gradient(145deg,#0b1c2b,#080f18)}.detail-symbol{font-size:12rem;color:var(--cyan);text-shadow:0 0 50px rgba(98,231,255,.35)}.detail-badge{position:absolute;top:18px;left:18px;border:1px solid var(--line);border-radius:999px;padding:8px 11px;color:var(--good);font-size:.7rem;font-weight:900}
+.product-info h1{font-size:clamp(2.4rem,4vw,4.5rem)}.price-line{display:flex;align-items:baseline;gap:12px;margin:24px 0}.price-line strong{font-size:2rem;color:var(--cyan)}.price-line small{color:var(--muted)}
+.fake-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}.fake-fields label{display:grid;gap:7px}.fake-fields span{font-size:.75rem;color:var(--muted);font-weight:700}.fake-fields input{border:1px solid var(--line);background:#07131f;color:var(--text);border-radius:12px;padding:12px}
+.checkout-layout{display:grid;grid-template-columns:1fr 340px;gap:28px}.checkout-main h1{font-size:clamp(2rem,4vw,4rem)}.checkout-items{display:grid;gap:10px;margin:22px 0}.checkout-item{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:11px;background:rgba(9,20,31,.7)}.checkout-icon{width:54px;height:54px;border-radius:13px;display:grid;place-items:center;background:rgba(98,231,255,.08)}.checkout-item small{display:block;color:var(--muted);margin-top:3px}
+.fake-payment{display:flex;align-items:center;gap:16px;border:1px dashed var(--line-strong);border-radius:18px;padding:16px;background:rgba(98,231,255,.035)}.fake-payment p{color:var(--muted);margin:4px 0 0}.fake-qr{width:86px;height:86px;display:grid;place-items:center;background:repeating-linear-gradient(45deg,#dffcff 0 6px,#0b1722 6px 12px);color:#07111a;font-weight:1000;border:8px solid white;flex:0 0 auto}.fake-qr span{background:white;padding:2px 5px}
+.order-summary{align-self:start;position:sticky;top:100px;border:1px solid var(--line);border-radius:22px;background:rgba(10,23,35,.85);padding:20px}.order-summary>div{display:flex;justify-content:space-between;margin:12px 0;color:var(--muted)}.order-summary .total{color:var(--text);align-items:end}.order-summary .total strong{font-size:1.5rem;color:var(--cyan)}.order-summary hr{border:0;border-top:1px solid var(--line)}.order-summary small{display:block;color:var(--muted);text-align:center;margin-top:10px}
+.profile-card{display:flex;gap:14px;align-items:center;border:1px solid var(--line);border-radius:22px;padding:20px;background:rgba(10,23,35,.75)}.profile-card h2,.profile-card p{margin:0}.profile-card p{color:var(--muted);margin-top:4px}.avatar{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#06111d;font-weight:1000}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.metric-grid article{border:1px solid var(--line);border-radius:18px;background:rgba(9,20,31,.72);padding:17px}.metric-grid span,.metric-grid small{display:block;color:var(--muted)}.metric-grid strong{display:block;font-size:1.55rem;margin:7px 0;color:var(--cyan)}
+.account-menu{display:grid;gap:8px;margin-top:16px}.account-menu button{display:flex;justify-content:space-between;border:1px solid var(--line);border-radius:15px;background:rgba(9,20,31,.65);padding:14px 15px;cursor:pointer}
+.admin-demo-table{margin-top:18px;border:1px solid var(--line);border-radius:19px;overflow:hidden;background:rgba(9,20,31,.7)}.admin-demo-table>div{display:grid;grid-template-columns:1fr 120px 130px;gap:12px;align-items:center;padding:14px 16px;border-top:1px solid var(--line)}.admin-demo-table .table-head{border-top:0;background:rgba(98,231,255,.05);color:var(--muted);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em}.tag{justify-self:start;border-radius:999px;padding:5px 8px;font-size:.7rem;font-weight:900}.tag.income{background:rgba(100,242,176,.1);color:var(--good)}.tag.expense{background:rgba(255,127,154,.1);color:var(--bad)}
+.mobile-nav{display:none;position:absolute;bottom:0;left:0;right:0;z-index:15;grid-template-columns:repeat(5,1fr);border-top:1px solid #26313b;background:#08111a;padding:7px 4px calc(7px + env(safe-area-inset-bottom))}
+.mobile-nav button{display:grid;place-items:center;gap:3px;padding:4px 2px;border:0;background:transparent;color:#a7b1ba;font-size:.66rem;cursor:pointer}
+.mobile-nav button span{font-size:1rem}
+.mobile-nav button.active{color:#fff;font-weight:700}
+.toast{position:fixed;right:24px;bottom:24px;z-index:50;max-width:360px;padding:13px 15px;border:1px solid var(--line-strong);border-radius:14px;background:#0b1c29;box-shadow:var(--shadow);opacity:0;transform:translateY(14px);pointer-events:none;transition:.25s ease}.toast.show{opacity:1;transform:none}
+.reveal{animation:reveal .55s cubic-bezier(.2,.8,.2,1) both}.reveal:nth-child(2){animation-delay:.06s}.reveal:nth-child(3){animation-delay:.12s}
+html.motion-off *,html.motion-off *:before,html.motion-off *:after{animation:none!important;transition:none!important}
+@keyframes reveal{from{opacity:0;transform:translateY(18px) scale(.995)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-16px) rotate(2deg)}}
+@media (max-width:1100px){
+  .category-grid,.product-grid{grid-template-columns:repeat(2,1fr)}
+  .hero{grid-template-columns:1fr;min-height:auto}.hero-art{min-height:240px}.gem{font-size:7rem}
+}
+@media (max-width:820px){
+  .lab-shell{grid-template-columns:1fr}.lab-panel{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.lab-menu{grid-template-columns:repeat(3,1fr)}.lab-note{margin-top:0}
+  .preview-stage{padding:14px}.store-view{padding:28px 22px 92px}.checkout-layout,.product-detail{grid-template-columns:1fr}.order-summary{position:static}.product-visual{min-height:360px}.detail-symbol{font-size:8rem}
+}
+html[data-device="mobile"] .store-header{grid-template-columns:1fr auto;padding:14px 15px}
+html[data-device="mobile"] .desktop-nav{display:none}
+html[data-device="mobile"] .brand-button{font-size:.84rem}
+html[data-device="mobile"] .store-view{padding:24px 15px 94px}
+html[data-device="mobile"] .mobile-nav{display:grid}
+html[data-device="mobile"] .hero{grid-template-columns:1fr;padding:20px;border-radius:22px;gap:14px}
+html[data-device="mobile"] .hero h1{font-size:2.55rem}
+html[data-device="mobile"] .hero-art{min-height:190px}
+html[data-device="mobile"] .gem{font-size:5.5rem}
+html[data-device="mobile"] .category-grid,html[data-device="mobile"] .product-grid{grid-template-columns:1fr 1fr;gap:9px}
+html[data-device="mobile"] .product-thumb{height:115px}
+html[data-device="mobile"] .product-card{padding:8px}
+html[data-device="mobile"] .category-card{min-height:125px;padding:13px}
+html[data-device="mobile"] .product-detail,html[data-device="mobile"] .checkout-layout{grid-template-columns:1fr}
+html[data-device="mobile"] .product-visual{min-height:290px}
+html[data-device="mobile"] .detail-symbol{font-size:6rem}
+html[data-device="mobile"] .fake-fields{grid-template-columns:1fr}
+html[data-device="mobile"] .metric-grid{grid-template-columns:1fr}
+html[data-device="mobile"] .admin-demo-table>div{grid-template-columns:1fr auto}.admin-demo-table>div strong{grid-column:1/-1}
+@media (max-width:520px){
+  .preview-toolbar{align-items:flex-start;flex-direction:column}.preview-actions{width:100%;justify-content:space-between}
+  .lab-menu{grid-template-columns:repeat(2,1fr)}
+}
+
+.device-preview-control small{color:var(--muted);font-size:.72rem;line-height:1.4}
+.device-preview-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.device-preview-buttons button{border:1px solid var(--line);background:#0a1723;color:var(--muted);border-radius:10px;padding:9px 8px;cursor:pointer}
+.device-preview-buttons button.active{background:#e9f9ff;color:#06111d;border-color:#e9f9ff;font-weight:800}
+html[data-device="laptop"] .device-frame{max-width:1120px}
+
+</style>
+</head>
+<body data-preview-build="isolated-single-file">
+  <div class="lab-shell">
+    <aside class="lab-panel" aria-label="Herramientas del laboratorio">
+      <div class="lab-brand">
+        <span class="lab-brand-mark">✦</span>
+        <div><b>DESIGN LAB</b><small>French Store · UI aislada</small></div>
+      </div>
+
+      <div class="safety-card">
+        <span class="safety-dot"></span>
+        <div><b>Modo seguro</b><small>Sin Supabase, pagos, QR real, Push ni backend.</small></div>
+      </div>
+
+      <div class="control device-preview-control" aria-label="Vista de dispositivo">
+        <span>Vista de prueba</span>
+        <div class="device-preview-buttons" id="devicePreviewButtons">
+          <button type="button" data-device-preview="mobile">Celular</button>
+          <button type="button" data-device-preview="tablet">Tablet</button>
+          <button type="button" data-device-preview="laptop">Laptop</button>
+          <button type="button" data-device-preview="desktop" class="active">PC</button>
+        </div>
+        <small>Estos controles pertenecen al laboratorio y no forman parte del diseño de la tienda.</small>
+      </div>
+
+      <label class="control">
+        <span>Estado simulado</span>
+        <select id="roleSelect">
+          <option value="visitor">Visitante</option>
+          <option value="user">Usuario</option>
+          <option value="reseller">Reseller</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+
+      <div class="lab-menu" id="labMenu">
+        <button class="active" data-lab-view="inicio">Inicio</button>
+        <button data-lab-view="catalogo">Tienda</button>
+        <button data-lab-view="wallet">Wallet</button>
+        <button data-lab-view="pedidos">Pedidos</button>
+        <button data-lab-view="perfil">Perfil</button>
+        <button data-lab-view="producto">Producto</button>
+        <button data-lab-view="checkout">Checkout</button>
+        <button data-lab-view="admin">Admin</button>
+      </div>
+
+      <div class="lab-note">
+        <b>Regla del laboratorio</b>
+        <p>Aquí primero aprobamos diseño, navegación y animaciones. Recién después se migra a producción y se conectan reglas reales.</p>
+      </div>
+    </aside>
+
+    <main class="preview-stage">
+      <div class="preview-toolbar">
+        <div>
+          <span class="preview-kicker">PREVIEW</span>
+          <b id="previewTitle">Inicio</b>
+        </div>
+        <div class="preview-actions">
+          <button id="motionToggle" class="tool-btn" type="button">Animaciones: ON</button>
+          <span class="demo-pill">DATOS FICTICIOS</span>
+        </div>
+      </div>
+
+      <div class="device-frame">
+        <div class="store-app">
+          <header class="store-header">
+            <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio">
+              <span>💎</span><b>FRENCH STORE</b><span>💎</span>
+            </button>
+            <nav class="desktop-nav" aria-label="Navegación de demostración">
+              <button data-nav-view="inicio" class="active">Inicio</button>
+              <button data-nav-view="catalogo">Tienda</button>
+              <button data-nav-view="perfil">Perfil</button>
+            </nav>
+            <div class="header-actions">
+              <button class="icon-button" type="button" aria-label="Buscar">⌕</button>
+              <button class="cart-button" type="button" data-nav-view="checkout">🛒 <span id="cartCount">2</span></button>
+            </div>
+          </header>
+
+          <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
+
+          <section class="store-view active" data-view="inicio">
+            <div class="hero reveal">
+              <div class="hero-copy">
+                <span class="eyebrow">EXPERIENCIA DIGITAL</span>
+                <h1>Una nueva forma de descubrir y comprar.</h1>
+                <p>Este espacio existe únicamente para experimentar con la futura interfaz de French Store sin tocar la tienda real.</p>
+                <div class="hero-actions">
+                  <button class="primary" type="button" data-nav-view="catalogo">Explorar diseño</button>
+                  <button class="secondary" type="button" data-demo-action="safe">Probar interacción</button>
+                </div>
+              </div>
+              <div class="hero-art" aria-hidden="true">
+                <div class="orb orb-a"></div>
+                <div class="orb orb-b"></div>
+                <div class="gem">◆</div>
+              </div>
+            </div>
+
+            <section class="section reveal">
+              <div class="section-head"><div><span class="eyebrow">CATEGORÍAS</span><h2>Explora por mundo</h2></div><button class="text-button" data-nav-view="catalogo">Ver todo →</button></div>
+              <div id="categoryGrid" class="category-grid"></div>
+            </section>
+
+            <section class="section reveal">
+              <div class="section-head"><div><span class="eyebrow">DESTACADOS</span><h2>Productos para probar la UI</h2></div></div>
+              <div id="featuredGrid" class="product-grid"></div>
+            </section>
+          </section>
+
+          <section class="store-view" data-view="catalogo">
+            <div class="page-head reveal">
+              <span class="eyebrow">CATÁLOGO DEMO</span>
+              <h1>Encuentra lo que buscas.</h1>
+              <p>Todos los productos y precios de esta pantalla son ejemplos locales.</p>
+            </div>
+            <div class="search-shell reveal">
+              <span>⌕</span><input id="catalogSearch" type="search" placeholder="Buscar Free Fire, Netflix, ML..." autocomplete="off">
+            </div>
+            <div id="filterRow" class="filter-row reveal"></div>
+            <div id="catalogGrid" class="product-grid reveal"></div>
+          </section>
+
+          <section class="store-view" data-view="producto">
+            <div class="product-detail reveal">
+              <div class="product-visual">
+                <div class="detail-badge">DEMO</div>
+                <div class="detail-symbol">◇</div>
+              </div>
+              <div class="product-info">
+                <span class="eyebrow">RECARGA POR ID</span>
+                <h1>Diamantes Nova · 500</h1>
+                <p>Ejemplo visual para diseñar jerarquía, precio, información y controles del futuro detalle de producto.</p>
+                <div class="price-line"><strong>Bs 49,90</strong><small>precio ficticio</small></div>
+                <div class="fake-fields">
+                  <label><span>ID de jugador</span><input value="123456789" readonly></label>
+                  <label><span>Zona</span><input value="1234" readonly></label>
+                </div>
+                <button class="primary full" type="button" data-nav-view="checkout">Continuar al checkout demo</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="checkout">
+            <div class="checkout-layout reveal">
+              <div class="checkout-main">
+                <span class="eyebrow">CHECKOUT DEMO</span>
+                <h1>Revisa tu compra</h1>
+                <div id="checkoutItems" class="checkout-items"></div>
+                <div class="fake-payment">
+                  <div class="fake-qr" aria-hidden="true"><span>QR</span></div>
+                  <div><b>QR visual de prueba</b><p>No genera cobros, no contiene datos bancarios y no consulta ningún servicio.</p></div>
+                </div>
+              </div>
+              <aside class="order-summary">
+                <h3>Resumen</h3>
+                <div><span>Subtotal</span><b>Bs 74,80</b></div>
+                <div><span>Comisión</span><b>Bs 0,00</b></div>
+                <hr>
+                <div class="total"><span>Total</span><strong>Bs 74,80</strong></div>
+                <button class="primary full" type="button" data-demo-action="safe">Simular pago</button>
+                <small>Acción bloqueada por el laboratorio.</small>
+              </aside>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="wallet">
+            <div class="page-head reveal">
+              <span class="eyebrow">WALLET DEMO</span>
+              <h1>French Wallet</h1>
+              <p>Base visual sin saldo, cargas ni conexiones reales.</p>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="pedidos">
+            <div class="page-head reveal">
+              <span class="eyebrow">PEDIDOS DEMO</span>
+              <h1>Mis pedidos</h1>
+              <p>Base visual para diseñar después el historial y seguimiento.</p>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="perfil">
+            <div class="account-layout reveal">
+              <div class="profile-card">
+                <div class="avatar">FS</div>
+                <div><span class="eyebrow">PERFIL DEMO</span><h2 id="profileRole">Visitante</h2><p>demo@frenchstore.local</p></div>
+              </div>
+              <div class="metric-grid">
+                <article><span>Pedidos</span><strong>12</strong><small>ficticios</small></article>
+                <article><span>Favoritos</span><strong>8</strong><small>locales</small></article>
+                <article><span>Wallet</span><strong>Bs 125</strong><small>simulado</small></article>
+              </div>
+              <div class="account-menu">
+                <button type="button" data-nav-view="pedidos">Mis pedidos <span>→</span></button>
+                <button type="button">Favoritos <span>→</span></button>
+                <button type="button">Notificaciones <span>→</span></button>
+                <button type="button">Configuración <span>→</span></button>
+              </div>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="admin">
+            <div class="page-head reveal">
+              <span class="eyebrow">ADMIN DEMO</span>
+              <h1>Panel visual aislado.</h1>
+              <p>Sirve para rediseñar administración sin leer ni modificar información real.</p>
+            </div>
+            <div class="metric-grid reveal">
+              <article><span>Ventas del mes</span><strong>Bs 8.420</strong><small>dato ficticio</small></article>
+              <article><span>Gastos del mes</span><strong>Bs 5.130</strong><small>dato ficticio</small></article>
+              <article><span>Ganancia</span><strong>Bs 3.290</strong><small>dato ficticio</small></article>
+            </div>
+            <div class="admin-demo-table reveal">
+              <div class="table-head"><span>Movimiento</span><span>Tipo</span><span>Monto</span></div>
+              <div><b>Pedido #FS-DEMO-102</b><span class="tag income">Ingreso</span><strong>+ Bs 120</strong></div>
+              <div><b>Compra de saldo proveedor</b><span class="tag expense">Gasto</span><strong>- Bs 80</strong></div>
+              <div><b>Pedido #FS-DEMO-103</b><span class="tag income">Ingreso</span><strong>+ Bs 55</strong></div>
+            </div>
+          </section>
+
+          <nav class="mobile-nav" aria-label="Navegación principal">
+            <button class="active" data-nav-view="inicio"><span>⌂</span>Inicio</button>
+            <button data-nav-view="catalogo"><span>▦</span>Tienda</button>
+            <button data-nav-view="wallet"><span>▣</span>Wallet</button>
+            <button data-nav-view="pedidos"><span>☷</span>Pedidos</button>
+            <button data-nav-view="perfil"><span>●</span>Perfil</button>
+          </nav>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+window.FS_LAB_DATA = Object.freeze({
+  categories: [
+    { id: "recargas-id", icon: "🎮", name: "Recargas por ID", subtitle: "Diamantes, monedas y pases" },
+    { id: "recargas-cuenta", icon: "👤", name: "Recargas por Cuenta", subtitle: "Flujos asistidos de ejemplo" },
+    { id: "streaming", icon: "📺", name: "Streaming", subtitle: "Entretenimiento y música" },
+    { id: "giftcards", icon: "🎁", name: "Gift Cards", subtitle: "Códigos digitales de muestra" }
+  ],
+  products: [
+    { id: "p1", icon: "◇", name: "Diamantes Nova · 500", category: "Recargas", price: 49.90, featured: true },
+    { id: "p2", icon: "🔥", name: "Fire Coins · 310", category: "Recargas", price: 24.90, featured: true },
+    { id: "p3", icon: "▶", name: "Stream Plus · 1 mes", category: "Streaming", price: 35.00, featured: true },
+    { id: "p4", icon: "✦", name: "Gift Card · 10 USD", category: "Gift Cards", price: 78.00, featured: true },
+    { id: "p5", icon: "⚔", name: "Battle Pass · Elite", category: "Recargas", price: 67.50, featured: false },
+    { id: "p6", icon: "♫", name: "Music Premium · 1 mes", category: "Streaming", price: 19.90, featured: false },
+    { id: "p7", icon: "◈", name: "Créditos Arena · 1000", category: "Recargas", price: 89.00, featured: false },
+    { id: "p8", icon: "▣", name: "Store Card · 15 USD", category: "Gift Cards", price: 114.00, featured: false }
+  ],
+  checkout: [
+    { icon: "◇", name: "Diamantes Nova · 500", detail: "ID 123456789 · Zona 1234", price: 49.90 },
+    { icon: "🔥", name: "Fire Coins · 310", detail: "ID 987654321", price: 24.90 }
+  ]
+});
+
+</script>
+  <script>
+(() => {
+  "use strict";
+
+  // Defense in depth: this lab must never talk to production or third-party services.
+  const blocked = (name) => () => Promise.reject(new Error("[Design Lab] " + name + " está bloqueado."));
+  try { window.fetch = blocked("fetch"); } catch (_) {}
+  try { window.XMLHttpRequest = class { constructor(){ throw new Error("[Design Lab] XMLHttpRequest está bloqueado."); } }; } catch (_) {}
+  try { window.WebSocket = class { constructor(){ throw new Error("[Design Lab] WebSocket está bloqueado."); } }; } catch (_) {}
+  try { window.EventSource = class { constructor(){ throw new Error("[Design Lab] EventSource está bloqueado."); } }; } catch (_) {}
+
+  const data = window.FS_LAB_DATA || { categories: [], products: [], checkout: [] };
+  const $ = (s, root = document) => root.querySelector(s);
+  const $ = (s, root = document) => [...root.querySelectorAll(s)];
+  const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", producto: "Producto", checkout: "Checkout", admin: "Admin" };
+  const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
+  let currentView = "inicio";
+  let activeFilter = "Todos";
+  let toastTimer;
+
+  function money(value){ return "Bs " + Number(value).toFixed(2).replace(".", ","); }
+
+  function toast(message){
+    const el = $("#toast");
+    if (!el) return;
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+  }
+
+  function categoryCard(item){
+    return '<button class="category-card" type="button" data-nav-view="catalogo" data-category="' + item.id + '"><span class="icon">' + item.icon + '</span><b>' + item.name + '</b><small>' + item.subtitle + '</small></button>';
+  }
+
+  function productCard(item){
+    return '<article class="product-card" tabindex="0" role="button" data-open-product="' + item.id + '"><div class="product-thumb">' + item.icon + '</div><div class="product-meta"><span>' + item.category + '</span><b>' + item.name + '</b><div class="product-price"><strong>' + money(item.price) + '</strong><small>DEMO</small></div></div></article>';
+  }
+
+  function render(){
+    const categoryGrid = $("#categoryGrid");
+    if (categoryGrid) categoryGrid.innerHTML = data.categories.map(categoryCard).join("");
+
+    const featuredGrid = $("#featuredGrid");
+    if (featuredGrid) featuredGrid.innerHTML = data.products.filter(p => p.featured).map(productCard).join("");
+
+    const categories = ["Todos", ...new Set(data.products.map(p => p.category))];
+    const filterRow = $("#filterRow");
+    if (filterRow) filterRow.innerHTML = categories.map(c => '<button type="button" data-filter="' + c + '" class="' + (c === activeFilter ? "active" : "") + '">' + c + '</button>').join("");
+
+    renderCatalog();
+
+    const checkout = $("#checkoutItems");
+    if (checkout) checkout.innerHTML = data.checkout.map(item => '<div class="checkout-item"><span class="checkout-icon">' + item.icon + '</span><div><b>' + item.name + '</b><small>' + item.detail + '</small></div><strong>' + money(item.price) + '</strong></div>').join("");
+  }
+
+  function renderCatalog(){
+    const query = ($("#catalogSearch")?.value || "").trim().toLowerCase();
+    const items = data.products.filter(item => {
+      const matchesFilter = activeFilter === "Todos" || item.category === activeFilter;
+      const matchesQuery = !query || (item.name + " " + item.category).toLowerCase().includes(query);
+      return matchesFilter && matchesQuery;
+    });
+    const grid = $("#catalogGrid");
+    if (grid) grid.innerHTML = items.length ? items.map(productCard).join("") : '<div class="lab-note"><b>Sin resultados</b><p>Prueba otra búsqueda. Estos datos son ficticios.</p></div>';
+  }
+
+  function setView(view){
+    currentView = titleMap[view] ? view : "inicio";
+    $(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
+    $("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
+    $("#labMenu [data-lab-view]").forEach(el => el.classList.toggle("active", el.dataset.labView === currentView));
+    const title = $("#previewTitle");
+    if (title) title.textContent = titleMap[currentView];
+    const stage = $(".store-app");
+    if (stage) stage.scrollTop = 0;
+    history.replaceState(null, "", "#" + currentView);
+  }
+
+  function setRole(role){
+    const safeRole = roleMap[role] ? role : "visitor";
+    document.documentElement.dataset.role = safeRole;
+    const label = roleMap[safeRole];
+    const banner = $("#roleBanner");
+    if (banner) banner.textContent = "Vista simulada: " + label;
+    const profile = $("#profileRole");
+    if (profile) profile.textContent = label;
+    if (safeRole !== "admin" && currentView === "admin") setView("inicio");
+    toast("Estado simulado: " + label + ". No se consultó ninguna cuenta real.");
+  }
+
+  document.addEventListener("submit", (event) => {
+    event.preventDefault();
+    toast("Formularios bloqueados en Design Lab.");
+  }, true);
+
+  document.addEventListener("click", (event) => {
+    const nav = event.target.closest("[data-nav-view]");
+    if (nav) {
+      setView(nav.dataset.navView);
+      return;
+    }
+
+    const labNav = event.target.closest("[data-lab-view]");
+    if (labNav) {
+      setView(labNav.dataset.labView);
+      return;
+    }
+
+    const filter = event.target.closest("[data-filter]");
+    if (filter) {
+      activeFilter = filter.dataset.filter;
+      render();
+      return;
+    }
+
+    const product = event.target.closest("[data-open-product]");
+    if (product) {
+      setView("producto");
+      return;
+    }
+
+    const demo = event.target.closest("[data-demo-action]");
+    if (demo) {
+      toast("🧪 Acción simulada. No se enviaron datos ni se realizó ningún pago.");
+    }
+  });
+
+  $("#catalogSearch")?.addEventListener("input", renderCatalog);
+
+  $("#devicePreviewButtons")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-device-preview]");
+    if (!button) return;
+    const device = button.dataset.devicePreview;
+    document.documentElement.dataset.device = device;
+    $("#devicePreviewButtons [data-device-preview]").forEach(el => el.classList.toggle("active", el === button));
+  });
+
+  $("#roleSelect")?.addEventListener("change", (event) => setRole(event.target.value));
+
+  $("#motionToggle")?.addEventListener("click", (event) => {
+    const disabled = document.documentElement.classList.toggle("motion-off");
+    event.currentTarget.textContent = "Animaciones: " + (disabled ? "OFF" : "ON");
+  });
+
+  render();
+  const initial = location.hash.replace("#", "");
+  setView(titleMap[initial] ? initial : "inicio");
+})();
+
+</script>
+</body>
+</html>
