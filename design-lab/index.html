@@ -144,6 +144,9 @@
                 </div>
                 <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
                 <div class="category-arena-floor" aria-hidden="true"><span></span></div>
+                <div class="category-enter-dock">
+                  <button id="categoryEnterButton" class="category-enter-button" type="button">Ingresar</button>
+                </div>
                 <div class="category-arena-status">
                   <strong id="categoryArenaCounter">01 / 06</strong>
                   <div class="category-arena-dots" id="categoryArenaDots" aria-label="Posición de categoría"></div>
@@ -289,6 +292,70 @@
               <div><b>Compra de saldo proveedor</b><span class="tag expense">Gasto</span><strong>- Bs 80</strong></div>
               <div><b>Pedido #FS-DEMO-103</b><span class="tag income">Ingreso</span><strong>+ Bs 55</strong></div>
             </div>
+          </section>
+
+
+          <section class="x-experience" id="xExperience" aria-hidden="true" aria-label="Selector de productos French Store">
+            <div class="x-experience-bg" aria-hidden="true"></div>
+            <div class="x-experience-shell">
+              <header class="x-experience-topbar">
+                <div class="x-experience-title">
+                  <span id="xCategoryLabel">RECARGAS POR ID</span>
+                  <b id="xGameBreadcrumb">Selecciona un juego</b>
+                </div>
+                <div class="x-experience-actions">
+                  <button type="button" data-x-back aria-label="Volver a categorías">↩</button>
+                  <button type="button" data-x-favorite aria-label="Agregar a favoritos">♡</button>
+                  <button type="button" data-x-cart aria-label="Abrir carrito">🛒 <span id="xCartCount">0</span></button>
+                  <button type="button" data-x-exit aria-label="Salir">×</button>
+                </div>
+              </header>
+
+              <div class="x-experience-grid">
+                <aside class="x-wheel-panel" aria-label="Productos de la sección">
+                  <button class="x-wheel-arrow" type="button" data-x-game-step="-1" aria-label="Anterior">⌃</button>
+                  <div class="x-game-wheel" id="xGameWheel" tabindex="0"></div>
+                  <button class="x-wheel-arrow" type="button" data-x-game-step="1" aria-label="Siguiente">⌄</button>
+                </aside>
+
+                <section class="x-showcase">
+                  <div class="x-showcase-aura" aria-hidden="true"></div>
+                  <div class="x-showcase-icon">
+                    <img id="xShowcaseImage" class="x-showcase-img" alt="">
+                    <span id="xShowcaseFallback">FS</span>
+                  </div>
+                  <div class="x-showcase-copy">
+                    <span id="xShowcaseType">FRENCH STORE</span>
+                    <h2 id="xShowcaseTitle">Selecciona una opción</h2>
+                    <p id="xShowcaseMeta">Desliza para cambiar.</p>
+                  </div>
+                </section>
+
+                <aside class="x-config-panel">
+                  <div class="x-config-head">
+                    <span>CONFIGURAR COMPRA</span>
+                    <b id="xSelectedProductLabel">Selecciona un producto</b>
+                  </div>
+                  <div class="x-input-fields" id="xInputFields"></div>
+                  <div class="x-package-list" id="xPackageList"></div>
+                  <button class="x-buy-button" id="xBuyButton" type="button" disabled>Comprar</button>
+                  <small class="x-config-note">Vista del laboratorio · no procesa pagos reales.</small>
+                </aside>
+              </div>
+
+              <footer class="x-experience-brand">💎 French Store 💎</footer>
+            </div>
+
+            <div class="x-cart-backdrop" id="xCartBackdrop" data-x-cart-close></div>
+            <aside class="x-cart-drawer" id="xCartDrawer" aria-hidden="true">
+              <div class="x-cart-head">
+                <div><span>FRENCH CART</span><b>Tu selección</b></div>
+                <button type="button" data-x-cart-close aria-label="Cerrar carrito">×</button>
+              </div>
+              <div class="x-cart-items" id="xCartItems"></div>
+              <div class="x-cart-total"><span>Total demo</span><b id="xCartTotal">Bs 0,00</b></div>
+              <button class="x-cart-checkout" type="button" data-x-checkout>Continuar con un solo pago</button>
+            </aside>
           </section>
 
           <div class="info-hub-backdrop" id="infoHubBackdrop" data-info-close></div>
