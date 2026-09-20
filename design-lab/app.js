@@ -52,6 +52,8 @@
   let experienceFieldValues = {};
   let experienceGestureStartY = null;
   let experienceGestureStartX = null;
+  let experienceForceLandscape = false;
+  let experienceOrientationManaged = false;
   let favoriteOrder = loadLocalList(favoriteStorageKey);
   let labCart = loadLocalList(cartStorageKey);
 
@@ -488,26 +490,105 @@
     toast(existing>=0?"Quitado de favoritos.":"Favorito guardado; aparecerá primero la próxima vez.");
   }
 
+  function isTouchMobileViewport(){
+    return Boolean(
+      (navigator.maxTouchPoints || 0) > 0 &&
+      window.matchMedia?.("(max-width: 980px)")?.matches
+    );
+  }
+
+  function physicalPortrait(){
+    return Boolean(window.matchMedia?.("(orientation: portrait)")?.matches);
+  }
+
+  function setOrientationGate(open){
+    const gate=$("#xOrientationGate");
+    if (!gate) return;
+    gate.classList.toggle("open",Boolean(open));
+    gate.setAttribute("aria-hidden",open?"false":"true");
+  }
+
+  function syncExperienceOrientation(){
+    const overlay=$("#xExperience");
+    if (!overlay?.classList.contains("open")) return;
+
+    const mobile=isTouchMobileViewport();
+    if (!mobile) {
+      experienceForceLandscape=false;
+      overlay.classList.remove("force-landscape");
+      setOrientationGate(false);
+      return;
+    }
+
+    const portrait=physicalPortrait();
+    if (portrait && experienceForceLandscape) {
+      overlay.classList.add("force-landscape");
+      setOrientationGate(false);
+      return;
+    }
+
+    overlay.classList.remove("force-landscape");
+
+    if (portrait) {
+      setOrientationGate(true);
+      if (document.documentElement.dataset.device==="mobile-landscape") setDevice("mobile");
+    } else {
+      setOrientationGate(false);
+      if (document.documentElement.dataset.device==="mobile") setDevice("mobile-landscape");
+    }
+  }
+
+  function tryLandscapeLock(){
+    if (!isTouchMobileViewport()) return;
+    const orientation=screen.orientation;
+    if (!orientation || typeof orientation.lock!=="function") return;
+    Promise.resolve(orientation.lock("landscape")).then(()=>{
+      experienceOrientationManaged=true;
+      setTimeout(syncExperienceOrientation,120);
+    }).catch(()=>{});
+  }
+
+  function unlockExperienceOrientation(){
+    if (!experienceOrientationManaged) return;
+    try { screen.orientation?.unlock?.(); } catch (_) {}
+    experienceOrientationManaged=false;
+  }
+
+  function forceLandscapeInsidePortrait(){
+    const overlay=$("#xExperience");
+    if (!overlay) return;
+    experienceForceLandscape=true;
+    overlay.classList.add("force-landscape");
+    setOrientationGate(false);
+  }
+
   function openExperience(categoryId){
     experienceCategoryId=experienceCategoryMap[categoryId]?categoryId:"recargas-id";
     experienceGames=sortExperienceGames(categorySnapshot(experienceCategoryId));
     activeExperienceGame=0;
     selectedExperienceProduct=null;
     experienceFieldValues={};
+    experienceForceLandscape=false;
     const overlay=$("#xExperience");
+    overlay?.classList.remove("force-landscape");
     overlay?.classList.add("open");
     overlay?.setAttribute("aria-hidden","false");
     document.body.classList.add("experience-open");
     renderExperienceWheel(true);
     updateCartBadges();
+    syncExperienceOrientation();
+    tryLandscapeLock();
     scheduleDeviceScale();
   }
 
   function closeExperience(goHome=false){
     setCartDrawer(false);
     const overlay=$("#xExperience");
-    overlay?.classList.remove("open");
+    overlay?.classList.remove("open","force-landscape");
     overlay?.setAttribute("aria-hidden","true");
+    setOrientationGate(false);
+    experienceForceLandscape=false;
+    unlockExperienceOrientation();
     document.body.classList.remove("experience-open");
     if (goHome) setView("inicio");
     scheduleDeviceScale();
@@ -624,6 +705,7 @@
     const gameCard=event.target.closest("[data-x-game-index]");
     if (gameCard) { setExperienceGame(Number(gameCard.dataset.xGameIndex)); return; }
 
+    if (event.target.closest("[data-x-force-landscape]")) { forceLandscapeInsidePortrait(); return; }
     if (event.target.closest("[data-x-back]")) { closeExperience(false); return; }
     if (event.target.closest("[data-x-favorite]")) { toggleExperienceFavorite(); return; }
     if (event.target.closest("[data-x-cart]")) { setCartDrawer(true); return; }
@@ -839,6 +921,7 @@
     resizeTimer = setTimeout(() => {
       lastScaleKey="";
       scheduleDeviceScale();
+      if (document.body.classList.contains("experience-open")) syncExperienceOrientation();
     }, 100);
   }, {passive:true});
 
@@ -921,6 +1004,11 @@
 
   const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
   setDevice(initialDevice);
+  window.addEventListener("orientationchange", () => {
+    if (!document.body.classList.contains("experience-open")) return;
+    setTimeout(syncExperienceOrientation,120);
+  }, {passive:true});
+
   const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(scheduleDeviceScale) : null;
   if (frameObserver) frameObserver.observe($("#deviceFrame"));
   render();
