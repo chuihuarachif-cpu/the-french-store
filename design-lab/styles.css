@@ -1140,525 +1140,72 @@ html.motion-off .loading-center-brand{
 }
 
 
-/* r240 · XArena-style finite product selector */
-.category-enter-dock{
-  position:absolute;
-  z-index:8;
-  left:50%;
-  bottom:43px;
-  transform:translateX(-50%)
-}
-.category-enter-button{
-  min-width:178px;
-  border:1px solid rgba(92,232,255,.48);
-  border-radius:12px;
-  padding:10px 18px;
-  background:linear-gradient(100deg,rgba(14,130,255,.88),rgba(21,229,255,.92));
-  color:#021019;
-  font-weight:950;
-  letter-spacing:.02em;
-  cursor:pointer;
-  box-shadow:0 0 24px rgba(33,210,255,.18);
-  transition:transform .18s ease,filter .18s ease
-}
+/* r241 · circular product wheel + store-style packages */
+.category-enter-dock{position:absolute;z-index:8;left:50%;bottom:43px;transform:translateX(-50%)}
+.category-enter-button{min-width:178px;border:1px solid rgba(92,232,255,.48);border-radius:12px;padding:10px 18px;background:linear-gradient(100deg,rgba(14,130,255,.88),rgba(21,229,255,.92));color:#021019;font-weight:950;letter-spacing:.02em;cursor:pointer;box-shadow:0 0 24px rgba(33,210,255,.18);transition:transform .18s ease,filter .18s ease}
 .category-enter-button:hover{transform:translateY(-1px);filter:brightness(1.06)}
 .category-arena-status{bottom:10px!important}
 
-.x-experience{
-  position:absolute;
-  inset:0;
-  z-index:34;
-  overflow:hidden;
-  background:#030914;
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-  transition:opacity .24s ease,visibility 0s linear .24s;
-  isolation:isolate
-}
-.x-experience.open{
-  opacity:1;
-  visibility:visible;
-  pointer-events:auto;
-  transition-delay:0s
-}
-.x-experience-bg{
-  position:absolute;
-  inset:0;
-  z-index:0;
-  background:
-    radial-gradient(ellipse at 54% 44%,rgba(17,199,255,.16),transparent 33%),
-    radial-gradient(ellipse at 50% 100%,rgba(33,98,255,.18),transparent 38%),
-    linear-gradient(180deg,#071225,#020817 72%,#020612);
-  pointer-events:none
-}
-.x-experience-bg:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  opacity:.2;
-  background:
-    linear-gradient(130deg,transparent 0 43%,rgba(44,220,255,.18) 43.3% 43.6%,transparent 44% 100%),
-    linear-gradient(50deg,transparent 0 58%,rgba(100,96,255,.13) 58.3% 58.6%,transparent 59%);
-  background-size:180px 180px
-}
-.x-experience-shell{
-  position:relative;
-  z-index:2;
-  width:100%;
-  height:100%;
-  min-height:var(--device-height,900px);
-  display:grid;
-  grid-template-rows:auto 1fr auto;
-  padding:clamp(14px,2cqw,26px) clamp(14px,2.2cqw,30px) clamp(12px,1.8cqw,22px)
-}
-.x-experience-topbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  min-height:50px
-}
-.x-experience-title{display:grid;gap:3px}
-.x-experience-title span{
-  color:#65eaff;
-  font-size:.62rem;
-  font-weight:950;
-  letter-spacing:.16em
-}
-.x-experience-title b{
-  color:#eefcff;
-  font-size:clamp(.88rem,1.4cqw,1.1rem)
-}
-.x-experience-actions{display:flex;align-items:center;gap:7px}
-.x-experience-actions button{
-  min-width:38px;
-  height:38px;
-  border:1px solid rgba(113,226,255,.22);
-  border-radius:11px;
-  background:rgba(6,22,38,.9);
-  color:#dcfaff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  cursor:pointer;
-  font-weight:900
-}
-.x-experience-actions button.active{
-  color:#ff6d9b;
-  border-color:rgba(255,109,155,.48);
-  background:rgba(92,20,47,.38)
-}
-.x-experience-actions span{
-  font-size:.66rem;
-  color:#73edff
-}
-.x-experience-grid{
-  min-height:0;
-  display:grid;
-  grid-template-columns:minmax(150px,20%) minmax(260px,42%) minmax(300px,38%);
-  gap:clamp(10px,1.6cqw,20px);
-  align-items:stretch
-}
-.x-wheel-panel{
-  min-width:0;
-  display:grid;
-  grid-template-rows:34px 1fr 34px;
-  gap:6px;
-  align-items:center
-}
-.x-wheel-arrow{
-  justify-self:center;
-  width:42px;
-  height:32px;
-  border:1px solid rgba(90,225,255,.18);
-  border-radius:10px;
-  background:rgba(6,20,35,.7);
-  color:#91efff;
-  cursor:pointer;
-  font-size:1.25rem
-}
-.x-wheel-arrow:disabled{opacity:.22;cursor:default}
-.x-game-wheel{
-  position:relative;
-  height:100%;
-  min-height:320px;
-  contain:layout paint style;
-  touch-action:pan-x
-}
-.x-game-card{
-  --wheel-y:0px;
-  --wheel-scale:.78;
-  --wheel-opacity:0;
-  position:absolute;
-  top:50%;
-  left:4%;
-  width:92%;
-  min-height:64px;
-  padding:8px 10px;
-  border:1px solid rgba(101,224,255,.12);
-  border-radius:13px;
-  background:linear-gradient(90deg,rgba(9,28,47,.96),rgba(6,18,34,.9));
-  color:#dff9ff;
-  display:grid;
-  grid-template-columns:46px 1fr;
-  grid-template-rows:auto auto;
-  column-gap:9px;
-  text-align:left;
-  transform:translate3d(0,calc(-50% + var(--wheel-y)),0) scale(var(--wheel-scale));
-  opacity:var(--wheel-opacity);
-  transition:transform .24s cubic-bezier(.22,.72,.2,1),opacity .18s linear,border-color .18s linear;
-  pointer-events:none;
-  cursor:pointer
-}
-.x-game-card[data-x-slot="-2"]{--wheel-y:-148px;--wheel-scale:.72;--wheel-opacity:.36}
-.x-game-card[data-x-slot="-1"]{--wheel-y:-76px;--wheel-scale:.86;--wheel-opacity:.72;pointer-events:auto}
-.x-game-card[data-x-slot="0"]{--wheel-y:0px;--wheel-scale:1;--wheel-opacity:1;pointer-events:auto;border-color:rgba(80,232,255,.62);background:linear-gradient(90deg,rgba(17,74,119,.96),rgba(7,31,57,.95));box-shadow:0 0 20px rgba(35,202,255,.1)}
-.x-game-card[data-x-slot="1"]{--wheel-y:76px;--wheel-scale:.86;--wheel-opacity:.72;pointer-events:auto}
-.x-game-card[data-x-slot="2"]{--wheel-y:148px;--wheel-scale:.72;--wheel-opacity:.36}
-.x-game-card.x-hidden{--wheel-opacity:0!important}
-.x-game-card.x-instant{transition:none!important}
-.x-game-thumb-shell{
-  grid-row:1/3;
-  position:relative;
-  width:44px;
-  height:44px;
-  border-radius:11px;
-  background:rgba(91,225,255,.08);
-  display:grid;
-  place-items:center;
-  overflow:hidden
-}
-.x-game-thumb{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  opacity:0
-}
-.x-game-thumb.loaded:not(.failed){opacity:1}
-.x-game-thumb-shell i{font-style:normal;color:#73eaff;font-size:.7rem;font-weight:950}
-.x-game-name{
-  align-self:end;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  font-size:.78rem;
-  font-weight:900
-}
-.x-game-card small{color:#7f9eae;font-size:.6rem;margin-top:2px}
+.x-experience{position:absolute;inset:0;z-index:34;overflow:hidden;background:#030914;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility 0s linear .22s;isolation:isolate}
+.x-experience.open{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+.x-experience-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 60% 40%,rgba(17,199,255,.13),transparent 36%),radial-gradient(ellipse at 50% 100%,rgba(33,98,255,.15),transparent 40%),linear-gradient(180deg,#071225,#020817 72%,#020612);pointer-events:none}
+.x-experience-shell{position:relative;z-index:2;width:100%;height:100%;min-height:var(--device-height,900px);display:grid;grid-template-rows:auto 1fr;padding:clamp(12px,1.8cqw,24px);gap:8px}
+.x-experience-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:48px}
+.x-experience-title{display:grid;gap:3px}.x-experience-title span{color:#65eaff;font-size:.62rem;font-weight:950;letter-spacing:.16em}.x-experience-title b{color:#eefcff;font-size:clamp(.86rem,1.35cqw,1.08rem)}
+.x-experience-actions{display:flex;align-items:center;gap:7px}.x-experience-actions button{min-width:38px;height:38px;border:1px solid rgba(113,226,255,.22);border-radius:11px;background:rgba(6,22,38,.9);color:#dcfaff;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-weight:900}.x-experience-actions button.active{color:#ff6d9b;border-color:rgba(255,109,155,.48);background:rgba(92,20,47,.38)}.x-experience-actions span{font-size:.66rem;color:#73edff}
 
-.x-showcase{
-  position:relative;
-  overflow:hidden;
-  min-width:0;
-  border:1px solid rgba(88,221,255,.14);
-  border-radius:24px;
-  display:grid;
-  place-items:center;
-  align-content:center;
-  padding:24px 20px;
-  background:
-    linear-gradient(180deg,rgba(10,35,58,.44),rgba(3,13,25,.78)),
-    radial-gradient(circle at 50% 44%,rgba(39,217,255,.16),transparent 36%)
-}
-.x-showcase:after{
-  content:"";
-  position:absolute;
-  left:12%;
-  right:12%;
-  bottom:12%;
-  height:2px;
-  background:linear-gradient(90deg,transparent,#55eaff,transparent);
-  box-shadow:0 0 25px rgba(55,220,255,.38)
-}
-.x-showcase-aura{
-  position:absolute;
-  width:min(68%,390px);
-  aspect-ratio:1;
-  border-radius:50%;
-  border:1px solid rgba(92,230,255,.11);
-  box-shadow:inset 0 0 60px rgba(35,192,255,.07)
-}
-.x-showcase-icon{
-  position:relative;
-  z-index:2;
-  width:clamp(112px,15cqw,190px);
-  aspect-ratio:1;
-  border-radius:28%;
-  display:grid;
-  place-items:center;
-  overflow:hidden;
-  background:linear-gradient(145deg,rgba(22,61,91,.92),rgba(7,22,39,.95));
-  border:1px solid rgba(111,231,255,.28);
-  box-shadow:0 18px 40px rgba(0,0,0,.34)
-}
-.x-showcase-img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  opacity:0
-}
-.x-showcase-img.loaded:not(.failed){opacity:1}
-.x-showcase-icon span{color:#73eaff;font-size:2rem;font-weight:950}
-.x-showcase-copy{
-  position:relative;
-  z-index:2;
-  text-align:center;
-  margin-top:18px;
-  display:grid;
-  gap:5px
-}
-.x-showcase-copy>span{
-  color:#6eeaff;
-  font-size:.62rem;
-  letter-spacing:.16em;
-  font-weight:950
-}
-.x-showcase-copy h2{
-  margin:0;
-  font-size:clamp(1.45rem,2.6cqw,2.45rem);
-  line-height:1;
-  letter-spacing:-.04em
-}
-.x-showcase-copy p{margin:0;color:#8ca7b5;font-size:.72rem}
+.x-experience-grid{min-height:0;display:grid;grid-template-columns:minmax(145px,20%) minmax(0,80%);gap:clamp(9px,1.35cqw,18px);align-items:stretch}
+.x-wheel-panel{min-width:0;display:grid;grid-template-rows:34px 1fr 34px;gap:6px;align-items:center}
+.x-wheel-arrow{justify-self:center;width:42px;height:32px;border:1px solid rgba(90,225,255,.18);border-radius:10px;background:rgba(6,20,35,.7);color:#91efff;cursor:pointer;font-size:1.25rem}
+.x-game-wheel{position:relative;height:100%;min-height:320px;contain:layout paint style;touch-action:pan-x}
+.x-game-card{--wheel-y:0px;--wheel-scale:.78;--wheel-opacity:0;position:absolute;top:50%;left:4%;width:92%;min-height:64px;padding:8px 10px;border:1px solid rgba(101,224,255,.12);border-radius:13px;background:linear-gradient(90deg,rgba(9,28,47,.96),rgba(6,18,34,.9));color:#dff9ff;display:grid;grid-template-columns:46px 1fr;grid-template-rows:auto auto;column-gap:9px;text-align:left;transform:translate3d(0,calc(-50% + var(--wheel-y)),0) scale(var(--wheel-scale));opacity:var(--wheel-opacity);transition:transform .22s cubic-bezier(.22,.72,.2,1),opacity .16s linear,border-color .16s linear;pointer-events:none;cursor:pointer;backface-visibility:hidden}
+.x-game-card[data-x-slot="-2"]{--wheel-y:-148px;--wheel-scale:.72;--wheel-opacity:.36}.x-game-card[data-x-slot="-1"]{--wheel-y:-76px;--wheel-scale:.86;--wheel-opacity:.72;pointer-events:auto}.x-game-card[data-x-slot="0"]{--wheel-y:0px;--wheel-scale:1;--wheel-opacity:1;pointer-events:auto;border-color:rgba(80,232,255,.62);background:linear-gradient(90deg,rgba(17,74,119,.96),rgba(7,31,57,.95))}.x-game-card[data-x-slot="1"]{--wheel-y:76px;--wheel-scale:.86;--wheel-opacity:.72;pointer-events:auto}.x-game-card[data-x-slot="2"]{--wheel-y:148px;--wheel-scale:.72;--wheel-opacity:.36}
+.x-game-card.x-hidden{--wheel-opacity:0!important;transition:none!important}.x-game-card.x-instant{transition:none!important}.x-game-card:not(.x-hidden){will-change:transform,opacity}
+.x-game-thumb-shell{grid-row:1/3;position:relative;width:44px;height:44px;border-radius:11px;background:rgba(91,225,255,.08);display:grid;place-items:center;overflow:hidden}.x-game-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}.x-game-thumb.loaded:not(.failed){opacity:1}.x-game-thumb-shell i{font-style:normal;color:#73eaff;font-size:.7rem;font-weight:950}.x-game-name{align-self:end;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;font-weight:900}.x-game-card small{color:#7f9eae;font-size:.6rem;margin-top:2px}
 
-.x-config-panel{
-  min-width:0;
-  border:1px solid rgba(99,224,255,.14);
-  border-radius:22px;
-  padding:16px;
-  display:grid;
-  grid-template-rows:auto auto minmax(0,1fr) auto auto;
-  gap:10px;
-  background:linear-gradient(180deg,rgba(7,25,42,.93),rgba(4,14,26,.96));
-  overflow:hidden
-}
-.x-config-head{display:grid;gap:4px}
-.x-config-head span{color:#61e9ff;font-size:.58rem;font-weight:950;letter-spacing:.14em}
-.x-config-head b{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.x-input-fields{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:7px
-}
-.x-input-field{display:grid;gap:4px}
-.x-input-field span{color:#8ea8b6;font-size:.61rem;font-weight:800}
-.x-input-field input,.x-input-field select{
-  width:100%;
-  min-width:0;
-  border:1px solid rgba(112,222,255,.18);
-  border-radius:9px;
-  background:rgba(2,11,21,.72);
-  color:#eafcff;
-  padding:8px 9px;
-  font-size:.72rem;
-  outline:none
-}
-.x-input-field input:focus,.x-input-field select:focus{border-color:rgba(83,231,255,.6)}
-.x-input-field .needs-value{border-color:#ff7d9f!important}
-.x-no-inputs{
-  padding:9px 10px;
-  border:1px dashed rgba(112,222,255,.15);
-  border-radius:9px;
-  color:#829ca9;
-  font-size:.66rem
-}
-.x-package-list{
-  min-height:0;
-  overflow:auto;
-  display:grid;
-  align-content:start;
-  gap:7px;
-  padding-right:2px;
-  scrollbar-width:thin
-}
-.x-package-card{
-  border:1px solid rgba(104,221,255,.13);
-  border-radius:11px;
-  overflow:hidden;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  background:rgba(4,16,29,.78)
-}
-.x-package-card.active{border-color:rgba(78,234,255,.65);background:rgba(12,54,81,.76)}
-.x-package-main{
-  min-width:0;
-  border:0;
-  background:transparent;
-  color:#e8faff;
-  padding:9px 10px;
-  text-align:left;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  gap:3px 8px;
-  cursor:pointer
-}
-.x-package-main span{font-size:.72rem;font-weight:850;overflow:hidden;text-overflow:ellipsis}
-.x-package-main small{grid-column:1/3;color:#7f99a8;font-size:.57rem;line-height:1.25}
-.x-package-main b{color:#6eeaff;font-size:.7rem;white-space:nowrap}
-.x-package-cart{
-  border:0;
-  border-left:1px solid rgba(104,221,255,.11);
-  background:rgba(55,207,255,.06);
-  color:#88efff;
-  padding:7px 9px;
-  font-size:.6rem;
-  font-weight:900;
-  cursor:pointer
-}
-.x-buy-button{
-  min-height:43px;
-  border:1px solid rgba(75,232,255,.48);
-  border-radius:11px;
-  background:linear-gradient(100deg,#1695ff,#22e7ff);
-  color:#031019;
-  font-weight:950;
-  font-size:.9rem;
-  cursor:pointer
-}
-.x-buy-button:disabled{filter:grayscale(.75);opacity:.38;cursor:not-allowed}
-.x-config-note{color:#6f8896;text-align:center;font-size:.56rem}
+.x-product-stage{position:relative;min-width:0;min-height:0;overflow:hidden;border:1px solid rgba(86,220,255,.15);border-radius:24px;padding:14px;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:10px;background:radial-gradient(circle at 48% 45%,rgba(31,204,255,.075),transparent 34%),linear-gradient(180deg,rgba(7,27,45,.94),rgba(3,13,24,.97))}
+.x-product-stage:before{content:"💎 French Store 💎";position:absolute;z-index:0;left:50%;top:52%;transform:translate3d(-50%,-50%,0) rotate(-7deg);width:max-content;max-width:92%;color:#8cefff;font-size:clamp(2.4rem,6cqw,6.5rem);line-height:1;font-weight:950;letter-spacing:-.05em;white-space:nowrap;opacity:.035;text-shadow:0 0 30px rgba(45,216,255,.45);pointer-events:none}
+.x-product-stage>*{position:relative;z-index:1}
+.x-stage-gamehead{display:grid;grid-template-columns:54px minmax(0,1fr) minmax(150px,34%);gap:10px;align-items:center;padding-bottom:9px;border-bottom:1px solid rgba(107,221,255,.11)}
+.x-stage-game-icon{width:52px;height:52px;border-radius:14px;overflow:hidden;display:grid;place-items:center;position:relative;background:linear-gradient(145deg,rgba(22,61,91,.92),rgba(7,22,39,.95));border:1px solid rgba(111,231,255,.22)}
+.x-showcase-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}.x-showcase-img.loaded:not(.failed){opacity:1}.x-stage-game-icon span{color:#73eaff;font-size:.82rem;font-weight:950}
+.x-stage-gamecopy{min-width:0;display:grid;gap:2px}.x-stage-gamecopy>span{color:#6eeaff;font-size:.54rem;letter-spacing:.14em;font-weight:950}.x-stage-gamecopy h2{margin:0;font-size:clamp(1rem,1.9cqw,1.6rem);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.x-stage-gamecopy p{margin:0;color:#829fac;font-size:.62rem}
+.x-config-selection{min-width:0;text-align:right;display:grid;gap:2px}.x-config-selection small{color:#61e9ff;font-size:.5rem;font-weight:950;letter-spacing:.14em}.x-config-selection b{font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-.x-experience-brand{
-  justify-self:center;
-  margin-top:8px;
-  min-width:220px;
-  padding:7px 24px;
-  border:1px solid rgba(93,227,255,.18);
-  border-radius:14px 14px 4px 4px;
-  background:rgba(6,23,39,.88);
-  color:#eafcff;
-  text-align:center;
-  font-size:.78rem;
-  font-weight:950;
-  letter-spacing:.02em
-}
+.x-input-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.x-input-field{display:grid;gap:4px}.x-input-field span{color:#8ea8b6;font-size:.61rem;font-weight:800}.x-input-field input,.x-input-field select{width:100%;min-width:0;border:1px solid rgba(112,222,255,.18);border-radius:9px;background:rgba(2,11,21,.78);color:#eafcff;padding:8px 9px;font-size:.72rem;outline:none}.x-input-field input:focus,.x-input-field select:focus{border-color:rgba(83,231,255,.6)}.x-input-field .needs-value{border-color:#ff7d9f!important}.x-no-inputs{grid-column:1/-1;padding:8px 10px;border:1px dashed rgba(112,222,255,.14);border-radius:9px;color:#829ca9;font-size:.63rem}
 
-.x-cart-backdrop{
-  position:absolute;
-  inset:0;
-  z-index:8;
-  background:rgba(0,5,12,.56);
-  opacity:0;
-  visibility:hidden;
-  transition:opacity .18s ease,visibility 0s linear .18s
-}
-.x-cart-backdrop.open{opacity:1;visibility:visible;transition-delay:0s}
-.x-cart-drawer{
-  position:absolute;
-  z-index:9;
-  top:0;
-  right:0;
-  bottom:0;
-  width:min(390px,88%);
-  padding:20px 16px;
-  border-left:1px solid rgba(92,225,255,.2);
-  background:linear-gradient(180deg,#071827,#04101c);
-  transform:translate3d(102%,0,0);
-  transition:transform .24s cubic-bezier(.22,.72,.2,1);
-  display:grid;
-  grid-template-rows:auto 1fr auto auto;
-  gap:12px
-}
-.x-cart-drawer.open{transform:none}
-.x-cart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.x-cart-head div{display:grid}.x-cart-head span{color:#62eaff;font-size:.56rem;letter-spacing:.15em;font-weight:950}.x-cart-head b{font-size:1.2rem}
-.x-cart-head button{width:36px;height:36px;border:1px solid rgba(103,222,255,.16);border-radius:10px;background:rgba(255,255,255,.03);color:#fff;font-size:1.2rem}
-.x-cart-items{min-height:0;overflow:auto;display:grid;align-content:start;gap:7px}
-.x-cart-item{
-  display:grid;
-  grid-template-columns:1fr auto auto;
-  gap:8px;
-  align-items:center;
-  padding:10px;
-  border:1px solid rgba(100,220,255,.12);
-  border-radius:11px;
-  background:rgba(7,25,40,.68)
-}
-.x-cart-item div{display:grid}.x-cart-item b{font-size:.72rem}.x-cart-item span{font-size:.62rem;color:#849eac;margin-top:2px}
-.x-cart-item strong{color:#73eaff;font-size:.68rem}
-.x-cart-item button{border:0;background:transparent;color:#ff89a8;font-size:1rem}
-.x-cart-empty{display:grid;place-items:center;align-content:center;text-align:center;color:#7893a1;min-height:180px;gap:4px}.x-cart-empty b{color:#e8faff}
-.x-cart-total{display:flex;justify-content:space-between;color:#91aab6}.x-cart-total b{color:#76efff}
-.x-cart-checkout{min-height:44px;border:1px solid rgba(76,232,255,.36);border-radius:11px;background:rgba(34,203,255,.12);color:#dffcff;font-weight:900}
+.x-package-list{min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:9px;padding:1px 3px 2px 1px;scrollbar-width:thin}
+.x-package-card{min-width:0;border:1px solid rgba(72,190,229,.22);border-radius:16px;overflow:hidden;display:grid;grid-template-rows:minmax(0,1fr) auto;background:linear-gradient(180deg,rgba(7,28,44,.86),rgba(5,21,35,.9));transition:border-color .16s ease,background .16s ease,transform .16s ease}
+.x-package-card.active{border-color:rgba(72,224,255,.74);background:linear-gradient(180deg,rgba(13,58,82,.92),rgba(6,31,48,.94));box-shadow:0 0 0 1px rgba(72,224,255,.09)}
+.x-package-select{min-width:0;border:0;background:transparent;color:#eefcff;padding:11px 12px 9px;text-align:left;display:grid;grid-template-rows:auto auto 1fr;gap:5px;cursor:pointer}.x-package-name{font-size:.78rem;line-height:1.16;font-weight:950;overflow-wrap:anywhere}.x-package-availability{color:#819aa8;font-size:.59rem}.x-package-price{align-self:end;color:#69eaff;font-size:1rem;line-height:1;font-weight:950;padding-top:6px}.x-package-card.active .x-package-name:before{content:"✓ ";color:#63efff}
+.x-package-cart{min-height:34px;border:0;border-top:1px solid rgba(92,214,247,.13);background:rgba(45,183,225,.08);color:#b7f6ff;padding:7px 8px;font-size:.61rem;font-weight:900;cursor:pointer}.x-package-cart:hover{background:rgba(45,183,225,.14)}
 
-html[data-device="mobile"] .category-enter-dock{bottom:41px}
-html[data-device="mobile"] .category-enter-button{min-width:150px;padding:9px 12px;font-size:.72rem}
-html[data-device="mobile"] .x-experience-shell{padding:10px 9px 9px}
-html[data-device="mobile"] .x-experience-grid{
-  grid-template-columns:76px minmax(0,1fr);
-  grid-template-rows:220px minmax(0,1fr);
-  grid-template-areas:"wheel show" "wheel config";
-  gap:8px
-}
-html[data-device="mobile"] .x-wheel-panel{grid-area:wheel}
-html[data-device="mobile"] .x-showcase{grid-area:show;border-radius:16px;padding:12px}
-html[data-device="mobile"] .x-config-panel{grid-area:config;border-radius:15px;padding:10px;gap:7px}
-html[data-device="mobile"] .x-game-wheel{min-height:0}
-html[data-device="mobile"] .x-game-card{
-  left:0;
-  width:100%;
-  min-height:52px;
-  padding:6px;
-  grid-template-columns:34px 1fr;
-  column-gap:5px
-}
-html[data-device="mobile"] .x-game-thumb-shell{width:32px;height:32px;border-radius:8px}
-html[data-device="mobile"] .x-game-name{font-size:.58rem}
-html[data-device="mobile"] .x-game-card small{font-size:.48rem}
-html[data-device="mobile"] .x-game-card[data-x-slot="-2"]{--wheel-y:-106px}
-html[data-device="mobile"] .x-game-card[data-x-slot="-1"]{--wheel-y:-55px}
-html[data-device="mobile"] .x-game-card[data-x-slot="1"]{--wheel-y:55px}
-html[data-device="mobile"] .x-game-card[data-x-slot="2"]{--wheel-y:106px}
-html[data-device="mobile"] .x-wheel-arrow{width:34px;height:26px}
-html[data-device="mobile"] .x-showcase-icon{width:92px;border-radius:22px}
-html[data-device="mobile"] .x-showcase-copy{margin-top:8px}
-html[data-device="mobile"] .x-showcase-copy h2{font-size:1.22rem}
-html[data-device="mobile"] .x-showcase-copy p{font-size:.56rem}
-html[data-device="mobile"] .x-input-fields{grid-template-columns:1fr}
-html[data-device="mobile"] .x-package-main{padding:7px 8px}
-html[data-device="mobile"] .x-package-cart{padding:6px;font-size:.52rem}
-html[data-device="mobile"] .x-experience-brand{min-width:170px;padding:5px 15px;font-size:.65rem;margin-top:5px}
-html[data-device="mobile"] .x-experience-title b{font-size:.72rem}
-html[data-device="mobile"] .x-experience-actions{gap:4px}
-html[data-device="mobile"] .x-experience-actions button{min-width:31px;height:31px;border-radius:9px;font-size:.72rem}
+.x-buy-dock{display:grid;grid-template-columns:minmax(150px,260px) 1fr;gap:10px;align-items:center;padding-top:1px}.x-buy-button{min-height:42px;border:1px solid rgba(75,232,255,.48);border-radius:11px;background:linear-gradient(100deg,#1695ff,#22e7ff);color:#031019;font-weight:950;font-size:.88rem;cursor:pointer}.x-buy-button:disabled{filter:grayscale(.78);opacity:.35;cursor:not-allowed}.x-config-note{color:#6f8896;font-size:.56rem}
 
-html[data-device="mobile-landscape"] .x-experience-shell{padding:8px 11px 7px}
-html[data-device="mobile-landscape"] .x-experience-topbar{min-height:38px}
-html[data-device="mobile-landscape"] .x-experience-grid{grid-template-columns:19% 42% 39%;gap:8px}
-html[data-device="mobile-landscape"] .x-game-wheel{min-height:230px}
-html[data-device="mobile-landscape"] .x-game-card[data-x-slot="-2"]{--wheel-y:-98px}
-html[data-device="mobile-landscape"] .x-game-card[data-x-slot="-1"]{--wheel-y:-51px}
-html[data-device="mobile-landscape"] .x-game-card[data-x-slot="1"]{--wheel-y:51px}
-html[data-device="mobile-landscape"] .x-game-card[data-x-slot="2"]{--wheel-y:98px}
-html[data-device="mobile-landscape"] .x-game-card{min-height:44px;padding:5px;grid-template-columns:32px 1fr}
-html[data-device="mobile-landscape"] .x-game-thumb-shell{width:30px;height:30px}
-html[data-device="mobile-landscape"] .x-showcase{padding:10px;border-radius:14px}
-html[data-device="mobile-landscape"] .x-showcase-icon{width:92px}
-html[data-device="mobile-landscape"] .x-showcase-copy{margin-top:8px}
-html[data-device="mobile-landscape"] .x-showcase-copy h2{font-size:1.15rem}
-html[data-device="mobile-landscape"] .x-config-panel{padding:9px;border-radius:14px;gap:6px}
-html[data-device="mobile-landscape"] .x-input-field input,
-html[data-device="mobile-landscape"] .x-input-field select{padding:5px 6px;font-size:.6rem}
-html[data-device="mobile-landscape"] .x-package-main{padding:5px 6px}
-html[data-device="mobile-landscape"] .x-package-cart{padding:5px;font-size:.5rem}
-html[data-device="mobile-landscape"] .x-buy-button{min-height:32px;font-size:.72rem}
-html[data-device="mobile-landscape"] .x-config-note{display:none}
-html[data-device="mobile-landscape"] .x-experience-brand{margin-top:3px;padding:3px 14px;font-size:.58rem}
+.x-cart-backdrop{position:absolute;inset:0;z-index:8;background:rgba(0,5,12,.56);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility 0s linear .18s}.x-cart-backdrop.open{opacity:1;visibility:visible;transition-delay:0s}
+.x-cart-drawer{position:absolute;z-index:9;top:0;right:0;bottom:0;width:min(390px,88%);padding:20px 16px;border-left:1px solid rgba(92,225,255,.2);background:linear-gradient(180deg,#071827,#04101c);transform:translate3d(102%,0,0);transition:transform .22s cubic-bezier(.22,.72,.2,1);display:grid;grid-template-rows:auto 1fr auto auto;gap:12px}.x-cart-drawer.open{transform:none}
+.x-cart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.x-cart-head div{display:grid}.x-cart-head span{color:#62eaff;font-size:.56rem;letter-spacing:.15em;font-weight:950}.x-cart-head b{font-size:1.2rem}.x-cart-head button{width:36px;height:36px;border:1px solid rgba(103,222,255,.16);border-radius:10px;background:rgba(255,255,255,.03);color:#fff;font-size:1.2rem}
+.x-cart-items{min-height:0;overflow:auto;display:grid;align-content:start;gap:7px}.x-cart-item{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:10px;border:1px solid rgba(100,220,255,.12);border-radius:11px;background:rgba(7,25,40,.68)}.x-cart-item div{display:grid}.x-cart-item b{font-size:.72rem}.x-cart-item span{font-size:.62rem;color:#849eac;margin-top:2px}.x-cart-item strong{color:#73eaff;font-size:.68rem}.x-cart-item button{border:0;background:transparent;color:#ff89a8;font-size:1rem}.x-cart-empty{display:grid;place-items:center;align-content:center;text-align:center;color:#7893a1;min-height:180px;gap:4px}.x-cart-empty b{color:#e8faff}.x-cart-total{display:flex;justify-content:space-between;color:#91aab6}.x-cart-total b{color:#76efff}.x-cart-checkout{min-height:44px;border:1px solid rgba(76,232,255,.36);border-radius:11px;background:rgba(34,203,255,.12);color:#dffcff;font-weight:900}
 
-@media (max-width:700px){
-  .x-experience-bg:before{display:none}
-  .x-showcase,.x-config-panel,.x-game-card{box-shadow:none!important}
-  .x-game-card{will-change:transform,opacity}
-}
-html.motion-off .x-game-card,
-html.motion-off .x-cart-drawer,
-html.motion-off .x-experience{transition:none!important}
-@media (prefers-reduced-motion:reduce){
-  .x-game-card,.x-cart-drawer,.x-experience{transition:none!important}
-}
+html[data-device="mobile"] .category-enter-dock{bottom:41px}html[data-device="mobile"] .category-enter-button{min-width:150px;padding:9px 12px;font-size:.72rem}
+html[data-device="mobile"] .x-experience-shell{padding:9px 8px 8px}html[data-device="mobile"] .x-experience-topbar{min-height:39px}html[data-device="mobile"] .x-experience-grid{grid-template-columns:72px minmax(0,1fr);gap:7px}
+html[data-device="mobile"] .x-game-wheel{min-height:0}html[data-device="mobile"] .x-game-card{left:0;width:100%;min-height:50px;padding:6px;grid-template-columns:32px 1fr;column-gap:5px}html[data-device="mobile"] .x-game-thumb-shell{width:30px;height:30px;border-radius:8px}html[data-device="mobile"] .x-game-name{font-size:.55rem}html[data-device="mobile"] .x-game-card small{font-size:.46rem}
+html[data-device="mobile"] .x-game-card[data-x-slot="-2"]{--wheel-y:-102px}html[data-device="mobile"] .x-game-card[data-x-slot="-1"]{--wheel-y:-53px}html[data-device="mobile"] .x-game-card[data-x-slot="1"]{--wheel-y:53px}html[data-device="mobile"] .x-game-card[data-x-slot="2"]{--wheel-y:102px}html[data-device="mobile"] .x-wheel-arrow{width:32px;height:25px}
+html[data-device="mobile"] .x-product-stage{border-radius:15px;padding:9px;gap:7px}html[data-device="mobile"] .x-product-stage:before{font-size:2.35rem}html[data-device="mobile"] .x-stage-gamehead{grid-template-columns:38px minmax(0,1fr);gap:7px}html[data-device="mobile"] .x-stage-game-icon{width:36px;height:36px;border-radius:9px}html[data-device="mobile"] .x-stage-gamecopy h2{font-size:.9rem}html[data-device="mobile"] .x-stage-gamecopy p{font-size:.5rem}
+html[data-device="mobile"] .x-config-selection{grid-column:1/-1;text-align:left;display:flex;gap:5px;align-items:center}html[data-device="mobile"] .x-config-selection b{font-size:.58rem}
+html[data-device="mobile"] .x-input-fields{grid-template-columns:1fr}html[data-device="mobile"] .x-input-field input,html[data-device="mobile"] .x-input-field select{padding:6px 7px;font-size:.62rem}
+html[data-device="mobile"] .x-package-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}html[data-device="mobile"] .x-package-card{border-radius:11px}html[data-device="mobile"] .x-package-select{padding:8px 7px 7px;gap:3px}html[data-device="mobile"] .x-package-name{font-size:.61rem}html[data-device="mobile"] .x-package-availability{font-size:.49rem}html[data-device="mobile"] .x-package-price{font-size:.78rem;padding-top:4px}html[data-device="mobile"] .x-package-cart{min-height:29px;padding:5px;font-size:.49rem}
+html[data-device="mobile"] .x-buy-dock{grid-template-columns:1fr;gap:4px}html[data-device="mobile"] .x-buy-button{min-height:34px;font-size:.72rem}html[data-device="mobile"] .x-config-note{text-align:center;font-size:.48rem}
+html[data-device="mobile"] .x-experience-title b{font-size:.7rem}html[data-device="mobile"] .x-experience-actions{gap:4px}html[data-device="mobile"] .x-experience-actions button{min-width:31px;height:31px;border-radius:9px;font-size:.72rem}
+
+html[data-device="mobile-landscape"] .x-experience-shell{padding:7px 10px}html[data-device="mobile-landscape"] .x-experience-topbar{min-height:36px}html[data-device="mobile-landscape"] .x-experience-grid{grid-template-columns:18% minmax(0,82%);gap:7px}
+html[data-device="mobile-landscape"] .x-game-wheel{min-height:210px}html[data-device="mobile-landscape"] .x-game-card[data-x-slot="-2"]{--wheel-y:-92px}html[data-device="mobile-landscape"] .x-game-card[data-x-slot="-1"]{--wheel-y:-48px}html[data-device="mobile-landscape"] .x-game-card[data-x-slot="1"]{--wheel-y:48px}html[data-device="mobile-landscape"] .x-game-card[data-x-slot="2"]{--wheel-y:92px}
+html[data-device="mobile-landscape"] .x-game-card{min-height:42px;padding:4px 5px;grid-template-columns:30px 1fr}html[data-device="mobile-landscape"] .x-game-thumb-shell{width:28px;height:28px}
+html[data-device="mobile-landscape"] .x-product-stage{padding:8px;gap:6px;border-radius:13px}html[data-device="mobile-landscape"] .x-product-stage:before{font-size:3rem}html[data-device="mobile-landscape"] .x-stage-gamehead{grid-template-columns:38px 1fr minmax(120px,30%)}html[data-device="mobile-landscape"] .x-stage-game-icon{width:36px;height:36px}html[data-device="mobile-landscape"] .x-stage-gamecopy h2{font-size:.88rem}
+html[data-device="mobile-landscape"] .x-input-field input,html[data-device="mobile-landscape"] .x-input-field select{padding:5px 6px;font-size:.58rem}
+html[data-device="mobile-landscape"] .x-package-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}html[data-device="mobile-landscape"] .x-package-card{border-radius:9px}html[data-device="mobile-landscape"] .x-package-select{padding:6px;gap:2px}html[data-device="mobile-landscape"] .x-package-name{font-size:.55rem}html[data-device="mobile-landscape"] .x-package-availability{font-size:.44rem}html[data-device="mobile-landscape"] .x-package-price{font-size:.68rem;padding-top:3px}html[data-device="mobile-landscape"] .x-package-cart{min-height:24px;padding:4px;font-size:.43rem}
+html[data-device="mobile-landscape"] .x-buy-dock{grid-template-columns:180px 1fr}html[data-device="mobile-landscape"] .x-buy-button{min-height:30px;font-size:.68rem}html[data-device="mobile-landscape"] .x-config-note{font-size:.47rem}
+
+@media (max-width:700px){.x-product-stage,.x-game-card{box-shadow:none!important}.x-product-stage:before{text-shadow:none}}
+html.motion-off .x-game-card,html.motion-off .x-cart-drawer,html.motion-off .x-experience,html.motion-off .x-package-card{transition:none!important}
+@media (prefers-reduced-motion:reduce){.x-game-card,.x-cart-drawer,.x-experience,.x-package-card{transition:none!important}}
