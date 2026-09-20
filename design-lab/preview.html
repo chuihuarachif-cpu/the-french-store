@@ -1328,6 +1328,196 @@ html.perf-lite .x-experience-bg{
   .x-cart-drawer{transition:transform .19s cubic-bezier(.22,.72,.2,1)!important}
 }
 
+
+/* r243 · mobile landscape gate and portrait fallback */
+.x-orientation-gate{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:
+    radial-gradient(circle at 50% 36%,rgba(26,187,255,.13),transparent 34%),
+    rgba(2,8,17,.965);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .2s ease,visibility 0s linear .2s
+}
+.x-orientation-gate.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition-delay:0s
+}
+.x-orientation-card{
+  width:min(92%,390px);
+  display:grid;
+  justify-items:center;
+  gap:10px;
+  padding:24px 20px 20px;
+  border:1px solid rgba(86,225,255,.2);
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(8,30,49,.96),rgba(4,15,27,.98));
+  text-align:center
+}
+.x-orientation-eyebrow{
+  color:#66eaff;
+  font-size:.62rem;
+  font-weight:950;
+  letter-spacing:.16em
+}
+.x-orientation-card h2{
+  margin:0;
+  color:#f2fdff;
+  font-size:1.65rem;
+  line-height:1;
+  letter-spacing:-.035em
+}
+.x-orientation-card p{
+  margin:0;
+  max-width:30ch;
+  color:#96afbb;
+  font-size:.82rem;
+  line-height:1.45
+}
+.x-orientation-card button{
+  width:100%;
+  min-height:44px;
+  margin-top:4px;
+  border:1px solid rgba(73,229,255,.46);
+  border-radius:12px;
+  background:linear-gradient(100deg,#168eff,#24e6ff);
+  color:#031019;
+  font-weight:950;
+  cursor:pointer
+}
+.x-orientation-card small{
+  color:#698692;
+  font-size:.62rem
+}
+.x-phone-rotate{
+  position:relative;
+  width:92px;
+  height:74px;
+  display:grid;
+  place-items:center;
+  margin-bottom:2px
+}
+.x-phone-body{
+  width:34px;
+  height:58px;
+  border:3px solid #82efff;
+  border-radius:9px;
+  box-shadow:0 0 18px rgba(56,221,255,.18);
+  animation:fsRotatePhone 1.55s cubic-bezier(.55,.05,.25,.95) infinite
+}
+.x-phone-arrow{
+  position:absolute;
+  right:4px;
+  top:13px;
+  color:#65eaff;
+  font-size:1.8rem;
+  line-height:1;
+  animation:fsRotateArrow 1.55s ease-in-out infinite
+}
+@keyframes fsRotatePhone{
+  0%,25%{transform:rotate(0deg)}
+  62%,88%{transform:rotate(90deg)}
+  100%{transform:rotate(0deg)}
+}
+@keyframes fsRotateArrow{
+  0%,25%{opacity:.45;transform:rotate(-18deg) scale(.92)}
+  62%,88%{opacity:1;transform:rotate(45deg) scale(1)}
+  100%{opacity:.45;transform:rotate(-18deg) scale(.92)}
+}
+
+/* If the user keeps the phone portrait, rotate only the XArena experience.
+   The element dimensions are swapped before rotation so its bounding box still
+   fits the portrait device frame. */
+html[data-device="mobile"] .x-experience.force-landscape{
+  inset:auto!important;
+  left:50%!important;
+  top:50%!important;
+  width:var(--device-height,844px)!important;
+  height:var(--device-width,390px)!important;
+  transform:translate3d(-50%,-50%,0) rotate(90deg)!important;
+  transform-origin:center center!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-experience-shell{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  padding:7px 10px!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-experience-topbar{min-height:36px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-experience-grid{
+  grid-template-columns:18% minmax(0,82%)!important;
+  gap:7px!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-game-wheel{min-height:210px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-game-card{
+  min-height:42px!important;
+  padding:4px 5px!important;
+  grid-template-columns:30px 1fr!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-game-card[data-x-slot="-2"]{--wheel-y:-92px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-game-card[data-x-slot="-1"]{--wheel-y:-48px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-game-card[data-x-slot="1"]{--wheel-y:48px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-game-card[data-x-slot="2"]{--wheel-y:92px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-game-thumb-shell{width:28px!important;height:28px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-product-stage{
+  padding:8px!important;
+  gap:6px!important;
+  border-radius:13px!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-product-stage:before{font-size:3rem!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-stage-gamehead{
+  grid-template-columns:38px 1fr minmax(120px,30%)!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-stage-game-icon{width:36px!important;height:36px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-stage-gamecopy h2{font-size:.88rem!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-config-selection{
+  grid-column:auto!important;
+  text-align:right!important;
+  display:grid!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-input-fields{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-input-field input,
+html[data-device="mobile"] .x-experience.force-landscape .x-input-field select{
+  padding:5px 6px!important;
+  font-size:.58rem!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-package-list{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important
+}
+html[data-device="mobile"] .x-experience.force-landscape .x-package-card{border-radius:9px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-package-select{padding:6px!important;gap:2px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-package-name{font-size:.55rem!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-package-availability{font-size:.44rem!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-package-price{font-size:.68rem!important;padding-top:3px!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-package-cart{min-height:24px!important;padding:4px!important;font-size:.43rem!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-buy-dock{grid-template-columns:180px 1fr!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-buy-button{min-height:30px!important;font-size:.68rem!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-config-note{font-size:.47rem!important}
+html[data-device="mobile"] .x-experience.force-landscape .x-orientation-gate{display:none!important}
+
+html.perf-lite .x-phone-body,
+html.perf-lite .x-phone-arrow{
+  box-shadow:none!important
+}
+html.motion-off .x-phone-body,
+html.motion-off .x-phone-arrow{
+  animation:none!important
+}
+@media (prefers-reduced-motion:reduce){
+  .x-phone-body,.x-phone-arrow{animation:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -1617,6 +1807,19 @@ html.perf-lite .x-experience-bg{
 
 
           <section class="x-experience" id="xExperience" aria-hidden="true" aria-label="Selector de productos French Store">
+            <div class="x-orientation-gate" id="xOrientationGate" aria-hidden="true">
+              <div class="x-orientation-card">
+                <div class="x-phone-rotate" aria-hidden="true">
+                  <span class="x-phone-body"></span>
+                  <span class="x-phone-arrow">↻</span>
+                </div>
+                <span class="x-orientation-eyebrow">MEJOR EXPERIENCIA</span>
+                <h2>Gira tu celular</h2>
+                <p>Esta sección de French Store está diseñada para usarse en horizontal.</p>
+                <button type="button" data-x-force-landscape>Usar vista horizontal aquí</button>
+                <small>Si giras el teléfono, entraremos automáticamente.</small>
+              </div>
+            </div>
             <div class="x-experience-bg" aria-hidden="true"></div>
             <div class="x-experience-shell">
               <header class="x-experience-topbar">
@@ -1791,6 +1994,8 @@ window.FS_LAB_DATA = Object.freeze({
   let experienceFieldValues = {};
   let experienceGestureStartY = null;
   let experienceGestureStartX = null;
+  let experienceForceLandscape = false;
+  let experienceOrientationManaged = false;
   let favoriteOrder = loadLocalList(favoriteStorageKey);
   let labCart = loadLocalList(cartStorageKey);
 
@@ -2227,26 +2432,105 @@ window.FS_LAB_DATA = Object.freeze({
     toast(existing>=0?"Quitado de favoritos.":"Favorito guardado; aparecerá primero la próxima vez.");
   }
 
+  function isTouchMobileViewport(){
+    return Boolean(
+      (navigator.maxTouchPoints || 0) > 0 &&
+      window.matchMedia?.("(max-width: 980px)")?.matches
+    );
+  }
+
+  function physicalPortrait(){
+    return Boolean(window.matchMedia?.("(orientation: portrait)")?.matches);
+  }
+
+  function setOrientationGate(open){
+    const gate=$("#xOrientationGate");
+    if (!gate) return;
+    gate.classList.toggle("open",Boolean(open));
+    gate.setAttribute("aria-hidden",open?"false":"true");
+  }
+
+  function syncExperienceOrientation(){
+    const overlay=$("#xExperience");
+    if (!overlay?.classList.contains("open")) return;
+
+    const mobile=isTouchMobileViewport();
+    if (!mobile) {
+      experienceForceLandscape=false;
+      overlay.classList.remove("force-landscape");
+      setOrientationGate(false);
+      return;
+    }
+
+    const portrait=physicalPortrait();
+    if (portrait && experienceForceLandscape) {
+      overlay.classList.add("force-landscape");
+      setOrientationGate(false);
+      return;
+    }
+
+    overlay.classList.remove("force-landscape");
+
+    if (portrait) {
+      setOrientationGate(true);
+      if (document.documentElement.dataset.device==="mobile-landscape") setDevice("mobile");
+    } else {
+      setOrientationGate(false);
+      if (document.documentElement.dataset.device==="mobile") setDevice("mobile-landscape");
+    }
+  }
+
+  function tryLandscapeLock(){
+    if (!isTouchMobileViewport()) return;
+    const orientation=screen.orientation;
+    if (!orientation || typeof orientation.lock!=="function") return;
+    Promise.resolve(orientation.lock("landscape")).then(()=>{
+      experienceOrientationManaged=true;
+      setTimeout(syncExperienceOrientation,120);
+    }).catch(()=>{});
+  }
+
+  function unlockExperienceOrientation(){
+    if (!experienceOrientationManaged) return;
+    try { screen.orientation?.unlock?.(); } catch (_) {}
+    experienceOrientationManaged=false;
+  }
+
+  function forceLandscapeInsidePortrait(){
+    const overlay=$("#xExperience");
+    if (!overlay) return;
+    experienceForceLandscape=true;
+    overlay.classList.add("force-landscape");
+    setOrientationGate(false);
+  }
+
   function openExperience(categoryId){
     experienceCategoryId=experienceCategoryMap[categoryId]?categoryId:"recargas-id";
     experienceGames=sortExperienceGames(categorySnapshot(experienceCategoryId));
     activeExperienceGame=0;
     selectedExperienceProduct=null;
     experienceFieldValues={};
+    experienceForceLandscape=false;
     const overlay=$("#xExperience");
+    overlay?.classList.remove("force-landscape");
     overlay?.classList.add("open");
     overlay?.setAttribute("aria-hidden","false");
     document.body.classList.add("experience-open");
     renderExperienceWheel(true);
     updateCartBadges();
+    syncExperienceOrientation();
+    tryLandscapeLock();
     scheduleDeviceScale();
   }
 
   function closeExperience(goHome=false){
     setCartDrawer(false);
     const overlay=$("#xExperience");
-    overlay?.classList.remove("open");
+    overlay?.classList.remove("open","force-landscape");
     overlay?.setAttribute("aria-hidden","true");
+    setOrientationGate(false);
+    experienceForceLandscape=false;
+    unlockExperienceOrientation();
     document.body.classList.remove("experience-open");
     if (goHome) setView("inicio");
     scheduleDeviceScale();
@@ -2363,6 +2647,7 @@ window.FS_LAB_DATA = Object.freeze({
     const gameCard=event.target.closest("[data-x-game-index]");
     if (gameCard) { setExperienceGame(Number(gameCard.dataset.xGameIndex)); return; }
 
+    if (event.target.closest("[data-x-force-landscape]")) { forceLandscapeInsidePortrait(); return; }
     if (event.target.closest("[data-x-back]")) { closeExperience(false); return; }
     if (event.target.closest("[data-x-favorite]")) { toggleExperienceFavorite(); return; }
     if (event.target.closest("[data-x-cart]")) { setCartDrawer(true); return; }
@@ -2578,6 +2863,7 @@ window.FS_LAB_DATA = Object.freeze({
     resizeTimer = setTimeout(() => {
       lastScaleKey="";
       scheduleDeviceScale();
+      if (document.body.classList.contains("experience-open")) syncExperienceOrientation();
     }, 100);
   }, {passive:true});
 
@@ -2660,6 +2946,11 @@ window.FS_LAB_DATA = Object.freeze({
 
   const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
   setDevice(initialDevice);
+  window.addEventListener("orientationchange", () => {
+    if (!document.body.classList.contains("experience-open")) return;
+    setTimeout(syncExperienceOrientation,120);
+  }, {passive:true});
+
   const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(scheduleDeviceScale) : null;
   if (frameObserver) frameObserver.observe($("#deviceFrame"));
   render();
