@@ -56,6 +56,15 @@
     return ((Number(index) % count) + count) % count;
   }
 
+  function circularDifference(cardIndex, activeIndex){
+    const count = data.categories.length;
+    if (!count) return 0;
+    let diff = cardIndex - activeIndex;
+    if (diff > count / 2) diff -= count;
+    if (diff < -count / 2) diff += count;
+    return diff;
+  }
+
   function categoryCard(item, index){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
     return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Explorar <i>→</i></span></button>';
@@ -69,29 +78,33 @@
     const dots = $("#categoryArenaDots");
     if (dots) dots.innerHTML = data.categories.map((_, index) => '<button type="button" data-arena-dot="' + index + '" aria-label="Ir a categoría ' + (index + 1) + '"></button>').join("");
     activeCategoryIndex = wrapCategoryIndex(activeCategoryIndex);
-    requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, true, true));
+    requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, false, true));
   }
 
-  function setCategoryActive(index, shouldScroll = true, instant = false){
+  function setCategoryActive(index, _shouldMove = true, instant = false){
     const cards = all(".category-arena-card");
-    const viewport = $("#categoryArenaViewport");
     const count = data.categories.length;
-    if (!cards.length || !viewport || !count) return;
+    if (!cards.length || !count) return;
 
-    const previous = activeCategoryIndex;
     const next = wrapCategoryIndex(index);
-    const wrapped = Math.abs(next - previous) > 1 && (previous === 0 || previous === count - 1);
     activeCategoryIndex = next;
 
     cards.forEach((card, cardIndex) => {
-      let diff = cardIndex - next;
-      if (diff > count / 2) diff -= count;
-      if (diff < -count / 2) diff += count;
-      card.classList.toggle("active", diff === 0);
-      card.dataset.distance = String(Math.min(3, Math.abs(diff)));
+      const diff = circularDifference(cardIndex, next);
+      const distance = Math.abs(diff);
+      card.dataset.rouletteSlot = String(diff);
+      card.dataset.distance = String(distance);
       card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
+      card.classList.toggle("active", diff === 0);
+      card.classList.toggle("roulette-hidden", distance >= 3);
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
+      card.setAttribute("aria-hidden", distance >= 3 ? "true" : "false");
+      card.tabIndex = distance <= 1 ? 0 : -1;
+      if (instant) card.classList.add("roulette-instant");
+      else card.classList.remove("roulette-instant");
     });
+
+    if (instant) requestAnimationFrame(() => cards.forEach(card => card.classList.remove("roulette-instant")));
 
     all("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
     const counter = $("#categoryArenaCounter");
@@ -101,19 +114,11 @@
     const nextButton = $(".arena-arrow-next");
     if (prev) prev.disabled = false;
     if (nextButton) nextButton.disabled = false;
-
-    if (shouldScroll) {
-      const card = cards[next];
-      const target = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2;
-      const reduced = instant || wrapped || document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-      if (wrapped) viewport.classList.add("roulette-wrap");
-      viewport.scrollTo({left:Math.max(0,target),behavior:reduced ? "auto" : "smooth"});
-      if (wrapped) setTimeout(() => viewport.classList.remove("roulette-wrap"), 170);
-    }
   }
 
   function moveCategory(direction){
-    setCategoryActive(activeCategoryIndex + (direction < 0 ? -1 : 1), true);
+    if (!direction) return;
+    setCategoryActive(activeCategoryIndex + (direction < 0 ? -1 : 1));
   }
 
   function productCard(item){
@@ -324,7 +329,7 @@
       el.classList.toggle("active", el.dataset.devicePreview === safeDevice);
     });
     updateDeviceScale();
-    requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, true, true));
+    requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, false, true));
   }
 
   $("#devicePreviewButtons")?.addEventListener("click", (event) => {
