@@ -1209,3 +1209,111 @@ html[data-device="mobile-landscape"] .x-buy-dock{grid-template-columns:180px 1fr
 @media (max-width:700px){.x-product-stage,.x-game-card{box-shadow:none!important}.x-product-stage:before{text-shadow:none}}
 html.motion-off .x-game-card,html.motion-off .x-cart-drawer,html.motion-off .x-experience,html.motion-off .x-package-card{transition:none!important}
 @media (prefers-reduced-motion:reduce){.x-game-card,.x-cart-drawer,.x-experience,.x-package-card{transition:none!important}}
+
+
+/* r242 · adaptive performance pass */
+body.experience-open .store-header,
+body.experience-open .store-view,
+body.experience-open .xarena-dock{
+  visibility:hidden!important;
+  pointer-events:none!important
+}
+body.experience-open .store-view *,
+body.experience-open .store-header *{
+  animation-play-state:paused!important
+}
+body.experience-open .store-app:before{
+  display:none!important
+}
+
+.x-experience{
+  contain:layout paint style;
+  overscroll-behavior:contain
+}
+.x-game-card{
+  contain:layout paint style
+}
+.x-game-card.x-hidden{
+  visibility:hidden!important;
+  content-visibility:hidden!important;
+  will-change:auto!important
+}
+.x-package-list{
+  contain:layout paint style;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch
+}
+.x-package-card{
+  content-visibility:auto;
+  contain:layout paint style;
+  contain-intrinsic-size:110px
+}
+.x-cart-drawer{
+  contain:layout paint style;
+  overscroll-behavior:contain
+}
+
+html.perf-lite .lab-panel,
+html.perf-lite .store-header,
+html.perf-lite .loading-demo-backdrop{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important
+}
+html.perf-lite .lab-panel{
+  background:#06111b!important
+}
+html.perf-lite .store-header{
+  background:#07131f!important
+}
+html.perf-lite .store-app:before{
+  display:none!important
+}
+html.perf-lite .gem{
+  animation:none!important;
+  filter:none!important;
+  text-shadow:0 0 22px rgba(98,231,255,.38)!important
+}
+html.perf-lite .orb{
+  filter:none!important;
+  opacity:.55!important
+}
+html.perf-lite .reveal{
+  animation-duration:.3s!important
+}
+html.perf-lite .category-arena-card,
+html.perf-lite .x-game-card,
+html.perf-lite .x-package-card,
+html.perf-lite .x-product-stage,
+html.perf-lite .x-cart-drawer{
+  box-shadow:none!important
+}
+html.perf-lite .x-product-stage:before{
+  text-shadow:none!important
+}
+html.perf-lite .category-card-grid{
+  display:none!important
+}
+html.perf-lite .category-icon-stage .icon{
+  filter:none!important
+}
+html.perf-lite .loading-square-wave span,
+html.perf-lite .loading-progress-fill-bottom{
+  box-shadow:none!important
+}
+html.perf-lite .x-experience-bg{
+  background:
+    radial-gradient(ellipse at 56% 40%,rgba(17,199,255,.08),transparent 36%),
+    linear-gradient(180deg,#071225,#020817 72%,#020612)!important
+}
+
+@media (max-width:700px){
+  .lab-panel,
+  .store-header{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important
+  }
+  .store-header{background:#07131f!important}
+  .x-game-card{transition:transform .19s cubic-bezier(.22,.72,.2,1),opacity .14s linear,border-color .14s linear!important}
+  .x-package-card{transition:border-color .12s ease,background .12s ease!important}
+  .x-cart-drawer{transition:transform .19s cubic-bezier(.22,.72,.2,1)!important}
+}
