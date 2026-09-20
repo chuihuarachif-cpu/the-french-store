@@ -327,18 +327,17 @@ html[data-fs-owner-classic="1"] .modal.open .modal-card{
 /* Scroll reveal. Sections are revealed in smaller pieces with a soft stagger. */
 html[data-fs-owner-classic="1"][data-r8-motion="full"] [data-fs-reveal="1"]{
   opacity:0;
-  transform:translate3d(0,34px,0);
+  transform:translate3d(0,18px,0);
   transition:
-    opacity .82s cubic-bezier(.16,1,.3,1),
-    transform .92s cubic-bezier(.16,1,.3,1);
+    opacity .50s cubic-bezier(.16,1,.3,1),
+    transform .58s cubic-bezier(.16,1,.3,1);
   transition-delay:var(--fs-reveal-delay,0ms);
-  will-change:transform,opacity;
 }
 html[data-fs-owner-classic="1"][data-r8-motion="full"] [data-fs-reveal="1"][data-fs-reveal-dir="left"]{
-  transform:translate3d(-42px,14px,0);
+  transform:translate3d(-24px,8px,0);
 }
 html[data-fs-owner-classic="1"][data-r8-motion="full"] [data-fs-reveal="1"][data-fs-reveal-dir="right"]{
-  transform:translate3d(42px,14px,0);
+  transform:translate3d(24px,8px,0);
 }
 html[data-fs-owner-classic="1"][data-r8-motion="full"] [data-fs-reveal="1"][data-fs-reveal-visible="1"]{
   opacity:1;
@@ -351,12 +350,16 @@ html[data-fs-owner-classic="1"][data-r8-motion="full"] .view.active{
   animation:fsCineViewIn .28s ease-out both!important;
 }
 
-@media(max-width:640px){
-  html[data-fs-owner-classic="1"][data-r8-motion="full"] [data-fs-reveal="1"][data-fs-reveal-dir="left"]{
-    transform:translate3d(-28px,12px,0);
+@media(max-width:700px){
+  html[data-fs-owner-classic="1"] .topbar{
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
   }
+  html[data-fs-owner-classic="1"][data-r8-motion="full"] [data-fs-reveal="1"],
+  html[data-fs-owner-classic="1"][data-r8-motion="full"] [data-fs-reveal="1"][data-fs-reveal-dir="left"],
   html[data-fs-owner-classic="1"][data-r8-motion="full"] [data-fs-reveal="1"][data-fs-reveal-dir="right"]{
-    transform:translate3d(28px,12px,0);
+    transform:translate3d(0,12px,0);
+    transition-duration:.42s,.48s;
   }
 }
 
@@ -425,6 +428,20 @@ html[data-fs-owner-classic="1"][data-r8-motion="lite"] .modal.open,
 html[data-fs-owner-classic="1"][data-r8-motion="lite"] .modal.open .modal-card{
   animation-duration:.12s!important;
 }
+html[data-fs-owner-classic="1"][data-r8-motion="lite"] .topbar,
+html[data-fs-owner-classic="1"][data-r8-motion="off"] .topbar{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-fs-owner-classic="1"][data-r8-motion="lite"] #view-inicio .hero-gem::before,
+html[data-fs-owner-classic="1"][data-r8-motion="off"] #view-inicio .hero-gem::before{
+  animation:none!important;
+  filter:none!important;
+}
+html[data-fs-owner-classic="1"][data-r8-motion="lite"] .view.active,
+html[data-fs-owner-classic="1"][data-r8-motion="off"] .view.active{
+  animation:none!important;
+}
 html[data-fs-owner-classic="1"][data-r8-motion="off"] .modal.open,
 html[data-fs-owner-classic="1"][data-r8-motion="off"] .modal.open .modal-card{
   animation:none!important;
@@ -444,8 +461,8 @@ html[data-fs-owner-classic="1"][data-r8-motion="off"] .modal.open .modal-card{
 }
 
 @keyframes fsCineViewIn{
-  from{opacity:.01;transform:translate3d(0,12px,0)}
-  to{opacity:1;transform:none}
+  from{opacity:.45}
+  to{opacity:1}
 }
 @keyframes fsCineModalBackdrop{
   from{opacity:.01}
