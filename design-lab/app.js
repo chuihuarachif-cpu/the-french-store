@@ -28,6 +28,54 @@
     "paginas": "Páginas Web"
   };
 
+  const experienceCategoryMap = {
+    "recargas-id": "Recargas por ID",
+    "recargas-cuenta": "Recargas por Cuenta",
+    "giftcards": "Gift Cards",
+    "streaming": "Streaming",
+    "cuentas": "Venta de Cuentas",
+    "paginas": "Venta de Páginas"
+  };
+  const favoriteStorageKey = "fs-design-lab-favorite-games-v1";
+  const cartStorageKey = "fs-design-lab-cart-v1";
+  let experienceCategoryId = "recargas-id";
+  let experienceGames = [];
+  let activeExperienceGame = 0;
+  let selectedExperienceProduct = null;
+  let experienceFieldValues = {};
+  let experienceGestureStartY = null;
+  let experienceGestureStartX = null;
+  let favoriteOrder = loadLocalList(favoriteStorageKey);
+  let labCart = loadLocalList(cartStorageKey);
+
+  function loadLocalList(key){
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(value) ? value : [];
+    } catch (_) { return []; }
+  }
+
+  function saveLocalList(key, value){
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+  }
+
+  function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+
+  function initials(value){
+    const parts = String(value || "French Store").trim().split(/\s+/).filter(Boolean);
+    return (parts.slice(0,2).map(part => part[0] || "").join("") || "FS").toUpperCase();
+  }
+
+  function favoriteKey(categoryId, gameName){
+    return categoryId + "::" + String(gameName || "");
+  }
+
+  function isFavoriteGame(gameName){
+    return favoriteOrder.includes(favoriteKey(experienceCategoryId, gameName));
+  }
+
   function money(value){ return "Bs " + Number(value).toFixed(2).replace(".", ","); }
 
   function toast(message){
@@ -110,6 +158,9 @@
     const counter = $("#categoryArenaCounter");
     if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(count).padStart(2, "0");
 
+    const enterButton = $("#categoryEnterButton");
+    if (enterButton) enterButton.textContent = "Ingresar · " + (data.categories[next]?.name || "French Store");
+
     const prev = $(".arena-arrow-prev");
     const nextButton = $(".arena-arrow-next");
     if (prev) prev.disabled = false;
@@ -121,12 +172,319 @@
     setCategoryActive(activeCategoryIndex + (direction < 0 ? -1 : 1));
   }
 
+  function categorySnapshot(categoryId){
+    const mapped = experienceCategoryMap[categoryId];
+    if (!mapped) return [];
+
+    if (categoryId === "cuentas") {
+      const grouped = new Map();
+      (data.accountListings || []).forEach(item => {
+        const key = item.game || "Cuentas";
+        if (!grouped.has(key)) grouped.set(key, []);
+        grouped.get(key).push({
+          id:item.id, category:mapped, game:key, package:item.package, price:item.price,
+          priceLabel:money(item.price), description:item.description || "", inputs:[], icon:""
+        });
+      });
+      return [...grouped].map(([name,packages],originalIndex)=>({name,packages,originalIndex,icon:""}));
+    }
+
+    if (categoryId === "paginas") {
+      return (data.webPlans || []).map((item,originalIndex)=>({
+        name:item.game, originalIndex, icon:"",
+        packages:[{
+          id:item.id, category:mapped, game:item.game, package:item.package, price:null,
+          priceLabel:item.priceLabel, description:item.description || "", inputs:[]
+        }]
+      }));
+    }
+
+    const grouped = new Map();
+    (data.experienceProducts || []).filter(item => item.category === mapped).forEach(item => {
+      if (!grouped.has(item.game)) grouped.set(item.game, []);
+      grouped.get(item.game).push(item);
+    });
+    return [...grouped].map(([name,packages],originalIndex)=>({
+      name, packages, originalIndex, icon:packages.find(p=>p.icon)?.icon || ""
+    }));
+  }
+
+  function sortExperienceGames(games){
+    const ranks = new Map(favoriteOrder.map((key,index)=>[key,index]));
+    return [...games].sort((a,b)=>{
+      const ar=ranks.get(favoriteKey(experienceCategoryId,a.name));
+      const br=ranks.get(favoriteKey(experienceCategoryId,b.name));
+      const af=Number.isInteger(ar), bf=Number.isInteger(br);
+      if (af && bf) return ar-br;
+      if (af) return -1;
+      if (bf) return 1;
+      return a.originalIndex-b.originalIndex;
+    });
+  }
+
+  function activeExperience(){
+    return experienceGames[activeExperienceGame] || null;
+  }
+
+  function unionInputs(packages){
+    const map = new Map();
+    (packages || []).forEach(product => (product.inputs || []).forEach(field => {
+      if (!map.has(field.field_key)) map.set(field.field_key, field);
+    }));
+    if (!map.size && experienceCategoryId === "recargas-cuenta") {
+      map.set("account_user",{field_key:"account_user",label:"Correo o usuario",input_type:"text",required:true,placeholder:"Dato de acceso de la cuenta",options:[],sort_order:10});
+      map.set("account_password",{field_key:"account_password",label:"Contraseña",input_type:"text",required:true,placeholder:"Contraseña de la cuenta",options:[],sort_order:20});
+    }
+    return [...map.values()].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+  }
+
+  function priceLabel(product){
+    if (product?.priceLabel) return product.priceLabel;
+    return Number.isFinite(Number(product?.price)) ? money(product.price) : "Cotizar";
+  }
+
+  function gameCardMarkup(game,index){
+    const image = game.icon ? '<img class="x-game-thumb" src="'+escapeHtml(game.icon)+'" alt="">' : '';
+    return '<button class="x-game-card" type="button" data-x-game-index="'+index+'" aria-label="'+escapeHtml(game.name)+'">'+
+      '<span class="x-game-thumb-shell">'+image+'<i>'+escapeHtml(initials(game.name))+'</i></span>'+
+      '<span class="x-game-name">'+escapeHtml(game.name)+'</span>'+
+      '<small>'+String(game.packages.length).padStart(2,"0")+' opciones</small></button>';
+  }
+
+  function renderExperienceWheel(instant=false){
+    const wheel=$("#xGameWheel");
+    if (!wheel) return;
+    wheel.innerHTML=experienceGames.map(gameCardMarkup).join("");
+    setExperienceGame(activeExperienceGame, instant);
+  }
+
+  function setExperienceGame(index, instant=false){
+    if (!experienceGames.length) return;
+    const next=Math.max(0,Math.min(experienceGames.length-1,Number(index)||0));
+    activeExperienceGame=next;
+    selectedExperienceProduct=null;
+    experienceFieldValues={};
+
+    all(".x-game-card").forEach((card,cardIndex)=>{
+      const diff=cardIndex-next;
+      card.dataset.xSlot=String(diff);
+      card.classList.toggle("active",diff===0);
+      card.classList.toggle("x-hidden",Math.abs(diff)>2);
+      card.setAttribute("aria-hidden",Math.abs(diff)>2?"true":"false");
+      card.tabIndex=Math.abs(diff)<=1?0:-1;
+      card.classList.toggle("x-instant",Boolean(instant));
+    });
+    if (instant) requestAnimationFrame(()=>all(".x-game-card").forEach(card=>card.classList.remove("x-instant")));
+
+    const up=$('[data-x-game-step="-1"]');
+    const down=$('[data-x-game-step="1"]');
+    if (up) up.disabled=next===0;
+    if (down) down.disabled=next===experienceGames.length-1;
+    renderExperienceDetail();
+  }
+
+  function renderExperienceDetail(){
+    const game=activeExperience();
+    if (!game) return;
+
+    const category=data.categories.find(item=>item.id===experienceCategoryId);
+    const categoryLabel=$("#xCategoryLabel");
+    const breadcrumb=$("#xGameBreadcrumb");
+    const title=$("#xShowcaseTitle");
+    const type=$("#xShowcaseType");
+    const meta=$("#xShowcaseMeta");
+    const image=$("#xShowcaseImage");
+    const fallback=$("#xShowcaseFallback");
+    if (categoryLabel) categoryLabel.textContent=(category?.name || experienceCategoryMap[experienceCategoryId] || "French Store").toUpperCase();
+    if (breadcrumb) breadcrumb.textContent=game.name;
+    if (title) title.textContent=game.name;
+    if (type) type.textContent=category?.tag || "FRENCH STORE";
+    if (meta) meta.textContent=game.packages.length+" opciones · "+(activeExperienceGame+1)+" / "+experienceGames.length;
+    if (fallback) fallback.textContent=initials(game.name);
+    if (image) {
+      image.classList.remove("loaded","failed");
+      if (game.icon) image.src=game.icon;
+      else image.removeAttribute("src");
+    }
+
+    const favorite=$("[data-x-favorite]");
+    if (favorite) {
+      const active=isFavoriteGame(game.name);
+      favorite.classList.toggle("active",active);
+      favorite.textContent=active?"♥":"♡";
+      favorite.setAttribute("aria-label",active?"Quitar de favoritos":"Agregar a favoritos");
+    }
+
+    const fields=unionInputs(game.packages);
+    const fieldWrap=$("#xInputFields");
+    if (fieldWrap) {
+      fieldWrap.innerHTML=fields.length?fields.map(field=>{
+        const key=escapeHtml(field.field_key);
+        const label=escapeHtml(field.label || field.field_key);
+        const placeholder=escapeHtml(field.placeholder || "Completa este dato");
+        if (field.input_type==="select" && Array.isArray(field.options)) {
+          return '<label class="x-input-field"><span>'+label+'</span><select data-x-field="'+key+'" '+(field.required?"required":"")+'><option value="">Seleccionar…</option>'+
+            field.options.map(opt=>'<option value="'+escapeHtml(opt.value)+'">'+escapeHtml(opt.label)+'</option>').join("")+
+            '</select></label>';
+        }
+        const typeAttr=field.field_key==="account_password"?"password":"text";
+        return '<label class="x-input-field"><span>'+label+'</span><input type="'+typeAttr+'" data-x-field="'+key+'" placeholder="'+placeholder+'" '+(field.required?"required":"")+' autocomplete="off"></label>';
+      }).join(""):'<div class="x-no-inputs">No necesitas datos adicionales para seleccionar este producto.</div>';
+    }
+
+    const list=$("#xPackageList");
+    if (list) {
+      list.innerHTML=game.packages.map((product,index)=>{
+        const desc=product.description?'<small>'+escapeHtml(product.description)+'</small>':'';
+        return '<article class="x-package-card" data-x-package-index="'+index+'">'+
+          '<button class="x-package-main" type="button" data-x-select-package="'+index+'"><span>'+escapeHtml(product.package)+'</span>'+desc+'<b>'+escapeHtml(priceLabel(product))+'</b></button>'+
+          '<button class="x-package-cart" type="button" data-x-add-package="'+index+'">＋ carrito</button>'+
+          '</article>';
+      }).join("");
+    }
+    updateExperienceBuyState();
+  }
+
+  function currentFieldsValid(){
+    const game=activeExperience();
+    if (!game || !selectedExperienceProduct) return false;
+    const fields=unionInputs(game.packages);
+    return fields.every(field=>{
+      if (!field.required) return true;
+      return String(experienceFieldValues[field.field_key] || "").trim().length>0;
+    });
+  }
+
+  function updateExperienceBuyState(){
+    const button=$("#xBuyButton");
+    const label=$("#xSelectedProductLabel");
+    if (label) label.textContent=selectedExperienceProduct ? selectedExperienceProduct.package+" · "+priceLabel(selectedExperienceProduct) : "Selecciona un producto";
+    if (button) button.disabled=!currentFieldsValid();
+  }
+
+  function selectExperiencePackage(index){
+    const game=activeExperience();
+    const product=game?.packages?.[Number(index)];
+    if (!product) return;
+    selectedExperienceProduct=product;
+    all(".x-package-card").forEach((card,cardIndex)=>card.classList.toggle("active",cardIndex===Number(index)));
+    updateExperienceBuyState();
+  }
+
+  function sanitizedCartItem(product){
+    const game=activeExperience();
+    return {
+      id:String(product.id),
+      category:experienceCategoryId,
+      game:game?.name || product.game || "French Store",
+      package:product.package || "Producto",
+      price:Number.isFinite(Number(product.price))?Number(product.price):null,
+      priceLabel:priceLabel(product)
+    };
+  }
+
+  function addCurrentToCart(){
+    if (!selectedExperienceProduct) {
+      toast("Selecciona primero un producto.");
+      return false;
+    }
+    if (!currentFieldsValid()) {
+      toast("Completa los datos requeridos antes de continuar.");
+      all(".x-input-field input:invalid,.x-input-field select:invalid").forEach(el=>el.classList.add("needs-value"));
+      return false;
+    }
+    labCart.push(sanitizedCartItem(selectedExperienceProduct));
+    saveLocalList(cartStorageKey,labCart);
+    updateCartBadges();
+    renderLabCart();
+    toast("Añadido al carrito del laboratorio.");
+    return true;
+  }
+
+  function updateCartBadges(){
+    const count=labCart.length;
+    const main=$("#cartCount");
+    const local=$("#xCartCount");
+    if (main) main.textContent=String(count);
+    if (local) local.textContent=String(count);
+  }
+
+  function renderLabCart(){
+    const wrap=$("#xCartItems");
+    if (!wrap) return;
+    if (!labCart.length) {
+      wrap.innerHTML='<div class="x-cart-empty"><b>Tu carrito está vacío</b><span>Agrega productos para probar un pago conjunto.</span></div>';
+    } else {
+      wrap.innerHTML=labCart.map((item,index)=>'<article class="x-cart-item"><div><b>'+escapeHtml(item.game)+'</b><span>'+escapeHtml(item.package)+'</span></div><strong>'+escapeHtml(item.priceLabel)+'</strong><button type="button" data-x-remove-cart="'+index+'" aria-label="Quitar">×</button></article>').join("");
+    }
+    const total=labCart.reduce((sum,item)=>sum+(Number.isFinite(Number(item.price))?Number(item.price):0),0);
+    const totalEl=$("#xCartTotal");
+    if (totalEl) totalEl.textContent=money(total)+(labCart.some(item=>item.price==null)?" + cotización":"");
+  }
+
+  function setCartDrawer(open){
+    const drawer=$("#xCartDrawer");
+    const backdrop=$("#xCartBackdrop");
+    const active=Boolean(open);
+    drawer?.classList.toggle("open",active);
+    backdrop?.classList.toggle("open",active);
+    drawer?.setAttribute("aria-hidden",active?"false":"true");
+    if (active) renderLabCart();
+  }
+
+  function toggleExperienceFavorite(){
+    const game=activeExperience();
+    if (!game) return;
+    const key=favoriteKey(experienceCategoryId,game.name);
+    const existing=favoriteOrder.indexOf(key);
+    if (existing>=0) favoriteOrder.splice(existing,1);
+    else favoriteOrder.push(key);
+    saveLocalList(favoriteStorageKey,favoriteOrder);
+
+    const currentName=game.name;
+    experienceGames=sortExperienceGames(categorySnapshot(experienceCategoryId));
+    activeExperienceGame=Math.max(0,experienceGames.findIndex(item=>item.name===currentName));
+    renderExperienceWheel(true);
+    toast(existing>=0?"Quitado de favoritos.":"Favorito guardado; aparecerá primero la próxima vez.");
+  }
+
+  function openExperience(categoryId){
+    experienceCategoryId=experienceCategoryMap[categoryId]?categoryId:"recargas-id";
+    experienceGames=sortExperienceGames(categorySnapshot(experienceCategoryId));
+    activeExperienceGame=0;
+    selectedExperienceProduct=null;
+    experienceFieldValues={};
+    const overlay=$("#xExperience");
+    overlay?.classList.add("open");
+    overlay?.setAttribute("aria-hidden","false");
+    document.body.classList.add("experience-open");
+    renderExperienceWheel(true);
+    updateCartBadges();
+    requestAnimationFrame(updateDeviceScale);
+  }
+
+  function closeExperience(goHome=false){
+    setCartDrawer(false);
+    const overlay=$("#xExperience");
+    overlay?.classList.remove("open");
+    overlay?.setAttribute("aria-hidden","true");
+    document.body.classList.remove("experience-open");
+    if (goHome) setView("inicio");
+    requestAnimationFrame(updateDeviceScale);
+  }
+
+  function moveExperienceGame(direction){
+    if (!direction || !experienceGames.length) return;
+    setExperienceGame(activeExperienceGame+(direction<0?-1:1));
+  }
+
   function productCard(item){
     return '<article class="product-card" tabindex="0" role="button" data-open-product="' + item.id + '"><div class="product-thumb">' + item.icon + '</div><div class="product-meta"><span>' + item.category + '</span><b>' + item.name + '</b><div class="product-price"><strong>' + money(item.price) + '</strong><small>DEMO</small></div></div></article>';
   }
 
   function render(){
     renderCategoryArena();
+    updateCartBadges();
 
     const featuredGrid = $("#featuredGrid");
     if (featuredGrid) featuredGrid.innerHTML = data.products.filter(p => p.featured).map(productCard).join("");
@@ -206,19 +564,58 @@
     const arenaDot = event.target.closest("[data-arena-dot]");
     if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
 
+    const categoryEnter = event.target.closest("#categoryEnterButton");
+    if (categoryEnter) {
+      const selected=data.categories[activeCategoryIndex];
+      if (selected) openExperience(selected.id);
+      return;
+    }
+
     const category = event.target.closest("[data-category-index]");
     if (category) {
       const index = wrapCategoryIndex(Number(category.dataset.categoryIndex));
-      if (index === activeCategoryIndex) {
-        const selected = data.categories[index];
-        activeFilter = categoryFilterMap[selected?.id] || "Todos";
-        render();
-        setView("catalogo");
-        toast("Abriendo " + (selected?.name || "French Store") + ".");
-        requestAnimationFrame(() => $("#catalogSearch")?.focus({preventScroll:true}));
-      } else {
-        setCategoryActive(index, true);
-      }
+      setCategoryActive(index, true);
+      return;
+    }
+
+    const gameStep=event.target.closest("[data-x-game-step]");
+    if (gameStep) { moveExperienceGame(Number(gameStep.dataset.xGameStep || 0)); return; }
+
+    const gameCard=event.target.closest("[data-x-game-index]");
+    if (gameCard) { setExperienceGame(Number(gameCard.dataset.xGameIndex)); return; }
+
+    if (event.target.closest("[data-x-back]")) { closeExperience(false); return; }
+    if (event.target.closest("[data-x-exit]")) { closeExperience(true); return; }
+    if (event.target.closest("[data-x-favorite]")) { toggleExperienceFavorite(); return; }
+    if (event.target.closest("[data-x-cart]")) { setCartDrawer(true); return; }
+    if (event.target.closest("[data-x-cart-close]")) { setCartDrawer(false); return; }
+
+    const selectPackage=event.target.closest("[data-x-select-package]");
+    if (selectPackage) { selectExperiencePackage(Number(selectPackage.dataset.xSelectPackage)); return; }
+
+    const addPackage=event.target.closest("[data-x-add-package]");
+    if (addPackage) {
+      selectExperiencePackage(Number(addPackage.dataset.xAddPackage));
+      addCurrentToCart();
+      return;
+    }
+
+    const removeCart=event.target.closest("[data-x-remove-cart]");
+    if (removeCart) {
+      labCart.splice(Number(removeCart.dataset.xRemoveCart),1);
+      saveLocalList(cartStorageKey,labCart);
+      updateCartBadges();
+      renderLabCart();
+      return;
+    }
+
+    if (event.target.closest("[data-x-checkout]")) {
+      toast(labCart.length?"Pago conjunto listo como demostración; todavía no se envía nada.":"Añade productos antes de continuar.");
+      return;
+    }
+
+    if (event.target.closest("#xBuyButton")) {
+      if (addCurrentToCart()) setCartDrawer(true);
       return;
     }
 
@@ -298,6 +695,51 @@
     categoryGestureStartY = null;
   }, {passive:true});
 
+  $("#xInputFields")?.addEventListener("input",(event)=>{
+    const field=event.target.closest("[data-x-field]");
+    if (!field) return;
+    experienceFieldValues[field.dataset.xField]=field.value;
+    field.classList.remove("needs-value");
+    updateExperienceBuyState();
+  });
+  $("#xInputFields")?.addEventListener("change",(event)=>{
+    const field=event.target.closest("[data-x-field]");
+    if (!field) return;
+    experienceFieldValues[field.dataset.xField]=field.value;
+    field.classList.remove("needs-value");
+    updateExperienceBuyState();
+  });
+
+  const xWheel=$("#xGameWheel");
+  xWheel?.addEventListener("pointerdown",(event)=>{
+    experienceGestureStartY=event.clientY;
+    experienceGestureStartX=event.clientX;
+  },{passive:true});
+  xWheel?.addEventListener("pointerup",(event)=>{
+    if (experienceGestureStartY==null || experienceGestureStartX==null) return;
+    const dy=event.clientY-experienceGestureStartY;
+    const dx=event.clientX-experienceGestureStartX;
+    experienceGestureStartY=null;
+    experienceGestureStartX=null;
+    if (Math.abs(dy)<34 || Math.abs(dy)<=Math.abs(dx)*1.05) return;
+    moveExperienceGame(dy<0?1:-1);
+  },{passive:true});
+  xWheel?.addEventListener("pointercancel",()=>{
+    experienceGestureStartY=null;
+    experienceGestureStartX=null;
+  },{passive:true});
+
+  document.addEventListener("error",(event)=>{
+    const image=event.target;
+    if (!(image instanceof HTMLImageElement)) return;
+    if (image.matches(".x-game-thumb,.x-showcase-img")) image.classList.add("failed");
+  },true);
+  document.addEventListener("load",(event)=>{
+    const image=event.target;
+    if (!(image instanceof HTMLImageElement)) return;
+    if (image.matches(".x-game-thumb,.x-showcase-img")) image.classList.add("loaded");
+  },true);
+
   const devicePresets = {
     mobile: { width: 390, height: 844, label: "Celular" },
     "mobile-landscape": { width: 844, height: 390, label: "Celular horizontal" },
@@ -371,7 +813,7 @@
         overlay.setAttribute("aria-hidden","true");
         if (button) button.textContent = "▶ Probar carga";
       }, reduced ? 40 : 360);
-    }, reduced ? 180 : 520);
+    }, reduced ? 150 : 360);
   }
 
   function runLoadingDemo(){
@@ -397,7 +839,7 @@
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
     loadingProgressInterval = setInterval(() => {
-      progress += reduced ? 8 : (0.75 + Math.random() * 2.15);
+      progress += reduced ? 12 : (1.8 + Math.random() * 2.4);
 
       if (progress >= 100) {
         progress = 100;
@@ -414,11 +856,8 @@
       fill.style.width = progress + "%";
       percent.textContent = visible + "%";
 
-      if (visible < 30) message.textContent = "Preparando French Store...";
-      else if (visible < 65) message.textContent = "Cargando bloques, accesos y animaciones...";
-      else if (visible < 90) message.textContent = "Ordenando ofertas y recargas...";
-      else message.textContent = "Últimos detalles...";
-    }, 80);
+      message.textContent = visible < 70 ? "Preparando French Store..." : "Últimos detalles...";
+    }, 65);
   }
 
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
