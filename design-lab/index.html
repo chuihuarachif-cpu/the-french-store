@@ -117,7 +117,7 @@
               <button data-nav-view="perfil">Perfil</button>
             </nav>
             <div class="header-actions">
-              <button class="icon-button" type="button" aria-label="Buscar">⌕</button>
+              <button class="icon-button" type="button" data-open-search aria-label="Buscar">⌕</button>
               <button class="cart-button" type="button" data-nav-view="checkout">🛒 <span id="cartCount">2</span></button>
             </div>
           </header>
@@ -240,9 +240,9 @@
               </div>
               <div class="account-menu">
                 <button type="button" data-nav-view="pedidos">Mis pedidos <span>→</span></button>
-                <button type="button">Favoritos <span>→</span></button>
-                <button type="button">Notificaciones <span>→</span></button>
-                <button type="button">Configuración <span>→</span></button>
+                <button type="button" data-account-action="Favoritos">Favoritos <span>→</span></button>
+                <button type="button" data-account-action="Notificaciones">Notificaciones <span>→</span></button>
+                <button type="button" data-account-action="Configuración">Configuración <span>→</span></button>
               </div>
             </div>
           </section>

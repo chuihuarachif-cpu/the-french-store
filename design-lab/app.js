@@ -18,6 +18,14 @@
   let toastTimer;
   let activeCategoryIndex = 0;
   let categoryScrollRaf = 0;
+  const categoryFilterMap = {
+    "recargas-id": "Recargas",
+    "recargas-cuenta": "Recargas",
+    "giftcards": "Gift Cards",
+    "streaming": "Streaming",
+    "cuentas": "Cuentas",
+    "paginas": "Páginas Web"
+  };
 
   function money(value){ return "Bs " + Number(value).toFixed(2).replace(".", ","); }
 
@@ -45,7 +53,7 @@
   }
 
   function setCategoryActive(index, shouldScroll = true, instant = false){
-    const cards = $(".category-arena-card");
+    const cards = $$(".category-arena-card");
     const viewport = $("#categoryArenaViewport");
     if (!cards.length || !viewport) return;
     const next = Math.max(0, Math.min(cards.length - 1, Number(index) || 0));
@@ -57,7 +65,7 @@
       card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
     });
-    $("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
+    $$("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
     const counter = $("#categoryArenaCounter");
     if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(cards.length).padStart(2, "0");
     const prev = $(".arena-arrow-prev");
@@ -75,7 +83,7 @@
   function syncCategoryFromScroll(){
     categoryScrollRaf = 0;
     const viewport = $("#categoryArenaViewport");
-    const cards = $(".category-arena-card");
+    const cards = $$(".category-arena-card");
     if (!viewport || !cards.length) return;
     const viewportBox = viewport.getBoundingClientRect();
     const center = viewportBox.left + viewportBox.width / 2;
@@ -160,11 +168,29 @@
     if (category) {
       const index = Number(category.dataset.categoryIndex);
       if (index === activeCategoryIndex) {
+        const selected = data.categories[index];
+        activeFilter = categoryFilterMap[selected?.id] || "Todos";
+        render();
         setView("catalogo");
-        toast("Categoría demo seleccionada: " + (data.categories[index]?.name || "French Store") + ".");
+        toast("Abriendo " + (selected?.name || "French Store") + ".");
+        requestAnimationFrame(() => $("#catalogSearch")?.focus({preventScroll:true}));
       } else {
         setCategoryActive(index, true);
       }
+      return;
+    }
+
+    const searchButton = event.target.closest("[data-open-search]");
+    if (searchButton) {
+      setView("catalogo");
+      requestAnimationFrame(() => $("#catalogSearch")?.focus({preventScroll:false}));
+      return;
+    }
+
+    const accountAction = event.target.closest("[data-account-action]");
+    if (accountAction) {
+      const label = accountAction.dataset.accountAction || "Esta sección";
+      toast(label + " está disponible como interacción de diseño en el Lab.");
       return;
     }
 
@@ -200,6 +226,14 @@
   });
 
   $("#catalogSearch")?.addEventListener("input", renderCatalog);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const product = event.target.closest?.("[data-open-product]");
+    if (!product) return;
+    event.preventDefault();
+    setView("producto");
+  });
 
   $("#categoryArenaViewport")?.addEventListener("scroll", () => {
     if (categoryScrollRaf) cancelAnimationFrame(categoryScrollRaf);
