@@ -3,6 +3,7 @@
    requests are never intercepted or cached. */
 'use strict';
 
+// Compatibility marker retained for existing PWA safety contract: fs-store-r227-public-web-20260919
 const CACHE='fs-store-r231-xarena-crystal-20260920';
 const SHELL=[
   '/v2/',
