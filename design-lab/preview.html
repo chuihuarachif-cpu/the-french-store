@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#06111d">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https://raw.githubusercontent.com; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none';">
   <title>French Store · Design Lab Preview</title>
   <style>
 :root{
@@ -556,6 +556,66 @@ html[data-device="mobile"] .pass-card{min-height:215px}
 html[data-device="tablet"] .pass-grid{grid-template-columns:1fr 1fr}
 @media (prefers-reduced-motion:reduce){.info-hub,.info-hub-backdrop,.xarena-dock button,.settings-grid button{transition:none!important}}
 
+
+/* r232 · infinite arena + reliable mascot loading */
+.loading-brand-gem{
+  transform:none!important;
+  color:inherit!important;
+  font-size:clamp(1.45rem,3.25cqw,2.55rem)!important;
+  filter:drop-shadow(0 0 8px rgba(77,222,255,.65)) drop-shadow(0 0 24px rgba(29,128,255,.42));
+  text-shadow:none!important
+}
+.brand-button>span{
+  display:inline-block;
+  filter:drop-shadow(0 0 7px rgba(98,231,255,.45))
+}
+.category-arena-viewport{
+  overscroll-behavior-x:none
+}
+.category-arena-card{
+  contain:layout paint style
+}
+.arena-arrow:disabled{
+  opacity:1!important;
+  cursor:pointer!important;
+  pointer-events:auto!important
+}
+.loading-run-phase{
+  overflow:visible!important
+}
+.loading-runner-zone{
+  min-height:clamp(210px,32cqw,330px)!important;
+  overflow:visible!important;
+  z-index:6
+}
+.loading-runner{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+  z-index:12!important;
+  width:clamp(180px,27cqw,245px)!important;
+  min-width:150px;
+  max-height:82%;
+  object-fit:contain;
+  object-position:left bottom
+}
+.loading-demo.run-phase .loading-runner{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important
+}
+.loading-runner-fallback{
+  width:clamp(150px,22cqw,205px)!important
+}
+html[data-device="mobile"] .loading-runner{
+  width:172px!important;
+  min-width:172px
+}
+html[data-device="mobile-landscape"] .loading-runner{
+  width:185px!important;
+  min-width:185px
+}
+
 </style>
 </head>
 <body>
@@ -636,17 +696,355 @@ html[data-device="tablet"] .pass-grid{grid-template-columns:1fr 1fr}
               <div class="loading-brand-intro" id="loadingBrandIntro" aria-label="French Store">
                 <div class="loading-brand-mascot-shell">
                   <span class="loading-brand-halo" aria-hidden="true"></span>
-                  <img class="loading-brand-mascot" src="https://raw.githubusercontent.com/chuihuarachif-cpu/the-french-store/design-lab/v2/assets/brand/french-store-mascot.webp" alt="Zorro de French Store" width="220" height="220" decoding="async">
+                  <img class="loading-brand-mascot" src="data:image/webp;base64,UklGRioTAQBXRUJQVlA4WAoAAAAQAAAAVwIAVwIAQUxQSP07AAABFAVt2zAt
+f9p7jQYgIhS4baOM6RgeoedoItcxZz4QVRBBhIwpgBzgMKXQWGxCpS4lfGJB
+4O9g2kEOChNihNOURvhwf5gEdmMHN9QT3Y39YziXFbGMwYyWfTvXHUJOxU8+
+1/i/dIzyQFubIrnRtt0RmdXdYrbFaEZJZmZmEBhkGJntMbM8hjGjRma2h8wg
+ywzSmMYwkkUmWRpZ0GJudXdlUOa9VmZkVnVXRFZWPc/zvhEhi7adoJVukyZE
+xDet09aAqCh+eLJtSZJkS5L+/1YMwwZj46qHY01bNgprWddaNofaTB9fIF1L
+hQgB4MK9QGKtHxG0INuq20rrHoRelgEh4ByQ7CRT8wH/m/1B/lcVE0Jg316E
+VKFASc9vLwFahZIO3Nw0bQiQKhTvtmxD89ttKKk22Wj7LzDfhHeCQ0hVCS5c
+h3nOWP4gcKtK5JDBKyXjwsPv2zoOqSrJ5zAvhAjpBshVkaQLB3o8Yilk455V
+pElR2nEqMqk9GH5RVzVKMJzEvRHH6QKgVSPe25NShY8I3F/Qm5Aqkcss9ykK
+pT80MQFolSjFkb70w0eMhNwwvCpElPSeFgg/gZRi+LLrkCpQGG4PuFIqiaTw
+TgSn+uPhhz2WcVEASgSzexFa9XGZ1b3je7IQwlEerfoIBy4VntSRaOJsFLjV
+HQk7rZBCKh1JBuEv3aGqoxLa7mNkMoZkhePnnSit5shLg4g1FKZxQKs4vPky
+yaUqDlKt3b56Q5S8gmGKMRQkhn+r2sCBYwOhVNFQIr9blYYIrfkORSIXMXgS
+cao08mrkSVpxNLYK4zwjxIW9GhIcsUVCyHW7RKubVVcsbq3b4btQtgSamNrB
+qXFdSqseUQmhTkLRm9sxr8uOeHhXfJk1+oPDqVQpxo0vVbYfsPeYPz68kXMN
+LZGy8bmbLx21/9Y9cgmFpR2najBqOK4TG7ftgD1HXT1h0qwljT5iyFLj3qxC
+RGRr5335yiPXHz+8X/vYooYbjVodiNtu0G5n3PXCN0uaMHr4wst7QsTQnOWM
+ceFrf61YX//9a4/feOzWbfWPzEp9EI2vh995+2Ouff7fixoQEQMVzZ9cW/FV
+towLlNaRUnDGmFBacnLl18/dcdqefXTXR4UdlVBHS6nrjiNve3P2eomIqDjn
+QqoCjwjtmQIPKQTnMkDEoHHux49cfGCf2oRPTFIJf+dGlrotjrv5nZ83aB+O
+MhpXi1sEt+IjscShDKPqn5lswZSHz9qle+ynXkWrUP1nXI8Dbv9iZRCPq/yC
+82/L0VpfypxzLWrD7NduPGxAZHEqVAPRPh9hkz0vf+lnpsUVolAxweS5MsYl
+pISC0tonplj03q37dNb+8ZRUoum62537yi/NiCgYly2fX0uMQoOYQEQ248lR
+g6CiTJZQbQbqc+TdX6zRhmmW1phdQzaBEr6NWTSZJe9fv2cb7b8XqRC/dek2
+F01agIjS87iQsYLyljx01hdSGQ8Q89/fe2h37QUhFZ8fo90+4z5bq6cb84bF
+2Bal4HexRFRzXjhlUCU3umZpe8j90zliwLkswnFhq0Fov/KWvn7GgMrsNx51
+CUDdrjd+JxFlaPF93wZujR+K8WQjQ/0/R/UJDRXVkimJljprdr3xq4bQcniq
+w6yZFXJFpi85DzCY++gRnaMqmEgF9b271eWfbEBUTIwXjPdQQ7NOFowj8ql/
+2jkXTakCik8A+pz12srIEsY3gwFRlNR/4zV8dOFmWt30lU783B7j5yP6+kJn
+fGbcSrTV1LiPuOwfR0TRaSUTv8e5k5v1soC6Zsxsp62caj/xxAfHt9M8HpVJ
+fLrr3b8iSibMWuIUVlsL+NMEqu9u2k5LuvLQep/9MdPim+rIkN+VC8QNLx3m
+VBKK/oNouwkLEuL76ftI+IWn/jWmfaRUDj/ndn5yXRQ//umY2g/NTzv94u4V
+gRJVzeAe/sZG9JlUqc9+lDRH/PXGgZlfoaHW+YxPOIpQS+ZUN4hQqb+nf6Rk
+eq3XZTMROYuts5OaWiustBbgbxdok8vsWr/rf445yaxIz2ugGAvU12d0yuQK
+CbUBf16ImFQ/ZDkhLQLijD/2CJXsrW01YQmiVvDGclbuWBKIc6/sGL7G2Vrr
+cdsqDFjhr91yM6rgiN8fDZCZV3kMta6Xz9EcGq3Ab6CTijd2A8hlYaIUasf+
+iMikKnscj26l5he2C6eRgTU48WtETyidyyBJJnHDgz2B0qw7keFvB8h43FIe
+STKFc06OfB1ZVtv8wTWR1nJ+H2MHQ/WPHTKrEmqb3LwUJVM6l0ucjB1r7u8X
+TiOTTqTugjmRSyOulVtSwsdFV7bLnEbiAhz8OWKSVo5JccRvDsyYRgqw5TN5
+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
+" alt="Mascota de French Store" width="220" height="220" decoding="async">
                 </div>
                 <div class="loading-brand-lockup" aria-label="French Store">
-                  <span class="loading-brand-gem" aria-hidden="true">◆</span>
+                  <span class="loading-brand-gem" aria-hidden="true">💎</span>
                   <div class="loading-brand-copy"><strong>FRENCH</strong><strong>STORE</strong></div>
-                  <span class="loading-brand-gem" aria-hidden="true">◆</span>
+                  <span class="loading-brand-gem" aria-hidden="true">💎</span>
                 </div>
               </div>
               <div class="loading-run-phase" id="loadingRunPhase">
                 <div class="loading-runner-zone" id="loadingRunnerZone" aria-hidden="true">
-                  <img id="loadingRunner" class="loading-runner" src="https://raw.githubusercontent.com/chuihuarachif-cpu/the-french-store/design-lab/design-lab/assets/fox-run-cycle.webp" alt="Zorro de French Store corriendo con documentos" width="80" height="80" decoding="async">
+                  <img id="loadingRunner" class="loading-runner" src="data:image/webp;base64,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
+N0iXTkpGqJF4/264wAAA
+" alt="Mascota de French Store corriendo" width="220" height="220" decoding="sync" fetchpriority="high">
                 </div>
                 <div class="loading-progress-shell">
                   <div class="loading-progress-meta"><span>Actualizando French Store</span><b id="loadingPercent">0%</b></div>
@@ -917,8 +1315,11 @@ window.FS_LAB_DATA = Object.freeze({
   let currentView = "inicio";
   let activeFilter = "Todos";
   let toastTimer;
-  let activeCategoryIndex = 0;
+  const categoryLoopCopies = 3;
+  let activeCategoryIndex = Math.max(0, data.categories.length);
   let categoryScrollRaf = 0;
+  let categoryLoopTimer = 0;
+  let categoryLoopRecentering = false;
   const categoryFilterMap = {
     "recargas-id": "Recargas",
     "recargas-cuenta": "Recargas",
@@ -950,25 +1351,66 @@ window.FS_LAB_DATA = Object.freeze({
     toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
-  function categoryCard(item, index){
+  function logicalCategoryIndex(index){
+    const count = data.categories.length;
+    if (!count) return 0;
+    return ((Number(index) % count) + count) % count;
+  }
+
+  function closestLoopIndex(logicalIndex){
+    const count = data.categories.length;
+    if (!count) return 0;
+    const logical = logicalCategoryIndex(logicalIndex);
+    const candidates = [logical, logical + count, logical + count * 2];
+    return candidates.reduce((best, candidate) =>
+      Math.abs(candidate - activeCategoryIndex) < Math.abs(best - activeCategoryIndex) ? candidate : best
+    , candidates[1]);
+  }
+
+  function categoryCard(item, renderIndex, logicalIndex){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
-    return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Explorar <i>→</i></span></button>';
+    return '<button class="category-card category-arena-card" type="button" data-category-index="' + renderIndex + '" data-logical-index="' + logicalIndex + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(logicalIndex + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Explorar <i>→</i></span></button>';
   }
 
   function renderCategoryArena(){
     const grid = $("#categoryGrid");
-    if (!grid) return;
-    grid.innerHTML = data.categories.map(categoryCard).join("");
+    const count = data.categories.length;
+    if (!grid || !count) return;
+    const looped = Array.from({length:categoryLoopCopies}, (_, copyIndex) =>
+      data.categories.map((item, logicalIndex) => ({item, logicalIndex, renderIndex:copyIndex * count + logicalIndex}))
+    ).flat();
+    grid.innerHTML = looped.map(entry => categoryCard(entry.item, entry.renderIndex, entry.logicalIndex)).join("");
     const dots = $("#categoryArenaDots");
     if (dots) dots.innerHTML = data.categories.map((_, index) => '<button type="button" data-arena-dot="' + index + '" aria-label="Ir a categoría ' + (index + 1) + '"></button>').join("");
-    requestAnimationFrame(() => setCategoryActive(Math.min(activeCategoryIndex, Math.max(0, data.categories.length - 1)), false, true));
+    const maxIndex = count * categoryLoopCopies - 1;
+    if (activeCategoryIndex < count || activeCategoryIndex >= count * 2) activeCategoryIndex = count + logicalCategoryIndex(activeCategoryIndex);
+    requestAnimationFrame(() => setCategoryActive(Math.min(activeCategoryIndex, maxIndex), true, true, true));
   }
 
-  function setCategoryActive(index, shouldScroll = true, instant = false){
-    const cards = $$(".category-arena-card");
+  function scheduleCategoryLoopNormalize(){
+    clearTimeout(categoryLoopTimer);
+    categoryLoopTimer = setTimeout(normalizeCategoryLoop, 110);
+  }
+
+  function normalizeCategoryLoop(){
+    const count = data.categories.length;
+    if (!count || categoryLoopRecentering) return;
+    let target = activeCategoryIndex;
+    if (activeCategoryIndex < count) target = activeCategoryIndex + count;
+    else if (activeCategoryIndex >= count * 2) target = activeCategoryIndex - count;
+    if (target === activeCategoryIndex) return;
+    categoryLoopRecentering = true;
+    setCategoryActive(target, true, true, true);
+    requestAnimationFrame(() => { categoryLoopRecentering = false; });
+  }
+
+  function setCategoryActive(index, shouldScroll = true, instant = false, skipNormalize = false){
+    const cards = $(".category-arena-card");
     const viewport = $("#categoryArenaViewport");
-    if (!cards.length || !viewport) return;
+    const count = data.categories.length;
+    if (!cards.length || !viewport || !count) return;
     const next = Math.max(0, Math.min(cards.length - 1, Number(index) || 0));
+    const logical = logicalCategoryIndex(next);
     activeCategoryIndex = next;
     cards.forEach((card, cardIndex) => {
       const diff = cardIndex - next;
@@ -977,25 +1419,26 @@ window.FS_LAB_DATA = Object.freeze({
       card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
     });
-    $$("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
+    $("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === logical));
     const counter = $("#categoryArenaCounter");
-    if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(cards.length).padStart(2, "0");
+    if (counter) counter.textContent = String(logical + 1).padStart(2, "0") + " / " + String(count).padStart(2, "0");
     const prev = $(".arena-arrow-prev");
     const nextButton = $(".arena-arrow-next");
-    if (prev) prev.disabled = next === 0;
-    if (nextButton) nextButton.disabled = next === cards.length - 1;
+    if (prev) prev.disabled = false;
+    if (nextButton) nextButton.disabled = false;
     if (shouldScroll) {
       const card = cards[next];
       const target = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2;
       const reduced = instant || document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
       viewport.scrollTo({left:Math.max(0,target),behavior:reduced ? "auto" : "smooth"});
     }
+    if (!skipNormalize) scheduleCategoryLoopNormalize();
   }
 
   function syncCategoryFromScroll(){
     categoryScrollRaf = 0;
     const viewport = $("#categoryArenaViewport");
-    const cards = $$(".category-arena-card");
+    const cards = $(".category-arena-card");
     if (!viewport || !cards.length) return;
     const viewportBox = viewport.getBoundingClientRect();
     const center = viewportBox.left + viewportBox.width / 2;
@@ -1006,7 +1449,8 @@ window.FS_LAB_DATA = Object.freeze({
       const distance = Math.abs((box.left + box.width / 2) - center);
       if (distance < bestDistance) { bestDistance = distance; bestIndex = index; }
     });
-    if (bestIndex !== activeCategoryIndex) setCategoryActive(bestIndex, false);
+    if (bestIndex !== activeCategoryIndex) setCategoryActive(bestIndex, false, false, true);
+    scheduleCategoryLoopNormalize();
   }
 
   function productCard(item){
@@ -1092,13 +1536,14 @@ window.FS_LAB_DATA = Object.freeze({
     if (arenaArrow) { setCategoryActive(activeCategoryIndex + Number(arenaArrow.dataset.arenaDirection || 0), true); return; }
 
     const arenaDot = event.target.closest("[data-arena-dot]");
-    if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
+    if (arenaDot) { setCategoryActive(closestLoopIndex(Number(arenaDot.dataset.arenaDot)), true); return; }
 
     const category = event.target.closest("[data-category-index]");
     if (category) {
       const index = Number(category.dataset.categoryIndex);
+      const logicalIndex = Number(category.dataset.logicalIndex);
       if (index === activeCategoryIndex) {
-        const selected = data.categories[index];
+        const selected = data.categories[logicalCategoryIndex(logicalIndex)];
         activeFilter = categoryFilterMap[selected?.id] || "Todos";
         render();
         setView("catalogo");
@@ -1246,6 +1691,8 @@ window.FS_LAB_DATA = Object.freeze({
     runner.style.setProperty("--runner-bob","0px");
     runner.style.opacity = "1";
     runner.style.visibility = "visible";
+    runner.style.display = "block";
+    runner.removeAttribute("hidden");
     message.textContent = "Estamos corriendo para actualizar precios...";
     if (button) button.textContent = "↻ Reiniciar carga";
 
@@ -1290,6 +1737,14 @@ window.FS_LAB_DATA = Object.freeze({
       }
       loadingRaf = requestAnimationFrame(tick);
     }, brandDuration);
+  }
+
+  const runnerImage = $("#loadingRunner");
+  if (runnerImage) {
+    runnerImage.addEventListener("error", () => {
+      runnerImage.src = "../v2/assets/brand/french-store-mascot.webp";
+      runnerImage.classList.add("loading-runner-fallback");
+    }, {once:true});
   }
 
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
