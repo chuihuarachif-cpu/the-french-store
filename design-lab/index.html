@@ -43,10 +43,12 @@
 
       <div class="lab-menu" id="labMenu">
         <button class="active" data-lab-view="inicio">Inicio</button>
-        <button data-lab-view="catalogo">Catálogo</button>
+        <button data-lab-view="catalogo">Tienda</button>
+        <button data-lab-view="wallet">Wallet</button>
+        <button data-lab-view="pedidos">Pedidos</button>
+        <button data-lab-view="perfil">Perfil</button>
         <button data-lab-view="producto">Producto</button>
         <button data-lab-view="checkout">Checkout</button>
-        <button data-lab-view="cuenta">Mi cuenta</button>
         <button data-lab-view="admin">Admin</button>
       </div>
 
@@ -77,7 +79,7 @@
             <nav class="desktop-nav" aria-label="Navegación de demostración">
               <button data-nav-view="inicio" class="active">Inicio</button>
               <button data-nav-view="catalogo">Tienda</button>
-              <button data-nav-view="cuenta">Cuenta</button>
+              <button data-nav-view="perfil">Perfil</button>
             </nav>
             <div class="header-actions">
               <button class="icon-button" type="button" aria-label="Buscar">⌕</button>
@@ -172,11 +174,27 @@
             </div>
           </section>
 
-          <section class="store-view" data-view="cuenta">
+          <section class="store-view" data-view="wallet">
+            <div class="page-head reveal">
+              <span class="eyebrow">WALLET DEMO</span>
+              <h1>French Wallet</h1>
+              <p>Base visual sin saldo, cargas ni conexiones reales.</p>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="pedidos">
+            <div class="page-head reveal">
+              <span class="eyebrow">PEDIDOS DEMO</span>
+              <h1>Mis pedidos</h1>
+              <p>Base visual para diseñar después el historial y seguimiento.</p>
+            </div>
+          </section>
+
+          <section class="store-view" data-view="perfil">
             <div class="account-layout reveal">
               <div class="profile-card">
                 <div class="avatar">FS</div>
-                <div><span class="eyebrow">CUENTA DEMO</span><h2 id="profileRole">Visitante</h2><p>demo@frenchstore.local</p></div>
+                <div><span class="eyebrow">PERFIL DEMO</span><h2 id="profileRole">Visitante</h2><p>demo@frenchstore.local</p></div>
               </div>
               <div class="metric-grid">
                 <article><span>Pedidos</span><strong>12</strong><small>ficticios</small></article>
@@ -184,7 +202,7 @@
                 <article><span>Wallet</span><strong>Bs 125</strong><small>simulado</small></article>
               </div>
               <div class="account-menu">
-                <button type="button">Mis pedidos <span>→</span></button>
+                <button type="button" data-nav-view="pedidos">Mis pedidos <span>→</span></button>
                 <button type="button">Favoritos <span>→</span></button>
                 <button type="button">Notificaciones <span>→</span></button>
                 <button type="button">Configuración <span>→</span></button>
@@ -211,11 +229,12 @@
             </div>
           </section>
 
-          <nav class="mobile-nav" aria-label="Navegación inferior">
+          <nav class="mobile-nav" aria-label="Navegación principal">
             <button class="active" data-nav-view="inicio"><span>⌂</span>Inicio</button>
             <button data-nav-view="catalogo"><span>▦</span>Tienda</button>
-            <button data-nav-view="checkout"><span>🛒</span>Carrito</button>
-            <button data-nav-view="cuenta"><span>●</span>Cuenta</button>
+            <button data-nav-view="wallet"><span>▣</span>Wallet</button>
+            <button data-nav-view="pedidos"><span>☷</span>Pedidos</button>
+            <button data-nav-view="perfil"><span>●</span>Perfil</button>
           </nav>
         </div>
       </div>
