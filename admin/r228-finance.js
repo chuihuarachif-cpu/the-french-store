@@ -90,7 +90,7 @@
   function renderTop(){
     const h=$('financeTopProducts'),rows=Array.isArray(summary.top_products)?summary.top_products:[];if(!h)return;
     if(!rows.length){h.innerHTML='<div class="r228-empty">No hay productos vendidos en este periodo.</div>';return}
-    h.innerHTML='<div style="overflow-x:auto"><table class="r228-table"><thead><tr><th>Producto</th><th class="num">Cant.</th><th class="num">Ventas</th><th class="num">Ganancia</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(r.product)+'</td><td class="num">'+esc(r.quantity)+'</td><td class="num">'+esc(money(r.revenue_bob))+'</td><td class="num">'+esc(money(r.profit_bob))+'</td></tr>').join('')+'</tbody></table></div>';
+    h.innerHTML='<div class="r228-table-wrap"><table class="r228-table"><thead><tr><th>Producto</th><th class="num">Cant.</th><th class="num">Ventas</th><th class="num">Ganancia</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(r.product)+'</td><td class="num">'+esc(r.quantity)+'</td><td class="num">'+esc(money(r.revenue_bob))+'</td><td class="num">'+esc(money(r.profit_bob))+'</td></tr>').join('')+'</tbody></table></div>';
   }
 
   function renderExpenses(){
