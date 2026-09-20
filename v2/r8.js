@@ -7,9 +7,12 @@
   const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
   const saveData = connection?.saveData === true;
-  const lowMemory = Number(navigator.deviceMemory || 4) <= 2;
-  const lowCpu = Number(navigator.hardwareConcurrency || 4) <= 2;
-  const motionMode = reduced ? 'off' : (saveData || lowMemory || lowCpu ? 'lite' : 'full');
+  const memory = Number(navigator.deviceMemory);
+  const cpu = Number(navigator.hardwareConcurrency);
+  const lowMemory = Number.isFinite(memory) && memory <= 4;
+  const lowCpu = Number.isFinite(cpu) && cpu <= 4;
+  const slowNetwork = ['slow-2g','2g'].includes(String(connection?.effectiveType || '').toLowerCase());
+  const motionMode = reduced ? 'off' : (saveData || slowNetwork || lowMemory || lowCpu ? 'lite' : 'full');
 
   root.dataset.r8Motion = motionMode;
 
@@ -179,6 +182,8 @@
     const p = profileFor(name);
     const hero = detail.querySelector('.r6-hero');
     if(!hero || hero.querySelector('.r8-motion-layer')) return;
+    /* Lite/off keeps the visual theme but skips decorative DOM layers on weaker devices. */
+    if(motionMode !== 'full') return;
     hero.dataset.r8Effect = p.effect;
     hero.style.setProperty('--r8-a', p.a);
     hero.style.setProperty('--r8-b', p.b);
