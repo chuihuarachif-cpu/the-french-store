@@ -127,13 +127,45 @@
 
   $("#catalogSearch")?.addEventListener("input", renderCatalog);
 
+  const devicePresets = {
+    mobile: { width: 390, height: 844, label: "Celular" },
+    tablet: { width: 820, height: 1180, label: "Tablet" },
+    laptop: { width: 1180, height: 768, label: "Laptop" },
+    desktop: { width: 1440, height: 900, label: "PC" }
+  };
+
+  function updateDeviceScale(){
+    const root = document.documentElement;
+    const viewport = $("#deviceViewport");
+    const frame = $("#deviceFrame");
+    if (!viewport || !frame) return;
+    const preset = devicePresets[root.dataset.device] || devicePresets.desktop;
+    const available = Math.max(1, viewport.clientWidth);
+    const scale = Math.min(1, available / preset.width);
+    root.style.setProperty("--device-width", preset.width + "px");
+    root.style.setProperty("--device-height", preset.height + "px");
+    root.style.setProperty("--device-scale", scale.toFixed(4));
+    requestAnimationFrame(() => {
+      viewport.style.height = Math.ceil(frame.scrollHeight * scale) + "px";
+    });
+  }
+
+  function setDevice(device){
+    const safeDevice = devicePresets[device] ? device : "desktop";
+    document.documentElement.dataset.device = safeDevice;
+    document.querySelectorAll("#devicePreviewButtons [data-device-preview]").forEach(el => {
+      el.classList.toggle("active", el.dataset.devicePreview === safeDevice);
+    });
+    updateDeviceScale();
+  }
+
   $("#devicePreviewButtons")?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-device-preview]");
     if (!button) return;
-    const device = button.dataset.devicePreview;
-    document.documentElement.dataset.device = device;
-    $("#devicePreviewButtons [data-device-preview]").forEach(el => el.classList.toggle("active", el === button));
+    setDevice(button.dataset.devicePreview);
   });
+
+  window.addEventListener("resize", updateDeviceScale);
 
   $("#roleSelect")?.addEventListener("change", (event) => setRole(event.target.value));
 
@@ -142,6 +174,9 @@
     event.currentTarget.textContent = "Animaciones: " + (disabled ? "OFF" : "ON");
   });
 
+  setDevice(document.documentElement.dataset.device || "desktop");
+  const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(updateDeviceScale) : null;
+  if (frameObserver) frameObserver.observe($("#deviceFrame"));
   render();
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
