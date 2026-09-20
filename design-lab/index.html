@@ -81,27 +81,30 @@
         <div class="store-app">
           <div class="loading-demo" id="loadingDemo" aria-hidden="true">
             <div class="loading-demo-backdrop" aria-hidden="true"></div>
-            <div class="loading-demo-glow loading-demo-glow-a"></div>
-            <div class="loading-demo-glow loading-demo-glow-b"></div>
             <div class="loading-demo-content">
-              <div class="loading-brand-intro loading-brand-intro-text-only" id="loadingBrandIntro" aria-label="French Store">
-                <div class="loading-brand-lockup loading-brand-lockup-text-only" aria-label="💎 French Store 💎">
-                  <strong>💎 French Store 💎</strong>
-                </div>
-              </div>
               <div class="loading-run-phase" id="loadingRunPhase">
-                <div class="loading-exact-wrapper">
-                  <div class="loading-percentage-text" id="loadingPercent">0%</div>
-                  <div class="loading-exact-track" aria-label="Progreso de carga">
-                    <div class="loading-fox-character" id="loadingFox" aria-hidden="true">
-                      <img id="loadingFoxImage" class="loading-fox-image" src="./assets/fox-run-cycle.webp" alt="" width="180" height="180" decoding="sync" fetchpriority="high">
-                    </div>
-                    <div class="loading-exact-fill" id="loadingProgressBar"></div>
+                <div class="loading-center-stage" aria-label="💎 French Store 💎">
+                  <div class="loading-square-wave" aria-hidden="true">
+                    <span style="--square-index:0"></span>
+                    <span style="--square-index:1"></span>
+                    <span style="--square-index:2"></span>
+                    <span style="--square-index:3"></span>
+                    <span style="--square-index:4"></span>
                   </div>
+                  <strong class="loading-center-brand">💎 French Store 💎</strong>
                 </div>
-                <div class="loading-demo-copy loading-exact-copy">
-                  <strong id="loadingMessage">Estamos corriendo para actualizar precios...</strong>
-                  <span>Preparando ofertas, recargas y novedades.</span>
+
+                <div class="loading-bottom-cluster">
+                  <div class="loading-progress-row">
+                    <div class="loading-progress-track-bottom" aria-label="Progreso de carga">
+                      <div class="loading-progress-fill-bottom" id="loadingProgressBar"></div>
+                    </div>
+                    <b class="loading-percent-end" id="loadingPercent">0%</b>
+                  </div>
+                  <div class="loading-status-copy">
+                    <strong id="loadingMessage">Preparando French Store...</strong>
+                    <span>Preparando ofertas, recargas y novedades.</span>
+                  </div>
                 </div>
               </div>
             </div>
