@@ -179,12 +179,12 @@ html[data-device="mobile"] .admin-demo-table>div strong{grid-column:1/-1}
 .loading-runner-zone{position:relative;align-self:stretch;width:min(100%,940px);justify-self:center;min-height:250px;overflow:hidden;border-radius:28px;isolation:isolate}
 .loading-runner-zone:before{content:"";position:absolute;left:3%;right:3%;bottom:4%;height:2px;background:linear-gradient(90deg,transparent,rgba(95,233,255,.55),transparent);box-shadow:0 0 25px rgba(32,195,255,.35)}
 .loading-runner-zone:after{content:"";position:absolute;left:0;right:0;top:20%;height:58%;background:repeating-linear-gradient(180deg,transparent 0 26px,rgba(27,151,255,.09) 27px 29px);transform:skewX(-12deg);filter:blur(.6px);opacity:.55;z-index:-1}
-.loading-runner{position:absolute;left:0;bottom:0;width:clamp(210px,29cqw,330px);max-width:44%;height:auto;transform:translateY(var(--runner-bob,0px));transform-origin:center bottom;border-radius:34px;-webkit-mask-image:radial-gradient(ellipse 72% 72% at 58% 55%,#000 46%,rgba(0,0,0,.98) 63%,transparent 95%);mask-image:radial-gradient(ellipse 72% 72% at 58% 55%,#000 46%,rgba(0,0,0,.98) 63%,transparent 95%);filter:drop-shadow(0 18px 18px rgba(0,0,0,.45)) drop-shadow(0 0 12px rgba(32,205,255,.18));will-change:left,transform}
+.loading-runner{position:absolute;left:0;bottom:0;width:clamp(210px,29cqw,330px);max-width:44%;height:auto;transform:translate3d(var(--runner-x,0px),var(--runner-bob,0px),0);transform-origin:center bottom;border-radius:34px;-webkit-mask-image:radial-gradient(ellipse 72% 72% at 58% 55%,#000 46%,rgba(0,0,0,.98) 63%,transparent 95%);mask-image:radial-gradient(ellipse 72% 72% at 58% 55%,#000 46%,rgba(0,0,0,.98) 63%,transparent 95%);filter:drop-shadow(0 18px 18px rgba(0,0,0,.45)) drop-shadow(0 0 12px rgba(32,205,255,.18));will-change:transform}
 .loading-progress-shell{width:min(88%,900px);justify-self:center}
 .loading-progress-meta{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:9px;color:#a7c7d6;font-size:clamp(.68rem,1.15cqw,.86rem);font-weight:800;letter-spacing:.04em;text-transform:uppercase}
 .loading-progress-meta b{color:#74ecff;font-size:1em}
 .loading-progress-track{height:clamp(12px,1.6cqw,18px);padding:3px;border:1px solid rgba(107,232,255,.5);border-radius:999px;background:rgba(3,16,26,.78);box-shadow:inset 0 0 16px rgba(0,0,0,.8),0 0 22px rgba(18,179,255,.14);overflow:hidden}
-.loading-progress-fill{width:0%;height:100%;border-radius:999px;background:repeating-linear-gradient(120deg,rgba(255,255,255,.18) 0 9px,transparent 9px 18px),linear-gradient(90deg,#0aa6ff,#64efff);box-shadow:0 0 16px rgba(76,229,255,.75),0 0 40px rgba(12,151,255,.34);will-change:width}
+.loading-progress-fill{width:100%;height:100%;transform:scaleX(0);transform-origin:left center;border-radius:999px;background:repeating-linear-gradient(120deg,rgba(255,255,255,.18) 0 9px,transparent 9px 18px),linear-gradient(90deg,#0aa6ff,#64efff);box-shadow:0 0 16px rgba(76,229,255,.75),0 0 40px rgba(12,151,255,.34);will-change:transform}
 .loading-demo-copy{justify-self:center;max-width:760px;text-align:center}
 .loading-demo-copy strong{display:block;margin-bottom:8px;font-size:clamp(1.15rem,2.7cqw,2rem);line-height:1.08;letter-spacing:-.025em}
 .loading-demo-copy span{color:#86a8b8;font-size:clamp(.78rem,1.35cqw,1rem)}
@@ -695,9 +695,9 @@ window.FS_LAB_DATA = Object.freeze({
     overlay.classList.remove("leaving");
     overlay.classList.add("active");
     overlay.setAttribute("aria-hidden","false");
-    fill.style.width = "0%";
+    fill.style.transform = "scaleX(0)";
     percent.textContent = "0%";
-    runner.style.left = "0px";
+    runner.style.setProperty("--runner-x","0px");
     runner.style.setProperty("--runner-bob","0px");
     message.textContent = "Estamos corriendo para actualizar precios...";
     if (button) button.textContent = "↻ Reiniciar carga";
@@ -715,9 +715,9 @@ window.FS_LAB_DATA = Object.freeze({
       const zoneWidth = zone.clientWidth;
       const runnerWidth = runner.getBoundingClientRect().width / (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--device-scale")) || 1);
       const travel = Math.max(0, zoneWidth - Math.min(runnerWidth, zoneWidth * .58));
-      runner.style.left = (travel * eased) + "px";
+      runner.style.setProperty("--runner-x",(travel * eased) + "px");
       runner.style.setProperty("--runner-bob", reduced ? "0px" : (Math.sin(raw * Math.PI * 18) * 3.8) + "px");
-      fill.style.width = value + "%";
+      fill.style.transform = "scaleX(" + eased.toFixed(4) + ")";
       percent.textContent = value + "%";
 
       if (value < 38) message.textContent = "Estamos corriendo para actualizar precios...";
