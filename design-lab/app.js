@@ -348,77 +348,109 @@
   });
 
 
-  let loadingRaf = 0;
   let loadingHideTimer = 0;
   let loadingPhaseTimer = 0;
+  let loadingRunInterval = 0;
+  let loadingProgressInterval = 0;
+
+  function stopLoadingTimers(){
+    clearTimeout(loadingHideTimer);
+    clearTimeout(loadingPhaseTimer);
+    clearInterval(loadingRunInterval);
+    clearInterval(loadingProgressInterval);
+    loadingHideTimer = 0;
+    loadingPhaseTimer = 0;
+    loadingRunInterval = 0;
+    loadingProgressInterval = 0;
+  }
+
+  function setFoxFrame(frame){
+    const sprite = $("#loadingFoxSprite");
+    if (!sprite) return;
+    const positions = ["0%","33.333%","66.667%","100%"];
+    sprite.style.backgroundPosition = positions[frame % positions.length] + " 0";
+  }
+
+  function finishLoadingDemo(overlay, button, reduced){
+    loadingHideTimer = setTimeout(() => {
+      overlay.classList.add("leaving");
+      loadingHideTimer = setTimeout(() => {
+        overlay.classList.remove("active","leaving","brand-phase","run-phase");
+        overlay.setAttribute("aria-hidden","true");
+        if (button) button.textContent = "▶ Probar carga";
+      }, reduced ? 40 : 480);
+    }, reduced ? 180 : 720);
+  }
 
   function runLoadingDemo(){
     const overlay = $("#loadingDemo");
-    const runner = $("#loadingRunner");
-    const zone = $("#loadingRunnerZone");
+    const fox = $("#loadingFox");
     const fill = $("#loadingProgressBar");
     const percent = $("#loadingPercent");
     const message = $("#loadingMessage");
     const button = $("#loadingDemoButton");
-    if (!overlay || !runner || !zone || !fill || !percent || !message) return;
+    if (!overlay || !fox || !fill || !percent || !message) return;
 
-    cancelAnimationFrame(loadingRaf);
-    clearTimeout(loadingHideTimer);
-    clearTimeout(loadingPhaseTimer);
+    stopLoadingTimers();
     overlay.classList.remove("leaving","run-phase");
     overlay.classList.add("active","brand-phase");
     overlay.setAttribute("aria-hidden","false");
-    fill.style.transform = "scaleX(0)";
+
+    let currentFrame = 0;
+    let progress = 0;
+    setFoxFrame(0);
+    fox.style.left = "0%";
+    fill.style.width = "0%";
     percent.textContent = "0%";
-    runner.style.setProperty("--runner-x","0px");
-    runner.style.setProperty("--runner-bob","0px");
-    runner.style.opacity = "1";
-    runner.style.visibility = "visible";
-    runner.style.display = "block";
-    runner.removeAttribute("hidden");
     message.textContent = "Estamos corriendo para actualizar precios...";
     if (button) button.textContent = "↻ Reiniciar carga";
 
-    const reduced = document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const reduced = document.documentElement.classList.contains("motion-off") ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     const device = document.documentElement.dataset.device || "desktop";
     const compactMobile = device === "mobile" || device === "mobile-landscape";
-    const brandDuration = reduced ? 420 : (compactMobile ? 1250 : 1180);
-    const runDuration = reduced ? 1050 : (compactMobile ? 3600 : device === "tablet" ? 3900 : 3700);
+    const brandDuration = reduced ? 350 : (compactMobile ? 900 : 1050);
 
     loadingPhaseTimer = setTimeout(() => {
       overlay.classList.remove("brand-phase");
       overlay.classList.add("run-phase");
-      const start = performance.now();
 
-      function tick(now){
-        const raw = Math.min(1, Math.max(0, (now - start) / runDuration));
-        const eased = 1 - Math.pow(1 - raw, 2.05);
-        const value = Math.round(eased * 100);
-        const zoneWidth = zone.clientWidth;
-        const rootScale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--device-scale")) || 1;
-        const runnerWidth = runner.getBoundingClientRect().width / rootScale;
-        const travel = Math.max(0, zoneWidth - Math.min(runnerWidth, zoneWidth * .58));
-        runner.style.setProperty("--runner-x",(travel * eased) + "px");
-        runner.style.setProperty("--runner-bob", reduced ? "0px" : (Math.sin(raw * Math.PI * 18) * 3.8) + "px");
-        fill.style.transform = "scaleX(" + eased.toFixed(4) + ")";
-        percent.textContent = value + "%";
-        if (value < 38) message.textContent = "Estamos corriendo para actualizar precios...";
-        else if (value < 76) message.textContent = "Un sprint más: ordenando ofertas y recargas...";
-        else if (value < 100) message.textContent = "Últimos metros: dejando todo listo...";
-        else message.textContent = "¡Llegamos! French Store está listo.";
-
-        if (raw < 1) { loadingRaf = requestAnimationFrame(tick); return; }
-
-        loadingHideTimer = setTimeout(() => {
-          overlay.classList.add("leaving");
-          loadingHideTimer = setTimeout(() => {
-            overlay.classList.remove("active","leaving","brand-phase","run-phase");
-            overlay.setAttribute("aria-hidden","true");
-            if (button) button.textContent = "▶ Probar carga";
-          }, reduced ? 40 : 480);
-        }, reduced ? 180 : 560);
+      if (!reduced) {
+        loadingRunInterval = setInterval(() => {
+          currentFrame = (currentFrame + 1) % 4;
+          setFoxFrame(currentFrame);
+        }, 100);
       }
-      loadingRaf = requestAnimationFrame(tick);
+
+      loadingProgressInterval = setInterval(() => {
+        const increment = reduced ? 8 : Math.random() * 2.5;
+        progress += increment;
+
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(loadingProgressInterval);
+          clearInterval(loadingRunInterval);
+          loadingProgressInterval = 0;
+          loadingRunInterval = 0;
+          currentFrame = 0;
+          setFoxFrame(0);
+          percent.textContent = "¡CARGA COMPLETADA!";
+          message.textContent = "¡Llegamos! French Store está listo.";
+          fill.style.width = "100%";
+          fox.style.left = "100%";
+          finishLoadingDemo(overlay, button, reduced);
+          return;
+        }
+
+        const displayProgress = Math.floor(progress);
+        percent.textContent = displayProgress + "%";
+        fill.style.width = progress + "%";
+        fox.style.left = progress + "%";
+
+        if (displayProgress < 38) message.textContent = "Estamos corriendo para actualizar precios...";
+        else if (displayProgress < 76) message.textContent = "Un sprint más: ordenando ofertas y recargas...";
+        else message.textContent = "Últimos metros: dejando todo listo...";
+      }, 80);
     }, brandDuration);
   }
 
