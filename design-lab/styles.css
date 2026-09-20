@@ -653,3 +653,196 @@ html[data-device="mobile-landscape"] .loading-runner{
   letter-spacing:.015em;
   white-space:nowrap
 }
+
+
+/* r234 · true six-card circular roulette (no scroll, no clones) */
+.category-arena-viewport{
+  position:relative!important;
+  overflow:hidden!important;
+  padding:0!important;
+  height:338px;
+  touch-action:pan-y!important;
+  contain:layout paint
+}
+.category-arena-track{
+  --arena-card-width:clamp(250px,26cqw,350px);
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  padding:0!important
+}
+.category-arena-card{
+  --roulette-x:0cqw;
+  --roulette-y:10px;
+  --roulette-scale:.78;
+  --roulette-tilt:0deg;
+  --roulette-opacity:0;
+  position:absolute!important;
+  left:50%!important;
+  top:20px!important;
+  width:var(--arena-card-width)!important;
+  min-height:286px;
+  margin:0!important;
+  transform:
+    perspective(1050px)
+    translate3d(calc(-50% + var(--roulette-x)),var(--roulette-y),0)
+    rotateY(var(--roulette-tilt))
+    scale(var(--roulette-scale))!important;
+  opacity:var(--roulette-opacity)!important;
+  transition:
+    transform .5s cubic-bezier(.2,.78,.2,1),
+    opacity .32s ease,
+    border-color .32s ease,
+    box-shadow .38s ease!important;
+  filter:none!important;
+  will-change:auto!important;
+  pointer-events:none;
+  z-index:1
+}
+.category-arena-card[data-roulette-slot="0"]{
+  --roulette-x:0cqw;
+  --roulette-y:-7px;
+  --roulette-scale:1;
+  --roulette-tilt:0deg;
+  --roulette-opacity:1;
+  pointer-events:auto;
+  z-index:6
+}
+.category-arena-card[data-roulette-slot="-1"]{
+  --roulette-x:-30cqw;
+  --roulette-y:10px;
+  --roulette-scale:.88;
+  --roulette-tilt:9deg;
+  --roulette-opacity:.9;
+  pointer-events:auto;
+  z-index:4
+}
+.category-arena-card[data-roulette-slot="1"]{
+  --roulette-x:30cqw;
+  --roulette-y:10px;
+  --roulette-scale:.88;
+  --roulette-tilt:-9deg;
+  --roulette-opacity:.9;
+  pointer-events:auto;
+  z-index:4
+}
+.category-arena-card[data-roulette-slot="-2"]{
+  --roulette-x:-53cqw;
+  --roulette-y:22px;
+  --roulette-scale:.72;
+  --roulette-tilt:12deg;
+  --roulette-opacity:.34;
+  z-index:2
+}
+.category-arena-card[data-roulette-slot="2"]{
+  --roulette-x:53cqw;
+  --roulette-y:22px;
+  --roulette-scale:.72;
+  --roulette-tilt:-12deg;
+  --roulette-opacity:.34;
+  z-index:2
+}
+.category-arena-card[data-roulette-slot="-3"],
+.category-arena-card[data-roulette-slot="3"],
+.category-arena-card.roulette-hidden{
+  --roulette-opacity:0;
+  pointer-events:none!important;
+  z-index:0
+}
+.category-arena-card.roulette-instant{
+  transition:none!important
+}
+.category-arena-card.active{
+  filter:none!important
+}
+.category-arena-card[data-distance="1"],
+.category-arena-card[data-distance="2"],
+.category-arena-card[data-distance="3"]{
+  filter:none!important
+}
+.category-arena-card[data-distance="1"]{
+  opacity:var(--roulette-opacity)!important
+}
+.category-arena-card[data-distance="2"]{
+  opacity:var(--roulette-opacity)!important
+}
+.category-arena-card[data-distance="3"]{
+  opacity:0!important
+}
+
+/* Performance: mobile uses only transform + opacity for roulette motion. */
+html[data-device="mobile"] .category-arena-viewport{
+  height:328px
+}
+html[data-device="mobile"] .category-arena-track{
+  --arena-card-width:270px!important
+}
+html[data-device="mobile"] .category-arena-card[data-roulette-slot="-1"]{
+  --roulette-x:-57cqw;
+  --roulette-scale:.82;
+  --roulette-opacity:.82
+}
+html[data-device="mobile"] .category-arena-card[data-roulette-slot="1"]{
+  --roulette-x:57cqw;
+  --roulette-scale:.82;
+  --roulette-opacity:.82
+}
+html[data-device="mobile"] .category-arena-card[data-roulette-slot="-2"]{
+  --roulette-x:-103cqw;
+  --roulette-opacity:0
+}
+html[data-device="mobile"] .category-arena-card[data-roulette-slot="2"]{
+  --roulette-x:103cqw;
+  --roulette-opacity:0
+}
+html[data-device="mobile"] .category-card-grid{
+  opacity:.22
+}
+html[data-device="mobile"] .category-icon-orbit{
+  box-shadow:none
+}
+html[data-device="mobile"] .xarena-dock,
+html[data-device="mobile"] .info-hub{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important
+}
+html[data-device="mobile"] .loading-demo.run-phase .loading-runner{
+  animation:none!important;
+  filter:drop-shadow(0 12px 14px rgba(0,0,0,.42))!important
+}
+
+html[data-device="mobile-landscape"] .category-arena-viewport{
+  height:208px
+}
+html[data-device="mobile-landscape"] .category-arena-track{
+  --arena-card-width:230px!important
+}
+html[data-device="mobile-landscape"] .category-arena-card{
+  top:4px!important;
+  min-height:188px!important
+}
+html[data-device="mobile-landscape"] .category-arena-card[data-roulette-slot="-1"]{
+  --roulette-x:-30cqw;
+  --roulette-scale:.84
+}
+html[data-device="mobile-landscape"] .category-arena-card[data-roulette-slot="1"]{
+  --roulette-x:30cqw;
+  --roulette-scale:.84
+}
+html[data-device="mobile-landscape"] .category-arena-card[data-roulette-slot="-2"],
+html[data-device="mobile-landscape"] .category-arena-card[data-roulette-slot="2"]{
+  --roulette-opacity:0
+}
+html[data-device="mobile-landscape"] .xarena-dock,
+html[data-device="mobile-landscape"] .info-hub{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important
+}
+html[data-device="mobile-landscape"] .loading-demo.run-phase .loading-runner{
+  animation:none!important
+}
+
+@media (prefers-reduced-motion:reduce){
+  .category-arena-card{transition:none!important}
+}
