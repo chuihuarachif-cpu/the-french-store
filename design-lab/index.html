@@ -307,7 +307,6 @@
                   <button type="button" data-x-back aria-label="Volver a categorías">↩</button>
                   <button type="button" data-x-favorite aria-label="Agregar a favoritos">♡</button>
                   <button type="button" data-x-cart aria-label="Abrir carrito">🛒 <span id="xCartCount">0</span></button>
-                  <button type="button" data-x-exit aria-label="Salir">×</button>
                 </div>
               </header>
 
@@ -318,32 +317,30 @@
                   <button class="x-wheel-arrow" type="button" data-x-game-step="1" aria-label="Siguiente">⌄</button>
                 </aside>
 
-                <section class="x-showcase">
-                  <div class="x-showcase-aura" aria-hidden="true"></div>
-                  <div class="x-showcase-icon">
-                    <img id="xShowcaseImage" class="x-showcase-img" alt="">
-                    <span id="xShowcaseFallback">FS</span>
-                  </div>
-                  <div class="x-showcase-copy">
-                    <span id="xShowcaseType">FRENCH STORE</span>
-                    <h2 id="xShowcaseTitle">Selecciona una opción</h2>
-                    <p id="xShowcaseMeta">Desliza para cambiar.</p>
-                  </div>
-                </section>
-
-                <aside class="x-config-panel">
-                  <div class="x-config-head">
-                    <span>CONFIGURAR COMPRA</span>
-                    <b id="xSelectedProductLabel">Selecciona un producto</b>
+                <main class="x-product-stage">
+                  <div class="x-stage-gamehead">
+                    <div class="x-stage-game-icon">
+                      <img id="xShowcaseImage" class="x-showcase-img" alt="">
+                      <span id="xShowcaseFallback">FS</span>
+                    </div>
+                    <div class="x-stage-gamecopy">
+                      <span id="xShowcaseType">FRENCH STORE</span>
+                      <h2 id="xShowcaseTitle">Selecciona una opción</h2>
+                      <p id="xShowcaseMeta">Desliza para cambiar.</p>
+                    </div>
+                    <div class="x-config-selection">
+                      <small>SELECCIÓN</small>
+                      <b id="xSelectedProductLabel">Selecciona un producto</b>
+                    </div>
                   </div>
                   <div class="x-input-fields" id="xInputFields"></div>
                   <div class="x-package-list" id="xPackageList"></div>
-                  <button class="x-buy-button" id="xBuyButton" type="button" disabled>Comprar</button>
-                  <small class="x-config-note">Vista del laboratorio · no procesa pagos reales.</small>
-                </aside>
+                  <div class="x-buy-dock">
+                    <button class="x-buy-button" id="xBuyButton" type="button" disabled>Comprar</button>
+                    <small class="x-config-note">Vista del laboratorio · no procesa pagos reales.</small>
+                  </div>
+                </main>
               </div>
-
-              <footer class="x-experience-brand">💎 French Store 💎</footer>
             </div>
 
             <div class="x-cart-backdrop" id="xCartBackdrop" data-x-cart-close></div>
