@@ -305,34 +305,28 @@ html[data-device="mobile"] .admin-demo-table>div strong{grid-column:1/-1}
   opacity:.58;
   pointer-events:none
 }
-.loading-runner-fallback{
-  position:absolute;
-  left:10px;
-  bottom:26px;
-  z-index:2;
-  font-size:7rem;
-  opacity:.18;
-  filter:drop-shadow(0 0 18px rgba(27,213,255,.65));
-  pointer-events:none
-}
 .loading-runner{
   position:absolute;
   left:0;
   bottom:12px;
   z-index:5;
   display:block;
-  width:clamp(225px,31cqw,350px);
+  width:clamp(170px,25cqw,220px);
   max-width:none;
   height:auto;
   opacity:1;
+  visibility:visible;
   object-fit:contain;
+  image-rendering:auto;
   transform:translate3d(var(--runner-x,0px),var(--runner-bob,0px),0);
   transform-origin:center bottom;
-  border-radius:24px;
+  background:transparent!important;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
   filter:
-    drop-shadow(0 18px 20px rgba(0,0,0,.48))
+    drop-shadow(0 16px 18px rgba(0,0,0,.46))
     drop-shadow(0 0 14px rgba(24,204,255,.30));
-  box-shadow:0 0 0 1px rgba(82,222,255,.06);
   will-change:transform;
   pointer-events:none
 }
@@ -407,18 +401,16 @@ html[data-device="mobile"] .loading-demo-wordmark span{font-size:2.35rem}
 html[data-device="mobile"] .loading-demo-diamond{font-size:1.25rem}
 html[data-device="mobile"] .loading-demo-wordmark i{font-size:.95rem}
 html[data-device="mobile"] .loading-runner-zone{min-height:330px;width:100%}
-html[data-device="mobile"] .loading-runner{width:225px;bottom:10px}
-html[data-device="mobile"] .loading-runner-fallback{font-size:5.5rem;bottom:32px}
-html[data-device="mobile"] .loading-progress-shell{width:92%}
+html[data-device="mobile"] .loading-runner{width:175px;bottom:10px}
+html[data-device="mobile"] html[data-device="mobile"] .loading-progress-shell{width:92%}
 html[data-device="mobile"] .loading-demo-copy{max-width:330px}
 html[data-device="mobile"] .loading-demo-copy strong{font-size:1.25rem}
 html[data-device="tablet"] .loading-demo-content{
   grid-template-rows:auto minmax(430px,1fr) auto auto;
   padding:38px 38px 44px
 }
-html[data-device="tablet"] .loading-runner{width:300px}
-html[data-device="laptop"] .loading-runner,
-html[data-device="desktop"] .loading-runner{width:340px}
+html[data-device="tablet"] .loading-runner{width:200px}
+html[data-device="laptop"] .loading-runner,\nhtml[data-device="desktop"] .loading-runner{width:220px}
 html.motion-off .loading-demo,
 html.motion-off .loading-runner,
 html.motion-off .loading-progress-fill{transition:none!important;animation:none!important}
