@@ -1,0 +1,22 @@
+/* FRENCH STORE — Admin scheduled messages. Replaces the retired seasonal calendar UI. */
+.message-schedule-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+.message-schedule-summary>div{padding:13px 14px;border:1px solid rgba(91,203,255,.18);border-radius:14px;background:rgba(5,20,32,.7)}
+.message-schedule-summary b{display:block;color:#eefbff;margin-bottom:3px}.message-schedule-summary small{color:#9db4c4;line-height:1.4}
+.message-schedule-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.72fr);gap:14px;align-items:start}
+.message-schedule-list{display:grid;gap:10px}
+.message-schedule-card{padding:14px;border:1px solid rgba(91,203,255,.16);border-radius:15px;background:rgba(4,16,27,.62)}
+.message-schedule-card.is-off{opacity:.62}
+.message-schedule-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.message-schedule-top b{display:block;color:#f1fbff}.message-schedule-top small{display:block;color:#9bb3c4;margin-top:3px}
+.message-schedule-badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;border:1px solid rgba(91,203,255,.2);font-size:.7rem;font-weight:800;white-space:nowrap}
+.message-schedule-badge.preset{color:#8cecff;background:rgba(91,203,255,.07)}.message-schedule-badge.custom{color:#f3cf87;background:rgba(225,174,72,.08);border-color:rgba(225,174,72,.2)}
+.message-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.message-preview>div{padding:10px 11px;border:1px solid rgba(255,255,255,.06);border-radius:11px;background:rgba(255,255,255,.025)}
+.message-preview span{display:block;color:#6fdff1;font-size:.72rem;font-weight:800;margin-bottom:4px}.message-preview b{display:block;font-size:.82rem}.message-preview p{margin:4px 0 0;color:#9fb5c4;font-size:.78rem;line-height:1.38}
+.message-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.message-editor{position:sticky;top:10px}.message-editor .form-grid{margin-top:10px}.message-editor label{display:grid;gap:5px}.message-editor label span{font-size:.78rem;color:#a9bfce}.message-editor input,.message-editor textarea,.message-editor select{width:100%;box-sizing:border-box}
+.message-editor .wide{grid-column:1/-1}.message-editor-meta{padding:9px 10px;margin-top:8px;border-radius:10px;background:rgba(91,203,255,.06);color:#9fb7c7;font-size:.78rem;line-height:1.4}
+.custom-message-card{margin:0 0 14px}.custom-message-card .form-grid{margin-top:10px}.custom-message-card label{display:grid;gap:5px}.custom-message-card label span{font-size:.78rem;color:#a9bfce}.custom-message-card input,.custom-message-card textarea{width:100%;box-sizing:border-box}.custom-message-card .wide{grid-column:1/-1}
+.message-help{padding:11px 12px;margin:10px 0 14px;border-radius:12px;background:rgba(91,203,255,.06);color:#9eb5c5;font-size:.8rem;line-height:1.5}
+@media(max-width:900px){.message-schedule-summary{grid-template-columns:1fr}.message-schedule-grid{grid-template-columns:1fr}.message-editor{position:static}}
+@media(max-width:620px){.message-preview{grid-template-columns:1fr}.message-schedule-top{align-items:flex-start}.message-schedule-badge{font-size:.65rem}}
