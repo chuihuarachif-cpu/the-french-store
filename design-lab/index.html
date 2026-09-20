@@ -84,15 +84,9 @@
             <div class="loading-demo-glow loading-demo-glow-a"></div>
             <div class="loading-demo-glow loading-demo-glow-b"></div>
             <div class="loading-demo-content">
-              <div class="loading-brand-intro" id="loadingBrandIntro" aria-label="French Store">
-                <div class="loading-brand-mascot-shell">
-                  <span class="loading-brand-halo" aria-hidden="true"></span>
-                  <img class="loading-brand-mascot" src="../v2/assets/brand/french-store-mascot.webp" alt="Mascota de French Store" width="220" height="220" decoding="async">
-                </div>
-                <div class="loading-brand-lockup" aria-label="French Store">
-                  <span class="loading-brand-gem" aria-hidden="true">💎</span>
-                  <div class="loading-brand-copy"><strong>FRENCH</strong><strong>STORE</strong></div>
-                  <span class="loading-brand-gem" aria-hidden="true">💎</span>
+              <div class="loading-brand-intro loading-brand-intro-text-only" id="loadingBrandIntro" aria-label="French Store">
+                <div class="loading-brand-lockup loading-brand-lockup-text-only" aria-label="💎 French Store 💎">
+                  <strong>💎 French Store 💎</strong>
                 </div>
               </div>
               <div class="loading-run-phase" id="loadingRunPhase">
@@ -100,7 +94,7 @@
                   <div class="loading-percentage-text" id="loadingPercent">0%</div>
                   <div class="loading-exact-track" aria-label="Progreso de carga">
                     <div class="loading-fox-character" id="loadingFox" aria-hidden="true">
-                      <span class="loading-fox-sprite" id="loadingFoxSprite"></span>
+                      <img id="loadingFoxImage" class="loading-fox-image" src="./assets/fox-run-cycle.webp" alt="" width="128" height="128" decoding="async" fetchpriority="high">
                     </div>
                     <div class="loading-exact-fill" id="loadingProgressBar"></div>
                   </div>
