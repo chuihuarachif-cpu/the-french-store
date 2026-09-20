@@ -3,7 +3,7 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r229-motion-copy-20260919';
+const CACHE='fs-store-r230-mobile-motion-20260919';
 const SHELL=[
   '/v2/',
   '/v2/index.html',
