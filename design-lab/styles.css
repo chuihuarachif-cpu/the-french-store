@@ -2257,3 +2257,127 @@ html[data-device="mobile-landscape"] .x-config-note,
 html[data-device="mobile"] .x-experience.force-landscape .x-config-note{
   font-size:.5rem!important
 }
+
+
+/* r246 · mobile/GPU performance pass */
+.loading-progress-fill-bottom{
+  width:100%!important;
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform .08s linear!important;
+  will-change:transform
+}
+
+/* Do not paint/animate the storefront behind modal experiences. */
+body.info-center-open .store-view{
+  visibility:hidden!important;
+  pointer-events:none!important
+}
+body.info-center-open .welcome-ticker-track,
+body.info-center-open .reveal,
+body.experience-open .welcome-ticker-track,
+html.page-hidden .welcome-ticker-track,
+html.page-hidden .loading-square-wave span,
+html.page-hidden .x-phone-body,
+html.page-hidden .x-phone-arrow{
+  animation-play-state:paused!important
+}
+
+/* Promote the single continuous ticker rather than repainting text each frame. */
+.welcome-ticker-track{
+  will-change:transform;
+  backface-visibility:hidden
+}
+
+/* Mobile/lower-resource roulette: transform + opacity only. */
+html.perf-lite .category-arena-card{
+  filter:none!important;
+  box-shadow:none!important;
+  transition:
+    transform .19s cubic-bezier(.22,.72,.2,1),
+    opacity .14s linear,
+    border-color .14s linear!important;
+  will-change:auto!important;
+  backface-visibility:hidden
+}
+html.perf-lite .category-arena-card:not(.roulette-hidden){
+  will-change:transform,opacity!important
+}
+html.perf-lite .category-arena-card.roulette-hidden{
+  visibility:hidden!important;
+  content-visibility:hidden!important;
+  pointer-events:none!important
+}
+html.perf-lite .category-arena-card[data-distance="1"]{
+  filter:none!important
+}
+html.perf-lite .category-arena-card[data-distance="2"]{
+  filter:none!important
+}
+html.perf-lite .category-icon-orbit,
+html.perf-lite .category-visual-lines,
+html.perf-lite .category-arena-card:before{
+  box-shadow:none!important
+}
+html.perf-lite .category-icon-stage .icon{
+  filter:none!important;
+  transition:transform .18s ease!important
+}
+html.perf-lite .category-card-grid{
+  display:none!important
+}
+html.perf-lite .info-hub,
+html.perf-lite .social-card,
+html.perf-lite .info-hub-aside,
+html.perf-lite .whatsapp-float{
+  box-shadow:none!important
+}
+html.perf-lite .info-hub{
+  transition:opacity .16s linear,transform .18s ease,visibility 0s linear .18s!important
+}
+html.perf-lite .social-card{
+  contain:layout paint style
+}
+
+/* Product selector keeps only nearby wheel items composited. */
+.x-game-card.x-hidden{
+  transform:none!important
+}
+.x-game-card:not(.x-hidden){
+  backface-visibility:hidden
+}
+
+/* Lab-only scaling should not animate on phone; it causes a second transform
+   animation around the already animated storefront. */
+html.perf-lite .device-viewport,
+html.perf-lite .device-frame{
+  transition:none!important
+}
+
+@media (max-width:700px){
+  .welcome-ticker-track{will-change:transform}
+  .category-arena-card{
+    transition:
+      transform .19s cubic-bezier(.22,.72,.2,1),
+      opacity .14s linear,
+      border-color .14s linear!important
+  }
+  .category-arena-card,
+  .category-arena-card.active{
+    box-shadow:none!important
+  }
+  .category-icon-stage .icon{
+    filter:none!important
+  }
+  .category-icon-orbit,
+  .category-visual-lines{
+    box-shadow:none!important
+  }
+  .info-hub{box-shadow:none!important}
+  .whatsapp-float{box-shadow:none!important}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .welcome-ticker-track{animation:none!important;will-change:auto!important}
+  .loading-progress-fill-bottom{transition:none!important;will-change:auto!important}
+}
