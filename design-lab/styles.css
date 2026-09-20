@@ -2176,3 +2176,84 @@ html.perf-lite .welcome-ticker-track{animation-duration:26s}
 @media (prefers-reduced-motion:reduce){
   .welcome-ticker-track{animation:none!important;padding-left:12px!important}
 }
+
+
+/* r245 · product-card readability + landscape sizing */
+.x-package-select{
+  grid-template-rows:auto 1fr!important
+}
+.x-package-availability{display:none!important}
+
+html[data-device="mobile-landscape"] .x-experience-grid,
+html[data-device="mobile"] .x-experience.force-landscape .x-experience-grid{
+  grid-template-columns:88px minmax(0,1fr)!important;
+  gap:8px!important
+}
+html[data-device="mobile-landscape"] .x-product-stage,
+html[data-device="mobile"] .x-experience.force-landscape .x-product-stage{
+  padding:10px!important;
+  gap:8px!important;
+  border-radius:14px!important
+}
+html[data-device="mobile-landscape"] .x-stage-gamehead,
+html[data-device="mobile"] .x-experience.force-landscape .x-stage-gamehead{
+  grid-template-columns:42px minmax(0,1fr)!important;
+  gap:8px!important
+}
+html[data-device="mobile-landscape"] .x-config-selection,
+html[data-device="mobile"] .x-experience.force-landscape .x-config-selection{
+  display:none!important
+}
+html[data-device="mobile-landscape"] .x-package-list,
+html[data-device="mobile"] .x-experience.force-landscape .x-package-list{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:7px!important
+}
+html[data-device="mobile-landscape"] .x-package-card,
+html[data-device="mobile"] .x-experience.force-landscape .x-package-card{
+  min-height:100px!important;
+  border-radius:10px!important
+}
+html[data-device="mobile-landscape"] .x-package-select,
+html[data-device="mobile"] .x-experience.force-landscape .x-package-select{
+  min-height:68px!important;
+  padding:8px!important;
+  gap:5px!important
+}
+html[data-device="mobile-landscape"] .x-package-name,
+html[data-device="mobile"] .x-experience.force-landscape .x-package-name{
+  font-size:.67rem!important;
+  line-height:1.14!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:2!important;
+  -webkit-box-orient:vertical!important;
+  overflow:hidden!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important
+}
+html[data-device="mobile-landscape"] .x-package-price,
+html[data-device="mobile"] .x-experience.force-landscape .x-package-price{
+  align-self:end!important;
+  font-size:.84rem!important;
+  padding-top:2px!important
+}
+html[data-device="mobile-landscape"] .x-package-cart,
+html[data-device="mobile"] .x-experience.force-landscape .x-package-cart{
+  min-height:30px!important;
+  padding:5px 6px!important;
+  font-size:.52rem!important
+}
+html[data-device="mobile-landscape"] .x-buy-dock,
+html[data-device="mobile"] .x-experience.force-landscape .x-buy-dock{
+  grid-template-columns:minmax(180px,280px) 1fr!important;
+  gap:8px!important
+}
+html[data-device="mobile-landscape"] .x-buy-button,
+html[data-device="mobile"] .x-experience.force-landscape .x-buy-button{
+  min-height:36px!important;
+  font-size:.76rem!important
+}
+html[data-device="mobile-landscape"] .x-config-note,
+html[data-device="mobile"] .x-experience.force-landscape .x-config-note{
+  font-size:.5rem!important
+}
