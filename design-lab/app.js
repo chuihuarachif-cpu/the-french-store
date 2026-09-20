@@ -193,9 +193,9 @@
     overlay.classList.remove("leaving");
     overlay.classList.add("active");
     overlay.setAttribute("aria-hidden","false");
-    fill.style.width = "0%";
+    fill.style.transform = "scaleX(0)";
     percent.textContent = "0%";
-    runner.style.left = "0px";
+    runner.style.setProperty("--runner-x","0px");
     runner.style.setProperty("--runner-bob","0px");
     message.textContent = "Estamos corriendo para actualizar precios...";
     if (button) button.textContent = "↻ Reiniciar carga";
@@ -213,9 +213,9 @@
       const zoneWidth = zone.clientWidth;
       const runnerWidth = runner.getBoundingClientRect().width / (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--device-scale")) || 1);
       const travel = Math.max(0, zoneWidth - Math.min(runnerWidth, zoneWidth * .58));
-      runner.style.left = (travel * eased) + "px";
+      runner.style.setProperty("--runner-x",(travel * eased) + "px");
       runner.style.setProperty("--runner-bob", reduced ? "0px" : (Math.sin(raw * Math.PI * 18) * 3.8) + "px");
-      fill.style.width = value + "%";
+      fill.style.transform = "scaleX(" + eased.toFixed(4) + ")";
       percent.textContent = value + "%";
 
       if (value < 38) {
