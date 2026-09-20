@@ -1,0 +1,67 @@
+/* THE FRENCH STORE — R229 Finance Admin visual polish. External stylesheet for strict CSP. */
+#financePanel{overflow:hidden}
+#financePanel .panel-head{padding-bottom:4px}
+#financePanel .panel-head h2{font-size:clamp(1.55rem,4vw,2.1rem);line-height:1.08}
+#financePanel .panel-head p{max-width:720px}
+.r228-toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:14px 0}
+.r228-toolbar label,.r228-form label{display:grid;gap:6px;color:#9fb8c6;font-size:.78rem;font-weight:700}
+.r228-toolbar label{min-width:170px}
+.r228-toolbar select,.r228-toolbar input,.r228-form input,.r228-form select,.r228-form textarea{
+  width:100%;box-sizing:border-box;border:1px solid #27556d;border-radius:12px;background:#03141f;color:#f5fbff;
+  padding:12px 13px;outline:none;font:inherit
+}
+.r228-toolbar select:focus,.r228-toolbar input:focus,.r228-form input:focus,.r228-form select:focus,.r228-form textarea:focus{
+  border-color:#50dff1;box-shadow:0 0 0 3px rgba(80,223,241,.11)
+}
+.r228-custom{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.r228-custom.hidden{display:none!important}
+.r228-note{margin:12px 0 14px;padding:12px 14px;border:1px solid rgba(255,205,99,.25);border-radius:14px;background:rgba(255,205,99,.07);color:#ebd8a1;line-height:1.5}
+.r228-note.hidden{display:none!important}
+.r228-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.r228-metric{min-width:0;padding:14px;border:1px solid #183f53;border-radius:16px;background:linear-gradient(155deg,#071d2a,#061822);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+.r228-metric small{display:block;color:#8fa8b6;font-size:.73rem;line-height:1.25}
+.r228-metric b{display:block;margin-top:6px;font-size:1.25rem;line-height:1.12;overflow-wrap:anywhere}
+.r228-metric em{display:block;margin-top:6px;color:#7593a4;font-style:normal;font-size:.74rem;line-height:1.3}
+.r228-metric.good b{color:#8df1c2}.r228-metric.bad b{color:#ffb0b8}
+.r228-layout,.r228-subgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(290px,.85fr);gap:14px;align-items:start}
+.r228-subgrid{margin-top:14px;grid-template-columns:1fr 1fr}
+.r228-card{min-width:0;padding:15px;border:1px solid #183f53;border-radius:17px;background:#071d2a}
+.r228-card h3{margin:0 0 5px;font-size:1.06rem}.r228-card>small{display:block;margin-bottom:12px;color:#829eae;line-height:1.4}
+.r228-form{display:grid;grid-template-columns:1fr 1fr;gap:11px}.r228-form .wide{grid-column:1/-1}
+.r228-form textarea{resize:vertical;min-height:82px}
+.r228-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.r228-actions .hidden{display:none!important}
+.r228-actions button{min-height:44px}
+.r228-expenses{display:grid;gap:10px}
+.r228-expense{padding:12px;border:1px solid rgba(39,85,109,.7);border-radius:13px;background:#061923}
+.r228-expense-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.r228-expense-top>div{min-width:0}.r228-expense-top b{display:block;overflow-wrap:anywhere}.r228-expense-top small{display:block;margin-top:5px;color:#819cab;line-height:1.4}
+.r228-expense-top>span{flex:0 0 auto;text-align:right}.r228-expense-top>span small{white-space:nowrap}
+.r228-expense-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.r228-expense-actions button{padding:9px 11px;border-radius:10px;background:#0b2a3a;color:#e9f9ff;border:1px solid #28566d}
+.r228-table-wrap{overflow-x:auto}
+.r228-table{width:100%;border-collapse:collapse;font-size:.84rem}
+.r228-table th,.r228-table td{padding:10px 8px;border-bottom:1px solid rgba(39,85,109,.48);text-align:left;vertical-align:top}
+.r228-table th{color:#91aab7;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+.r228-table .num{text-align:right;white-space:nowrap}
+.r228-empty{padding:14px;border:1px dashed #285269;border-radius:13px;color:#8099a8;line-height:1.45}
+.r228-loading{opacity:.65;pointer-events:none}
+@media(max-width:820px){
+  .r228-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .r228-layout,.r228-subgrid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  #financePanel{padding:13px}
+  #financePanel .panel-head{gap:10px}
+  #financePanel .panel-head h2{font-size:1.65rem}
+  #financePanel .panel-head p{font-size:.88rem}
+  .r228-toolbar,.r228-custom{display:grid;grid-template-columns:1fr;width:100%}
+  .r228-toolbar label{min-width:0}
+  .r228-metrics{grid-template-columns:1fr 1fr;gap:8px}
+  .r228-metric{padding:12px}.r228-metric b{font-size:1.04rem}.r228-metric em{font-size:.7rem}
+  .r228-card{padding:13px}
+  .r228-form{grid-template-columns:1fr}.r228-form .wide{grid-column:auto}
+  .r228-expense-top{display:block}.r228-expense-top>span{display:block;text-align:left;margin-top:9px}
+  .r228-table{font-size:.79rem}.r228-table th,.r228-table td{padding:9px 6px}
+}
+@media(max-width:390px){
+  .r228-metrics{grid-template-columns:1fr}
+}

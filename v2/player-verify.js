@@ -134,7 +134,9 @@
     } else {
       control = `<input id="${html(id)}" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="${req.maxLength}" value="${html(value)}" placeholder="${html(req.placeholder)}" data-pv-key="${html(req.key)}" ${req.required ? 'required' : ''}>`;
     }
-    return `<label class="fs-player-field" for="${html(id)}"><span>${html(req.label)}${req.required ? ' *' : ''}</span>${control}${req.helpText ? `<small>${html(req.helpText)}</small>` : ''}</label>`;
+    const help = text(req.helpText);
+    const repeatedSecurityHelp = /contrase|correo|c[oó]digos?\s+de\s+acceso/i.test(help);
+    return `<label class="fs-player-field" for="${html(id)}"><span>${html(req.label)}${req.required ? ' *' : ''}</span>${control}${help && !repeatedSecurityHelp ? `<small>${html(help)}</small>` : ''}</label>`;
   }
 
   function panelValues(panel) {
