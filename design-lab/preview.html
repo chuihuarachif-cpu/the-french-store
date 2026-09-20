@@ -158,7 +158,6 @@ html[data-device="mobile"] .admin-demo-table>div{grid-template-columns:1fr auto}
 html[data-device="mobile"] .admin-demo-table>div strong{grid-column:1/-1}
 
 
-
 /* Design Lab loading-screen prototype */
 .loading-demo-button{
   border-color:rgba(98,231,255,.34);
@@ -429,9 +428,61 @@ html.motion-off .loading-progress-fill{transition:none!important;animation:none!
   .loading-demo,.loading-runner,.loading-progress-fill{transition:none!important;animation:none!important}
 }
 
-</style>
+/* French Store arena categories + two-phase brand loader */
+.home-intro{max-width:940px;margin:0 auto 18px;text-align:center;padding:18px 24px 4px}
+.home-intro h1{margin:0 auto 14px;max-width:920px;font-size:clamp(2.5rem,5.3cqw,5.35rem);line-height:.92;letter-spacing:-.055em}
+.home-intro p{max-width:720px;margin:0 auto;color:var(--muted);line-height:1.6;font-size:clamp(.9rem,1.25cqw,1.04rem)}
+.category-arena-section{margin-top:14px}.category-arena-head{align-items:center;margin-bottom:14px}.category-arena-hint{color:#7f9cac;font-size:.68rem;letter-spacing:.14em;font-weight:900;white-space:nowrap}
+.category-arena{position:relative;overflow:hidden;min-height:430px;padding:14px 54px 54px;border:1px solid rgba(108,224,255,.16);border-radius:30px;background:radial-gradient(ellipse at 50% 88%,rgba(25,190,255,.16),transparent 34%),linear-gradient(180deg,rgba(8,24,37,.86),rgba(5,13,23,.94));box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 28px 70px rgba(0,0,0,.28);isolation:isolate}
+.category-arena:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:linear-gradient(rgba(88,202,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(88,202,255,.028) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,transparent 2%,#000 28%,#000 78%,transparent 100%)}
+.category-arena-viewport{position:relative;z-index:3;width:100%;overflow-x:auto;overflow-y:visible;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y;padding:34px 0 56px}
+.category-arena-viewport::-webkit-scrollbar{display:none}
+.category-arena-track{--arena-card-width:clamp(250px,26cqw,350px);display:flex;width:max-content;gap:clamp(12px,2cqw,24px);padding-inline:calc(50% - var(--arena-card-width)/2)}
+.category-arena-card{--card-scale:.78;--card-lift:18px;--card-tilt:0deg;position:relative;flex:0 0 var(--arena-card-width);width:var(--arena-card-width);min-height:286px;padding:18px 18px 16px;scroll-snap-align:center;scroll-snap-stop:always;border:1px solid rgba(var(--accent-rgb),.18);border-radius:24px;background:radial-gradient(circle at 50% 30%,rgba(var(--accent-rgb),.14),transparent 34%),linear-gradient(160deg,rgba(14,34,51,.94),rgba(6,16,27,.96));color:var(--text);text-align:left;overflow:hidden;opacity:.34;transform:perspective(1050px) translateY(var(--card-lift)) rotateY(var(--card-tilt)) scale(var(--card-scale));transform-origin:center 72%;transition:transform .56s cubic-bezier(.2,.78,.2,1),opacity .4s ease,border-color .4s ease,box-shadow .45s ease,filter .4s ease;filter:saturate(.7) brightness(.78);cursor:pointer;box-shadow:0 18px 38px rgba(0,0,0,.24);will-change:transform}
+.category-arena-card[data-side="left"]{--card-tilt:9deg}.category-arena-card[data-side="right"]{--card-tilt:-9deg}
+.category-arena-card[data-distance="1"]{--card-scale:.9;--card-lift:9px;opacity:.7;filter:saturate(.84) brightness(.9)}
+.category-arena-card[data-distance="2"]{--card-scale:.82;--card-lift:16px;opacity:.46}.category-arena-card[data-distance="3"]{--card-scale:.75;--card-lift:22px;opacity:.28}
+.category-arena-card.active{--card-scale:1;--card-lift:-8px;--card-tilt:0deg;opacity:1;filter:none;border-color:rgba(var(--accent-rgb),.62);box-shadow:0 28px 70px rgba(0,0,0,.38),0 0 0 1px rgba(var(--accent-rgb),.1),0 0 34px rgba(var(--accent-rgb),.14)}
+.category-card-grid{position:absolute;inset:0;z-index:0;opacity:.46;pointer-events:none;background:linear-gradient(rgba(var(--accent-rgb),.045) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--accent-rgb),.035) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(to bottom,#000,transparent 86%)}
+.category-arena-card:before{content:"";position:absolute;left:12%;right:12%;bottom:-1px;height:2px;z-index:4;background:linear-gradient(90deg,transparent,rgba(var(--accent-rgb),.85),transparent);opacity:.35;box-shadow:0 0 20px rgba(var(--accent-rgb),.35);transition:opacity .4s ease}.category-arena-card.active:before{opacity:1}
+.category-card-top{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.category-code{color:rgba(var(--accent-rgb),.92);font-size:.74rem;font-weight:950;letter-spacing:.18em}
+.category-tag{border:1px solid rgba(var(--accent-rgb),.18);border-radius:999px;padding:5px 8px;color:#95afbd;background:rgba(4,14,23,.45);font-size:.58rem;font-weight:900;letter-spacing:.1em}
+.category-icon-stage{position:relative;z-index:2;display:grid;place-items:center;width:126px;height:126px;margin:18px auto 8px}
+.category-icon-stage:before,.category-icon-stage:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(var(--accent-rgb),.15)}.category-icon-stage:before{inset:9px}.category-icon-stage:after{inset:25px;border-style:dashed}
+.category-icon-orbit{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(var(--accent-rgb),.14),transparent 63%);box-shadow:0 0 42px rgba(var(--accent-rgb),.11)}
+.category-icon-stage .icon{position:relative;z-index:2;font-size:3.55rem;line-height:1;filter:drop-shadow(0 12px 16px rgba(0,0,0,.4)) drop-shadow(0 0 15px rgba(var(--accent-rgb),.22));transform:translateZ(0);transition:transform .48s cubic-bezier(.2,.8,.2,1)}.category-arena-card.active .category-icon-stage .icon{transform:translateY(-4px) scale(1.07)}
+.category-copy{position:relative;z-index:2;display:grid;gap:3px;text-align:center}.category-copy small{order:2;color:#8fa7b5;font-size:.78rem}.category-copy b{order:1;margin:0;color:#f3fbff;font-size:clamp(1.03rem,1.55cqw,1.25rem);letter-spacing:-.025em}
+.category-enter{position:relative;z-index:2;display:flex;justify-content:center;align-items:center;gap:7px;margin-top:13px;color:rgba(var(--accent-rgb),.9);font-size:.7rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.35;transform:translateY(4px);transition:.36s ease}.category-enter i{font-style:normal;font-size:1rem}.category-arena-card.active .category-enter{opacity:1;transform:none}
+.category-arena-floor{position:absolute;z-index:1;left:50%;bottom:37px;width:min(44%,520px);height:58px;transform:translateX(-50%);pointer-events:none;border-radius:50%;background:radial-gradient(ellipse,rgba(47,211,255,.19),rgba(20,136,255,.07) 45%,transparent 72%);filter:blur(.2px)}
+.category-arena-floor:before{content:"";position:absolute;left:11%;right:11%;top:16px;height:1px;background:linear-gradient(90deg,transparent,rgba(105,235,255,.8),transparent);box-shadow:0 0 18px rgba(55,213,255,.55)}.category-arena-floor span{position:absolute;inset:4px 18%;border:1px solid rgba(88,220,255,.18);border-radius:50%;transform:perspective(260px) rotateX(68deg)}
+.arena-arrow{position:absolute;z-index:8;top:46%;width:44px;height:44px;border:1px solid rgba(105,226,255,.2);border-radius:50%;background:rgba(5,18,29,.82);color:#b9f5ff;font-size:1.8rem;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.3);transition:.25s ease}.arena-arrow:hover:not(:disabled){transform:scale(1.06);border-color:rgba(105,226,255,.5);box-shadow:0 0 26px rgba(54,202,255,.14)}.arena-arrow:disabled{opacity:.2;cursor:default}.arena-arrow-prev{left:14px}.arena-arrow-next{right:14px}
+.category-arena-status{position:absolute;z-index:7;left:50%;bottom:13px;transform:translateX(-50%);width:min(92%,720px);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;color:#7f9cab;font-size:.65rem}.category-arena-status strong{color:#78eaff;letter-spacing:.13em;font-size:.7rem}
+.category-arena-dots{display:flex;justify-content:center;gap:6px}.category-arena-dots button{width:18px;height:4px;padding:0;border:0;border-radius:999px;background:#203846;cursor:pointer;transition:.35s ease}.category-arena-dots button.active{width:34px;background:#67e7ff;box-shadow:0 0 12px rgba(72,220,255,.55)}.category-arena-swipe{white-space:nowrap;letter-spacing:.06em}
+
+.loading-demo-content{grid-template-rows:1fr;place-items:stretch;padding:clamp(22px,3.5cqw,46px) clamp(18px,4cqw,58px)}
+.loading-brand-intro,.loading-run-phase{grid-area:1/1;min-height:calc(var(--device-height,900px) - clamp(44px,7cqw,92px));transition:opacity .46s ease,transform .62s cubic-bezier(.2,.8,.2,1),filter .5s ease}
+.loading-brand-intro{position:relative;z-index:5;display:grid;place-content:center;justify-items:center;gap:4px;opacity:0;transform:scale(.92) translateY(8px);filter:blur(3px);pointer-events:none}.loading-demo.brand-phase .loading-brand-intro{opacity:1;transform:scale(1) translateY(0);filter:none}.loading-demo.run-phase .loading-brand-intro{opacity:0;transform:scale(1.045) translateY(-8px);filter:blur(4px)}
+.loading-brand-mascot-shell{position:relative;width:clamp(148px,20cqw,230px);aspect-ratio:1;display:grid;place-items:center;margin-bottom:-10px}.loading-brand-halo{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(62,214,255,.23),rgba(15,93,255,.09) 47%,transparent 72%);box-shadow:0 0 58px rgba(36,186,255,.14)}.loading-brand-mascot{position:relative;z-index:2;width:100%;height:100%;object-fit:contain;background:transparent;filter:drop-shadow(0 16px 22px rgba(0,0,0,.55)) drop-shadow(0 0 15px rgba(54,205,255,.18))}
+.loading-brand-lockup{display:grid;grid-template-columns:auto auto auto;align-items:center;gap:clamp(10px,1.8cqw,20px);filter:drop-shadow(0 12px 20px rgba(0,0,0,.65))}.loading-brand-copy{display:grid;justify-items:center;line-height:.77}.loading-brand-copy strong{font-family:Georgia,"Times New Roman",serif;color:#fff;font-size:clamp(2.2rem,6.7cqw,5rem);font-weight:900;letter-spacing:-.06em;-webkit-text-stroke:1px rgba(207,242,255,.5);text-shadow:0 2px 0 #13283a,0 5px 0 #07111d,0 0 22px rgba(44,194,255,.2)}.loading-brand-gem{color:#76ecff;font-size:clamp(1.35rem,3.1cqw,2.35rem);transform:rotate(45deg);text-shadow:0 0 10px #24d8ff,0 0 28px #0b7fff}
+.loading-run-phase{position:relative;z-index:4;display:grid;grid-template-rows:minmax(270px,1fr) auto auto;align-items:center;gap:clamp(10px,1.8cqw,18px);opacity:0;transform:translateY(16px) scale(.99);pointer-events:none}.loading-demo.run-phase .loading-run-phase{opacity:1;transform:none;pointer-events:auto}.loading-demo.brand-phase .loading-run-phase{opacity:0;transform:translateY(16px) scale(.99)}.loading-demo:not(.run-phase) .loading-runner{animation:none}.loading-demo.run-phase .loading-runner{animation:runnerPulse .34s ease-in-out infinite alternate}
+
+html[data-device="tablet"] .category-arena-track{--arena-card-width:300px}
+html[data-device="mobile"] .home-intro{padding:8px 2px 0;margin-bottom:10px}html[data-device="mobile"] .home-intro h1{font-size:2.35rem;line-height:.96}html[data-device="mobile"] .home-intro p{font-size:.86rem;line-height:1.5}
+html[data-device="mobile"] .category-arena-section{margin-inline:-15px}html[data-device="mobile"] .category-arena-head{padding-inline:15px;align-items:flex-end}html[data-device="mobile"] .category-arena-head .category-arena-hint{display:none}
+html[data-device="mobile"] .category-arena{min-height:406px;padding:0 0 49px;border-left:0;border-right:0;border-radius:0;background:radial-gradient(ellipse at 50% 86%,rgba(25,190,255,.17),transparent 38%),linear-gradient(180deg,rgba(8,24,37,.8),rgba(5,13,23,.94))}
+html[data-device="mobile"] .category-arena-viewport{padding:28px 0 52px}html[data-device="mobile"] .category-arena-track{--arena-card-width:270px;gap:12px;padding-inline:calc(50% - var(--arena-card-width)/2)}html[data-device="mobile"] .category-arena-card{min-height:292px;border-radius:22px}
+html[data-device="mobile"] .category-icon-stage{width:116px;height:116px;margin-top:14px}html[data-device="mobile"] .category-icon-stage .icon{font-size:3.15rem}html[data-device="mobile"] .arena-arrow{display:none}html[data-device="mobile"] .category-arena-floor{width:78%;bottom:36px}
+html[data-device="mobile"] .category-arena-status{width:92%;grid-template-columns:auto 1fr;gap:10px}html[data-device="mobile"] .category-arena-swipe{display:none}
+html[data-device="mobile"] .loading-brand-mascot-shell{width:145px;margin-bottom:-5px}html[data-device="mobile"] .loading-brand-copy strong{font-size:2.45rem}html[data-device="mobile"] .loading-brand-gem{font-size:1.2rem}
+html[data-device="mobile"] .loading-brand-intro,html[data-device="mobile"] .loading-run-phase{min-height:calc(var(--device-height,844px) - 48px)}html[data-device="mobile"] .loading-run-phase{grid-template-rows:minmax(315px,1fr) auto auto;gap:8px}html[data-device="mobile"] .loading-demo-content{padding:24px 16px 28px}
+html[data-device="tablet"] .loading-run-phase{grid-template-rows:minmax(430px,1fr) auto auto}
+html.motion-off .category-arena-card,html.motion-off .category-icon-stage .icon,html.motion-off .category-arena-dots button,html.motion-off .loading-brand-intro,html.motion-off .loading-run-phase{transition:none!important;animation:none!important}
+@media (prefers-reduced-motion:reduce){.category-arena-card,.category-icon-stage .icon,.category-arena-dots button,.loading-brand-intro,.loading-run-phase{transition:none!important;animation:none!important}}
+
+  </style>
 </head>
-<body data-preview-build="isolated-single-file">
+<body>
   <div class="lab-shell">
     <aside class="lab-panel" aria-label="Herramientas del laboratorio">
       <div class="lab-brand">
@@ -503,30 +554,29 @@ html.motion-off .loading-progress-fill{transition:none!important;animation:none!
             <div class="loading-demo-glow loading-demo-glow-a"></div>
             <div class="loading-demo-glow loading-demo-glow-b"></div>
             <div class="loading-demo-content">
-              <div class="loading-demo-logo" aria-label="French Store">
-                <span class="loading-demo-diamond">◆</span>
-                <div class="loading-demo-wordmark">
-                  <span>FRENCH</span>
-                  <i>◆</i>
-                  <span>STORE</span>
+              <div class="loading-brand-intro" id="loadingBrandIntro" aria-label="French Store">
+                <div class="loading-brand-mascot-shell">
+                  <span class="loading-brand-halo" aria-hidden="true"></span>
+                  <img class="loading-brand-mascot" src="https://raw.githubusercontent.com/chuihuarachif-cpu/the-french-store/design-lab/v2/assets/brand/french-store-mascot.webp" alt="Zorro de French Store" width="220" height="220" decoding="async">
                 </div>
-                <span class="loading-demo-diamond">◆</span>
-              </div>
-              <div class="loading-runner-zone" id="loadingRunnerZone" aria-hidden="true">
-                <img id="loadingRunner" class="loading-runner" src="https://raw.githubusercontent.com/chuihuarachif-cpu/the-french-store/design-lab/design-lab/assets/fox-run-cycle.webp" alt="Zorro de French Store corriendo con documentos" width="80" height="80" decoding="async">
-              </div>
-              <div class="loading-progress-shell">
-                <div class="loading-progress-meta">
-                  <span>Actualizando French Store</span>
-                  <b id="loadingPercent">0%</b>
-                </div>
-                <div class="loading-progress-track" aria-hidden="true">
-                  <div class="loading-progress-fill" id="loadingProgressBar"></div>
+                <div class="loading-brand-lockup" aria-label="French Store">
+                  <span class="loading-brand-gem" aria-hidden="true">◆</span>
+                  <div class="loading-brand-copy"><strong>FRENCH</strong><strong>STORE</strong></div>
+                  <span class="loading-brand-gem" aria-hidden="true">◆</span>
                 </div>
               </div>
-              <div class="loading-demo-copy">
-                <strong id="loadingMessage">Estamos corriendo para actualizar precios...</strong>
-                <span>Preparando ofertas, recargas y novedades.</span>
+              <div class="loading-run-phase" id="loadingRunPhase">
+                <div class="loading-runner-zone" id="loadingRunnerZone" aria-hidden="true">
+                  <img id="loadingRunner" class="loading-runner" src="https://raw.githubusercontent.com/chuihuarachif-cpu/the-french-store/design-lab/design-lab/assets/fox-run-cycle.webp" alt="Zorro de French Store corriendo con documentos" width="80" height="80" decoding="async">
+                </div>
+                <div class="loading-progress-shell">
+                  <div class="loading-progress-meta"><span>Actualizando French Store</span><b id="loadingPercent">0%</b></div>
+                  <div class="loading-progress-track" aria-hidden="true"><div class="loading-progress-fill" id="loadingProgressBar"></div></div>
+                </div>
+                <div class="loading-demo-copy">
+                  <strong id="loadingMessage">Estamos corriendo para actualizar precios...</strong>
+                  <span>Preparando ofertas, recargas y novedades.</span>
+                </div>
               </div>
             </div>
           </div>
@@ -548,30 +598,32 @@ html.motion-off .loading-progress-fill{transition:none!important;animation:none!
           <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
 
           <section class="store-view active" data-view="inicio">
-            <div class="hero reveal">
-              <div class="hero-copy">
-                <span class="eyebrow">EXPERIENCIA DIGITAL</span>
-                <h1>Una nueva forma de descubrir y comprar.</h1>
-                <p>Este espacio existe únicamente para experimentar con la futura interfaz de French Store sin tocar la tienda real.</p>
-                <div class="hero-actions">
-                  <button class="primary" type="button" data-nav-view="catalogo">Explorar diseño</button>
-                  <button class="secondary" type="button" data-demo-action="safe">Probar interacción</button>
+            <div class="home-intro reveal">
+              <span class="eyebrow">FRENCH STORE · CATEGORÍAS</span>
+              <h1>Elige dónde quieres entrar.</h1>
+              <p>Desliza entre las categorías. La tarjeta central queda activa y las laterales se apartan con profundidad, brillo y movimiento suave.</p>
+            </div>
+            <section class="section category-arena-section reveal" aria-labelledby="categoryArenaTitle">
+              <div class="section-head category-arena-head">
+                <div><span class="eyebrow">CENTRO DE CATEGORÍAS</span><h2 id="categoryArenaTitle">Todo French Store en un solo lugar</h2></div>
+                <span class="category-arena-hint">DESLIZA · TOCA · EXPLORA</span>
+              </div>
+              <div class="category-arena">
+                <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
+                <div class="category-arena-viewport" id="categoryArenaViewport" tabindex="0" aria-label="Categorías de French Store">
+                  <div id="categoryGrid" class="category-arena-track"></div>
+                </div>
+                <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
+                <div class="category-arena-floor" aria-hidden="true"><span></span></div>
+                <div class="category-arena-status">
+                  <strong id="categoryArenaCounter">01 / 06</strong>
+                  <div class="category-arena-dots" id="categoryArenaDots" aria-label="Posición de categoría"></div>
+                  <span class="category-arena-swipe">Desliza horizontalmente</span>
                 </div>
               </div>
-              <div class="hero-art" aria-hidden="true">
-                <div class="orb orb-a"></div>
-                <div class="orb orb-b"></div>
-                <div class="gem">◆</div>
-              </div>
-            </div>
-
-            <section class="section reveal">
-              <div class="section-head"><div><span class="eyebrow">CATEGORÍAS</span><h2>Explora por mundo</h2></div><button class="text-button" data-nav-view="catalogo">Ver todo →</button></div>
-              <div id="categoryGrid" class="category-grid"></div>
             </section>
-
-            <section class="section reveal">
-              <div class="section-head"><div><span class="eyebrow">DESTACADOS</span><h2>Productos para probar la UI</h2></div></div>
+            <section class="section featured-section reveal">
+              <div class="section-head"><div><span class="eyebrow">DESTACADOS</span><h2>Productos para probar la UI</h2></div><button class="text-button" data-nav-view="catalogo">Ver tienda →</button></div>
               <div id="featuredGrid" class="product-grid"></div>
             </section>
           </section>
@@ -704,10 +756,12 @@ html.motion-off .loading-progress-fill{transition:none!important;animation:none!
   <script>
 window.FS_LAB_DATA = Object.freeze({
   categories: [
-    { id: "recargas-id", icon: "🎮", name: "Recargas por ID", subtitle: "Diamantes, monedas y pases" },
-    { id: "recargas-cuenta", icon: "👤", name: "Recargas por Cuenta", subtitle: "Flujos asistidos de ejemplo" },
-    { id: "streaming", icon: "📺", name: "Streaming", subtitle: "Entretenimiento y música" },
-    { id: "giftcards", icon: "🎁", name: "Gift Cards", subtitle: "Códigos digitales de muestra" }
+    { id: "recargas-id", icon: "🎮", code: "01", tag: "GAMING", accentRgb: "74,229,255", name: "Recargas por ID", subtitle: "Directo al jugador" },
+    { id: "recargas-cuenta", icon: "👤", code: "02", tag: "ASISTIDO", accentRgb: "76,166,255", name: "Recargas por Cuenta", subtitle: "Entrega asistida" },
+    { id: "giftcards", icon: "🎁", code: "03", tag: "CÓDIGOS", accentRgb: "151,128,255", name: "Gift Cards", subtitle: "Códigos digitales" },
+    { id: "streaming", icon: "📺", code: "04", tag: "STREAM", accentRgb: "70,238,211", name: "Plataformas de Streaming", subtitle: "Series, música y más" },
+    { id: "cuentas", icon: "🪪", code: "05", tag: "CUENTAS", accentRgb: "103,201,255", name: "Venta de Cuentas", subtitle: "Cuentas listas para usar" },
+    { id: "paginas", icon: "💻", code: "06", tag: "WEB", accentRgb: "126,143,255", name: "Venta de Páginas", subtitle: "Diseño web a medida" }
   ],
   products: [
     { id: "p1", icon: "◇", name: "Diamantes Nova · 500", category: "Recargas", price: 49.90, featured: true },
@@ -717,7 +771,9 @@ window.FS_LAB_DATA = Object.freeze({
     { id: "p5", icon: "⚔", name: "Battle Pass · Elite", category: "Recargas", price: 67.50, featured: false },
     { id: "p6", icon: "♫", name: "Music Premium · 1 mes", category: "Streaming", price: 19.90, featured: false },
     { id: "p7", icon: "◈", name: "Créditos Arena · 1000", category: "Recargas", price: 89.00, featured: false },
-    { id: "p8", icon: "▣", name: "Store Card · 15 USD", category: "Gift Cards", price: 114.00, featured: false }
+    { id: "p8", icon: "▣", name: "Store Card · 15 USD", category: "Gift Cards", price: 114.00, featured: false },
+    { id: "p9", icon: "🪪", name: "Cuenta Gaming · Demo", category: "Cuentas", price: 99.00, featured: false },
+    { id: "p10", icon: "💻", name: "Landing Page · Demo", category: "Páginas Web", price: 690.00, featured: false }
   ],
   checkout: [
     { icon: "◇", name: "Diamantes Nova · 500", detail: "ID 123456789 · Zona 1234", price: 49.90 },
@@ -725,7 +781,7 @@ window.FS_LAB_DATA = Object.freeze({
   ]
 });
 
-</script>
+  </script>
   <script>
 (() => {
   "use strict";
@@ -739,12 +795,14 @@ window.FS_LAB_DATA = Object.freeze({
 
   const data = window.FS_LAB_DATA || { categories: [], products: [], checkout: [] };
   const $ = (s, root = document) => root.querySelector(s);
-  const all = (s, root = document) => [...root.querySelectorAll(s)];
+  const $ = (s, root = document) => [...root.querySelectorAll(s)];
   const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", producto: "Producto", checkout: "Checkout", admin: "Admin" };
   const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
   let currentView = "inicio";
   let activeFilter = "Todos";
   let toastTimer;
+  let activeCategoryIndex = 0;
+  let categoryScrollRaf = 0;
 
   function money(value){ return "Bs " + Number(value).toFixed(2).replace(".", ","); }
 
@@ -757,8 +815,63 @@ window.FS_LAB_DATA = Object.freeze({
     toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
   }
 
-  function categoryCard(item){
-    return '<button class="category-card" type="button" data-nav-view="catalogo" data-category="' + item.id + '"><span class="icon">' + item.icon + '</span><b>' + item.name + '</b><small>' + item.subtitle + '</small></button>';
+  function categoryCard(item, index){
+    const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
+    return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Explorar <i>→</i></span></button>';
+  }
+
+  function renderCategoryArena(){
+    const grid = $("#categoryGrid");
+    if (!grid) return;
+    grid.innerHTML = data.categories.map(categoryCard).join("");
+    const dots = $("#categoryArenaDots");
+    if (dots) dots.innerHTML = data.categories.map((_, index) => '<button type="button" data-arena-dot="' + index + '" aria-label="Ir a categoría ' + (index + 1) + '"></button>').join("");
+    requestAnimationFrame(() => setCategoryActive(Math.min(activeCategoryIndex, Math.max(0, data.categories.length - 1)), false, true));
+  }
+
+  function setCategoryActive(index, shouldScroll = true, instant = false){
+    const cards = $(".category-arena-card");
+    const viewport = $("#categoryArenaViewport");
+    if (!cards.length || !viewport) return;
+    const next = Math.max(0, Math.min(cards.length - 1, Number(index) || 0));
+    activeCategoryIndex = next;
+    cards.forEach((card, cardIndex) => {
+      const diff = cardIndex - next;
+      card.classList.toggle("active", diff === 0);
+      card.dataset.distance = String(Math.min(3, Math.abs(diff)));
+      card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
+      card.setAttribute("aria-current", diff === 0 ? "true" : "false");
+    });
+    $("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
+    const counter = $("#categoryArenaCounter");
+    if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(cards.length).padStart(2, "0");
+    const prev = $(".arena-arrow-prev");
+    const nextButton = $(".arena-arrow-next");
+    if (prev) prev.disabled = next === 0;
+    if (nextButton) nextButton.disabled = next === cards.length - 1;
+    if (shouldScroll) {
+      const card = cards[next];
+      const target = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2;
+      const reduced = instant || document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      viewport.scrollTo({left:Math.max(0,target),behavior:reduced ? "auto" : "smooth"});
+    }
+  }
+
+  function syncCategoryFromScroll(){
+    categoryScrollRaf = 0;
+    const viewport = $("#categoryArenaViewport");
+    const cards = $(".category-arena-card");
+    if (!viewport || !cards.length) return;
+    const viewportBox = viewport.getBoundingClientRect();
+    const center = viewportBox.left + viewportBox.width / 2;
+    let bestIndex = activeCategoryIndex;
+    let bestDistance = Infinity;
+    cards.forEach((card, index) => {
+      const box = card.getBoundingClientRect();
+      const distance = Math.abs((box.left + box.width / 2) - center);
+      if (distance < bestDistance) { bestDistance = distance; bestIndex = index; }
+    });
+    if (bestIndex !== activeCategoryIndex) setCategoryActive(bestIndex, false);
   }
 
   function productCard(item){
@@ -766,8 +879,7 @@ window.FS_LAB_DATA = Object.freeze({
   }
 
   function render(){
-    const categoryGrid = $("#categoryGrid");
-    if (categoryGrid) categoryGrid.innerHTML = data.categories.map(categoryCard).join("");
+    renderCategoryArena();
 
     const featuredGrid = $("#featuredGrid");
     if (featuredGrid) featuredGrid.innerHTML = data.products.filter(p => p.featured).map(productCard).join("");
@@ -795,9 +907,9 @@ window.FS_LAB_DATA = Object.freeze({
 
   function setView(view){
     currentView = titleMap[view] ? view : "inicio";
-    all(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
-    all("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
-    all("#labMenu [data-lab-view]").forEach(el => el.classList.toggle("active", el.dataset.labView === currentView));
+    $(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
+    $("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
+    $("#labMenu [data-lab-view]").forEach(el => el.classList.toggle("active", el.dataset.labView === currentView));
     const title = $("#previewTitle");
     if (title) title.textContent = titleMap[currentView];
     const stage = $(".store-app");
@@ -823,6 +935,24 @@ window.FS_LAB_DATA = Object.freeze({
   }, true);
 
   document.addEventListener("click", (event) => {
+    const arenaArrow = event.target.closest("[data-arena-direction]");
+    if (arenaArrow) { setCategoryActive(activeCategoryIndex + Number(arenaArrow.dataset.arenaDirection || 0), true); return; }
+
+    const arenaDot = event.target.closest("[data-arena-dot]");
+    if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
+
+    const category = event.target.closest("[data-category-index]");
+    if (category) {
+      const index = Number(category.dataset.categoryIndex);
+      if (index === activeCategoryIndex) {
+        setView("catalogo");
+        toast("Categoría demo seleccionada: " + (data.categories[index]?.name || "French Store") + ".");
+      } else {
+        setCategoryActive(index, true);
+      }
+      return;
+    }
+
     const nav = event.target.closest("[data-nav-view]");
     if (nav) {
       setView(nav.dataset.navView);
@@ -856,6 +986,11 @@ window.FS_LAB_DATA = Object.freeze({
 
   $("#catalogSearch")?.addEventListener("input", renderCatalog);
 
+  $("#categoryArenaViewport")?.addEventListener("scroll", () => {
+    if (categoryScrollRaf) cancelAnimationFrame(categoryScrollRaf);
+    categoryScrollRaf = requestAnimationFrame(syncCategoryFromScroll);
+  }, {passive:true});
+
   const devicePresets = {
     mobile: { width: 390, height: 844, label: "Celular" },
     tablet: { width: 820, height: 1180, label: "Tablet" },
@@ -886,6 +1021,7 @@ window.FS_LAB_DATA = Object.freeze({
       el.classList.toggle("active", el.dataset.devicePreview === safeDevice);
     });
     updateDeviceScale();
+    requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, true, true));
   }
 
   $("#devicePreviewButtons")?.addEventListener("click", (event) => {
@@ -906,6 +1042,7 @@ window.FS_LAB_DATA = Object.freeze({
 
   let loadingRaf = 0;
   let loadingHideTimer = 0;
+  let loadingPhaseTimer = 0;
 
   function runLoadingDemo(){
     const overlay = $("#loadingDemo");
@@ -919,56 +1056,59 @@ window.FS_LAB_DATA = Object.freeze({
 
     cancelAnimationFrame(loadingRaf);
     clearTimeout(loadingHideTimer);
-    overlay.classList.remove("leaving");
-    overlay.classList.add("active");
+    clearTimeout(loadingPhaseTimer);
+    overlay.classList.remove("leaving","run-phase");
+    overlay.classList.add("active","brand-phase");
     overlay.setAttribute("aria-hidden","false");
     fill.style.transform = "scaleX(0)";
     percent.textContent = "0%";
     runner.style.setProperty("--runner-x","0px");
+    runner.style.setProperty("--runner-bob","0px");
     runner.style.opacity = "1";
     runner.style.visibility = "visible";
-    runner.style.setProperty("--runner-bob","0px");
     message.textContent = "Estamos corriendo para actualizar precios...";
     if (button) button.textContent = "↻ Reiniciar carga";
 
-    const reduced = document.documentElement.classList.contains("motion-off") ||
-      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const reduced = document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     const device = document.documentElement.dataset.device || "desktop";
-    const duration = reduced ? 1100 : (device === "mobile" ? 4600 : device === "tablet" ? 4350 : 4100);
-    runner.dataset.ready = "1";
-    const start = performance.now();
+    const brandDuration = reduced ? 420 : (device === "mobile" ? 1350 : 1180);
+    const runDuration = reduced ? 1050 : (device === "mobile" ? 4200 : device === "tablet" ? 4000 : 3800);
 
-    function tick(now){
-      const raw = Math.min(1, Math.max(0, (now - start) / duration));
-      const eased = 1 - Math.pow(1 - raw, 2.05);
-      const value = Math.round(eased * 100);
-      const zoneWidth = zone.clientWidth;
-      const runnerWidth = runner.getBoundingClientRect().width / (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--device-scale")) || 1);
-      const travel = Math.max(0, zoneWidth - Math.min(runnerWidth, zoneWidth * .58));
-      runner.style.setProperty("--runner-x",(travel * eased) + "px");
-      runner.style.setProperty("--runner-bob", reduced ? "0px" : (Math.sin(raw * Math.PI * 18) * 3.8) + "px");
-      fill.style.transform = "scaleX(" + eased.toFixed(4) + ")";
-      percent.textContent = value + "%";
+    loadingPhaseTimer = setTimeout(() => {
+      overlay.classList.remove("brand-phase");
+      overlay.classList.add("run-phase");
+      const start = performance.now();
 
-      if (value < 38) message.textContent = "Estamos corriendo para actualizar precios...";
-      else if (value < 76) message.textContent = "Un sprint más: ordenando ofertas y recargas...";
-      else if (value < 100) message.textContent = "Últimos metros: dejando todo listo...";
-      else message.textContent = "¡Llegamos! Precios listos para revisar.";
+      function tick(now){
+        const raw = Math.min(1, Math.max(0, (now - start) / runDuration));
+        const eased = 1 - Math.pow(1 - raw, 2.05);
+        const value = Math.round(eased * 100);
+        const zoneWidth = zone.clientWidth;
+        const rootScale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--device-scale")) || 1;
+        const runnerWidth = runner.getBoundingClientRect().width / rootScale;
+        const travel = Math.max(0, zoneWidth - Math.min(runnerWidth, zoneWidth * .58));
+        runner.style.setProperty("--runner-x",(travel * eased) + "px");
+        runner.style.setProperty("--runner-bob", reduced ? "0px" : (Math.sin(raw * Math.PI * 18) * 3.8) + "px");
+        fill.style.transform = "scaleX(" + eased.toFixed(4) + ")";
+        percent.textContent = value + "%";
+        if (value < 38) message.textContent = "Estamos corriendo para actualizar precios...";
+        else if (value < 76) message.textContent = "Un sprint más: ordenando ofertas y recargas...";
+        else if (value < 100) message.textContent = "Últimos metros: dejando todo listo...";
+        else message.textContent = "¡Llegamos! French Store está listo.";
 
-      if (raw < 1) {
-        loadingRaf = requestAnimationFrame(tick);
-        return;
-      }
-      loadingHideTimer = setTimeout(() => {
-        overlay.classList.add("leaving");
+        if (raw < 1) { loadingRaf = requestAnimationFrame(tick); return; }
+
         loadingHideTimer = setTimeout(() => {
-          overlay.classList.remove("active","leaving");
-          overlay.setAttribute("aria-hidden","true");
-          if (button) button.textContent = "▶ Probar carga";
-        }, reduced ? 40 : 480);
-      }, reduced ? 220 : 650);
-    }
-    loadingRaf = requestAnimationFrame(tick);
+          overlay.classList.add("leaving");
+          loadingHideTimer = setTimeout(() => {
+            overlay.classList.remove("active","leaving","brand-phase","run-phase");
+            overlay.setAttribute("aria-hidden","true");
+            if (button) button.textContent = "▶ Probar carga";
+          }, reduced ? 40 : 480);
+        }, reduced ? 180 : 560);
+      }
+      loadingRaf = requestAnimationFrame(tick);
+    }, brandDuration);
   }
 
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
@@ -979,8 +1119,9 @@ window.FS_LAB_DATA = Object.freeze({
   render();
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
+  setTimeout(runLoadingDemo, 220);
 })();
 
-</script>
+  </script>
 </body>
 </html>

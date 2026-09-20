@@ -16,6 +16,8 @@
   let currentView = "inicio";
   let activeFilter = "Todos";
   let toastTimer;
+  let activeCategoryIndex = 0;
+  let categoryScrollRaf = 0;
 
   function money(value){ return "Bs " + Number(value).toFixed(2).replace(".", ","); }
 
@@ -28,8 +30,63 @@
     toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
   }
 
-  function categoryCard(item){
-    return '<button class="category-card" type="button" data-nav-view="catalogo" data-category="' + item.id + '"><span class="icon">' + item.icon + '</span><b>' + item.name + '</b><small>' + item.subtitle + '</small></button>';
+  function categoryCard(item, index){
+    const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
+    return '<button class="category-card category-arena-card" type="button" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + item.name + '"><span class="category-card-grid" aria-hidden="true"></span><span class="category-card-top"><span class="category-code">' + (item.code || String(index + 1).padStart(2, "0")) + '</span><span class="category-tag">' + (item.tag || "FRENCH") + '</span></span><span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span></span><span class="category-copy"><small>' + item.subtitle + '</small><b>' + item.name + '</b></span><span class="category-enter">Explorar <i>→</i></span></button>';
+  }
+
+  function renderCategoryArena(){
+    const grid = $("#categoryGrid");
+    if (!grid) return;
+    grid.innerHTML = data.categories.map(categoryCard).join("");
+    const dots = $("#categoryArenaDots");
+    if (dots) dots.innerHTML = data.categories.map((_, index) => '<button type="button" data-arena-dot="' + index + '" aria-label="Ir a categoría ' + (index + 1) + '"></button>').join("");
+    requestAnimationFrame(() => setCategoryActive(Math.min(activeCategoryIndex, Math.max(0, data.categories.length - 1)), false, true));
+  }
+
+  function setCategoryActive(index, shouldScroll = true, instant = false){
+    const cards = $(".category-arena-card");
+    const viewport = $("#categoryArenaViewport");
+    if (!cards.length || !viewport) return;
+    const next = Math.max(0, Math.min(cards.length - 1, Number(index) || 0));
+    activeCategoryIndex = next;
+    cards.forEach((card, cardIndex) => {
+      const diff = cardIndex - next;
+      card.classList.toggle("active", diff === 0);
+      card.dataset.distance = String(Math.min(3, Math.abs(diff)));
+      card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
+      card.setAttribute("aria-current", diff === 0 ? "true" : "false");
+    });
+    $("#categoryArenaDots [data-arena-dot]").forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === next));
+    const counter = $("#categoryArenaCounter");
+    if (counter) counter.textContent = String(next + 1).padStart(2, "0") + " / " + String(cards.length).padStart(2, "0");
+    const prev = $(".arena-arrow-prev");
+    const nextButton = $(".arena-arrow-next");
+    if (prev) prev.disabled = next === 0;
+    if (nextButton) nextButton.disabled = next === cards.length - 1;
+    if (shouldScroll) {
+      const card = cards[next];
+      const target = card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2;
+      const reduced = instant || document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      viewport.scrollTo({left:Math.max(0,target),behavior:reduced ? "auto" : "smooth"});
+    }
+  }
+
+  function syncCategoryFromScroll(){
+    categoryScrollRaf = 0;
+    const viewport = $("#categoryArenaViewport");
+    const cards = $(".category-arena-card");
+    if (!viewport || !cards.length) return;
+    const viewportBox = viewport.getBoundingClientRect();
+    const center = viewportBox.left + viewportBox.width / 2;
+    let bestIndex = activeCategoryIndex;
+    let bestDistance = Infinity;
+    cards.forEach((card, index) => {
+      const box = card.getBoundingClientRect();
+      const distance = Math.abs((box.left + box.width / 2) - center);
+      if (distance < bestDistance) { bestDistance = distance; bestIndex = index; }
+    });
+    if (bestIndex !== activeCategoryIndex) setCategoryActive(bestIndex, false);
   }
 
   function productCard(item){
@@ -37,8 +94,7 @@
   }
 
   function render(){
-    const categoryGrid = $("#categoryGrid");
-    if (categoryGrid) categoryGrid.innerHTML = data.categories.map(categoryCard).join("");
+    renderCategoryArena();
 
     const featuredGrid = $("#featuredGrid");
     if (featuredGrid) featuredGrid.innerHTML = data.products.filter(p => p.featured).map(productCard).join("");
@@ -94,6 +150,24 @@
   }, true);
 
   document.addEventListener("click", (event) => {
+    const arenaArrow = event.target.closest("[data-arena-direction]");
+    if (arenaArrow) { setCategoryActive(activeCategoryIndex + Number(arenaArrow.dataset.arenaDirection || 0), true); return; }
+
+    const arenaDot = event.target.closest("[data-arena-dot]");
+    if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
+
+    const category = event.target.closest("[data-category-index]");
+    if (category) {
+      const index = Number(category.dataset.categoryIndex);
+      if (index === activeCategoryIndex) {
+        setView("catalogo");
+        toast("Categoría demo seleccionada: " + (data.categories[index]?.name || "French Store") + ".");
+      } else {
+        setCategoryActive(index, true);
+      }
+      return;
+    }
+
     const nav = event.target.closest("[data-nav-view]");
     if (nav) {
       setView(nav.dataset.navView);
@@ -127,6 +201,11 @@
 
   $("#catalogSearch")?.addEventListener("input", renderCatalog);
 
+  $("#categoryArenaViewport")?.addEventListener("scroll", () => {
+    if (categoryScrollRaf) cancelAnimationFrame(categoryScrollRaf);
+    categoryScrollRaf = requestAnimationFrame(syncCategoryFromScroll);
+  }, {passive:true});
+
   const devicePresets = {
     mobile: { width: 390, height: 844, label: "Celular" },
     tablet: { width: 820, height: 1180, label: "Tablet" },
@@ -157,6 +236,7 @@
       el.classList.toggle("active", el.dataset.devicePreview === safeDevice);
     });
     updateDeviceScale();
+    requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, true, true));
   }
 
   $("#devicePreviewButtons")?.addEventListener("click", (event) => {
@@ -177,6 +257,7 @@
 
   let loadingRaf = 0;
   let loadingHideTimer = 0;
+  let loadingPhaseTimer = 0;
 
   function runLoadingDemo(){
     const overlay = $("#loadingDemo");
@@ -190,63 +271,59 @@
 
     cancelAnimationFrame(loadingRaf);
     clearTimeout(loadingHideTimer);
-    overlay.classList.remove("leaving");
-    overlay.classList.add("active");
+    clearTimeout(loadingPhaseTimer);
+    overlay.classList.remove("leaving","run-phase");
+    overlay.classList.add("active","brand-phase");
     overlay.setAttribute("aria-hidden","false");
     fill.style.transform = "scaleX(0)";
     percent.textContent = "0%";
     runner.style.setProperty("--runner-x","0px");
+    runner.style.setProperty("--runner-bob","0px");
     runner.style.opacity = "1";
     runner.style.visibility = "visible";
-    runner.style.setProperty("--runner-bob","0px");
     message.textContent = "Estamos corriendo para actualizar precios...";
     if (button) button.textContent = "↻ Reiniciar carga";
 
-    const reduced = document.documentElement.classList.contains("motion-off") ||
-      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const reduced = document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     const device = document.documentElement.dataset.device || "desktop";
-    const duration = reduced ? 1100 : (device === "mobile" ? 4600 : device === "tablet" ? 4350 : 4100);
-    runner.dataset.ready = "1";
-    const start = performance.now();
+    const brandDuration = reduced ? 420 : (device === "mobile" ? 1350 : 1180);
+    const runDuration = reduced ? 1050 : (device === "mobile" ? 4200 : device === "tablet" ? 4000 : 3800);
 
-    function tick(now){
-      const raw = Math.min(1, Math.max(0, (now - start) / duration));
-      const eased = 1 - Math.pow(1 - raw, 2.05);
-      const value = Math.round(eased * 100);
-      const zoneWidth = zone.clientWidth;
-      const runnerWidth = runner.getBoundingClientRect().width / (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--device-scale")) || 1);
-      const travel = Math.max(0, zoneWidth - Math.min(runnerWidth, zoneWidth * .58));
-      runner.style.setProperty("--runner-x",(travel * eased) + "px");
-      runner.style.setProperty("--runner-bob", reduced ? "0px" : (Math.sin(raw * Math.PI * 18) * 3.8) + "px");
-      fill.style.transform = "scaleX(" + eased.toFixed(4) + ")";
-      percent.textContent = value + "%";
+    loadingPhaseTimer = setTimeout(() => {
+      overlay.classList.remove("brand-phase");
+      overlay.classList.add("run-phase");
+      const start = performance.now();
 
-      if (value < 38) {
-        message.textContent = "Estamos corriendo para actualizar precios...";
-      } else if (value < 76) {
-        message.textContent = "Un sprint más: ordenando ofertas y recargas...";
-      } else if (value < 100) {
-        message.textContent = "Últimos metros: dejando todo listo...";
-      } else {
-        message.textContent = "¡Llegamos! Precios listos para revisar.";
-      }
+      function tick(now){
+        const raw = Math.min(1, Math.max(0, (now - start) / runDuration));
+        const eased = 1 - Math.pow(1 - raw, 2.05);
+        const value = Math.round(eased * 100);
+        const zoneWidth = zone.clientWidth;
+        const rootScale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--device-scale")) || 1;
+        const runnerWidth = runner.getBoundingClientRect().width / rootScale;
+        const travel = Math.max(0, zoneWidth - Math.min(runnerWidth, zoneWidth * .58));
+        runner.style.setProperty("--runner-x",(travel * eased) + "px");
+        runner.style.setProperty("--runner-bob", reduced ? "0px" : (Math.sin(raw * Math.PI * 18) * 3.8) + "px");
+        fill.style.transform = "scaleX(" + eased.toFixed(4) + ")";
+        percent.textContent = value + "%";
+        if (value < 38) message.textContent = "Estamos corriendo para actualizar precios...";
+        else if (value < 76) message.textContent = "Un sprint más: ordenando ofertas y recargas...";
+        else if (value < 100) message.textContent = "Últimos metros: dejando todo listo...";
+        else message.textContent = "¡Llegamos! French Store está listo.";
 
-      if (raw < 1) {
-        loadingRaf = requestAnimationFrame(tick);
-        return;
-      }
+        if (raw < 1) { loadingRaf = requestAnimationFrame(tick); return; }
 
-      loadingHideTimer = setTimeout(() => {
-        overlay.classList.add("leaving");
         loadingHideTimer = setTimeout(() => {
-          overlay.classList.remove("active","leaving");
-          overlay.setAttribute("aria-hidden","true");
-          if (button) button.textContent = "▶ Probar carga";
-        }, reduced ? 40 : 480);
-      }, reduced ? 220 : 650);
-    }
-
-    loadingRaf = requestAnimationFrame(tick);
+          overlay.classList.add("leaving");
+          loadingHideTimer = setTimeout(() => {
+            overlay.classList.remove("active","leaving","brand-phase","run-phase");
+            overlay.setAttribute("aria-hidden","true");
+            if (button) button.textContent = "▶ Probar carga";
+          }, reduced ? 40 : 480);
+        }, reduced ? 180 : 560);
+      }
+      loadingRaf = requestAnimationFrame(tick);
+    }, brandDuration);
   }
 
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
@@ -257,4 +334,5 @@
   render();
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
+  setTimeout(runLoadingDemo, 220);
 })();

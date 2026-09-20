@@ -81,33 +81,29 @@
             <div class="loading-demo-glow loading-demo-glow-a"></div>
             <div class="loading-demo-glow loading-demo-glow-b"></div>
             <div class="loading-demo-content">
-              <div class="loading-demo-logo" aria-label="French Store">
-                <span class="loading-demo-diamond">◆</span>
-                <div class="loading-demo-wordmark">
-                  <span>FRENCH</span>
-                  <i>◆</i>
-                  <span>STORE</span>
+              <div class="loading-brand-intro" id="loadingBrandIntro" aria-label="French Store">
+                <div class="loading-brand-mascot-shell">
+                  <span class="loading-brand-halo" aria-hidden="true"></span>
+                  <img class="loading-brand-mascot" src="https://raw.githubusercontent.com/chuihuarachif-cpu/the-french-store/design-lab/v2/assets/brand/french-store-mascot.webp" alt="Zorro de French Store" width="220" height="220" decoding="async">
                 </div>
-                <span class="loading-demo-diamond">◆</span>
-              </div>
-
-              <div class="loading-runner-zone" id="loadingRunnerZone" aria-hidden="true">
-                <img id="loadingRunner" class="loading-runner" src="https://raw.githubusercontent.com/chuihuarachif-cpu/the-french-store/design-lab/design-lab/assets/fox-run-cycle.webp" alt="Zorro de French Store corriendo con documentos" width="80" height="80" decoding="async">
-              </div>
-
-              <div class="loading-progress-shell">
-                <div class="loading-progress-meta">
-                  <span>Actualizando French Store</span>
-                  <b id="loadingPercent">0%</b>
-                </div>
-                <div class="loading-progress-track" aria-hidden="true">
-                  <div class="loading-progress-fill" id="loadingProgressBar"></div>
+                <div class="loading-brand-lockup" aria-label="French Store">
+                  <span class="loading-brand-gem" aria-hidden="true">◆</span>
+                  <div class="loading-brand-copy"><strong>FRENCH</strong><strong>STORE</strong></div>
+                  <span class="loading-brand-gem" aria-hidden="true">◆</span>
                 </div>
               </div>
-
-              <div class="loading-demo-copy">
-                <strong id="loadingMessage">Estamos corriendo para actualizar precios...</strong>
-                <span>Preparando ofertas, recargas y novedades.</span>
+              <div class="loading-run-phase" id="loadingRunPhase">
+                <div class="loading-runner-zone" id="loadingRunnerZone" aria-hidden="true">
+                  <img id="loadingRunner" class="loading-runner" src="https://raw.githubusercontent.com/chuihuarachif-cpu/the-french-store/design-lab/design-lab/assets/fox-run-cycle.webp" alt="Zorro de French Store corriendo con documentos" width="80" height="80" decoding="async">
+                </div>
+                <div class="loading-progress-shell">
+                  <div class="loading-progress-meta"><span>Actualizando French Store</span><b id="loadingPercent">0%</b></div>
+                  <div class="loading-progress-track" aria-hidden="true"><div class="loading-progress-fill" id="loadingProgressBar"></div></div>
+                </div>
+                <div class="loading-demo-copy">
+                  <strong id="loadingMessage">Estamos corriendo para actualizar precios...</strong>
+                  <span>Preparando ofertas, recargas y novedades.</span>
+                </div>
               </div>
             </div>
           </div>
@@ -129,30 +125,32 @@
           <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
 
           <section class="store-view active" data-view="inicio">
-            <div class="hero reveal">
-              <div class="hero-copy">
-                <span class="eyebrow">EXPERIENCIA DIGITAL</span>
-                <h1>Una nueva forma de descubrir y comprar.</h1>
-                <p>Este espacio existe únicamente para experimentar con la futura interfaz de French Store sin tocar la tienda real.</p>
-                <div class="hero-actions">
-                  <button class="primary" type="button" data-nav-view="catalogo">Explorar diseño</button>
-                  <button class="secondary" type="button" data-demo-action="safe">Probar interacción</button>
+            <div class="home-intro reveal">
+              <span class="eyebrow">FRENCH STORE · CATEGORÍAS</span>
+              <h1>Elige dónde quieres entrar.</h1>
+              <p>Desliza entre las categorías. La tarjeta central queda activa y las laterales se apartan con profundidad, brillo y movimiento suave.</p>
+            </div>
+            <section class="section category-arena-section reveal" aria-labelledby="categoryArenaTitle">
+              <div class="section-head category-arena-head">
+                <div><span class="eyebrow">CENTRO DE CATEGORÍAS</span><h2 id="categoryArenaTitle">Todo French Store en un solo lugar</h2></div>
+                <span class="category-arena-hint">DESLIZA · TOCA · EXPLORA</span>
+              </div>
+              <div class="category-arena">
+                <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
+                <div class="category-arena-viewport" id="categoryArenaViewport" tabindex="0" aria-label="Categorías de French Store">
+                  <div id="categoryGrid" class="category-arena-track"></div>
+                </div>
+                <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
+                <div class="category-arena-floor" aria-hidden="true"><span></span></div>
+                <div class="category-arena-status">
+                  <strong id="categoryArenaCounter">01 / 06</strong>
+                  <div class="category-arena-dots" id="categoryArenaDots" aria-label="Posición de categoría"></div>
+                  <span class="category-arena-swipe">Desliza horizontalmente</span>
                 </div>
               </div>
-              <div class="hero-art" aria-hidden="true">
-                <div class="orb orb-a"></div>
-                <div class="orb orb-b"></div>
-                <div class="gem">◆</div>
-              </div>
-            </div>
-
-            <section class="section reveal">
-              <div class="section-head"><div><span class="eyebrow">CATEGORÍAS</span><h2>Explora por mundo</h2></div><button class="text-button" data-nav-view="catalogo">Ver todo →</button></div>
-              <div id="categoryGrid" class="category-grid"></div>
             </section>
-
-            <section class="section reveal">
-              <div class="section-head"><div><span class="eyebrow">DESTACADOS</span><h2>Productos para probar la UI</h2></div></div>
+            <section class="section featured-section reveal">
+              <div class="section-head"><div><span class="eyebrow">DESTACADOS</span><h2>Productos para probar la UI</h2></div><button class="text-button" data-nav-view="catalogo">Ver tienda →</button></div>
               <div id="featuredGrid" class="product-grid"></div>
             </section>
           </section>
