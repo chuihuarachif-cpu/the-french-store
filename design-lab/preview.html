@@ -1220,6 +1220,114 @@ html[data-device="mobile-landscape"] .x-buy-dock{grid-template-columns:180px 1fr
 html.motion-off .x-game-card,html.motion-off .x-cart-drawer,html.motion-off .x-experience,html.motion-off .x-package-card{transition:none!important}
 @media (prefers-reduced-motion:reduce){.x-game-card,.x-cart-drawer,.x-experience,.x-package-card{transition:none!important}}
 
+
+/* r242 · adaptive performance pass */
+body.experience-open .store-header,
+body.experience-open .store-view,
+body.experience-open .xarena-dock{
+  visibility:hidden!important;
+  pointer-events:none!important
+}
+body.experience-open .store-view *,
+body.experience-open .store-header *{
+  animation-play-state:paused!important
+}
+body.experience-open .store-app:before{
+  display:none!important
+}
+
+.x-experience{
+  contain:layout paint style;
+  overscroll-behavior:contain
+}
+.x-game-card{
+  contain:layout paint style
+}
+.x-game-card.x-hidden{
+  visibility:hidden!important;
+  content-visibility:hidden!important;
+  will-change:auto!important
+}
+.x-package-list{
+  contain:layout paint style;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch
+}
+.x-package-card{
+  content-visibility:auto;
+  contain:layout paint style;
+  contain-intrinsic-size:110px
+}
+.x-cart-drawer{
+  contain:layout paint style;
+  overscroll-behavior:contain
+}
+
+html.perf-lite .lab-panel,
+html.perf-lite .store-header,
+html.perf-lite .loading-demo-backdrop{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important
+}
+html.perf-lite .lab-panel{
+  background:#06111b!important
+}
+html.perf-lite .store-header{
+  background:#07131f!important
+}
+html.perf-lite .store-app:before{
+  display:none!important
+}
+html.perf-lite .gem{
+  animation:none!important;
+  filter:none!important;
+  text-shadow:0 0 22px rgba(98,231,255,.38)!important
+}
+html.perf-lite .orb{
+  filter:none!important;
+  opacity:.55!important
+}
+html.perf-lite .reveal{
+  animation-duration:.3s!important
+}
+html.perf-lite .category-arena-card,
+html.perf-lite .x-game-card,
+html.perf-lite .x-package-card,
+html.perf-lite .x-product-stage,
+html.perf-lite .x-cart-drawer{
+  box-shadow:none!important
+}
+html.perf-lite .x-product-stage:before{
+  text-shadow:none!important
+}
+html.perf-lite .category-card-grid{
+  display:none!important
+}
+html.perf-lite .category-icon-stage .icon{
+  filter:none!important
+}
+html.perf-lite .loading-square-wave span,
+html.perf-lite .loading-progress-fill-bottom{
+  box-shadow:none!important
+}
+html.perf-lite .x-experience-bg{
+  background:
+    radial-gradient(ellipse at 56% 40%,rgba(17,199,255,.08),transparent 36%),
+    linear-gradient(180deg,#071225,#020817 72%,#020612)!important
+}
+
+@media (max-width:700px){
+  .lab-panel,
+  .store-header{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important
+  }
+  .store-header{background:#07131f!important}
+  .x-game-card{transition:transform .19s cubic-bezier(.22,.72,.2,1),opacity .14s linear,border-color .14s linear!important}
+  .x-package-card{transition:border-color .12s ease,background .12s ease!important}
+  .x-cart-drawer{transition:transform .19s cubic-bezier(.22,.72,.2,1)!important}
+}
+
 </style>
 </head>
 <body>
@@ -1533,7 +1641,7 @@ html.motion-off .x-game-card,html.motion-off .x-cart-drawer,html.motion-off .x-e
                 <main class="x-product-stage">
                   <div class="x-stage-gamehead">
                     <div class="x-stage-game-icon">
-                      <img id="xShowcaseImage" class="x-showcase-img" alt="">
+                      <img id="xShowcaseImage" class="x-showcase-img" alt="" decoding="async">
                       <span id="xShowcaseFallback">FS</span>
                     </div>
                     <div class="x-stage-gamecopy">
@@ -1667,6 +1775,13 @@ window.FS_LAB_DATA = Object.freeze({
     "cuentas": "Venta de Cuentas",
     "paginas": "Venta de Páginas"
   };
+  const prefersLitePerformance = Boolean(
+    window.matchMedia?.("(max-width: 700px)")?.matches ||
+    (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
+  );
+  document.documentElement.classList.toggle("perf-lite", prefersLitePerformance);
+
   const favoriteStorageKey = "fs-design-lab-favorite-games-v1";
   const cartStorageKey = "fs-design-lab-cart-v1";
   let experienceCategoryId = "recargas-id";
@@ -1875,7 +1990,7 @@ window.FS_LAB_DATA = Object.freeze({
   }
 
   function gameCardMarkup(game,index){
-    const image = game.icon ? '<img class="x-game-thumb" src="'+escapeHtml(game.icon)+'" alt="">' : '';
+    const image = game.icon ? '<img class="x-game-thumb" data-src="'+escapeHtml(game.icon)+'" alt="" decoding="async" fetchpriority="low">' : '';
     return '<button class="x-game-card" type="button" data-x-game-index="'+index+'" aria-label="'+escapeHtml(game.name)+'">'+
       '<span class="x-game-thumb-shell">'+image+'<i>'+escapeHtml(initials(game.name))+'</i></span>'+
       '<span class="x-game-name">'+escapeHtml(game.name)+'</span>'+
@@ -1921,6 +2036,13 @@ window.FS_LAB_DATA = Object.freeze({
       card.setAttribute("aria-current",diff===0?"true":"false");
       card.setAttribute("aria-hidden",distance>2?"true":"false");
       card.tabIndex=distance<=1?0:-1;
+      const thumb=card.querySelector(".x-game-thumb");
+      if (thumb) {
+        thumb.fetchPriority=distance<=1?"high":"low";
+        if (distance<=2 && !thumb.getAttribute("src") && thumb.dataset.src) {
+          thumb.setAttribute("src",thumb.dataset.src);
+        }
+      }
       card.classList.toggle("x-instant",Boolean(instant));
     });
     if (instant) requestAnimationFrame(()=>all(".x-game-card").forEach(card=>card.classList.remove("x-instant")));
@@ -2117,7 +2239,7 @@ window.FS_LAB_DATA = Object.freeze({
     document.body.classList.add("experience-open");
     renderExperienceWheel(true);
     updateCartBadges();
-    requestAnimationFrame(updateDeviceScale);
+    scheduleDeviceScale();
   }
 
   function closeExperience(goHome=false){
@@ -2127,7 +2249,7 @@ window.FS_LAB_DATA = Object.freeze({
     overlay?.setAttribute("aria-hidden","true");
     document.body.classList.remove("experience-open");
     if (goHome) setView("inicio");
-    requestAnimationFrame(updateDeviceScale);
+    scheduleDeviceScale();
   }
 
   function moveExperienceGame(direction){
@@ -2404,6 +2526,8 @@ window.FS_LAB_DATA = Object.freeze({
     desktop: { width: 1440, height: 900, label: "PC" }
   };
 
+  let scaleFrame = 0;
+  let lastScaleKey = "";
   function updateDeviceScale(){
     const root = document.documentElement;
     const viewport = $("#deviceViewport");
@@ -2412,11 +2536,22 @@ window.FS_LAB_DATA = Object.freeze({
     const preset = devicePresets[root.dataset.device] || devicePresets.desktop;
     const available = Math.max(1, viewport.clientWidth);
     const scale = Math.min(1, available / preset.width);
+    const frameHeight = frame.scrollHeight;
+    const targetHeight = Math.ceil(frameHeight * scale);
+    const key = preset.width+"|"+preset.height+"|"+available+"|"+frameHeight+"|"+scale.toFixed(4);
+    if (key===lastScaleKey) return;
+    lastScaleKey=key;
     root.style.setProperty("--device-width", preset.width + "px");
     root.style.setProperty("--device-height", preset.height + "px");
     root.style.setProperty("--device-scale", scale.toFixed(4));
-    requestAnimationFrame(() => {
-      viewport.style.height = Math.ceil(frame.scrollHeight * scale) + "px";
+    if (viewport.style.height !== targetHeight + "px") viewport.style.height = targetHeight + "px";
+  }
+
+  function scheduleDeviceScale(){
+    if (scaleFrame) return;
+    scaleFrame=requestAnimationFrame(()=>{
+      scaleFrame=0;
+      updateDeviceScale();
     });
   }
 
@@ -2426,7 +2561,8 @@ window.FS_LAB_DATA = Object.freeze({
     document.querySelectorAll("#devicePreviewButtons [data-device-preview]").forEach(el => {
       el.classList.toggle("active", el.dataset.devicePreview === safeDevice);
     });
-    updateDeviceScale();
+    lastScaleKey="";
+    scheduleDeviceScale();
     requestAnimationFrame(() => setCategoryActive(activeCategoryIndex, false, true));
   }
 
@@ -2439,7 +2575,10 @@ window.FS_LAB_DATA = Object.freeze({
   let resizeTimer = 0;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(updateDeviceScale, 80);
+    resizeTimer = setTimeout(() => {
+      lastScaleKey="";
+      scheduleDeviceScale();
+    }, 100);
   }, {passive:true});
 
   $("#roleSelect")?.addEventListener("change", (event) => setRole(event.target.value));
@@ -2521,7 +2660,7 @@ window.FS_LAB_DATA = Object.freeze({
 
   const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
   setDevice(initialDevice);
-  const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(updateDeviceScale) : null;
+  const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(scheduleDeviceScale) : null;
   if (frameObserver) frameObserver.observe($("#deviceFrame"));
   render();
   const initial = location.hash.replace("#", "");
