@@ -88,9 +88,9 @@
     requestAnimationFrame(() => setCategoryActive(Math.min(activeCategoryIndex, maxIndex), true, true, true));
   }
 
-  function scheduleCategoryLoopNormalize(){
+  function scheduleCategoryLoopNormalize(delay = 120){
     clearTimeout(categoryLoopTimer);
-    categoryLoopTimer = setTimeout(normalizeCategoryLoop, 110);
+    categoryLoopTimer = setTimeout(normalizeCategoryLoop, delay);
   }
 
   function normalizeCategoryLoop(){
@@ -133,7 +133,7 @@
       const reduced = instant || document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
       viewport.scrollTo({left:Math.max(0,target),behavior:reduced ? "auto" : "smooth"});
     }
-    if (!skipNormalize) scheduleCategoryLoopNormalize();
+    if (!skipNormalize) scheduleCategoryLoopNormalize(instant ? 20 : (shouldScroll ? 620 : 120));
   }
 
   function syncCategoryFromScroll(){
