@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r172-security-growth-20260919';
+  const VERSION = 'r230-mobile-motion-20260919';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
