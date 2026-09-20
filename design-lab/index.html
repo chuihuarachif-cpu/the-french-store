@@ -22,14 +22,16 @@
         <div><b>Modo seguro</b><small>Sin Supabase, pagos, QR real, Push ni backend.</small></div>
       </div>
 
-      <label class="control">
-        <span>Dispositivo</span>
-        <select id="deviceSelect">
-          <option value="desktop">PC</option>
-          <option value="tablet">Tablet</option>
-          <option value="mobile">Móvil</option>
-        </select>
-      </label>
+      <div class="control device-preview-control" aria-label="Vista de dispositivo">
+        <span>Vista de prueba</span>
+        <div class="device-preview-buttons" id="devicePreviewButtons">
+          <button type="button" data-device-preview="mobile">Celular</button>
+          <button type="button" data-device-preview="tablet">Tablet</button>
+          <button type="button" data-device-preview="laptop">Laptop</button>
+          <button type="button" data-device-preview="desktop" class="active">PC</button>
+        </div>
+        <small>Estos controles pertenecen al laboratorio y no forman parte del diseño de la tienda.</small>
+      </div>
 
       <label class="control">
         <span>Estado simulado</span>
