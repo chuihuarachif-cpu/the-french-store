@@ -11,7 +11,7 @@
   const data = window.FS_LAB_DATA || { categories: [], products: [], checkout: [] };
   const $ = (s, root = document) => root.querySelector(s);
   const $$ = (s, root = document) => [...root.querySelectorAll(s)];
-  const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", producto: "Producto", checkout: "Checkout", admin: "Admin" };
+  const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", pases: "Pases", ajustes: "Ajustes", producto: "Producto", checkout: "Checkout", admin: "Admin" };
   const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
   let currentView = "inicio";
   let activeFilter = "Todos";
@@ -36,6 +36,17 @@
     el.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+  }
+
+  function setInfoHub(open){
+    const hub = $("#infoHub");
+    const backdrop = $("#infoHubBackdrop");
+    const toggle = $("[data-info-toggle]");
+    const isOpen = Boolean(open);
+    hub?.classList.toggle("open", isOpen);
+    backdrop?.classList.toggle("open", isOpen);
+    hub?.setAttribute("aria-hidden", isOpen ? "false" : "true");
+    toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
   function categoryCard(item, index){
@@ -137,6 +148,7 @@
     if (title) title.textContent = titleMap[currentView];
     const stage = $(".store-app");
     if (stage) stage.scrollTop = 0;
+    setInfoHub(false);
     history.replaceState(null, "", "#" + currentView);
   }
 
@@ -158,6 +170,23 @@
   }, true);
 
   document.addEventListener("click", (event) => {
+    const infoToggle = event.target.closest("[data-info-toggle]");
+    if (infoToggle) {
+      setInfoHub(infoToggle.getAttribute("aria-expanded") !== "true");
+      return;
+    }
+
+    if (event.target.closest("[data-info-close]")) {
+      setInfoHub(false);
+      return;
+    }
+
+    const infoAction = event.target.closest("[data-info-action]");
+    if (infoAction) {
+      toast(infoAction.dataset.infoAction + " se abrirá aquí cuando conectemos la versión real.");
+      return;
+    }
+
     const arenaArrow = event.target.closest("[data-arena-direction]");
     if (arenaArrow) { setCategoryActive(activeCategoryIndex + Number(arenaArrow.dataset.arenaDirection || 0), true); return; }
 
@@ -242,6 +271,7 @@
 
   const devicePresets = {
     mobile: { width: 390, height: 844, label: "Celular" },
+    "mobile-landscape": { width: 844, height: 390, label: "Celular horizontal" },
     tablet: { width: 820, height: 1180, label: "Tablet" },
     laptop: { width: 1180, height: 768, label: "Laptop" },
     desktop: { width: 1440, height: 900, label: "PC" }
@@ -320,8 +350,9 @@
 
     const reduced = document.documentElement.classList.contains("motion-off") || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     const device = document.documentElement.dataset.device || "desktop";
-    const brandDuration = reduced ? 420 : (device === "mobile" ? 1350 : 1180);
-    const runDuration = reduced ? 1050 : (device === "mobile" ? 4200 : device === "tablet" ? 4000 : 3800);
+    const compactMobile = device === "mobile" || device === "mobile-landscape";
+    const brandDuration = reduced ? 420 : (compactMobile ? 1250 : 1180);
+    const runDuration = reduced ? 1050 : (compactMobile ? 3600 : device === "tablet" ? 3900 : 3700);
 
     loadingPhaseTimer = setTimeout(() => {
       overlay.classList.remove("brand-phase");
@@ -361,6 +392,7 @@
   }
 
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
+  $("#settingsMotionShortcut")?.addEventListener("click", () => $("#motionToggle")?.click());
 
   setDevice(document.documentElement.dataset.device || "desktop");
   const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(updateDeviceScale) : null;
