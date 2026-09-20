@@ -105,7 +105,9 @@
     backdrop?.classList.toggle("open", isOpen);
     hub?.setAttribute("aria-hidden", isOpen ? "false" : "true");
     toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    document.body.classList.toggle("info-center-open", isOpen);
     if (isOpen) setInfoPanel("social");
+    scheduleDeviceScale();
   }
 
   function setInfoPanel(name){
@@ -632,6 +634,7 @@
     });
     const grid = $("#catalogGrid");
     if (grid) grid.innerHTML = items.length ? items.map(productCard).join("") : '<div class="lab-note"><b>Sin resultados</b><p>Prueba otra búsqueda. Estos datos son ficticios.</p></div>';
+    scheduleDeviceScale();
   }
 
   function setView(view){
@@ -645,6 +648,7 @@
     if (stage) stage.scrollTop = 0;
     setInfoHub(false);
     history.replaceState(null, "", "#" + currentView);
+    scheduleDeviceScale();
   }
 
   function setRole(role){
@@ -984,7 +988,7 @@
     overlay.setAttribute("aria-hidden","false");
 
     let progress = 0;
-    fill.style.width = "0%";
+    fill.style.transform = "scaleX(0)";
     percent.textContent = "0%";
     message.textContent = "Preparando French Store...";
     if (button) button.textContent = "↻ Reiniciar carga";
@@ -999,7 +1003,7 @@
         progress = 100;
         clearInterval(loadingProgressInterval);
         loadingProgressInterval = 0;
-        fill.style.width = "100%";
+        fill.style.transform = "scaleX(1)";
         percent.textContent = "100%";
         message.textContent = "¡Todo listo! Entrando a French Store...";
         finishLoadingDemo(overlay, button, reduced);
@@ -1007,7 +1011,7 @@
       }
 
       const visible = Math.floor(progress);
-      fill.style.width = progress + "%";
+      fill.style.transform = "scaleX(" + (progress / 100) + ")";
       percent.textContent = visible + "%";
 
       message.textContent = visible < 70 ? "Preparando French Store..." : "Últimos detalles...";
@@ -1017,6 +1021,10 @@
   $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
   $("#settingsMotionShortcut")?.addEventListener("click", () => $("#motionToggle")?.click());
 
+  document.addEventListener("visibilitychange", () => {
+    document.documentElement.classList.toggle("page-hidden", document.hidden);
+  }, {passive:true});
+
   const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
   setDevice(initialDevice);
   window.addEventListener("orientationchange", () => {
@@ -1024,8 +1032,9 @@
     setTimeout(syncExperienceOrientation,120);
   }, {passive:true});
 
-  const frameObserver = ("ResizeObserver" in window && $("#deviceFrame")) ? new ResizeObserver(scheduleDeviceScale) : null;
-  if (frameObserver) frameObserver.observe($("#deviceFrame"));
+  // The Lab recalculates scale only after real UI/device changes.
+  // Avoid observing the whole frame continuously: on mobile it can cause
+  // repeated layout reads while cards, drawers and orientation states change.
   render();
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
