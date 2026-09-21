@@ -2573,6 +2573,148 @@ html.perf-lite .welcome-ticker-track{animation-duration:42s}
 html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-play-state:paused!important}
 
 </style>
+  <style>
+/* XArena-inspired command surfaces. Static lighting, small local SVG assets,
+   and compositor-only carousel movement; no per-frame JavaScript. */
+.store-header{border-bottom:1px solid #2f8fb755!important;box-shadow:0 6px 20px #0002,inset 0 -1px #70dfff13!important}
+.welcome-ticker{border-top:1px solid #31a9df66;background:linear-gradient(180deg,#0b304e,#061a30)!important;box-shadow:inset 0 -2px #43c8f24d,0 5px 18px #1bbff211!important}
+.home-intro{margin-bottom:10px!important;padding-top:3px!important}
+.home-intro h1{font-size:clamp(1.8rem,2.8cqw,2.7rem)!important;letter-spacing:-.035em!important;margin-bottom:8px!important}
+.home-intro .eyebrow{letter-spacing:.28em;font-size:.59rem;margin-bottom:10px}
+.home-intro p{font-size:.85rem!important}
+.hud-energy{position:absolute;pointer-events:none;inset:350px 0 auto;height:165px;z-index:0;overflow:hidden;contain:strict}
+.hud-energy i,.hud-energy span{position:absolute;display:block;width:100%;height:2px;left:0;top:35px;background:linear-gradient(90deg,transparent,#25daf74d 13%,#39ddff99 28%,transparent 49%,#7970ff66 74%,#dc76ed38 90%,transparent)}
+.hud-energy i:nth-child(2){top:141px;height:1px;background:linear-gradient(90deg,transparent,#3388ff52 21%,#7764ff4d 55%,#bd7ddd3d 78%,transparent)}
+.hud-energy span{top:27px;height:20px;opacity:.18;background:linear-gradient(90deg,transparent,#00cfff 20%,transparent 41%,#635bff 79%,transparent);clip-path:polygon(0 47%,17% 31%,29% 39%,49% 50%,78% 39%,95% 48%,100% 51%,70% 62%,26% 59%,13% 68%)}
+.category-arena{min-height:465px!important;padding-top:12px!important;padding-bottom:0!important}
+.category-arena-viewport{height:453px!important;perspective:1400px}
+.category-arena-track{--arena-card-width:clamp(290px,30cqw,435px)!important}
+.category-arena-card{top:22px!important;min-height:0!important;height:340px!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;overflow:visible!important;contain:layout style;isolation:isolate;cursor:pointer}
+.category-arena-card:before,.category-arena-card:after{display:none!important}
+.category-arena-card.active{border:0!important;box-shadow:none!important}
+.category-arena-card[data-roulette-slot="0"]{transform:translateX(-50%) scale(1.04)!important;border:0!important}
+.category-arena-card[data-roulette-slot="-1"]{transform:translateX(-144%) translateY(30px) rotate(-2deg) scale(.85)!important}
+.category-arena-card[data-roulette-slot="1"]{transform:translateX(44%) translateY(30px) rotate(2deg) scale(.85)!important}
+.category-glass{position:relative;display:flex;flex-direction:column;width:100%;height:100%;overflow:hidden;border:1px solid rgba(var(--accent-rgb),.72);border-top-color:#a4edffd4;border-radius:7px 30px 9px 28px;background:linear-gradient(118deg,#d5faff20 0,transparent 27%,#bcf3ff05 51%,#bcf3ff13 52%,transparent 70%),linear-gradient(152deg,#173f58e8,#09223de8 48%,#0c3855ee);box-shadow:inset 2px 0 #baf6ff4a,inset -2px -2px rgba(var(--accent-rgb),.23),0 0 13px rgba(var(--accent-rgb),.18),0 17px 24px #0005}
+.category-glass:before{content:"";position:absolute;inset:7px;pointer-events:none;border:1px solid rgba(var(--accent-rgb),.19);border-radius:2px 23px 3px 22px;z-index:3}
+.category-glass:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(126deg,transparent 18%,#e4fcff0a 18.3% 22%,transparent 22.3% 53%,#c0faff0b 53.3% 54%,transparent 54.3%);z-index:3}
+.category-arena-card.active .category-glass{border:2px solid #53eaff;border-top-color:#b4ffff;background:linear-gradient(119deg,#ddfcff2b,transparent 26%,#dbffff0b 52%,transparent 71%),linear-gradient(153deg,#1a5572ed,#0a304def 54%,#10425e);box-shadow:inset 2px 0 #efffff66,inset -2px -2px #50dcff66,0 0 13px #2ce0ff44,0 0 32px #17abdd26,0 19px 26px #0006}
+.hud-module-edge{position:absolute;z-index:4;left:14%;top:0;width:41%;height:4px;background:#b0fcff;box-shadow:0 1px 8px #19dfff77;border-radius:0 0 4px 4px;opacity:.75}
+.category-card-top{display:flex!important;justify-content:space-between!important;align-items:center!important;top:19px!important;left:20px!important;right:20px!important;z-index:4!important}
+.hud-module-label{font-size:.48rem;letter-spacing:.2em;color:#b2e7f9;line-height:1}
+.category-tag{font-size:.49rem!important;letter-spacing:.14em!important;border:1px solid rgba(var(--accent-rgb),.33)!important;border-radius:4px!important;padding:5px 8px!important;background:#03152a6b!important;color:#cef5ff!important}
+.category-card-grid{inset:0!important;z-index:0!important;opacity:.5!important}
+.category-art{height:221px;flex:0 0 221px;padding:32px 16px 0;z-index:1}
+.category-art img{object-position:center 56%}
+.category-console{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 114px;align-items:center;gap:12px;padding:16px 21px 13px;min-height:81px;background:linear-gradient(100deg,rgba(var(--accent-rgb),.24),#1576aa17);border-top:1px solid rgba(var(--accent-rgb),.37);border-bottom:1px solid rgba(var(--accent-rgb),.17);z-index:4}
+.category-copy{padding:0!important;text-align:left!important;align-items:flex-start!important;gap:5px!important;min-width:0!important}
+.category-copy b{font-size:clamp(.99rem,1.31cqw,1.25rem)!important;line-height:1.15!important;letter-spacing:-.03em!important;color:#edfbff}
+.category-copy small{font-size:.66rem!important;line-height:1.4!important;color:#b5d5e6!important}
+.category-enter{display:flex!important;align-items:center;justify-content:center;gap:12px;width:100%!important;margin:0!important;min-height:44px!important;font-size:.88rem!important;border-radius:5px!important;transform:skewX(-9deg)!important;background:linear-gradient(110deg,#dbfdff,#8cf5ff 48%,#2bd6ef)!important;box-shadow:inset 0 1px #fff,0 3px 13px #1acfea22!important}
+.category-enter i{font-size:1.03rem}.category-enter:focus-visible{outline-offset:2px!important}
+.hud-module-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex:1;padding:8px 22px;color:#9cd3e7;font-size:.42rem;letter-spacing:.16em;white-space:nowrap}
+.hud-module-foot i{width:23px;height:3px;display:block;background:linear-gradient(90deg,rgba(var(--accent-rgb),.7),transparent);transform:skewX(-28deg)}
+.hud-module-foot i:last-child{width:10px;background:rgba(var(--accent-rgb),.6)}
+/* Every module has its own platform. The rings are painted once, never spun. */
+.category-pedestal{position:absolute;display:block;left:-5%;width:110%;bottom:-53px;height:57px;z-index:-1;border-radius:50%;background:linear-gradient(180deg,#143b5b 0 38%,#061326 42% 56%,#174c6b 61%,#07192c 79%);border:1px solid #438fbb77;box-shadow:0 8px 0 #051426,0 10px 0 #2378a070,0 16px 19px #0005}
+.category-pedestal:before{content:"";position:absolute;inset:-7px 0 10px;border-radius:50%;border:2px solid rgba(var(--accent-rgb),.7);background:radial-gradient(ellipse at center,#14779c55,transparent 63%),#0a2339;box-shadow:inset 0 0 0 5px #102d47,inset 0 0 0 6px rgba(var(--accent-rgb),.27),0 0 12px rgba(var(--accent-rgb),.16)}
+.category-pedestal:after{content:"";position:absolute;inset:20% 10% 35%;border:1px solid rgba(var(--accent-rgb),.3);border-radius:50%}
+.category-pedestal i{position:absolute;left:8%;right:8%;bottom:7px;height:21px;border-bottom:3px solid rgba(var(--accent-rgb),.75);border-radius:50%}
+.category-pedestal b{position:absolute;left:45%;bottom:3px;width:10%;height:3px;background:rgb(var(--accent-rgb));box-shadow:0 0 7px rgba(var(--accent-rgb),.65);border-radius:4px}
+.category-arena-card.active .category-pedestal{width:120%;left:-10%;height:66px;bottom:-61px;border-color:#48d7edb3;box-shadow:0 8px 0 #061628,0 10px 0 #2ae5ff8a,0 15px 22px #10a9d41f}
+.category-arena-card.active .category-pedestal:before{border-color:#57eaff;box-shadow:inset 0 0 0 5px #143f5b,inset 0 0 0 6px #42ddf57d,0 0 15px #13ddff4d}
+.arena-arrow{top:43%!important;background:#08223cea!important;border-color:#56cde6a8!important;box-shadow:inset 0 0 10px #348abe20!important}
+.xarena-dock{border-radius:32px 32px 8px 8px!important;padding:13px 20px!important;background:linear-gradient(135deg,#bcecff0c,transparent 38%),#081f37!important}
+.xarena-dock:before{content:"";position:absolute;top:-3px;left:32%;width:36%;height:3px;background:linear-gradient(90deg,transparent,#91f6ff,transparent)}
+.info-launcher b{font-weight:650}.info-launcher small{letter-spacing:.13em!important}
+/* A command panel: persistent left navigation, channels in the center,
+   and short actionable help on the right. */
+.info-hub{border-radius:8px 30px 9px 30px!important;background:linear-gradient(118deg,#c1f6ff0b,transparent 27%),#071d34!important;padding:23px!important}
+.info-hub-head{border-bottom:1px solid #68bddd38;padding-bottom:15px!important;min-height:80px!important}
+.info-hub-titlemark{border-radius:5px 14px 5px 14px!important;border:1px solid #4edbff66!important;background:linear-gradient(145deg,#194762,#08273f)!important}
+.info-hub-head h2{font-size:1.57rem!important;letter-spacing:-.025em}.info-hub-head p{color:#a4c6dc!important}
+.info-hub-layout{grid-template-columns:210px minmax(0,1fr) 209px;gap:23px;padding-top:21px;height:calc(100% - 82px)}
+.info-hub-nav{padding-right:14px;border-right:1px solid #38739352;border-radius:0!important;gap:3px;background:none!important}
+.info-hub-nav button{display:grid;grid-template-columns:26px minmax(0,1fr) 12px;align-items:center;gap:11px;min-height:52px;padding:10px 10px;border:1px solid transparent;border-radius:4px!important;background:transparent;color:#a9c7dc;text-align:left}
+.info-hub-nav button>span{display:grid!important;place-items:center!important;width:26px!important;height:26px!important;min-width:0!important;border:0!important;background:none!important;color:#80cde8!important}
+.info-hub-nav button .ui-icon{width:23px;height:23px}.info-hub-nav button b{font-size:.73rem;font-weight:500}.info-hub-nav button i{font-size:1rem;color:#64ddef}
+.info-hub-nav button.active{border-color:#30d5f466!important;border-left:3px solid #7af6ff!important;background:linear-gradient(90deg,#08789dcc,#0c496379)!important;box-shadow:inset 0 1px #cefcff12!important;color:#e8fdff}
+.info-hub-nav button:hover{background-color:#27688922}.info-hub-signature{margin-top:auto!important;padding:20px 8px!important;border-top:1px solid #33709355}
+.info-panel-head{margin-bottom:19px!important}.info-panel-head h3{font-size:1.22rem!important}.info-panel-head p{font-size:.76rem!important;margin-top:6px!important}
+.social-card-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:13px}
+.social-card{grid-column:span 2;min-height:170px;padding:15px;border-radius:5px 18px 5px 18px!important;background:linear-gradient(126deg,#d7faff0e,transparent 43%),linear-gradient(150deg,rgba(var(--social),.13),#081d35)!important;box-shadow:inset 1px 0 #e1fbff19,0 0 12px rgba(var(--social),.1)!important}
+.social-card:before{content:"";position:absolute;top:0;left:17px;width:29%;height:2px;background:rgba(var(--social),.8)}
+.social-card>span{border-radius:9px!important;background:rgba(var(--social),.08)!important}.social-card>span .ui-icon{width:27px;height:27px}
+.social-card div{min-width:0}.social-card small{overflow-wrap:anywhere}.social-card i{border-radius:4px!important;min-height:32px;font-size:.68rem!important;display:grid;place-items:center}
+.social-card.whatsapp,.social-card.instagram{grid-column:span 3;min-height:121px;display:grid;grid-template-columns:40px minmax(0,1fr);gap:8px 12px;align-items:center}
+.social-card.whatsapp i,.social-card.instagram i{grid-column:1/-1;margin-top:0}
+.social-card.instagram{--social:220,107,240}.social-pending:hover{transform:none}.social-pending i{color:#b9bccf;background:#b19dc80a;border-style:dashed}
+.info-important{margin-top:21px}.info-important>span{color:#cce7f8;font-size:.77rem}.info-important button{border-radius:5px 12px 5px 12px!important;background:linear-gradient(135deg,#153951,#0b253e)!important}
+.info-hub-aside{display:flex;flex-direction:column;justify-content:flex-start!important;align-items:stretch;text-align:left!important;padding:19px!important;gap:15px!important;border:1px solid #429fc15c!important;border-radius:5px 19px 5px 19px!important;background:linear-gradient(137deg,#9bedff0b,transparent 38%),#0a263e!important}
+.info-hub-aside .hud-support-heading{display:flex;align-items:center;justify-content:flex-start;gap:9px;padding:0;margin:0;flex:none;border:0}
+.info-hub-aside .hud-support-heading span{display:block;width:auto;height:auto;background:none;transform:none;color:#8ccbdc;font-size:.49rem;letter-spacing:.13em}
+.hud-support-heading .ui-icon{width:22px;height:22px;color:#63e0ee}
+.info-hub-aside h3{font-size:1.21rem!important;line-height:1.3!important;text-align:left!important;margin:0!important}
+.info-hub-aside p{font-size:.76rem!important;line-height:1.65!important;margin:0!important;text-align:left!important}
+.hud-support-primary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;padding:10px 12px;border:1px solid #4aeeb18a;border-radius:5px;background:linear-gradient(110deg,#0d715c,#0a3f43);color:#ccfff1;font-size:.74rem;font-weight:650;cursor:pointer}
+.info-hub-aside .hud-support-links{display:flex;flex-direction:column;align-items:stretch;gap:0;margin:0;padding:0;border:0}
+.hud-support-links button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:46px;border:0;border-bottom:1px solid #419cb632;border-radius:0;background:none;color:#bddce9;font-size:.69rem;text-align:left;cursor:pointer}
+.hud-support-links button:hover{color:#86f3ff}.hud-support-links i,.hud-support-primary i{font-style:normal;color:#7de9e3}
+.hud-support-note{margin-top:auto;padding-top:12px;border-top:1px solid #419cb632;font-size:.6rem!important;line-height:1.7;color:#7ca5bd!important;letter-spacing:0!important;text-transform:none!important}
+.x-product-stage,.profile-card,.pass-card,.wallet-panel,.order-summary,.x-cart-drawer{border-top-color:#64def684!important;border-radius:7px 23px 7px 23px!important}
+.x-package-card,.x-game-card,.settings-grid button,.product-card{border-radius:5px 17px 5px 17px!important}
+@container(max-width:1100px){
+ .category-arena-track{--arena-card-width:clamp(290px,39cqw,400px)!important}
+ .category-console{grid-template-columns:minmax(0,1fr) 101px;padding:15px 18px;gap:8px}.category-copy b{font-size:1.08rem!important}
+ .info-hub-layout{grid-template-columns:185px minmax(0,1fr);gap:17px}.info-hub-aside{display:none}
+ .info-hub-nav{padding-right:10px}.info-hub-nav button{gap:8px;padding:9px 8px}
+}
+@container(max-width:600px){
+ .store-view[data-view="inicio"]{padding-top:24px!important;padding-bottom:150px!important}.home-intro h1{font-size:1.77rem!important}.home-intro p{font-size:.75rem!important;max-width:30ch!important}.home-intro .eyebrow{font-size:.47rem;margin-bottom:11px}
+ .hud-energy{top:318px;height:147px}
+ .category-arena{min-height:411px!important;padding-top:4px!important}.category-arena-viewport{height:401px!important}.category-arena-track{--arena-card-width:77cqw!important}
+ .category-arena-card{top:18px!important;height:308px!important}.category-arena-card[data-roulette-slot="0"]{transform:translateX(-50%) scale(1)!important}
+ .category-arena-card[data-roulette-slot="-1"]{transform:translateX(-143%) translateY(26px) rotate(-2deg) scale(.84)!important}.category-arena-card[data-roulette-slot="1"]{transform:translateX(43%) translateY(26px) rotate(2deg) scale(.84)!important}
+ .category-card-top{left:17px!important;right:17px!important;top:17px!important}.hud-module-label{font-size:.4rem;letter-spacing:.12em}.category-tag{font-size:.43rem!important;padding:4px 6px!important}
+ .category-art{height:189px;flex-basis:189px;padding:29px 7px 0}
+ .category-console{grid-template-columns:minmax(0,1fr) 93px;gap:8px;padding:12px 14px;min-height:86px}
+ .category-copy b{font-size:1rem!important;line-height:1.12!important}.category-copy small{font-size:.61rem!important;line-height:1.4!important}.category-enter{font-size:.76rem!important;gap:7px;min-height:44px!important}
+ .hud-module-foot{padding:8px 16px;font-size:.34rem;letter-spacing:.11em;gap:6px}.hud-module-foot i{width:16px}
+ .category-pedestal{bottom:-47px;height:49px}.category-arena-card.active .category-pedestal{left:-7%;width:114%;height:55px;bottom:-53px}
+ .xarena-dock{padding:12px 14px!important;border-radius:27px 27px 7px 7px!important}
+ .info-hub{padding:14px!important;border-radius:7px 23px 7px 23px!important}.info-hub-head{min-height:75px!important;padding-bottom:12px!important}.info-hub-head h2{font-size:1.09rem!important}.info-hub-head p{font-size:.62rem!important}
+ .info-hub-layout{height:calc(100% - 78px);gap:15px;padding-top:12px}.info-hub-nav{border:0;padding:0 0 6px;gap:6px}
+ .info-hub .info-hub-nav button{display:flex!important;min-height:44px!important;padding:9px!important;gap:6px!important}.info-hub-nav button>span{width:19px!important;height:21px!important}.info-hub-nav button .ui-icon{width:19px!important;height:19px!important}.info-hub-nav button b{font-size:.68rem!important}
+ .social-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.social-card{grid-column:auto;min-height:153px;padding:13px}.social-card.whatsapp{grid-column:auto;display:flex;min-height:153px}.social-card.instagram{grid-column:1/-1;min-height:99px;grid-template-columns:37px 1fr}.social-card.instagram i{grid-column:2;margin:0;justify-self:stretch}.social-card.instagram>span{grid-row:1/3}
+ .info-panel-head{margin-bottom:16px!important}.info-panel-head h3{font-size:1.07rem!important}.info-panel-head p{font-size:.7rem!important}.info-hub-aside{display:none}
+ .arena-arrow{width:38px!important;height:44px!important}
+}
+/* Low-end devices keep the HUD silhouette and static rings without glow,
+   blur, extra reflection layers or oversized composited textures. */
+html.perf-lite .category-glass,html.perf-lite .category-pedestal,html.perf-lite .category-pedestal:before,
+html.perf-lite .category-pedestal b,html.perf-lite .hud-module-edge,html.perf-lite .category-enter,
+html.perf-lite .social-card,html.perf-lite .welcome-ticker,html.perf-lite .arena-arrow{box-shadow:none!important;filter:none!important;backdrop-filter:none!important}
+html.perf-lite .category-glass:after,html.perf-lite .category-glass:before,html.perf-lite .hud-energy span{display:none}
+html.perf-lite .category-glass{background:linear-gradient(140deg,#20445c,#092a44)!important}
+html.perf-lite .category-pedestal:before{background:#0b2b44!important}
+html.perf-lite .category-arena-viewport{perspective:none}
+html.perf-lite .hud-energy{opacity:.5}
+@media(prefers-reduced-motion:reduce){.category-arena-card,.social-card{transition:none!important}}
+/* Retire the simulator's older compact carousel dimensions: those rules have
+   higher specificity than container queries and used to crop the platforms. */
+html[data-device="mobile"] .store-view[data-view="inicio"]{padding:24px 8px 150px!important}
+html[data-device="mobile"] .home-intro{padding:0 17px!important;margin-bottom:12px!important}
+html[data-device="mobile"] .home-intro h1{font-size:1.77rem!important}
+html[data-device="mobile"] .home-intro p{font-size:.75rem!important}
+html[data-device="mobile"] .category-arena-section{margin-inline:0!important}
+html[data-device="mobile"] .category-arena{min-height:411px!important;padding:4px 0 0!important;overflow:visible!important}
+html[data-device="mobile"] .category-arena-viewport{height:401px!important}
+html[data-device="mobile"] .category-arena-track{--arena-card-width:77cqw!important}
+html[data-device="mobile"] .category-arena-card{top:18px!important;min-height:0!important;height:308px!important;border-radius:0!important}
+html[data-device="mobile"] .category-arena-card[data-roulette-slot="-1"]{transform:translateX(-143%) translateY(26px) rotate(-2deg) scale(.84)!important}
+html[data-device="mobile"] .category-arena-card[data-roulette-slot="1"]{transform:translateX(43%) translateY(26px) rotate(2deg) scale(.84)!important}
+
+</style>
 </head>
 <body>
   <div class="lab-shell">
@@ -2704,16 +2846,17 @@ html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-
           </header>
 
           <div class="welcome-ticker" aria-label="Mensajes de French Store">
-            <div class="welcome-ticker-track"><div class="ticker-group"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>¿De vuelta? Nos alegra verte</span><i>✦</i><span>Gracias por elegirnos</span><i>✦</i></div><div class="ticker-group" aria-hidden="true"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>¿De vuelta? Nos alegra verte</span><i>✦</i><span>Gracias por elegirnos</span><i>✦</i></div></div><button class="ticker-pause" type="button" aria-label="Pausar bienvenida" aria-pressed="false">Ⅱ</button>
+            <div class="welcome-ticker-track"><div class="ticker-group"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>Gracias por tu compra</span><i>✦</i><span>Explora nuestras recargas, servicios y beneficios</span><i>✦</i></div><div class="ticker-group" aria-hidden="true"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>Gracias por tu compra</span><i>✦</i><span>Explora nuestras recargas, servicios y beneficios</span><i>✦</i></div></div><button class="ticker-pause" type="button" aria-label="Pausar bienvenida" aria-pressed="false">Ⅱ</button>
           </div>
 
+          <div class="hud-energy" aria-hidden="true"><i></i><i></i><span></span></div>
           <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
 
           <section class="store-view active" data-view="inicio">
             <div class="home-intro reveal">
               <span class="eyebrow">FRENCH STORE · CENTRO DE ACCESO</span>
-              <h1>Tu mundo digital, en un solo lugar.</h1>
-              <p>Recarga, conecta y disfruta. Elige tu próxima experiencia.</p>
+              <h1>Elige tu próxima experiencia.</h1>
+              <p>Todo French Store, a un toque de distancia.</p>
             </div>
             <section class="section category-arena-section reveal" aria-label="Explora nuestros servicios">
 
@@ -2723,7 +2866,7 @@ html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-
                   <div id="categoryGrid" class="category-arena-track"></div>
                 </div>
                 <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
-                <div class="category-arena-floor" aria-hidden="true"><span></span></div>
+
               </div>
             </section>
           </section>
@@ -2951,24 +3094,24 @@ html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-
 
             <div class="info-hub-layout">
               <nav class="info-hub-nav" aria-label="Secciones de información">
-                <button class="active" type="button" data-info-panel="social"><span>⌘</span><b>Redes oficiales</b><i>›</i></button>
-                <button type="button" data-info-panel="terms"><span>▤</span><b>Términos y condiciones</b><i>›</i></button>
-                <button type="button" data-info-panel="privacy"><span>♢</span><b>Política de privacidad</b><i>›</i></button>
-                <button type="button" data-info-panel="cookies"><span>◌</span><b>Cookies</b><i>›</i></button>
-                <button type="button" data-info-panel="support"><span>◈</span><b>Ayuda y soporte</b><i>›</i></button>
-                <button type="button" data-info-panel="buy"><span>🛒</span><b>Cómo comprar</b><i>›</i></button>
-                <button type="button" data-info-panel="delivery"><span>↗</span><b>Entregas y reembolsos</b><i>›</i></button><button type="button" data-info-panel="about"><span>◇</span><b>Acerca de French Store</b><i>›</i></button><div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
+                <button class="active" type="button" data-info-panel="social"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8 10 7-4m-7 8 7 4"/></svg></span><b>Redes oficiales</b><i>›</i></button>
+                <button type="button" data-info-panel="terms"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2h9l5 5v15H5Zm9 0v6h5M8 12h8m-8 4h8"/></svg></span><b>Términos y condiciones</b><i>›</i></button>
+                <button type="button" data-info-panel="privacy"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6Z"/><path d="m8 12 3 3 5-6"/></svg></span><b>Política de privacidad</b><i>›</i></button>
+                <button type="button" data-info-panel="cookies"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13A9 9 0 1 1 11 3a5 5 0 0 0 9 10Z"/><path d="M8 8h.01M7 14h.01m6 3h.01M12 11h.01"/></svg></span><b>Cookies</b><i>›</i></button>
+                <button type="button" data-info-panel="support"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v6c0 4-4 5-8 5"/><rect x="2" y="11" width="4" height="8" rx="2"/><rect x="18" y="11" width="4" height="8" rx="2"/></svg></span><b>Ayuda y soporte</b><i>›</i></button>
+                <button type="button" data-info-panel="buy"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h11l3-10H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg></span><b>Cómo comprar</b><i>›</i></button>
+                <button type="button" data-info-panel="delivery"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h12v14H2Zm12 5h5l3 5v4h-8"/><circle cx="6" cy="20" r="2"/><circle cx="18" cy="20" r="2"/></svg></span><b>Entregas y reembolsos</b><i>›</i></button><button type="button" data-info-panel="about"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 4-2 5 11 13L23 9l-4-5ZM1 9h22M8 4 6 9l6 13 6-13-3-5"/></svg></span><b>Acerca de French Store</b><i>›</i></button><div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
               </nav>
 
               <div class="info-hub-content">
                 <section class="info-panel active" data-info-panel-view="social">
-                  <div class="info-panel-head"><div><span class="eyebrow">REDES OFICIALES</span><h3>Nuestras redes oficiales</h3><p>Síguenos para novedades, promociones y atención.</p></div><span class="info-panel-symbol">ⓘ</span></div>
+                  <div class="info-panel-head"><div><span class="eyebrow">REDES OFICIALES</span><h3>Conecta con French Store</h3><p>Elige un canal para novedades, comunidad o atención.</p></div><span class="info-panel-symbol">ⓘ</span></div>
                   <div class="social-card-grid">
-                    <a class="social-card tiktok" href="https://www.tiktok.com/@frenchstore" target="_blank" rel="noopener noreferrer"><span>♪</span><div><b>TikTok</b><small>Contenido exclusivo</small></div><i>Seguir →</i></a>
-                    <a class="social-card facebook" href="https://www.facebook.com/share/1LeZV8aqQ3/" target="_blank" rel="noopener noreferrer"><span>f</span><div><b>Facebook</b><small>Noticias y comunidad</small></div><i>Seguir →</i></a>
-                    <a class="social-card youtube" href="https://youtube.com/@frenchstore1" target="_blank" rel="noopener noreferrer"><span>▶</span><div><b>YouTube</b><small>Guías y novedades</small></div><i>Suscribirse →</i></a>
+                    <a class="social-card tiktok" href="https://www.tiktok.com/@frenchstore" target="_blank" rel="noopener noreferrer"><span>♪</span><div><b>TikTok</b><small>@frenchstore</small></div><i>Seguir →</i></a>
+                    <a class="social-card facebook" href="https://www.facebook.com/share/1LeZV8aqQ3/" target="_blank" rel="noopener noreferrer"><span>f</span><div><b>Facebook</b><small>Comunidad French Store</small></div><i>Seguir →</i></a>
+                    <a class="social-card youtube" href="https://youtube.com/@frenchstore1" target="_blank" rel="noopener noreferrer"><span>▶</span><div><b>YouTube</b><small>@frenchstore1</small></div><i>Suscribirse →</i></a>
                     <a class="social-card whatsapp" href="https://wa.me/59177057379" target="_blank" rel="noopener noreferrer"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><div><b>WhatsApp</b><small>Atención al cliente</small></div><i>Contactar →</i></a>
-                    <button class="social-card community" type="button" data-info-panel="support"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></span><div><b>Ayuda y soporte</b><small>Estamos para ayudarte</small></div><i>Ver ayuda →</i></button>
+                    <div class="social-card instagram social-pending" aria-label="Instagram: enlace oficial por confirmar"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></span><div><b>Instagram</b><small>French Store</small></div><i>Enlace por confirmar</i></div>
                   </div>
                   <div class="info-important">
                     <span>Información importante</span>
@@ -2987,12 +3130,7 @@ html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-
                 <section class="info-panel" data-info-panel-view="buy"><span class="eyebrow">GUÍA</span><h3>Cómo comprar</h3><p>Elige una categoría, selecciona el producto, completa los datos necesarios y agrégalo al carrito.</p><button type="button" data-info-close>Volver a la tienda →</button></section>
               </div>
 
-              <aside class="info-hub-aside">
-                <span class="info-aside-symbol">ⓘ</span>
-                <h3>Siempre conectados contigo</h3>
-                <p>Aquí encontrarás redes oficiales, políticas, condiciones y formas de contacto para una experiencia segura dentro de French Store.</p>
-                <div><span></span><small>LA MISMA PASIÓN<br>EN TODAS PARTES</small></div>
-              </aside>
+              <aside class="info-hub-aside"><div class="hud-support-heading"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v6c0 4-4 5-8 5"/><rect x="2" y="11" width="4" height="8" rx="2"/><rect x="18" y="11" width="4" height="8" rx="2"/></svg><span>AYUDA Y CONTACTO</span></div><h3>¿En qué te ayudamos?</h3><p>Consulta tus dudas o encuentra información para tu próxima compra.</p><button type="button" class="hud-support-primary" data-info-action="WhatsApp">Abrir WhatsApp <i>↗</i></button><div class="hud-support-links"><button type="button" data-info-panel="buy">Cómo comprar <i>→</i></button><button type="button" data-info-panel="delivery">Entregas y reembolsos <i>→</i></button><button type="button" data-info-panel="privacy">Privacidad <i>→</i></button></div><small class="hud-support-note">Usa los canales oficiales de French Store.</small></aside>
             </div>
           </section>
 
@@ -3176,7 +3314,10 @@ window.FS_LAB_DATA = Object.freeze({
 
   function setInfoPanel(name){
     const target=String(name||"social");
-    all("[data-info-panel]").forEach(button=>button.classList.toggle("active",button.dataset.infoPanel===target));
+    all("[data-info-panel]").forEach(button=>{
+      const selected=button.dataset.infoPanel===target;button.classList.toggle("active",selected);
+      if(button.closest('.info-hub-nav')) {if(selected)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');}
+    });
     all("[data-info-panel-view]").forEach(panel=>panel.classList.toggle("active",panel.dataset.infoPanelView===target));
   }
 
@@ -3199,12 +3340,13 @@ window.FS_LAB_DATA = Object.freeze({
   function categoryCard(item, index){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
     return '<article class="category-card category-arena-card" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + escapeHtml(item.name) + '" role="group">'+
+      '<div class="category-glass"><span class="hud-module-edge" aria-hidden="true"></span>'+
       '<span class="category-card-grid" aria-hidden="true"></span>'+
-      '<span class="category-card-top"><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
+      '<span class="category-card-top"><span class="hud-module-label">FRENCH STORE</span><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
       '<span class="category-art" aria-hidden="true"><img src="' + embeddedArt[item.id] + '" width="480" height="300" alt="" decoding="async"></span>'+
-      '<span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
+      '<div class="category-console"><span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
       '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
-      '</article>';
+      '</div><div class="hud-module-foot" aria-hidden="true"><i></i><span>EXPLORA · ELIGE · INGRESA</span><i></i></div></div><span class="category-pedestal" aria-hidden="true"><i></i><b></b></span></article>';
   }
 
   function renderCategoryArena(){

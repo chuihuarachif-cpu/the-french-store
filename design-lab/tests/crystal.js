@@ -17,6 +17,9 @@
     check(q('.category-art img').complete&&q('.category-art img').naturalWidth>0,`${w}: ilustración disponible`);
     check(all('.category-enter').length===6&&all('.category-enter').every(e=>e.textContent.trim()==='Ingresar →'),`${w}: botón Ingresar en las seis categorías`);
     check(!q('.category-code')&&!q('.category-arena-status'),`${w}: sin numeración de categorías`);
+    check(all('.category-pedestal').length===6&&all('.category-pedestal').every(e=>e.getAttribute('aria-hidden')==='true'),`${w}: seis tarimas decorativas`);
+    const stage=q('.category-arena-viewport').getBoundingClientRect(),base=q('.category-arena-card.active .category-pedestal').getBoundingClientRect();
+    check(base.top>stage.top&&base.bottom+10<=stage.bottom&&base.left>=stage.left&&base.right<=stage.right,`${w}: tarima central completa sin recorte`);
     const cta=q('.category-arena-card.active .category-enter').getBoundingClientRect();
     check(cta.left>=0&&cta.right<=w+1&&cta.height>=40,`${w}: acción principal visible y táctil`);
     check(win.getComputedStyle(q('.store-app')).backgroundImage==='none',`${w}: fondo azul simple`);
@@ -26,9 +29,11 @@
     check(hub.classList.contains('open')&&!hub.inert,`${w}: centro desplegable interactivo`);
     check(r.left>=0&&r.right<=w+1&&r.top>=0&&r.bottom<=h+1,`${w}: panel cabe en pantalla`);
     check(q('.store-header').inert,`${w}: fondo fuera del foco durante el diálogo`);
+    check(all('.social-card-grid .social-card').length===5&&q('.social-card.instagram').textContent.includes('Enlace por confirmar'),`${w}: cinco canales sin inventar Instagram`);
     for(const panel of ['social','terms','privacy','cookies','support','buy','delivery','about']){
       q(`.info-hub-nav [data-info-panel="${panel}"]`).click();
       check(shown(q(`[data-info-panel-view="${panel}"]`)),`${w}: panel ${panel}`);
+      check(q(`.info-hub-nav [data-info-panel="${panel}"]`).getAttribute('aria-current')==='page',`${w}: selección accesible de ${panel}`);
     }
     d.dispatchEvent(new win.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await settle();
     check(hub.inert&&!hub.classList.contains('open')&&d.activeElement===q('.info-launcher'),`${w}: Escape cierra y devuelve foco`);
@@ -62,6 +67,9 @@
   const lite=await makeFrame(390,844,'../index.html?standalone=1&performance=lite'),ld=lite.contentDocument,lw=lite.contentWindow;
   check(ld.documentElement.classList.contains('perf-lite'),'Gama baja: modo ligero activo');
   check(lw.getComputedStyle(ld.querySelector('.category-arena-card.active')).boxShadow==='none','Gama baja: sin sombras de tarjeta costosas');
+  check(lw.getComputedStyle(ld.querySelector('.category-arena-card.active .category-glass')).boxShadow==='none','Gama baja: cristal sin sombras ni capas de brillo');
+  check(lw.getComputedStyle(ld.querySelector('.category-arena-card.active .category-pedestal')).boxShadow==='none','Gama baja: tarima simplificada conserva su forma');
+  check(lw.getComputedStyle(ld.querySelector('.hud-energy')).animationName==='none','Gama baja: energía horizontal estática');
   check(lw.getComputedStyle(ld.querySelector('.store-header')).backdropFilter==='none','Gama baja: sin desenfoque de fondo');
   check(!ld.querySelector('canvas,video'),'Gama baja: sin WebGL, canvas ni vídeo decorativos');
   check([...ld.querySelectorAll('.category-art img')].every(e=>e.src.startsWith(location.origin)),'Gama baja: portada sin imágenes remotas');

@@ -131,7 +131,10 @@
 
   function setInfoPanel(name){
     const target=String(name||"social");
-    all("[data-info-panel]").forEach(button=>button.classList.toggle("active",button.dataset.infoPanel===target));
+    all("[data-info-panel]").forEach(button=>{
+      const selected=button.dataset.infoPanel===target;button.classList.toggle("active",selected);
+      if(button.closest('.info-hub-nav')) {if(selected)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');}
+    });
     all("[data-info-panel-view]").forEach(panel=>panel.classList.toggle("active",panel.dataset.infoPanelView===target));
   }
 
@@ -153,12 +156,13 @@
   function categoryCard(item, index){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
     return '<article class="category-card category-arena-card" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + escapeHtml(item.name) + '" role="group">'+
+      '<div class="category-glass"><span class="hud-module-edge" aria-hidden="true"></span>'+
       '<span class="category-card-grid" aria-hidden="true"></span>'+
-      '<span class="category-card-top"><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
+      '<span class="category-card-top"><span class="hud-module-label">FRENCH STORE</span><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
       '<span class="category-art" aria-hidden="true"><img src="./assets/' + item.id + '.svg" width="480" height="300" alt="" decoding="async"></span>'+
-      '<span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
+      '<div class="category-console"><span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
       '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
-      '</article>';
+      '</div><div class="hud-module-foot" aria-hidden="true"><i></i><span>EXPLORA · ELIGE · INGRESA</span><i></i></div></div><span class="category-pedestal" aria-hidden="true"><i></i><b></b></span></article>';
   }
 
   function renderCategoryArena(){

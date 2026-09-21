@@ -46,7 +46,9 @@ La vista `desktop.html` se adapta al tamaño real de la pantalla y carga `index.
 
 ### Archivos y comprobación
 
-`crystal.css` contiene la capa visual actual; `assets/*.svg` contiene el arte. Tras editar HTML, CSS o JS, ejecutar `node design-lab/build-preview.mjs` para regenerar `preview.html` con los recursos nuevos incrustados.
+`crystal.css` contiene la base visual y `hud.css` refina las superficies al estilo XArena; `assets/*.svg` contiene el arte. Tras editar HTML, CSS o JS, ejecutar `node design-lab/build-preview.mjs` para regenerar `preview.html` con los recursos nuevos incrustados.
+
+La refinación HUD añade cristal angular, reflejos estáticos, una plataforma circular por categoría, mayor énfasis en la selección central y el botón Ingresar integrado en la consola. El Centro de información usa iconos SVG en su menú y un panel lateral de ayuda accionable. Instagram queda identificado como enlace por confirmar hasta recibir la cuenta oficial. Las líneas de energía y tarimas no tienen animación continua; el modo ligero conserva sus formas sin sombras ni capas de reflejos.
 
 Servir el repositorio por HTTP y abrir `design-lab/tests/crystal.html`. La regresión cubre 360, 390, 768, 1024 y 1440 px, seis categorías, ocho paneles informativos, navegación, controles accesibles, carrito y aislamiento de red. No ejecutar estas pruebas contra producción.
 

@@ -9,6 +9,7 @@
   <title>French Store · Design Lab</title>
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./crystal.css">
+  <link rel="stylesheet" href="./hud.css">
 </head>
 <body>
   <div class="lab-shell">
@@ -140,16 +141,17 @@
           </header>
 
           <div class="welcome-ticker" aria-label="Mensajes de French Store">
-            <div class="welcome-ticker-track"><div class="ticker-group"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>¿De vuelta? Nos alegra verte</span><i>✦</i><span>Gracias por elegirnos</span><i>✦</i></div><div class="ticker-group" aria-hidden="true"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>¿De vuelta? Nos alegra verte</span><i>✦</i><span>Gracias por elegirnos</span><i>✦</i></div></div><button class="ticker-pause" type="button" aria-label="Pausar bienvenida" aria-pressed="false">Ⅱ</button>
+            <div class="welcome-ticker-track"><div class="ticker-group"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>Gracias por tu compra</span><i>✦</i><span>Explora nuestras recargas, servicios y beneficios</span><i>✦</i></div><div class="ticker-group" aria-hidden="true"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>Gracias por tu compra</span><i>✦</i><span>Explora nuestras recargas, servicios y beneficios</span><i>✦</i></div></div><button class="ticker-pause" type="button" aria-label="Pausar bienvenida" aria-pressed="false">Ⅱ</button>
           </div>
 
+          <div class="hud-energy" aria-hidden="true"><i></i><i></i><span></span></div>
           <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
 
           <section class="store-view active" data-view="inicio">
             <div class="home-intro reveal">
               <span class="eyebrow">FRENCH STORE · CENTRO DE ACCESO</span>
-              <h1>Tu mundo digital, en un solo lugar.</h1>
-              <p>Recarga, conecta y disfruta. Elige tu próxima experiencia.</p>
+              <h1>Elige tu próxima experiencia.</h1>
+              <p>Todo French Store, a un toque de distancia.</p>
             </div>
             <section class="section category-arena-section reveal" aria-label="Explora nuestros servicios">
 
@@ -159,7 +161,7 @@
                   <div id="categoryGrid" class="category-arena-track"></div>
                 </div>
                 <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
-                <div class="category-arena-floor" aria-hidden="true"><span></span></div>
+
               </div>
             </section>
           </section>
@@ -387,24 +389,24 @@
 
             <div class="info-hub-layout">
               <nav class="info-hub-nav" aria-label="Secciones de información">
-                <button class="active" type="button" data-info-panel="social"><span>⌘</span><b>Redes oficiales</b><i>›</i></button>
-                <button type="button" data-info-panel="terms"><span>▤</span><b>Términos y condiciones</b><i>›</i></button>
-                <button type="button" data-info-panel="privacy"><span>♢</span><b>Política de privacidad</b><i>›</i></button>
-                <button type="button" data-info-panel="cookies"><span>◌</span><b>Cookies</b><i>›</i></button>
-                <button type="button" data-info-panel="support"><span>◈</span><b>Ayuda y soporte</b><i>›</i></button>
-                <button type="button" data-info-panel="buy"><span>🛒</span><b>Cómo comprar</b><i>›</i></button>
-                <button type="button" data-info-panel="delivery"><span>↗</span><b>Entregas y reembolsos</b><i>›</i></button><button type="button" data-info-panel="about"><span>◇</span><b>Acerca de French Store</b><i>›</i></button><div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
+                <button class="active" type="button" data-info-panel="social"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8 10 7-4m-7 8 7 4"/></svg></span><b>Redes oficiales</b><i>›</i></button>
+                <button type="button" data-info-panel="terms"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2h9l5 5v15H5Zm9 0v6h5M8 12h8m-8 4h8"/></svg></span><b>Términos y condiciones</b><i>›</i></button>
+                <button type="button" data-info-panel="privacy"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6Z"/><path d="m8 12 3 3 5-6"/></svg></span><b>Política de privacidad</b><i>›</i></button>
+                <button type="button" data-info-panel="cookies"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13A9 9 0 1 1 11 3a5 5 0 0 0 9 10Z"/><path d="M8 8h.01M7 14h.01m6 3h.01M12 11h.01"/></svg></span><b>Cookies</b><i>›</i></button>
+                <button type="button" data-info-panel="support"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v6c0 4-4 5-8 5"/><rect x="2" y="11" width="4" height="8" rx="2"/><rect x="18" y="11" width="4" height="8" rx="2"/></svg></span><b>Ayuda y soporte</b><i>›</i></button>
+                <button type="button" data-info-panel="buy"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h11l3-10H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg></span><b>Cómo comprar</b><i>›</i></button>
+                <button type="button" data-info-panel="delivery"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h12v14H2Zm12 5h5l3 5v4h-8"/><circle cx="6" cy="20" r="2"/><circle cx="18" cy="20" r="2"/></svg></span><b>Entregas y reembolsos</b><i>›</i></button><button type="button" data-info-panel="about"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 4-2 5 11 13L23 9l-4-5ZM1 9h22M8 4 6 9l6 13 6-13-3-5"/></svg></span><b>Acerca de French Store</b><i>›</i></button><div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
               </nav>
 
               <div class="info-hub-content">
                 <section class="info-panel active" data-info-panel-view="social">
-                  <div class="info-panel-head"><div><span class="eyebrow">REDES OFICIALES</span><h3>Nuestras redes oficiales</h3><p>Síguenos para novedades, promociones y atención.</p></div><span class="info-panel-symbol">ⓘ</span></div>
+                  <div class="info-panel-head"><div><span class="eyebrow">REDES OFICIALES</span><h3>Conecta con French Store</h3><p>Elige un canal para novedades, comunidad o atención.</p></div><span class="info-panel-symbol">ⓘ</span></div>
                   <div class="social-card-grid">
-                    <a class="social-card tiktok" href="https://www.tiktok.com/@frenchstore" target="_blank" rel="noopener noreferrer"><span>♪</span><div><b>TikTok</b><small>Contenido exclusivo</small></div><i>Seguir →</i></a>
-                    <a class="social-card facebook" href="https://www.facebook.com/share/1LeZV8aqQ3/" target="_blank" rel="noopener noreferrer"><span>f</span><div><b>Facebook</b><small>Noticias y comunidad</small></div><i>Seguir →</i></a>
-                    <a class="social-card youtube" href="https://youtube.com/@frenchstore1" target="_blank" rel="noopener noreferrer"><span>▶</span><div><b>YouTube</b><small>Guías y novedades</small></div><i>Suscribirse →</i></a>
+                    <a class="social-card tiktok" href="https://www.tiktok.com/@frenchstore" target="_blank" rel="noopener noreferrer"><span>♪</span><div><b>TikTok</b><small>@frenchstore</small></div><i>Seguir →</i></a>
+                    <a class="social-card facebook" href="https://www.facebook.com/share/1LeZV8aqQ3/" target="_blank" rel="noopener noreferrer"><span>f</span><div><b>Facebook</b><small>Comunidad French Store</small></div><i>Seguir →</i></a>
+                    <a class="social-card youtube" href="https://youtube.com/@frenchstore1" target="_blank" rel="noopener noreferrer"><span>▶</span><div><b>YouTube</b><small>@frenchstore1</small></div><i>Suscribirse →</i></a>
                     <a class="social-card whatsapp" href="https://wa.me/59177057379" target="_blank" rel="noopener noreferrer"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><div><b>WhatsApp</b><small>Atención al cliente</small></div><i>Contactar →</i></a>
-                    <button class="social-card community" type="button" data-info-panel="support"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></span><div><b>Ayuda y soporte</b><small>Estamos para ayudarte</small></div><i>Ver ayuda →</i></button>
+                    <div class="social-card instagram social-pending" aria-label="Instagram: enlace oficial por confirmar"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></span><div><b>Instagram</b><small>French Store</small></div><i>Enlace por confirmar</i></div>
                   </div>
                   <div class="info-important">
                     <span>Información importante</span>
@@ -423,12 +425,7 @@
                 <section class="info-panel" data-info-panel-view="buy"><span class="eyebrow">GUÍA</span><h3>Cómo comprar</h3><p>Elige una categoría, selecciona el producto, completa los datos necesarios y agrégalo al carrito.</p><button type="button" data-info-close>Volver a la tienda →</button></section>
               </div>
 
-              <aside class="info-hub-aside">
-                <span class="info-aside-symbol">ⓘ</span>
-                <h3>Siempre conectados contigo</h3>
-                <p>Aquí encontrarás redes oficiales, políticas, condiciones y formas de contacto para una experiencia segura dentro de French Store.</p>
-                <div><span></span><small>LA MISMA PASIÓN<br>EN TODAS PARTES</small></div>
-              </aside>
+              <aside class="info-hub-aside"><div class="hud-support-heading"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v6c0 4-4 5-8 5"/><rect x="2" y="11" width="4" height="8" rx="2"/><rect x="18" y="11" width="4" height="8" rx="2"/></svg><span>AYUDA Y CONTACTO</span></div><h3>¿En qué te ayudamos?</h3><p>Consulta tus dudas o encuentra información para tu próxima compra.</p><button type="button" class="hud-support-primary" data-info-action="WhatsApp">Abrir WhatsApp <i>↗</i></button><div class="hud-support-links"><button type="button" data-info-panel="buy">Cómo comprar <i>→</i></button><button type="button" data-info-panel="delivery">Entregas y reembolsos <i>→</i></button><button type="button" data-info-panel="privacy">Privacidad <i>→</i></button></div><small class="hud-support-note">Usa los canales oficiales de French Store.</small></aside>
             </div>
           </section>
 
