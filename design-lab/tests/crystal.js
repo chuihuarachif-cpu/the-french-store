@@ -17,9 +17,10 @@
     check(q('.category-art img').complete&&q('.category-art img').naturalWidth>0,`${w}: ilustración disponible`);
     check(all('.category-enter').length===6&&all('.category-enter').every(e=>e.textContent.trim()==='Ingresar →'),`${w}: botón Ingresar en las seis categorías`);
     check(!q('.category-code')&&!q('.category-arena-status'),`${w}: sin numeración de categorías`);
-    check(all('.category-pedestal').length===6&&all('.category-pedestal').every(e=>e.getAttribute('aria-hidden')==='true'),`${w}: seis tarimas decorativas`);
-    const stage=q('.category-arena-viewport').getBoundingClientRect(),base=q('.category-arena-card.active .category-pedestal').getBoundingClientRect();
-    check(base.top>stage.top&&base.bottom+10<=stage.bottom&&base.left>=stage.left&&base.right<=stage.right,`${w}: tarima central completa sin recorte`);
+    check(all('.arena-platform').length===1&&!q('.category-pedestal')&&q('.arena-platform').getAttribute('aria-hidden')==='true',`${w}: una sola tarima central decorativa`);
+    const stage=q('.category-arena-viewport').getBoundingClientRect(),base=q('.arena-platform').getBoundingClientRect();
+    check(base.top>stage.top&&base.bottom<=stage.bottom+1&&base.left>=stage.left-1&&base.right<=stage.right+1,`${w}: tarima central completa sin recorte`);
+    check(new Set(all('.category-glass').map(e=>win.getComputedStyle(e).borderTopColor)).size===6,`${w}: seis colores de iluminación diferenciados`);
     const cta=q('.category-arena-card.active .category-enter').getBoundingClientRect();
     check(cta.left>=0&&cta.right<=w+1&&cta.height>=40,`${w}: acción principal visible y táctil`);
     check(win.getComputedStyle(q('.store-app')).backgroundImage==='none',`${w}: fondo azul simple`);
@@ -43,6 +44,9 @@
       check(!/\d+\s*(opciones|\/)/.test(q('#xShowcaseMeta').textContent),`${w}: productos sin contador`);
       check(!q('#xOrientationGate').classList.contains('open'),`${w}: productos sin bloqueo de orientación`);
       q('[data-x-back]').click();q('[data-arena-direction="1"]').click();await settle();
+      const nextBase=q('.arena-platform').getBoundingClientRect(),nextStage=q('.category-arena-viewport').getBoundingClientRect();
+      // Focus restoration may scroll a short viewport; compare within the arena.
+      check(Math.abs((nextBase.left-nextStage.left)-(base.left-stage.left))<1&&Math.abs((nextBase.top-nextStage.top)-(base.top-stage.top))<1&&Math.abs(nextBase.width-base.width)<1,`${w}: tarima inmóvil al cambiar categoría ${i+1}`);
     }
     q('.cart-button').click();await settle();check(shown(q('#xCartDrawer'))&&!q('#xCartDrawer').inert,`${w}: carrito accesible desde portada`);
     q('#xCartDrawer [data-x-cart-close]').click();
@@ -63,12 +67,13 @@
     let blocked=false;try{await win.fetch('/blocked-test');}catch{blocked=true;}check(blocked,'Aislamiento de red del Lab conservado');
   }finally{if(previous===null)win.localStorage.removeItem('fs-design-lab-cart-v1');else win.localStorage.setItem('fs-design-lab-cart-v1',previous);frame.remove();}
   const standalone=await makeFrame(768,1024,'../preview.html?standalone=1'),sd=standalone.contentDocument;
-  check(sd.querySelector('.category-art img').src.startsWith('data:')&&sd.querySelector('.category-art img').naturalWidth>0,'Exportación: ilustraciones incrustadas y carga correcta');standalone.remove();
+  check(sd.querySelector('.category-art img').src.startsWith('data:')&&sd.querySelector('.category-art img').naturalWidth>0,'Exportación: ilustraciones incrustadas y carga correcta');
+  check(sd.querySelector('.arena-platform img').src.startsWith('data:')&&sd.querySelector('.arena-platform img').naturalWidth>0,'Exportación: tarima fija incrustada y disponible');standalone.remove();
   const lite=await makeFrame(390,844,'../index.html?standalone=1&performance=lite'),ld=lite.contentDocument,lw=lite.contentWindow;
   check(ld.documentElement.classList.contains('perf-lite'),'Gama baja: modo ligero activo');
   check(lw.getComputedStyle(ld.querySelector('.category-arena-card.active')).boxShadow==='none','Gama baja: sin sombras de tarjeta costosas');
   check(lw.getComputedStyle(ld.querySelector('.category-arena-card.active .category-glass')).boxShadow==='none','Gama baja: cristal sin sombras ni capas de brillo');
-  check(lw.getComputedStyle(ld.querySelector('.category-arena-card.active .category-pedestal')).boxShadow==='none','Gama baja: tarima simplificada conserva su forma');
+  check(lw.getComputedStyle(ld.querySelector('.arena-platform')).boxShadow==='none'&&lw.getComputedStyle(ld.querySelector('.arena-platform')).animationName==='none','Gama baja: tarima sin animación ni sombras calculadas');
   check(lw.getComputedStyle(ld.querySelector('.hud-energy')).animationName==='none','Gama baja: energía horizontal estática');
   check(lw.getComputedStyle(ld.querySelector('.store-header')).backdropFilter==='none','Gama baja: sin desenfoque de fondo');
   check(!ld.querySelector('canvas,video'),'Gama baja: sin WebGL, canvas ni vídeo decorativos');

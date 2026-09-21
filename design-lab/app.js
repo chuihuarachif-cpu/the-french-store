@@ -162,7 +162,7 @@
       '<span class="category-art" aria-hidden="true"><img src="./assets/' + item.id + '.svg" width="480" height="300" alt="" decoding="async"></span>'+
       '<div class="category-console"><span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
       '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
-      '</div><div class="hud-module-foot" aria-hidden="true"><i></i><span>EXPLORA · ELIGE · INGRESA</span><i></i></div></div><span class="category-pedestal" aria-hidden="true"><i></i><b></b></span></article>';
+      '</div><div class="hud-module-foot" aria-hidden="true"><i></i><span>EXPLORA · ELIGE · INGRESA</span><i></i></div></div></article>';
   }
 
   function renderCategoryArena(){

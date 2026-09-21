@@ -2615,14 +2615,6 @@ html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-
 .hud-module-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex:1;padding:8px 22px;color:#9cd3e7;font-size:.42rem;letter-spacing:.16em;white-space:nowrap}
 .hud-module-foot i{width:23px;height:3px;display:block;background:linear-gradient(90deg,rgba(var(--accent-rgb),.7),transparent);transform:skewX(-28deg)}
 .hud-module-foot i:last-child{width:10px;background:rgba(var(--accent-rgb),.6)}
-/* Every module has its own platform. The rings are painted once, never spun. */
-.category-pedestal{position:absolute;display:block;left:-5%;width:110%;bottom:-53px;height:57px;z-index:-1;border-radius:50%;background:linear-gradient(180deg,#143b5b 0 38%,#061326 42% 56%,#174c6b 61%,#07192c 79%);border:1px solid #438fbb77;box-shadow:0 8px 0 #051426,0 10px 0 #2378a070,0 16px 19px #0005}
-.category-pedestal:before{content:"";position:absolute;inset:-7px 0 10px;border-radius:50%;border:2px solid rgba(var(--accent-rgb),.7);background:radial-gradient(ellipse at center,#14779c55,transparent 63%),#0a2339;box-shadow:inset 0 0 0 5px #102d47,inset 0 0 0 6px rgba(var(--accent-rgb),.27),0 0 12px rgba(var(--accent-rgb),.16)}
-.category-pedestal:after{content:"";position:absolute;inset:20% 10% 35%;border:1px solid rgba(var(--accent-rgb),.3);border-radius:50%}
-.category-pedestal i{position:absolute;left:8%;right:8%;bottom:7px;height:21px;border-bottom:3px solid rgba(var(--accent-rgb),.75);border-radius:50%}
-.category-pedestal b{position:absolute;left:45%;bottom:3px;width:10%;height:3px;background:rgb(var(--accent-rgb));box-shadow:0 0 7px rgba(var(--accent-rgb),.65);border-radius:4px}
-.category-arena-card.active .category-pedestal{width:120%;left:-10%;height:66px;bottom:-61px;border-color:#48d7edb3;box-shadow:0 8px 0 #061628,0 10px 0 #2ae5ff8a,0 15px 22px #10a9d41f}
-.category-arena-card.active .category-pedestal:before{border-color:#57eaff;box-shadow:inset 0 0 0 5px #143f5b,inset 0 0 0 6px #42ddf57d,0 0 15px #13ddff4d}
 .arena-arrow{top:43%!important;background:#08223cea!important;border-color:#56cde6a8!important;box-shadow:inset 0 0 10px #348abe20!important}
 .xarena-dock{border-radius:32px 32px 8px 8px!important;padding:13px 20px!important;background:linear-gradient(135deg,#bcecff0c,transparent 38%),#081f37!important}
 .xarena-dock:before{content:"";position:absolute;top:-3px;left:32%;width:36%;height:3px;background:linear-gradient(90deg,transparent,#91f6ff,transparent)}
@@ -2680,7 +2672,6 @@ html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-
  .category-console{grid-template-columns:minmax(0,1fr) 93px;gap:8px;padding:12px 14px;min-height:86px}
  .category-copy b{font-size:1rem!important;line-height:1.12!important}.category-copy small{font-size:.61rem!important;line-height:1.4!important}.category-enter{font-size:.76rem!important;gap:7px;min-height:44px!important}
  .hud-module-foot{padding:8px 16px;font-size:.34rem;letter-spacing:.11em;gap:6px}.hud-module-foot i{width:16px}
- .category-pedestal{bottom:-47px;height:49px}.category-arena-card.active .category-pedestal{left:-7%;width:114%;height:55px;bottom:-53px}
  .xarena-dock{padding:12px 14px!important;border-radius:27px 27px 7px 7px!important}
  .info-hub{padding:14px!important;border-radius:7px 23px 7px 23px!important}.info-hub-head{min-height:75px!important;padding-bottom:12px!important}.info-hub-head h2{font-size:1.09rem!important}.info-hub-head p{font-size:.62rem!important}
  .info-hub-layout{height:calc(100% - 78px);gap:15px;padding-top:12px}.info-hub-nav{border:0;padding:0 0 6px;gap:6px}
@@ -2691,12 +2682,10 @@ html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-
 }
 /* Low-end devices keep the HUD silhouette and static rings without glow,
    blur, extra reflection layers or oversized composited textures. */
-html.perf-lite .category-glass,html.perf-lite .category-pedestal,html.perf-lite .category-pedestal:before,
-html.perf-lite .category-pedestal b,html.perf-lite .hud-module-edge,html.perf-lite .category-enter,
+html.perf-lite .category-glass,html.perf-lite .hud-module-edge,html.perf-lite .category-enter,
 html.perf-lite .social-card,html.perf-lite .welcome-ticker,html.perf-lite .arena-arrow{box-shadow:none!important;filter:none!important;backdrop-filter:none!important}
 html.perf-lite .category-glass:after,html.perf-lite .category-glass:before,html.perf-lite .hud-energy span{display:none}
 html.perf-lite .category-glass{background:linear-gradient(140deg,#20445c,#092a44)!important}
-html.perf-lite .category-pedestal:before{background:#0b2b44!important}
 html.perf-lite .category-arena-viewport{perspective:none}
 html.perf-lite .hud-energy{opacity:.5}
 @media(prefers-reduced-motion:reduce){.category-arena-card,.social-card{transition:none!important}}
@@ -2713,6 +2702,56 @@ html[data-device="mobile"] .category-arena-track{--arena-card-width:77cqw!import
 html[data-device="mobile"] .category-arena-card{top:18px!important;min-height:0!important;height:308px!important;border-radius:0!important}
 html[data-device="mobile"] .category-arena-card[data-roulette-slot="-1"]{transform:translateX(-143%) translateY(26px) rotate(-2deg) scale(.84)!important}
 html[data-device="mobile"] .category-arena-card[data-roulette-slot="1"]{transform:translateX(43%) translateY(26px) rotate(2deg) scale(.84)!important}
+
+/* Fixed-light 2.5D pass. All lighting is authored in CSS/SVG: no ray tracing,
+   pointer tracking, animation loop or added rendering dependency. */
+.category-arena-card{--rim-rgb:62,231,245;--accent-rgb:var(--rim-rgb)!important}
+.category-arena-card[data-category="recargas-cuenta"]{--rim-rgb:255,181,94}
+.category-arena-card[data-category="paginas"]{--rim-rgb:181,143,255}
+.category-arena-card[data-category="giftcards"]{--rim-rgb:245,131,206}
+.category-arena-card[data-category="streaming"]{--rim-rgb:88,228,177}
+.category-arena-card[data-category="cuentas"]{--rim-rgb:255,135,132}
+.category-arena-viewport{position:relative;isolation:isolate}
+.category-arena-track{z-index:2}
+.arena-platform{display:block;position:absolute;left:50%;bottom:3px;width:min(65cqw,790px);aspect-ratio:1000/240;transform:translateX(-50%);pointer-events:none;z-index:1;contain:layout style}
+.arena-platform img{display:block;width:100%;height:100%;object-fit:contain}
+.category-arena-card .category-glass{border:2px solid rgba(var(--rim-rgb),.88);border-top-color:rgba(var(--rim-rgb),1);background:linear-gradient(120deg,#e4fbff27,transparent 28%,#eefeff0a 51%,transparent 71%),radial-gradient(ellipse at 95% 10%,rgba(var(--rim-rgb),.21),transparent 68%),linear-gradient(158deg,#18384e,#092138 63%,#081a2d);box-shadow:inset 2px 2px 0 #ffffff47,inset -3px -3px 0 rgba(var(--rim-rgb),.3),3px 5px 0 #04111fd9,0 0 12px rgba(var(--rim-rgb),.29),0 14px 24px #0005}
+.category-arena-card.active .category-glass{border-color:rgb(var(--rim-rgb));background:linear-gradient(119deg,#e5ffff35,transparent 26%,#d9ffff12 52%,transparent 71%),radial-gradient(ellipse at 85% 5%,rgba(var(--rim-rgb),.3),transparent 62%),linear-gradient(153deg,#153b51,#082c43 56%,#103149);box-shadow:inset 2px 2px #f5ffff8a,inset -3px -3px rgba(var(--rim-rgb),.46),3px 6px 0 #041729,0 0 10px rgba(var(--rim-rgb),.5),0 0 24px rgba(var(--rim-rgb),.25),0 15px 20px #0005}
+.category-glass:before{border-color:rgba(var(--rim-rgb),.34);border-bottom:2px solid rgba(var(--rim-rgb),.51)}
+.category-glass:after{background:linear-gradient(122deg,transparent 12%,#e9ffff0d 12.2% 18%,transparent 18.2% 55%,#e0ffff15 55.2% 57%,transparent 57.2%)}
+.hud-module-edge{background:rgb(var(--rim-rgb));box-shadow:0 0 8px rgba(var(--rim-rgb),.5)}
+.category-console{background:linear-gradient(110deg,rgba(var(--rim-rgb),.33),rgba(var(--rim-rgb),.09));border-top-color:rgba(var(--rim-rgb),.65)}
+.category-enter{background:linear-gradient(112deg,#edffff,rgba(var(--rim-rgb),.96))!important;border-color:rgba(var(--rim-rgb),.85)!important;box-shadow:inset 0 1px #fff,2px 4px 0 #0518279c,0 0 11px rgba(var(--rim-rgb),.25)!important;color:#071c2b!important}
+.category-enter i{color:#1a3241}.category-tag{color:#f2f7ff!important;border-color:rgba(var(--rim-rgb),.6)!important}
+.category-arena-card[data-roulette-slot="-1"]{transform:translateX(-148%) translateY(23px) perspective(900px) rotateY(12deg) rotateZ(-2deg) scale(.84)!important}
+.category-arena-card[data-roulette-slot="1"]{transform:translateX(48%) translateY(23px) perspective(900px) rotateY(-12deg) rotateZ(2deg) scale(.84)!important}
+.hud-energy i:first-child{background:linear-gradient(90deg,transparent,#a68bfd70 12%,#8a6fed9c 28%,#41e4f28c 48%,#49e2f475 57%,#edb06987 78%,#eda96d40 91%,transparent)}
+.hud-energy i:nth-child(2){background:linear-gradient(90deg,transparent,#976fdf44 18%,#4276db44 42%,#46c6c642 62%,#f9b57340 87%,transparent)}
+/* Raised surfaces share a fixed light source from the upper left. Small
+   contact edges give depth without tilting text, forms or payment controls. */
+.store-header{background:linear-gradient(120deg,#213b532e,transparent 35%),linear-gradient(180deg,#0d2337,#071321)!important;border-top:1px solid #c4f7ff20!important;box-shadow:inset 0 -1px #42afca5c,0 5px 0 #020c18,0 10px 18px #0003!important}
+.header-profile-avatar,.info-hub-button,.header-search,.cart-button,.icon-button{box-shadow:inset 1px 1px #d4fbff24,inset -1px -1px #071326,0 3px 0 #020c1c,0 5px 10px #0003!important}
+.info-hub{background:linear-gradient(119deg,#d5faff13,transparent 31%,#c0adff05 72%),radial-gradient(ellipse at 100% 0,#9572f914,transparent 48%),#071d34!important;border-top-color:#acfcff!important;border-right-color:#a18bdc99!important;border-bottom-color:#676ac080!important;box-shadow:inset 2px 2px #e5fcff22,inset -2px -2px #9085df28,4px 7px 0 #020d20,0 0 17px #38c9f01e,0 22px 40px #0007!important}
+.info-hub-aside{box-shadow:inset 1px 1px #dbfaff29,inset -1px -1px #152941,3px 5px 0 #03172b!important}
+.social-card{box-shadow:inset 1px 1px #edffff38,inset -2px -2px rgba(var(--social),.17),2px 4px 0 #051123,0 0 10px rgba(var(--social),.13)!important;border-width:1.5px}
+.social-card i,.hud-support-primary{box-shadow:inset 0 1px #e5ffff24,0 3px 0 #020e22!important}
+.info-hub-nav button.active{box-shadow:inset 1px 1px #d4ffff48,2px 3px 0 #031425!important}
+.product-card,.product-detail,.profile-card,.metric-grid article,.pass-card,.settings-grid button,.order-summary,.wallet-card,.wallet-panel,.order-row,.admin-demo-table,.account-menu,.fake-payment,.x-product-stage,.x-package-card,.x-game-card,.x-cart-drawer{--surface-rim:105,199,232;border-top:1px solid rgba(var(--surface-rim),.63)!important;border-left:1px solid rgba(var(--surface-rim),.36)!important;box-shadow:inset 1px 1px #e3faff20,inset -1px -2px #010e24,3px 5px 0 #031021,0 12px 19px #0003!important}
+.pass-card-gold,.wallet-card{--surface-rim:242,191,108}.pass-card-diamond{--surface-rim:153,141,245}
+.settings-grid button:nth-child(2n),.metric-grid article:nth-child(2n){--surface-rim:169,147,244}
+.settings-grid button:nth-child(3n),.metric-grid article:nth-child(3n){--surface-rim:99,225,189}
+.x-package-card.active,.x-game-card.active{box-shadow:inset 1px 1px #c5ffff59,inset -1px -2px #1d6676,2px 4px 0 #021528,0 0 12px #4bd5e719!important}
+.x-input-field input,.x-input-field select,.header-search{box-shadow:inset 1px 2px 5px #0005,inset 0 -1px #b4eaff17!important}
+.xarena-dock{border-right-color:#a69ae570!important;box-shadow:inset 1px 1px #d5f9ff29,inset -1px -1px #4652827a,0 6px 0 #030e20,0 12px 20px #0005!important}
+.whatsapp-float{box-shadow:inset 1px 1px #caffec47,0 4px 0 #031d22,0 0 12px #30d9a42e!important}
+@container(max-width:1100px){.arena-platform{width:min(72cqw,650px)}}
+@container(max-width:600px){.arena-platform{width:100%;bottom:12px}.category-arena-card[data-roulette-slot="-1"]{transform:translateX(-143%) translateY(26px) rotate(-2deg) scale(.84)!important}.category-arena-card[data-roulette-slot="1"]{transform:translateX(43%) translateY(26px) rotate(2deg) scale(.84)!important}}
+/* Lite keeps category colors, the baked platform, and a beveled edge. It
+   discards bloom/reflection layers and perspective transforms. */
+html.perf-lite .category-glass{background:linear-gradient(122deg,rgba(var(--rim-rgb),.17),transparent 62%),linear-gradient(160deg,#204256,#08243b)!important;border-top-color:rgba(var(--rim-rgb),1)!important;border-right-color:rgba(var(--rim-rgb),.9)!important;border-bottom-color:rgba(var(--rim-rgb),.72)!important;box-shadow:none!important}
+html.perf-lite .category-arena-card[data-roulette-slot="-1"]{transform:translateX(-143%) translateY(26px) rotate(-2deg) scale(.84)!important}
+html.perf-lite .category-arena-card[data-roulette-slot="1"]{transform:translateX(43%) translateY(26px) rotate(2deg) scale(.84)!important}
+html.perf-lite .store-header,html.perf-lite .header-profile-avatar,html.perf-lite .info-hub-button,html.perf-lite .header-search,html.perf-lite .cart-button,html.perf-lite .icon-button,html.perf-lite .info-hub,html.perf-lite .info-hub-aside,html.perf-lite .social-card,html.perf-lite .social-card i,html.perf-lite .hud-support-primary,html.perf-lite .info-hub-nav button.active,html.perf-lite .product-card,html.perf-lite .product-detail,html.perf-lite .profile-card,html.perf-lite .metric-grid article,html.perf-lite .pass-card,html.perf-lite .settings-grid button,html.perf-lite .order-summary,html.perf-lite .wallet-card,html.perf-lite .wallet-panel,html.perf-lite .order-row,html.perf-lite .admin-demo-table,html.perf-lite .account-menu,html.perf-lite .fake-payment,html.perf-lite .x-product-stage,html.perf-lite .x-package-card,html.perf-lite .x-game-card,html.perf-lite .x-cart-drawer,html.perf-lite .xarena-dock,html.perf-lite .whatsapp-float{box-shadow:none!important;filter:none!important;backdrop-filter:none!important}
 
 </style>
 </head>
@@ -2863,6 +2902,7 @@ html[data-device="mobile"] .category-arena-card[data-roulette-slot="1"]{transfor
               <div class="category-arena">
                 <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
                 <div class="category-arena-viewport" id="categoryArenaViewport" tabindex="0" aria-label="Categorías de French Store">
+                  <span class="arena-platform" aria-hidden="true"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDEwMDAgMjQwIiBmaWxsPSJub25lIj4KIDxkZWZzPgogIDxyYWRpYWxHcmFkaWVudCBpZD0ic3BpbGwiPjxzdG9wIHN0b3AtY29sb3I9IiM2M2VhZmYiIHN0b3Atb3BhY2l0eT0iLjM0Ii8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiMxNDdkZmYiIHN0b3Atb3BhY2l0eT0iLjE3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNTg2NWZkIiBzdG9wLW9wYWNpdHk9IjAiLz48L3JhZGlhbEdyYWRpZW50PgogIDxyYWRpYWxHcmFkaWVudCBpZD0idG9wIj48c3RvcCBzdG9wLWNvbG9yPSIjMTc0ZTY5Ii8+PHN0b3Agb2Zmc2V0PSIuNjQiIHN0b3AtY29sb3I9IiMwYjI2M2YiLz48c3RvcCBvZmZzZXQ9Ii44OCIgc3RvcC1jb2xvcj0iIzA3MWIzMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFlNTk3MCIvPjwvcmFkaWFsR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJ3YWxsIiB4MT0iMCIgeTE9IjkyIiB4Mj0iMCIgeTI9IjIwMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiMxNjM0NTIiLz48c3RvcCBvZmZzZXQ9Ii4yOCIgc3RvcC1jb2xvcj0iIzA1MGYyMyIvPjxzdG9wIG9mZnNldD0iLjU1IiBzdG9wLWNvbG9yPSIjMTY1MTc0Ii8+PHN0b3Agb2Zmc2V0PSIuNyIgc3RvcC1jb2xvcj0iIzBjMjk0YSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA0MGUyMCIvPjwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJzaWx2ZXIiPjxzdG9wIHN0b3AtY29sb3I9IiMxOTRhN2EiLz48c3RvcCBvZmZzZXQ9Ii4yMiIgc3RvcC1jb2xvcj0iIzVjZGVmNSIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNkMGZjZmYiLz48c3RvcCBvZmZzZXQ9Ii43NSIgc3RvcC1jb2xvcj0iIzY3ZDlmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFjNDQ3NyIvPjwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJjeWFuIj48c3RvcCBzdG9wLWNvbG9yPSIjMTc3MGI0Ii8+PHN0b3Agb2Zmc2V0PSIuMiIgc3RvcC1jb2xvcj0iIzMyZGZmNCIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNiM2ZiZmYiLz48c3RvcCBvZmZzZXQ9Ii44IiBzdG9wLWNvbG9yPSIjMjdkOGY0Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMTc1YmFiIi8+PC9saW5lYXJHcmFkaWVudD4KICA8bGluZWFyR3JhZGllbnQgaWQ9InZpb2xldCI+PHN0b3Agc3RvcC1jb2xvcj0iIzg4NWJmYSIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuMyIgc3RvcC1jb2xvcj0iIzgxNzZmZiIgc3RvcC1vcGFjaXR5PSIuNjUiLz48c3RvcCBvZmZzZXQ9Ii42OCIgc3RvcC1jb2xvcj0iIzViYWRmYSIgc3RvcC1vcGFjaXR5PSIuNiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzU1OGJmZCIgc3RvcC1vcGFjaXR5PSIwIi8+PC9saW5lYXJHcmFkaWVudD4KIDwvZGVmcz4KIDwhLS0gRml4ZWQgcGFpbnRlZCBsaWdodCBhbmQgcmVmbGVjdGVkIGZsb29yIGlsbHVtaW5hdGlvbjsgbm8gU1ZHIGZpbHRlcnMsCiAgICAgIHNjcmlwdHMsIG1hc2tzLCBhbmltYXRpb24sIGJsdXIsIG9yIHJ1bnRpbWUgbGlnaHRpbmcgY2FsY3VsYXRpb25zLiAtLT4KIDxlbGxpcHNlIGN4PSI1MDAiIGN5PSIxNzAiIHJ4PSI1MDAiIHJ5PSI3MCIgZmlsbD0idXJsKCNzcGlsbCkiLz4KIDxlbGxpcHNlIGN4PSI1MDAiIGN5PSIxNjAiIHJ4PSI0NTMiIHJ5PSI1OCIgc3Ryb2tlPSJ1cmwoI3Zpb2xldCkiIHN0cm9rZS13aWR0aD0iMyIvPgogPHBhdGggZD0iTTYxIDg4QzYxIDQ4IDI1OCAxNyA1MDAgMTdzNDM5IDMxIDQzOSA3MXY2NWMwIDQzLTE5NyA3Mi00MzkgNzJTNjEgMTk2IDYxIDE1M1oiIGZpbGw9InVybCgjd2FsbCkiIHN0cm9rZT0iIzIwNDY2YyIgc3Ryb2tlLXdpZHRoPSIyIi8+CiA8cGF0aCBkPSJNNjIgMTI4YzAgNDEgMTk3IDc0IDQzOCA3NHM0MzgtMzMgNDM4LTc0djExYzAgNDEtMTk3IDc0LTQzOCA3NFM2MiAxODAgNjIgMTM5WiIgZmlsbD0idXJsKCNzaWx2ZXIpIi8+CiA8cGF0aCBkPSJNNjIgMTExYzAgNDAgMTk3IDcyIDQzOCA3MnM0MzgtMzIgNDM4LTcydjhjMCA0MS0xOTcgNzMtNDM4IDczUzYyIDE2MCA2MiAxMTlaIiBmaWxsPSJ1cmwoI2N5YW4pIi8+CiA8cGF0aCBkPSJNNjUgMTAwYzAgNDAgMTk1IDcxIDQzNSA3MXM0MzUtMzEgNDM1LTcxIiBzdHJva2U9IiMwNjIyMzkiIHN0cm9rZS13aWR0aD0iNSIvPgogPGVsbGlwc2UgY3g9IjUwMCIgY3k9Ijg4IiByeD0iNDM5IiByeT0iNzEiIGZpbGw9InVybCgjdG9wKSIgc3Ryb2tlPSJ1cmwoI3NpbHZlcikiIHN0cm9rZS13aWR0aD0iMyIvPgogPGVsbGlwc2UgY3g9IjUwMCIgY3k9Ijg1IiByeD0iNDE5IiByeT0iNjEiIHN0cm9rZT0iIzE1M2U1OSIgc3Ryb2tlLXdpZHRoPSI4Ii8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iODUiIHJ4PSI0MTEiIHJ5PSI1NyIgc3Ryb2tlPSJ1cmwoI2N5YW4pIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogPGVsbGlwc2UgY3g9IjUwMCIgY3k9IjgzIiByeD0iMzc3IiByeT0iNDYiIHN0cm9rZT0iIzUyZGJmMyIgc3Ryb2tlLW9wYWNpdHk9Ii4yNyIvPgogPGVsbGlwc2UgY3g9IjUwMCIgY3k9Ijg3IiByeD0iMjgwIiByeT0iMzQiIGZpbGw9IiMwMjExMjMiIGZpbGwtb3BhY2l0eT0iLjM2Ii8+CiA8cGF0aCBkPSJNMTE0IDEwM2M0NyAyNyAyMDIgNDkgMzg2IDQ5czMzOS0yMiAzODYtNDkiIHN0cm9rZT0iIzg3ZmFmZiIgc3Ryb2tlLW9wYWNpdHk9Ii44IiBzdHJva2Utd2lkdGg9IjMiLz4KIDxwYXRoIGQ9Im00NTcgMTk3IDQzLTExIDQzIDExLTQzLTRaIiBmaWxsPSIjZDZmZmZmIi8+CiA8cGF0aCBkPSJNMTcxIDIwNWM4MSAxNSAxOTcgMjMgMzI5IDIzczI0OC04IDMyOS0yMyIgc3Ryb2tlPSIjNGFiOGZmIiBzdHJva2Utb3BhY2l0eT0iLjI1IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+Cg==" width="1000" height="240" alt="" decoding="async"></span>
                   <div id="categoryGrid" class="category-arena-track"></div>
                 </div>
                 <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
@@ -3346,7 +3386,7 @@ window.FS_LAB_DATA = Object.freeze({
       '<span class="category-art" aria-hidden="true"><img src="' + embeddedArt[item.id] + '" width="480" height="300" alt="" decoding="async"></span>'+
       '<div class="category-console"><span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
       '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
-      '</div><div class="hud-module-foot" aria-hidden="true"><i></i><span>EXPLORA · ELIGE · INGRESA</span><i></i></div></div><span class="category-pedestal" aria-hidden="true"><i></i><b></b></span></article>';
+      '</div><div class="hud-module-foot" aria-hidden="true"><i></i><span>EXPLORA · ELIGE · INGRESA</span><i></i></div></div></article>';
   }
 
   function renderCategoryArena(){
