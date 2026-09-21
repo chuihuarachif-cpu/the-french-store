@@ -8,6 +8,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://raw.githubusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'self';">
   <title>French Store · Design Lab</title>
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./crystal.css">
 </head>
 <body>
   <div class="lab-shell">
@@ -111,11 +112,11 @@
           </div>
           <header class="store-header fs-command-header">
             <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio de French Store">
-              <b>💎 French Store 💎</b>
+              <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><b>French Store</b><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg>
             </button>
 
             <button class="header-profile" type="button" data-nav-view="perfil" aria-label="Abrir perfil">
-              <span class="header-profile-avatar">●</span>
+              <span class="header-profile-avatar"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg></span>
               <span class="header-profile-copy">
                 <b id="headerRoleName">Hola, Visitante</b>
                 <small>Inicia sesión para más beneficios</small>
@@ -123,30 +124,23 @@
             </button>
 
             <button class="info-hub-button" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub">
-              <span class="info-hub-icon">⌘</span>
-              <span><small>FRENCH HUB</small><b>Centro de información</b></span>
+              <span class="info-hub-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg></span>
+              <span><small>REDES · AYUDA · POLÍTICAS</small><b>Centro de información</b></span>
               <i>＋</i>
             </button>
 
             <button class="header-search" type="button" data-open-search aria-label="Buscar en French Store">
-              <span>⌕</span><span class="header-search-copy">Buscar en French Store...</span>
+              <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg><span class="header-search-copy">Buscar en French Store...</span>
             </button>
 
             <div class="header-actions">
-              <button class="icon-button notification-button" type="button" data-account-action="Notificaciones" aria-label="Notificaciones">♢<i>1</i></button>
-              <button class="cart-button" type="button" data-nav-view="checkout" aria-label="Carrito">🛒 <span id="cartCount">2</span></button>
+              <button class="icon-button" type="button" data-nav-view="pedidos" aria-label="Mis pedidos" title="Mis pedidos"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5v11l-10 5-10-5V7Zm0 10 10-5M12 12 2 7m10 5v11M7 4l10 5v5"/></svg></button>
+              <button class="cart-button" type="button" data-x-cart aria-label="Carrito"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h11l3-10H6M9 10h10"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg> <span id="cartCount">0</span></button>
             </div>
           </header>
 
           <div class="welcome-ticker" aria-label="Mensajes de French Store">
-            <div class="welcome-ticker-track">
-              <span>Bienvenido a French Store</span><i>•</i>
-              <span>Disfruta tu estancia</span><i>•</i>
-              <span>Gracias por tu compra</span><i>•</i>
-              <span>Explora nuestras recargas, servicios y beneficios</span><i>•</i>
-              <span>Bienvenido a French Store</span><i>•</i>
-              <span>Disfruta tu estancia</span>
-            </div>
+            <div class="welcome-ticker-track"><div class="ticker-group"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>¿De vuelta? Nos alegra verte</span><i>✦</i><span>Gracias por elegirnos</span><i>✦</i></div><div class="ticker-group" aria-hidden="true"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>¿De vuelta? Nos alegra verte</span><i>✦</i><span>Gracias por elegirnos</span><i>✦</i></div></div><button class="ticker-pause" type="button" aria-label="Pausar bienvenida" aria-pressed="false">Ⅱ</button>
           </div>
 
           <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
@@ -155,9 +149,9 @@
             <div class="home-intro reveal">
               <span class="eyebrow">FRENCH STORE · CENTRO DE ACCESO</span>
               <h1>Tu mundo digital, en un solo lugar.</h1>
-              <p>Desliza entre tus servicios y entra directamente al bloque que necesitas.</p>
+              <p>Recarga, conecta y disfruta. Elige tu próxima experiencia.</p>
             </div>
-            <section class="section category-arena-section reveal" aria-labelledby="categoryArenaTitle">
+            <section class="section category-arena-section reveal" aria-label="Explora nuestros servicios">
 
               <div class="category-arena">
                 <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
@@ -253,11 +247,11 @@
                 <article><span>Favoritos</span><strong>8</strong><small>locales</small></article>
                 <article><span>Wallet</span><strong>Bs 125</strong><small>simulado</small></article>
               </div>
-              <div class="account-menu">
+              <div class="account-menu"><button type="button" data-nav-view="wallet">Mi Wallet <span>→</span></button>
                 <button type="button" data-nav-view="pedidos">Mis pedidos <span>→</span></button>
                 <button type="button" data-account-action="Favoritos">Favoritos <span>→</span></button>
                 <button type="button" data-account-action="Notificaciones">Notificaciones <span>→</span></button>
-                <button type="button" data-account-action="Configuración">Configuración <span>→</span></button>
+                <button type="button" data-nav-view="ajustes">Configuración <span>→</span></button>
               </div>
             </div>
           </section>
@@ -309,7 +303,7 @@
           </section>
 
 
-          <section class="x-experience" id="xExperience" aria-hidden="true" aria-label="Selector de productos French Store">
+          <section class="x-experience" id="xExperience" inert aria-hidden="true" aria-label="Selector de productos French Store">
             <div class="x-orientation-gate" id="xOrientationGate" aria-hidden="true">
               <div class="x-orientation-card">
                 <div class="x-phone-rotate" aria-hidden="true">
@@ -330,10 +324,10 @@
                   <span id="xCategoryLabel">RECARGAS POR ID</span>
                   <b id="xGameBreadcrumb">Selecciona un juego</b>
                 </div>
-                <div class="x-experience-actions">
+                <div class="x-experience-actions"><button type="button" data-nav-view="perfil" aria-label="Abrir perfil"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg></button>
                   <button type="button" data-x-back aria-label="Volver a categorías">↩</button>
                   <button type="button" data-x-favorite aria-label="Agregar a favoritos">♡</button>
-                  <button type="button" data-x-cart aria-label="Abrir carrito">🛒 <span id="xCartCount">0</span></button>
+                  <button type="button" data-x-cart aria-label="Abrir carrito"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h11l3-10H6M9 10h10"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg> <span id="xCartCount">0</span></button>
                 </div>
               </header>
 
@@ -370,8 +364,11 @@
               </div>
             </div>
 
+
+          </section>
+
             <div class="x-cart-backdrop" id="xCartBackdrop" data-x-cart-close></div>
-            <aside class="x-cart-drawer" id="xCartDrawer" aria-hidden="true">
+            <aside class="x-cart-drawer" id="xCartDrawer" role="dialog" aria-modal="true" aria-label="Carrito de compras" inert aria-hidden="true">
               <div class="x-cart-head">
                 <div><span>FRENCH CART</span><b>Tu selección</b></div>
                 <button type="button" data-x-cart-close aria-label="Cerrar carrito">×</button>
@@ -380,12 +377,10 @@
               <div class="x-cart-total"><span>Total demo</span><b id="xCartTotal">Bs 0,00</b></div>
               <button class="x-cart-checkout" type="button" data-x-checkout>Continuar con un solo pago</button>
             </aside>
-          </section>
-
           <div class="info-hub-backdrop" id="infoHubBackdrop" data-info-close></div>
-          <section class="info-hub" id="infoHub" aria-hidden="true" aria-label="Centro de información">
+          <section class="info-hub" id="infoHub" role="dialog" aria-modal="true" aria-hidden="true" inert aria-label="Centro de información">
             <header class="info-hub-head">
-              <div class="info-hub-titlemark"><span>⌘</span></div>
+              <div class="info-hub-titlemark"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg></div>
               <div><span class="eyebrow">FRENCH STORE</span><h2>Centro de información</h2><p>Todo lo que necesitas saber, en un solo lugar.</p></div>
               <button type="button" data-info-close aria-label="Cerrar">×</button>
             </header>
@@ -398,18 +393,18 @@
                 <button type="button" data-info-panel="cookies"><span>◌</span><b>Cookies</b><i>›</i></button>
                 <button type="button" data-info-panel="support"><span>◈</span><b>Ayuda y soporte</b><i>›</i></button>
                 <button type="button" data-info-panel="buy"><span>🛒</span><b>Cómo comprar</b><i>›</i></button>
-                <div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
+                <button type="button" data-info-panel="delivery"><span>↗</span><b>Entregas y reembolsos</b><i>›</i></button><button type="button" data-info-panel="about"><span>◇</span><b>Acerca de French Store</b><i>›</i></button><div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
               </nav>
 
               <div class="info-hub-content">
                 <section class="info-panel active" data-info-panel-view="social">
                   <div class="info-panel-head"><div><span class="eyebrow">REDES OFICIALES</span><h3>Nuestras redes oficiales</h3><p>Síguenos para novedades, promociones y atención.</p></div><span class="info-panel-symbol">ⓘ</span></div>
                   <div class="social-card-grid">
-                    <button class="social-card tiktok" type="button" data-info-action="TikTok"><span>♪</span><div><b>TikTok</b><small>Contenido exclusivo</small></div><i>Seguir →</i></button>
-                    <button class="social-card facebook" type="button" data-info-action="Facebook"><span>f</span><div><b>Facebook</b><small>Noticias y comunidad</small></div><i>Seguir →</i></button>
-                    <button class="social-card youtube" type="button" data-info-action="YouTube"><span>▶</span><div><b>YouTube</b><small>Guías y novedades</small></div><i>Suscribirse →</i></button>
-                    <button class="social-card whatsapp" type="button" data-info-action="WhatsApp"><span>◉</span><div><b>WhatsApp</b><small>Atención al cliente</small></div><i>Contactar →</i></button>
-                    <button class="social-card instagram" type="button" data-info-action="Instagram"><span>◎</span><div><b>Instagram</b><small>Promociones y sorteos</small></div><i>Seguir →</i></button>
+                    <a class="social-card tiktok" href="https://www.tiktok.com/@frenchstore" target="_blank" rel="noopener noreferrer"><span>♪</span><div><b>TikTok</b><small>Contenido exclusivo</small></div><i>Seguir →</i></a>
+                    <a class="social-card facebook" href="https://www.facebook.com/share/1LeZV8aqQ3/" target="_blank" rel="noopener noreferrer"><span>f</span><div><b>Facebook</b><small>Noticias y comunidad</small></div><i>Seguir →</i></a>
+                    <a class="social-card youtube" href="https://youtube.com/@frenchstore1" target="_blank" rel="noopener noreferrer"><span>▶</span><div><b>YouTube</b><small>Guías y novedades</small></div><i>Suscribirse →</i></a>
+                    <a class="social-card whatsapp" href="https://wa.me/59177057379" target="_blank" rel="noopener noreferrer"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><div><b>WhatsApp</b><small>Atención al cliente</small></div><i>Contactar →</i></a>
+                    <button class="social-card community" type="button" data-info-panel="support"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></span><div><b>Ayuda y soporte</b><small>Estamos para ayudarte</small></div><i>Ver ayuda →</i></button>
                   </div>
                   <div class="info-important">
                     <span>Información importante</span>
@@ -421,10 +416,10 @@
                   </div>
                 </section>
 
-                <section class="info-panel" data-info-panel-view="terms"><span class="eyebrow">LEGAL</span><h3>Términos y condiciones</h3><p>Consulta las reglas de uso, compra, entrega y responsabilidades de French Store.</p><button type="button" data-info-action="Términos y condiciones">Abrir términos →</button></section>
-                <section class="info-panel" data-info-panel-view="privacy"><span class="eyebrow">PRIVACIDAD</span><h3>Política de privacidad</h3><p>Información sobre datos, cuentas, seguridad y tratamiento de información personal.</p><button type="button" data-info-action="Política de privacidad">Abrir política →</button></section>
-                <section class="info-panel" data-info-panel-view="cookies"><span class="eyebrow">PREFERENCIAS</span><h3>Cookies</h3><p>Revisa las preferencias y tecnologías utilizadas para mejorar tu experiencia.</p><button type="button" data-info-action="Cookies">Ver cookies →</button></section>
-                <section class="info-panel" data-info-panel-view="support"><span class="eyebrow">SOPORTE</span><h3>Ayuda y soporte</h3><p>Encuentra asistencia para pedidos, garantías, pagos y dudas frecuentes.</p><button type="button" data-info-action="Soporte">Contactar soporte →</button></section>
+                <section class="info-panel" data-info-panel-view="delivery"><span class="eyebrow">TUS COMPRAS</span><h3>Entregas y reembolsos</h3><p>Consulta los plazos, las condiciones de entrega y las opciones de atención para tu compra.</p><a class="info-link" href="https://frenchstorebo.com/v2/refunds.html" target="_blank" rel="noopener noreferrer">Consultar condiciones →</a></section><section class="info-panel" data-info-panel-view="about"><span class="eyebrow">FRENCH STORE</span><h3>Tu mundo digital, más cerca.</h3><p>Conoce French Store y nuestros servicios de recargas, entretenimiento y creación web.</p><a class="info-link" href="https://frenchstorebo.com/v2/about.html" target="_blank" rel="noopener noreferrer">Conocer la tienda →</a></section><section class="info-panel" data-info-panel-view="terms"><span class="eyebrow">LEGAL</span><h3>Términos y condiciones</h3><p>Consulta las reglas de uso, compra, entrega y responsabilidades de French Store.</p><a class="info-link" href="https://frenchstorebo.com/v2/terms.html" target="_blank" rel="noopener noreferrer">Abrir términos →</a></section>
+                <section class="info-panel" data-info-panel-view="privacy"><span class="eyebrow">PRIVACIDAD</span><h3>Política de privacidad</h3><p>Información sobre datos, cuentas, seguridad y tratamiento de información personal.</p><a class="info-link" href="https://frenchstorebo.com/v2/privacy.html" target="_blank" rel="noopener noreferrer">Abrir política →</a></section>
+                <section class="info-panel" data-info-panel-view="cookies"><span class="eyebrow">PREFERENCIAS</span><h3>Cookies</h3><p>Revisa las preferencias y tecnologías utilizadas para mejorar tu experiencia.</p><a class="info-link" href="https://frenchstorebo.com/v2/cookies.html" target="_blank" rel="noopener noreferrer">Ver cookies →</a></section>
+                <section class="info-panel" data-info-panel-view="support"><span class="eyebrow">SOPORTE</span><h3>Ayuda y soporte</h3><p>Encuentra asistencia para pedidos, garantías, pagos y dudas frecuentes.</p><button type="button" data-info-action="WhatsApp">Contactar soporte →</button></section>
                 <section class="info-panel" data-info-panel-view="buy"><span class="eyebrow">GUÍA</span><h3>Cómo comprar</h3><p>Elige una categoría, selecciona el producto, completa los datos necesarios y agrégalo al carrito.</p><button type="button" data-info-close>Volver a la tienda →</button></section>
               </div>
 
@@ -437,12 +432,12 @@
             </div>
           </section>
 
-          <nav class="xarena-dock" aria-label="Accesos principales">
-            <button type="button" data-nav-view="pases"><span>◇</span><small>Pases</small></button>
-            <button type="button" data-nav-view="ajustes"><span>⚙</span><small>Ajustes</small></button>
+          <nav class="xarena-dock" aria-label="Accesos principales"><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>EXPLORA FRENCH STORE</small><b>Centro de información</b></span><i>⌃</i></button>
+            <button type="button" data-nav-view="pases"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><small>Pases</small></button>
+            <button type="button" data-nav-view="ajustes"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 3 1-2h4l1 2 3 2 2 1 2 4-1 2 1 2-2 4-2 1-3 2-1 2h-4l-1-2-3-2-2-1-2-4 1-2-1-2 2-4 2-1Z"/><circle cx="12" cy="12" r="4"/></svg><small>Ajustes</small></button>
           </nav>
           <button class="whatsapp-float" type="button" data-info-action="WhatsApp" aria-label="Contactar por WhatsApp">
-            <span>◉</span><b>¿Necesitas ayuda?</b><small>Escríbenos por WhatsApp</small>
+            <span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><b>¿Necesitas ayuda?</b><small>Escríbenos por WhatsApp</small>
           </button>
         </div>
       </div>

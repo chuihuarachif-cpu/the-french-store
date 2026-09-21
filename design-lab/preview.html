@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#06111d">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: https://raw.githubusercontent.com; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none';">
-  <title>French Store · Design Lab Preview</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: https://raw.githubusercontent.com; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'self';">
+  <title>French Store · Design Lab</title>
   <style>
 :root{
   color-scheme:dark;
@@ -2393,6 +2393,186 @@ html.perf-lite .device-frame{
 }
 
 </style>
+  <style>
+/* French Store · crystal surfaces. CSS/SVG only; no continuous JS render loop. */
+:root{--bg:#041225;--panel:#0b2038;--panel-2:#102a47;--muted:#a0b5ca;--line:rgba(115,206,255,.2);--radius:22px}
+html,body{background:#041225}
+.store-app{background:#041225!important}
+.store-app:before{display:none!important}
+.ui-icon{width:24px;height:24px;flex-shrink:0;display:block}
+button,a,input,select{-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #8ff4ff!important;outline-offset:4px!important}
+html.standalone .lab-shell{display:block}
+html.standalone .lab-panel,html.standalone .preview-toolbar{display:none}
+html.standalone .preview-stage{padding:0;min-height:100dvh}
+html.standalone .device-viewport{display:block;width:100%;height:auto!important;overflow:visible;transition:none}
+html.standalone .device-frame{width:100%;max-width:none;transform:none;transition:none}
+html.standalone .store-app{min-height:100dvh;border:0;border-radius:0;box-shadow:none}
+.fs-command-header{grid-template-columns:auto minmax(150px,190px) minmax(195px,1fr) minmax(130px,220px) auto!important;gap:18px!important;padding:18px 3.2%!important;height:90px}
+.brand-button{gap:9px;font-size:clamp(1rem,1.6cqw,1.55rem)!important;letter-spacing:-.03em;white-space:nowrap}
+.brand-button .ui-icon{color:#65dfff;width:28px;height:28px;filter:drop-shadow(0 0 8px #10caff55)}
+.brand-button .ui-icon:last-child{width:18px;height:18px}
+.header-profile{height:50px;background:transparent;border:0;padding:0;grid-template-columns:38px 1fr;gap:10px}
+.header-profile-avatar{width:38px;height:43px;border-radius:12px;background:linear-gradient(150deg,#194370,#08203c);border:1px solid #3d8cd26b}
+.header-profile-copy b{font-size:.81rem}.header-profile-copy small{font-size:.61rem;color:#9ab0c7;line-height:1.5;white-space:normal}
+.info-hub-button{height:52px!important;border-radius:30px!important;justify-content:center!important;gap:10px!important;border:1px solid #4ce2ff88!important;background:linear-gradient(120deg,#133b59a8,#07203c)!important}
+.info-hub-button b{font-size:.84rem!important}.info-hub-button small{font-size:.48rem!important;letter-spacing:.11em;color:#95bbd4!important}
+.info-hub-button .info-hub-icon{width:30px!important;height:30px!important;background:none!important}
+.header-search{height:44px;border-radius:24px;background:#071b35;border-color:#457ab58c;gap:10px}
+.header-search .ui-icon{width:20px;color:#92cbef}.header-search-copy{font-size:.72rem;color:#9eb5cf}
+.icon-button,.cart-button{min-width:46px;height:48px!important;display:flex;align-items:center;justify-content:center;gap:10px;border-color:#377ca280!important}
+.cart-button{padding:8px 14px!important}.cart-button span{display:grid;place-items:center;min-width:25px;height:25px;border-radius:50%;background:#79edff;color:#05152a;font-size:.77rem}
+.welcome-ticker{position:relative;top:auto!important;height:43px;margin:0 2.5%;border-radius:0 0 34px 34px;border-bottom:1px solid #4bd5ff99;background:linear-gradient(180deg,#092741,#051a30);box-shadow:0 5px 13px #10a6e811,inset 0 -2px 6px #0daee819;padding:0 44px;clip-path:polygon(0 0,100% 0,98% 100%,2% 100%)}
+.welcome-ticker:before{left:22px}.welcome-ticker:after{display:none}
+.welcome-ticker-track{padding-left:0;gap:0;font-size:.76rem;color:#aee8ff;width:max-content;animation:crystalWelcome 32s linear infinite}
+.ticker-group{display:flex;align-items:center;gap:35px;padding-right:35px;white-space:nowrap}
+.ticker-group i{font-size:.65rem;color:#41d9ff}
+@keyframes crystalWelcome{to{transform:translate3d(-50%,0,0)}}
+.ticker-pause{position:absolute;right:15px;top:0;height:42px;width:40px;border:0;background:#07213a;color:#92e7ff;cursor:pointer;z-index:3}
+.welcome-ticker.paused .welcome-ticker-track,.welcome-ticker:focus-within .welcome-ticker-track,.welcome-ticker:hover .welcome-ticker-track{animation-play-state:paused}
+.store-view[data-view="inicio"]{padding:30px 3% 142px!important}
+.home-intro{max-width:1200px!important;padding:12px 12px 0!important;margin-bottom:18px!important}
+.home-intro .eyebrow{font-size:.65rem;letter-spacing:.25em;color:#5cdcf6;margin-bottom:13px}
+.home-intro h1{font-size:clamp(1.9rem,3.9cqw,3.7rem)!important;font-weight:760!important;letter-spacing:-.045em!important;line-height:1.09!important;margin-bottom:13px!important}
+.home-intro p{font-size:.95rem!important;color:#a7bbd1!important;line-height:1.55}
+.category-arena{min-height:460px!important;padding:8px 44px 20px!important}
+.category-arena-viewport{height:420px!important;overflow:hidden!important;padding:0!important;perspective:1200px}
+.category-arena-track{position:relative!important;display:block!important;width:100%!important;height:100%!important;padding:0!important;--arena-card-width:clamp(270px,29cqw,415px)!important}
+.category-arena-card{position:absolute!important;left:50%!important;top:16px!important;width:var(--arena-card-width)!important;min-height:366px!important;height:auto!important;transform-origin:center center!important;border-radius:26px 26px 30px 14px!important;border:1px solid rgba(var(--accent-rgb),.58)!important;opacity:1!important;filter:none!important;background:linear-gradient(126deg,rgba(200,239,255,.12),transparent 32%,rgba(var(--accent-rgb),.07) 75%),linear-gradient(160deg,#112e4c,#091a30 65%,#09243a)!important;box-shadow:inset 1px 1px 0 #d4f5ff26,inset -1px -1px 0 rgba(var(--accent-rgb),.14),0 16px 30px #0005!important;transition:transform .35s cubic-bezier(.2,.7,.2,1),opacity .25s ease!important;contain:layout paint style}
+.category-arena-card[data-roulette-slot="0"]{transform:translateX(-50%) scale(1)!important;z-index:5!important;border:2px solid #64e8ffa1!important}
+.category-arena-card[data-roulette-slot="-1"]{transform:translateX(-145%) translateY(23px) rotate(-3deg) scale(.88)!important;z-index:3!important}
+.category-arena-card[data-roulette-slot="1"]{transform:translateX(45%) translateY(23px) rotate(3deg) scale(.88)!important;z-index:3!important}
+.category-arena-card[data-distance="2"],.category-arena-card.roulette-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateX(-50%) scale(.75)!important}
+.category-arena-card.active{box-shadow:inset 1px 1px 0 #efffff47,inset -1px -1px 0 #1a8dda60,0 0 28px #17b5ee20,0 22px 36px #0006!important}
+.category-card-grid{display:block!important;background:linear-gradient(124deg,transparent 0 27%,#ddf8ff06 27.3% 29%,transparent 29.3% 73%,#9febff08 73.3% 78%,transparent 78.3%)!important;background-size:100% 100%!important;pointer-events:none}
+.category-card-top{top:15px!important;right:17px!important}.category-tag{font-size:.57rem!important;letter-spacing:.12em!important;background:#04142988!important;padding:5px 10px!important}
+.category-art{display:block;position:relative;height:235px;padding-top:20px;overflow:hidden}
+.category-art img{display:block;width:100%;height:100%;object-fit:contain}
+.category-copy{padding:0 16px 12px!important;gap:6px!important}
+.category-copy b{font-size:clamp(1.12rem,1.6cqw,1.52rem)!important;line-height:1.14!important;letter-spacing:-.025em}
+.category-copy small{font-size:.8rem!important;color:#a6c2d5!important}
+.category-enter{width:calc(100% - 52px)!important;min-height:45px!important;margin:0 auto 20px!important;opacity:1!important;transform:skewX(-8deg)!important;border-radius:12px!important;text-transform:none!important;letter-spacing:0!important;font-size:1rem!important;font-weight:700!important;color:#051c34!important;background:linear-gradient(105deg,#b8f8ff,#3bdcf6 63%,#16b7eb)!important;border:1px solid #c1fcffc7!important;box-shadow:inset 0 1px 0 #fff9,0 5px 20px #14cdf029!important}
+.category-enter i{color:#075275;font-size:1.25rem}.category-enter:hover{filter:brightness(1.13)!important}
+.category-arena-floor{width:min(83%,1040px)!important;bottom:0!important;height:46px!important;opacity:.85!important;background:radial-gradient(ellipse,#1182cd24,transparent 72%)!important;filter:none!important}
+.category-arena-floor:before{top:18px!important}.category-arena-floor span{border-color:#22a2d341!important;inset:0 8%!important;transform:none!important}
+.arena-arrow{top:42%!important;width:44px!important;height:44px!important}.arena-arrow-prev{left:0}.arena-arrow-next{right:0}
+.xarena-dock{position:absolute!important;bottom:20px!important;left:50%!important;width:auto!important;max-width:calc(100% - 24px)!important;transform:translateX(-50%)!important;display:flex!important;gap:4px!important;padding:9px 16px!important;border:1px solid #397faf8a!important;border-top:2px solid #50cfee9c!important;border-radius:28px 28px 20px 20px!important;background:linear-gradient(170deg,#122e49,#061b31)!important;box-shadow:inset 0 1px #b7f4ff21,0 12px 30px #0003!important}
+.xarena-dock button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;min-width:62px!important;color:#bed9ed}
+.xarena-dock button .ui-icon{width:22px;height:22px;color:#83def6}
+.xarena-dock button.info-launcher{order:0;flex-direction:row;gap:12px;padding:5px 23px 5px 4px!important;min-width:250px!important;border-right:1px solid #548ca742;border-radius:0;text-align:left}
+.info-launcher>span{display:grid;gap:4px}.info-launcher b{font-size:.9rem;color:#e1f9ff}.info-launcher small{font-size:.49rem!important;letter-spacing:.15em;color:#7bacc8}.info-launcher i{font-style:normal;color:#73def9;font-size:1.3rem}
+.whatsapp-float{position:absolute!important;right:28px!important;bottom:30px!important;min-height:57px!important;border:1px solid #54e5ad83!important;border-radius:32px!important;background:linear-gradient(140deg,#064f3e,#052e2e)!important;box-shadow:0 0 19px #16bd8224!important;padding:10px 19px 10px 10px!important;grid-template-columns:37px 1fr!important}
+.whatsapp-float>span{height:37px!important;width:37px!important;background:#11a873!important;color:white!important;border-radius:50%!important;display:grid!important;place-items:center!important}
+.whatsapp-float .ui-icon{width:26px;height:26px}.whatsapp-float b{font-size:.7rem!important}.whatsapp-float small{font-size:.61rem!important;color:#b4d6cb!important}
+.info-hub-backdrop{position:absolute!important;inset:0!important}
+.info-hub{inset:145px 4% 112px!important;min-height:460px;border:1px solid #59e0ffa6!important;border-top:2px solid #91efffc7!important;box-shadow:inset 1px 1px 0 #cefbff29,0 0 25px #078cdc22,0 20px 60px #0007!important;background:linear-gradient(135deg,#153b5740,transparent 48%),#061a31!important;padding:20px!important;border-radius:25px!important}
+.info-hub-head{min-height:76px!important;grid-template-columns:48px 1fr 42px!important;gap:15px!important}.info-hub-head h2{font-size:1.7rem!important;letter-spacing:-.03em}.info-hub-head p{font-size:.8rem;color:#a4bed1}.info-hub-head .eyebrow{font-size:.53rem;margin-bottom:4px}.info-hub-head button{min-width:40px;min-height:40px}
+.info-hub-layout{height:calc(100% - 82px);grid-template-columns:210px minmax(0,1fr) 200px;gap:20px;padding-top:17px}
+.info-hub-nav{gap:8px}.info-hub-nav button{min-height:49px;padding:9px 8px;gap:8px}.info-hub-nav button b{font-size:.74rem;white-space:normal;text-overflow:clip}.info-hub-nav button.active{background:linear-gradient(100deg,#087dd5,#105672);border-color:#57e7ff9c;box-shadow:inset 0 1px #d3faff57,0 0 13px #20d8ff1c}
+.info-hub-signature strong{font-size:.6rem}.info-hub-signature small{font-size:.48rem}
+.info-panel-head h3,.info-panel h3{font-size:1.28rem;margin:0 0 5px}.info-panel-head p,.info-panel>p{font-size:.79rem;line-height:1.6;color:#a8c0d3}.info-panel-head .eyebrow{display:none}
+.social-card-grid{gap:12px}.social-card{--social:100,194,255;position:relative;text-decoration:none;min-height:164px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:16px;border-color:rgba(var(--social),.65)!important;border-radius:17px;box-shadow:inset 0 1px #d4f5ff1c,0 0 15px rgba(var(--social),.08);background:radial-gradient(ellipse at 90% 0,rgba(var(--social),.16),transparent 70%),linear-gradient(140deg,#102d49,#071a30);transition:transform .2s ease}
+.social-card:hover{transform:translateY(-3px)}.social-card>span{width:38px;height:38px;font-size:1.9rem;color:rgb(var(--social));background:rgba(var(--social),.09)}
+.social-card b{font-size:.95rem}.social-card small{font-size:.67rem;line-height:1.5;color:#a5bdd0}.social-card i{font-size:.74rem;color:#d7faff;align-self:stretch;padding:6px 10px;border:1px solid rgba(var(--social),.35);border-radius:14px;text-align:center;margin-top:8px;background:rgba(var(--social),.08)}
+.social-card.tiktok{--social:227,107,231}.social-card.facebook{--social:64,163,255}.social-card.youtube{--social:255,69,102}.social-card.whatsapp{--social:58,228,159}.social-card.community{--social:151,145,251}
+.social-card.whatsapp,.social-card.community{min-height:130px}.social-card.whatsapp{grid-column:1/2}.social-card.community{grid-column:2/4}
+.social-card.whatsapp>span{font-size:1.3rem}.social-card.community{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:10px}.social-card.community i{grid-column:1/-1;margin:0}
+.info-important>span{font-size:.8rem}.info-important button{min-height:59px}.info-important b{font-size:.65rem;white-space:normal}.info-important small{font-size:.59rem}
+.info-hub-aside{padding:20px;gap:18px}.info-aside-symbol{width:70px;height:70px;font-size:2.3rem}.info-hub-aside h3{font-size:1.22rem}.info-hub-aside p{font-size:.8rem;line-height:1.65;color:#a2bbd0}
+.info-link{display:block;justify-self:center;margin-top:20px;padding:12px 18px;border:1px solid #53c4ea77;border-radius:12px;background:#123851;text-decoration:none;color:#b7f4ff;font-weight:650}
+/* One quiet background and one glass language across all existing lab views. */
+.store-view:not([data-view="inicio"]){padding:38px 5% 140px!important;background:transparent!important}
+.page-head h1,.product-info h1,.checkout-main h1{font-size:clamp(1.9rem,3.8cqw,3.5rem);line-height:1.06;letter-spacing:-.04em}
+.page-head p,.product-info p{color:#a9bed2}
+.product-card,.product-detail,.profile-card,.metric-grid article,.pass-card,.settings-grid button,.order-summary,.wallet-card,.wallet-panel,.order-row,.admin-demo-table,.account-menu,.fake-payment{border:1px solid #669fca48!important;background:linear-gradient(135deg,#ffffff09,transparent 45%),linear-gradient(155deg,#122d49eb,#081b30f5)!important;box-shadow:inset 1px 1px #c9f2ff16,0 12px 30px #0002!important;border-radius:20px!important}
+.pass-card-gold{border-color:#b8995066!important}.pass-card-diamond{border-color:#64dbff77!important}
+.product-thumb,.product-visual{background:radial-gradient(ellipse at 50% 30%,#157cac38,transparent 75%),#0c233c!important}
+.product-card:hover{border-color:#64ddffa0!important;transform:translateY(-3px)}
+.x-experience{background:#041225!important}.x-experience-bg{background:#041225!important}.x-experience-bg:before,.x-experience-bg:after,.x-product-stage:before{display:none!important}
+.x-experience-shell{background:transparent!important;padding:24px!important}.x-experience-topbar{border-bottom:1px solid #49779355;padding-bottom:15px!important;margin-bottom:8px}
+.x-experience-title>span{font-size:.68rem!important;letter-spacing:.13em}.x-experience-title b{font-size:1.2rem!important;margin-top:4px}.x-experience-actions button{min-width:44px!important;min-height:44px!important;display:flex;align-items:center;justify-content:center;gap:7px}
+.x-product-stage{background:linear-gradient(125deg,#ffffff08,transparent 38%),linear-gradient(150deg,#102d47,#071d34)!important;border-color:#76c8e44f!important;border-radius:24px!important;box-shadow:inset 1px 1px #cbfaff1a!important;padding:22px!important;gap:16px!important}
+.x-game-card,.x-package-card{background:linear-gradient(135deg,#1d405a80,#0a1c32)!important;border-color:#608ea151!important;border-radius:15px!important}.x-package-card.active,.x-game-card.active{border-color:#57d7ffa8!important;box-shadow:inset 0 1px #c6fbff2b,0 0 14px #21d6ff12!important;background:linear-gradient(125deg,#1c648169,#0c2947)!important}
+.x-package-name{font-size:.91rem!important;line-height:1.4!important}.x-package-select{padding:17px!important}.x-package-price{font-size:1.14rem!important}.x-package-cart{font-size:.74rem!important;min-height:40px!important}
+.x-input-field span{font-size:.78rem!important}.x-input-field input,.x-input-field select{font-size:.87rem!important;min-height:43px;padding:10px!important}.x-no-inputs{font-size:.77rem!important}
+.x-stage-gamecopy h2{font-size:1.5rem!important}.x-stage-gamecopy p{font-size:.77rem!important;color:#aac1d4}.x-config-selection b{font-size:.8rem!important}.x-buy-button{min-height:45px!important}.x-config-note{font-size:.68rem!important}
+/* Keep overlay controls above the gallery, with independent scroll on small screens. */
+html.standalone .x-experience{position:fixed!important;inset:0!important;height:100dvh!important;z-index:55!important}
+html.standalone .x-experience-shell{height:100%!important;width:100%!important;transform:none!important;min-width:0!important}
+html.standalone .info-hub{position:fixed!important;inset:100px 4% 30px!important;max-height:820px!important;min-height:0!important}
+html.standalone .info-hub-backdrop{position:fixed!important}
+.toast{z-index:200!important}
+@container (max-width:1100px){
+ .fs-command-header{grid-template-columns:auto minmax(120px,1fr) auto auto!important;gap:12px!important;padding:14px 3%!important;height:80px}
+ .fs-command-header>.info-hub-button{display:none!important}.header-profile{justify-self:end;width:175px}
+ .header-search-copy{display:none}.header-search{width:44px;padding:11px}.brand-button{font-size:1.1rem!important}
+ .info-hub-layout{grid-template-columns:180px minmax(0,1fr)}.info-hub-aside{display:none}
+ .info-hub{inset:120px 3% 110px!important}.info-hub-head h2{font-size:1.5rem!important}
+ .category-arena-track{--arena-card-width:clamp(270px,39cqw,380px)!important}
+ .whatsapp-float{right:17px!important;bottom:33px!important;padding:10px!important;grid-template-columns:37px!important}.whatsapp-float b,.whatsapp-float small{display:none!important}
+}
+@container (max-width:600px){
+ .fs-command-header{height:72px!important;grid-template-columns:1fr auto auto!important;gap:10px!important;padding:12px 15px!important}
+ .brand-button{font-size:1.05rem!important;gap:7px}.brand-button .ui-icon{width:23px;height:23px}.brand-button .ui-icon:last-child{display:none}
+ .header-profile{width:38px!important;min-width:0;height:44px;display:block}.header-profile-copy{display:none!important}
+ .header-search,.header-actions>.icon-button{display:none!important}.header-actions{gap:0!important}.cart-button{height:44px!important;min-width:57px;padding:7px!important;gap:5px}.cart-button .ui-icon{width:21px}.cart-button span{min-width:19px;height:19px;font-size:.65rem}
+ .welcome-ticker{height:37px;margin:0 12px;padding:0 28px;clip-path:none;border-radius:0 0 20px 20px}.welcome-ticker-track{font-size:.68rem}.ticker-group{gap:22px;padding-right:22px}.welcome-ticker:before{display:none}.ticker-pause{height:36px;right:0}
+ .store-view[data-view="inicio"]{padding:23px 8px 134px!important}.home-intro{padding:0 17px!important;margin-bottom:12px!important}.home-intro .eyebrow{font-size:.51rem;letter-spacing:.17em;margin-bottom:12px}.home-intro h1{font-size:2rem!important;line-height:1.06!important}.home-intro p{font-size:.79rem!important;max-width:29ch!important;line-height:1.6}
+ .category-arena{padding:0 8px!important;min-height:389px!important}.category-arena-viewport{height:375px!important}.category-arena-track{--arena-card-width:75cqw!important}.category-arena-card{top:15px!important;min-height:321px!important;border-radius:23px!important}
+ .category-art{height:198px}.category-copy b{font-size:1.21rem!important}.category-copy small{font-size:.72rem!important}.category-copy{padding-bottom:12px!important}.category-enter{min-height:43px!important;margin-bottom:17px!important;font-size:.91rem!important;width:calc(100% - 37px)!important}
+ .category-arena-card[data-roulette-slot="-1"]{transform:translateX(-140%) translateY(20px) rotate(-3deg) scale(.85)!important}.category-arena-card[data-roulette-slot="1"]{transform:translateX(40%) translateY(20px) rotate(3deg) scale(.85)!important}
+ .arena-arrow{height:35px!important;width:35px!important;font-size:1.4rem!important;top:45%!important;background:#05172feb!important}.arena-arrow-prev{left:0!important}.arena-arrow-next{right:0!important}
+ .xarena-dock{bottom:18px!important;padding:10px 13px!important;gap:1px!important;width:calc(100% - 24px)!important;justify-content:space-between!important;border-radius:21px!important}
+ .xarena-dock button.info-launcher{min-width:0!important;flex:1;padding:3px 8px 3px 0!important;gap:8px!important}.info-launcher b{font-size:.73rem}.info-launcher small{font-size:.41rem!important;letter-spacing:.06em}.info-launcher i{display:none}.xarena-dock button.info-launcher .ui-icon{width:23px;height:23px}.xarena-dock button{min-width:44px!important;padding:4px 6px!important}.xarena-dock button small{font-size:.55rem}.xarena-dock button .ui-icon{width:19px;height:19px}
+ .whatsapp-float{bottom:97px!important;right:14px!important;min-height:44px!important;padding:6px!important;grid-template-columns:31px!important}.whatsapp-float>span{width:31px!important;height:31px!important}.whatsapp-float .ui-icon{width:23px;height:23px}
+ .info-hub{inset:14px!important;padding:13px!important;border-radius:21px!important;min-height:0!important}.info-hub-head{grid-template-columns:32px 1fr 34px!important;gap:8px!important;min-height:68px!important}.info-hub-titlemark{width:32px;height:36px}.info-hub-head h2{font-size:1.12rem!important}.info-hub-head p{font-size:.66rem}.info-hub-head button{min-width:34px!important;width:34px!important;height:34px!important;min-height:34px!important}
+ .info-hub-layout{display:flex!important;flex-direction:column;height:calc(100% - 73px);padding-top:12px;gap:13px}.info-hub-nav{display:flex!important;overflow:auto;flex:0 0 auto;border:0;padding:0 0 4px;gap:7px}.info-hub-nav button{min-width:max-content;min-height:40px;padding:7px 11px;display:flex;gap:7px}.info-hub-nav button b{font-size:.69rem;white-space:nowrap}.info-hub-nav button span{width:18px;height:20px;background:none}.info-hub-nav button i,.info-hub-signature{display:none}
+ .info-hub-content{flex:1;min-height:0}.info-panel-head h3,.info-panel h3{font-size:1.16rem}.info-panel-head p,.info-panel>p{font-size:.74rem}.info-panel-symbol{display:none}.social-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.social-card{min-height:157px;padding:12px}.social-card b{font-size:.87rem}.social-card small{font-size:.62rem}.social-card.whatsapp{grid-column:auto;min-height:157px}.social-card.community{grid-column:1/-1;min-height:100px;grid-template-columns:38px 1fr}.social-card.community i{grid-column:2;align-self:center}.info-important>div{grid-template-columns:1fr}.info-important{margin-top:17px}.info-important button{min-height:53px}.info-important b{font-size:.73rem}.info-important small{font-size:.63rem}
+ .store-view:not([data-view="inicio"]){padding:28px 18px 138px!important}.page-head h1,.product-info h1,.checkout-main h1{font-size:2rem!important}.account-layout,.checkout-layout,.product-detail{grid-template-columns:1fr!important}.metric-grid{grid-template-columns:1fr!important}.pass-grid,.settings-grid{grid-template-columns:1fr!important}
+ .x-experience-shell{padding:13px!important}.x-experience-title b{font-size:.94rem!important}.x-experience-title>span{font-size:.52rem!important}.x-experience-actions{gap:5px!important}.x-experience-actions button{min-width:35px!important;width:35px!important;height:39px!important;min-height:39px!important}.x-experience-actions .ui-icon{width:19px;height:19px}
+ .x-experience-grid{grid-template-columns:1fr!important;grid-template-rows:145px minmax(0,1fr)!important;gap:10px!important;overflow:hidden!important}.x-wheel-panel{display:grid!important;grid-template-columns:32px 1fr 32px!important;align-items:center!important;gap:4px!important;padding:0!important}.x-game-wheel{height:143px!important;min-height:0!important;width:100%!important}.x-wheel-arrow{width:32px!important;height:40px!important;transform:rotate(-90deg)}
+ .x-game-card{left:50%!important;top:50%!important;width:160px!important;min-height:67px!important;grid-template-columns:38px 1fr!important;padding:9px!important;--wheel-y:0px!important;transform:translate(-50%,-50%)!important}.x-game-card[data-x-slot="-1"]{transform:translate(-143%,-50%) scale(.8)!important;opacity:.4!important}.x-game-card[data-x-slot="1"]{transform:translate(43%,-50%) scale(.8)!important;opacity:.4!important}.x-game-card[data-x-distance="2"]{visibility:hidden!important}.x-game-name{font-size:.77rem!important}
+ .x-product-stage{padding:14px!important;gap:11px!important;overflow:auto!important;display:flex!important;flex-direction:column!important;min-height:0!important}.x-stage-gamehead{flex-shrink:0;grid-template-columns:38px minmax(0,1fr)!important}.x-stage-gamecopy h2{font-size:1.1rem!important}.x-config-selection{font-size:.72rem!important;grid-column:1/-1!important;text-align:left!important}.x-input-fields{flex-shrink:0;grid-template-columns:1fr!important}.x-input-field input,.x-input-field select{font-size:16px!important}.x-package-list{overflow:visible!important;flex-shrink:0;grid-template-columns:repeat(2,minmax(0,1fr))!important}.x-package-select{padding:12px!important}.x-package-name{font-size:.77rem!important;-webkit-line-clamp:unset!important}.x-package-price{font-size:1rem!important}.x-package-cart{font-size:.65rem!important}.x-buy-dock{flex-shrink:0;grid-template-columns:1fr!important;position:sticky;bottom:-14px;background:#0a2035;padding:10px 0!important}.x-config-note{font-size:.58rem!important}
+}
+@media(max-width:600px){html.standalone .info-hub{inset:10px!important;max-height:none!important}html.standalone .store-app{min-height:100dvh}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.welcome-ticker-track{will-change:auto}.ticker-pause{display:none}}
+html.motion-off .ticker-pause{display:none}
+html.perf-lite .category-arena-card{box-shadow:inset 1px 1px #cff5ff20!important}
+
+/* Final interaction and compact viewport refinements. */
+.whatsapp-float{min-width:0!important}
+.x-cart-backdrop{z-index:70!important}.x-cart-drawer{z-index:71!important;visibility:hidden;pointer-events:none}.x-cart-drawer.open{visibility:visible;pointer-events:auto}
+html.standalone .x-cart-drawer,html.standalone .x-cart-backdrop{position:fixed!important}
+.info-hub-nav{overflow:auto;scrollbar-width:thin}
+@container(max-width:1100px){.whatsapp-float{width:57px!important}}
+@container(max-width:600px){.whatsapp-float{width:45px!important}.x-experience-grid{grid-template-rows:92px minmax(0,1fr)!important}.x-wheel-panel{grid-template-rows:1fr!important}.x-game-wheel{height:90px!important}.x-game-name{white-space:normal!important;font-size:.7rem!important;line-height:1.3}.x-game-card{width:156px!important}.x-experience-title{min-width:0}.x-experience-topbar{gap:8px}.x-experience-title b{font-size:.82rem!important}.x-experience-actions button{min-width:31px!important;width:31px!important}.x-game-wheel{touch-action:pan-y}}
+html[data-device="mobile"] .fs-command-header .header-profile{display:block!important;width:38px!important;min-width:38px!important}
+html[data-device="mobile"] .info-hub .info-hub-nav button{min-height:44px!important;min-width:max-content!important;padding:8px 12px!important}
+html[data-device="mobile"] .info-hub .info-hub-nav button b{font-size:.72rem!important}
+html[data-device="mobile"] .category-arena .arena-arrow{display:grid!important}
+
+/* Low-resource policy extends the existing perf-lite mode. Keep the art and
+   actions; discard expensive compositing and light effects first. */
+html.perf-lite .store-header,html.perf-lite .lab-panel,html.perf-lite .info-hub,
+html.perf-lite .x-product-stage,html.perf-lite .xarena-dock,
+html.perf-lite .x-cart-drawer,html.perf-lite .whatsapp-float{
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  filter:none!important;box-shadow:none!important
+}
+html.perf-lite .category-arena-card,html.perf-lite .product-card,
+html.perf-lite .x-package-card,html.perf-lite .x-game-card,
+html.perf-lite .pass-card,html.perf-lite .social-card{
+  filter:none!important;box-shadow:none!important;
+  transition:transform .18s ease,opacity .14s linear!important
+}
+html.perf-lite .category-card-grid,html.perf-lite .category-arena-floor{display:none!important}
+html.perf-lite .category-arena-card:before,html.perf-lite .category-arena-card:after{display:none!important}
+html.perf-lite .brand-button .ui-icon{filter:none}
+html.perf-lite .welcome-ticker-track{animation-duration:42s}
+html.page-hidden *,html.page-hidden *:before,html.page-hidden *:after{animation-play-state:paused!important}
+
+</style>
 </head>
 <body>
   <div class="lab-shell">
@@ -2496,11 +2676,11 @@ html.perf-lite .device-frame{
           </div>
           <header class="store-header fs-command-header">
             <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio de French Store">
-              <b>💎 French Store 💎</b>
+              <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><b>French Store</b><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg>
             </button>
 
             <button class="header-profile" type="button" data-nav-view="perfil" aria-label="Abrir perfil">
-              <span class="header-profile-avatar">●</span>
+              <span class="header-profile-avatar"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg></span>
               <span class="header-profile-copy">
                 <b id="headerRoleName">Hola, Visitante</b>
                 <small>Inicia sesión para más beneficios</small>
@@ -2508,30 +2688,23 @@ html.perf-lite .device-frame{
             </button>
 
             <button class="info-hub-button" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub">
-              <span class="info-hub-icon">⌘</span>
-              <span><small>FRENCH HUB</small><b>Centro de información</b></span>
+              <span class="info-hub-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg></span>
+              <span><small>REDES · AYUDA · POLÍTICAS</small><b>Centro de información</b></span>
               <i>＋</i>
             </button>
 
             <button class="header-search" type="button" data-open-search aria-label="Buscar en French Store">
-              <span>⌕</span><span class="header-search-copy">Buscar en French Store...</span>
+              <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg><span class="header-search-copy">Buscar en French Store...</span>
             </button>
 
             <div class="header-actions">
-              <button class="icon-button notification-button" type="button" data-account-action="Notificaciones" aria-label="Notificaciones">♢<i>1</i></button>
-              <button class="cart-button" type="button" data-nav-view="checkout" aria-label="Carrito">🛒 <span id="cartCount">2</span></button>
+              <button class="icon-button" type="button" data-nav-view="pedidos" aria-label="Mis pedidos" title="Mis pedidos"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5v11l-10 5-10-5V7Zm0 10 10-5M12 12 2 7m10 5v11M7 4l10 5v5"/></svg></button>
+              <button class="cart-button" type="button" data-x-cart aria-label="Carrito"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h11l3-10H6M9 10h10"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg> <span id="cartCount">0</span></button>
             </div>
           </header>
 
           <div class="welcome-ticker" aria-label="Mensajes de French Store">
-            <div class="welcome-ticker-track">
-              <span>Bienvenido a French Store</span><i>•</i>
-              <span>Disfruta tu estancia</span><i>•</i>
-              <span>Gracias por tu compra</span><i>•</i>
-              <span>Explora nuestras recargas, servicios y beneficios</span><i>•</i>
-              <span>Bienvenido a French Store</span><i>•</i>
-              <span>Disfruta tu estancia</span>
-            </div>
+            <div class="welcome-ticker-track"><div class="ticker-group"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>¿De vuelta? Nos alegra verte</span><i>✦</i><span>Gracias por elegirnos</span><i>✦</i></div><div class="ticker-group" aria-hidden="true"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>¿De vuelta? Nos alegra verte</span><i>✦</i><span>Gracias por elegirnos</span><i>✦</i></div></div><button class="ticker-pause" type="button" aria-label="Pausar bienvenida" aria-pressed="false">Ⅱ</button>
           </div>
 
           <div id="roleBanner" class="role-banner">Vista simulada: Visitante</div>
@@ -2540,9 +2713,9 @@ html.perf-lite .device-frame{
             <div class="home-intro reveal">
               <span class="eyebrow">FRENCH STORE · CENTRO DE ACCESO</span>
               <h1>Tu mundo digital, en un solo lugar.</h1>
-              <p>Desliza entre tus servicios y entra directamente al bloque que necesitas.</p>
+              <p>Recarga, conecta y disfruta. Elige tu próxima experiencia.</p>
             </div>
-            <section class="section category-arena-section reveal" aria-labelledby="categoryArenaTitle">
+            <section class="section category-arena-section reveal" aria-label="Explora nuestros servicios">
 
               <div class="category-arena">
                 <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
@@ -2638,11 +2811,11 @@ html.perf-lite .device-frame{
                 <article><span>Favoritos</span><strong>8</strong><small>locales</small></article>
                 <article><span>Wallet</span><strong>Bs 125</strong><small>simulado</small></article>
               </div>
-              <div class="account-menu">
+              <div class="account-menu"><button type="button" data-nav-view="wallet">Mi Wallet <span>→</span></button>
                 <button type="button" data-nav-view="pedidos">Mis pedidos <span>→</span></button>
                 <button type="button" data-account-action="Favoritos">Favoritos <span>→</span></button>
                 <button type="button" data-account-action="Notificaciones">Notificaciones <span>→</span></button>
-                <button type="button" data-account-action="Configuración">Configuración <span>→</span></button>
+                <button type="button" data-nav-view="ajustes">Configuración <span>→</span></button>
               </div>
             </div>
           </section>
@@ -2694,7 +2867,7 @@ html.perf-lite .device-frame{
           </section>
 
 
-          <section class="x-experience" id="xExperience" aria-hidden="true" aria-label="Selector de productos French Store">
+          <section class="x-experience" id="xExperience" inert aria-hidden="true" aria-label="Selector de productos French Store">
             <div class="x-orientation-gate" id="xOrientationGate" aria-hidden="true">
               <div class="x-orientation-card">
                 <div class="x-phone-rotate" aria-hidden="true">
@@ -2715,10 +2888,10 @@ html.perf-lite .device-frame{
                   <span id="xCategoryLabel">RECARGAS POR ID</span>
                   <b id="xGameBreadcrumb">Selecciona un juego</b>
                 </div>
-                <div class="x-experience-actions">
+                <div class="x-experience-actions"><button type="button" data-nav-view="perfil" aria-label="Abrir perfil"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg></button>
                   <button type="button" data-x-back aria-label="Volver a categorías">↩</button>
                   <button type="button" data-x-favorite aria-label="Agregar a favoritos">♡</button>
-                  <button type="button" data-x-cart aria-label="Abrir carrito">🛒 <span id="xCartCount">0</span></button>
+                  <button type="button" data-x-cart aria-label="Abrir carrito"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h11l3-10H6M9 10h10"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg> <span id="xCartCount">0</span></button>
                 </div>
               </header>
 
@@ -2755,8 +2928,11 @@ html.perf-lite .device-frame{
               </div>
             </div>
 
+
+          </section>
+
             <div class="x-cart-backdrop" id="xCartBackdrop" data-x-cart-close></div>
-            <aside class="x-cart-drawer" id="xCartDrawer" aria-hidden="true">
+            <aside class="x-cart-drawer" id="xCartDrawer" role="dialog" aria-modal="true" aria-label="Carrito de compras" inert aria-hidden="true">
               <div class="x-cart-head">
                 <div><span>FRENCH CART</span><b>Tu selección</b></div>
                 <button type="button" data-x-cart-close aria-label="Cerrar carrito">×</button>
@@ -2765,12 +2941,10 @@ html.perf-lite .device-frame{
               <div class="x-cart-total"><span>Total demo</span><b id="xCartTotal">Bs 0,00</b></div>
               <button class="x-cart-checkout" type="button" data-x-checkout>Continuar con un solo pago</button>
             </aside>
-          </section>
-
           <div class="info-hub-backdrop" id="infoHubBackdrop" data-info-close></div>
-          <section class="info-hub" id="infoHub" aria-hidden="true" aria-label="Centro de información">
+          <section class="info-hub" id="infoHub" role="dialog" aria-modal="true" aria-hidden="true" inert aria-label="Centro de información">
             <header class="info-hub-head">
-              <div class="info-hub-titlemark"><span>⌘</span></div>
+              <div class="info-hub-titlemark"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg></div>
               <div><span class="eyebrow">FRENCH STORE</span><h2>Centro de información</h2><p>Todo lo que necesitas saber, en un solo lugar.</p></div>
               <button type="button" data-info-close aria-label="Cerrar">×</button>
             </header>
@@ -2783,18 +2957,18 @@ html.perf-lite .device-frame{
                 <button type="button" data-info-panel="cookies"><span>◌</span><b>Cookies</b><i>›</i></button>
                 <button type="button" data-info-panel="support"><span>◈</span><b>Ayuda y soporte</b><i>›</i></button>
                 <button type="button" data-info-panel="buy"><span>🛒</span><b>Cómo comprar</b><i>›</i></button>
-                <div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
+                <button type="button" data-info-panel="delivery"><span>↗</span><b>Entregas y reembolsos</b><i>›</i></button><button type="button" data-info-panel="about"><span>◇</span><b>Acerca de French Store</b><i>›</i></button><div class="info-hub-signature"><strong>FRENCH STORE</strong><small>CONECTA · RECARGA · DISFRUTA</small></div>
               </nav>
 
               <div class="info-hub-content">
                 <section class="info-panel active" data-info-panel-view="social">
                   <div class="info-panel-head"><div><span class="eyebrow">REDES OFICIALES</span><h3>Nuestras redes oficiales</h3><p>Síguenos para novedades, promociones y atención.</p></div><span class="info-panel-symbol">ⓘ</span></div>
                   <div class="social-card-grid">
-                    <button class="social-card tiktok" type="button" data-info-action="TikTok"><span>♪</span><div><b>TikTok</b><small>Contenido exclusivo</small></div><i>Seguir →</i></button>
-                    <button class="social-card facebook" type="button" data-info-action="Facebook"><span>f</span><div><b>Facebook</b><small>Noticias y comunidad</small></div><i>Seguir →</i></button>
-                    <button class="social-card youtube" type="button" data-info-action="YouTube"><span>▶</span><div><b>YouTube</b><small>Guías y novedades</small></div><i>Suscribirse →</i></button>
-                    <button class="social-card whatsapp" type="button" data-info-action="WhatsApp"><span>◉</span><div><b>WhatsApp</b><small>Atención al cliente</small></div><i>Contactar →</i></button>
-                    <button class="social-card instagram" type="button" data-info-action="Instagram"><span>◎</span><div><b>Instagram</b><small>Promociones y sorteos</small></div><i>Seguir →</i></button>
+                    <a class="social-card tiktok" href="https://www.tiktok.com/@frenchstore" target="_blank" rel="noopener noreferrer"><span>♪</span><div><b>TikTok</b><small>Contenido exclusivo</small></div><i>Seguir →</i></a>
+                    <a class="social-card facebook" href="https://www.facebook.com/share/1LeZV8aqQ3/" target="_blank" rel="noopener noreferrer"><span>f</span><div><b>Facebook</b><small>Noticias y comunidad</small></div><i>Seguir →</i></a>
+                    <a class="social-card youtube" href="https://youtube.com/@frenchstore1" target="_blank" rel="noopener noreferrer"><span>▶</span><div><b>YouTube</b><small>Guías y novedades</small></div><i>Suscribirse →</i></a>
+                    <a class="social-card whatsapp" href="https://wa.me/59177057379" target="_blank" rel="noopener noreferrer"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><div><b>WhatsApp</b><small>Atención al cliente</small></div><i>Contactar →</i></a>
+                    <button class="social-card community" type="button" data-info-panel="support"><span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></span><div><b>Ayuda y soporte</b><small>Estamos para ayudarte</small></div><i>Ver ayuda →</i></button>
                   </div>
                   <div class="info-important">
                     <span>Información importante</span>
@@ -2806,10 +2980,10 @@ html.perf-lite .device-frame{
                   </div>
                 </section>
 
-                <section class="info-panel" data-info-panel-view="terms"><span class="eyebrow">LEGAL</span><h3>Términos y condiciones</h3><p>Consulta las reglas de uso, compra, entrega y responsabilidades de French Store.</p><button type="button" data-info-action="Términos y condiciones">Abrir términos →</button></section>
-                <section class="info-panel" data-info-panel-view="privacy"><span class="eyebrow">PRIVACIDAD</span><h3>Política de privacidad</h3><p>Información sobre datos, cuentas, seguridad y tratamiento de información personal.</p><button type="button" data-info-action="Política de privacidad">Abrir política →</button></section>
-                <section class="info-panel" data-info-panel-view="cookies"><span class="eyebrow">PREFERENCIAS</span><h3>Cookies</h3><p>Revisa las preferencias y tecnologías utilizadas para mejorar tu experiencia.</p><button type="button" data-info-action="Cookies">Ver cookies →</button></section>
-                <section class="info-panel" data-info-panel-view="support"><span class="eyebrow">SOPORTE</span><h3>Ayuda y soporte</h3><p>Encuentra asistencia para pedidos, garantías, pagos y dudas frecuentes.</p><button type="button" data-info-action="Soporte">Contactar soporte →</button></section>
+                <section class="info-panel" data-info-panel-view="delivery"><span class="eyebrow">TUS COMPRAS</span><h3>Entregas y reembolsos</h3><p>Consulta los plazos, las condiciones de entrega y las opciones de atención para tu compra.</p><a class="info-link" href="https://frenchstorebo.com/v2/refunds.html" target="_blank" rel="noopener noreferrer">Consultar condiciones →</a></section><section class="info-panel" data-info-panel-view="about"><span class="eyebrow">FRENCH STORE</span><h3>Tu mundo digital, más cerca.</h3><p>Conoce French Store y nuestros servicios de recargas, entretenimiento y creación web.</p><a class="info-link" href="https://frenchstorebo.com/v2/about.html" target="_blank" rel="noopener noreferrer">Conocer la tienda →</a></section><section class="info-panel" data-info-panel-view="terms"><span class="eyebrow">LEGAL</span><h3>Términos y condiciones</h3><p>Consulta las reglas de uso, compra, entrega y responsabilidades de French Store.</p><a class="info-link" href="https://frenchstorebo.com/v2/terms.html" target="_blank" rel="noopener noreferrer">Abrir términos →</a></section>
+                <section class="info-panel" data-info-panel-view="privacy"><span class="eyebrow">PRIVACIDAD</span><h3>Política de privacidad</h3><p>Información sobre datos, cuentas, seguridad y tratamiento de información personal.</p><a class="info-link" href="https://frenchstorebo.com/v2/privacy.html" target="_blank" rel="noopener noreferrer">Abrir política →</a></section>
+                <section class="info-panel" data-info-panel-view="cookies"><span class="eyebrow">PREFERENCIAS</span><h3>Cookies</h3><p>Revisa las preferencias y tecnologías utilizadas para mejorar tu experiencia.</p><a class="info-link" href="https://frenchstorebo.com/v2/cookies.html" target="_blank" rel="noopener noreferrer">Ver cookies →</a></section>
+                <section class="info-panel" data-info-panel-view="support"><span class="eyebrow">SOPORTE</span><h3>Ayuda y soporte</h3><p>Encuentra asistencia para pedidos, garantías, pagos y dudas frecuentes.</p><button type="button" data-info-action="WhatsApp">Contactar soporte →</button></section>
                 <section class="info-panel" data-info-panel-view="buy"><span class="eyebrow">GUÍA</span><h3>Cómo comprar</h3><p>Elige una categoría, selecciona el producto, completa los datos necesarios y agrégalo al carrito.</p><button type="button" data-info-close>Volver a la tienda →</button></section>
               </div>
 
@@ -2822,12 +2996,12 @@ html.perf-lite .device-frame{
             </div>
           </section>
 
-          <nav class="xarena-dock" aria-label="Accesos principales">
-            <button type="button" data-nav-view="pases"><span>◇</span><small>Pases</small></button>
-            <button type="button" data-nav-view="ajustes"><span>⚙</span><small>Ajustes</small></button>
+          <nav class="xarena-dock" aria-label="Accesos principales"><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>EXPLORA FRENCH STORE</small><b>Centro de información</b></span><i>⌃</i></button>
+            <button type="button" data-nav-view="pases"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><small>Pases</small></button>
+            <button type="button" data-nav-view="ajustes"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 3 1-2h4l1 2 3 2 2 1 2 4-1 2 1 2-2 4-2 1-3 2-1 2h-4l-1-2-3-2-2-1-2-4 1-2-1-2 2-4 2-1Z"/><circle cx="12" cy="12" r="4"/></svg><small>Ajustes</small></button>
           </nav>
           <button class="whatsapp-float" type="button" data-info-action="WhatsApp" aria-label="Contactar por WhatsApp">
-            <span>◉</span><b>¿Necesitas ayuda?</b><small>Escríbenos por WhatsApp</small>
+            <span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><b>¿Necesitas ayuda?</b><small>Escríbenos por WhatsApp</small>
           </button>
         </div>
       </div>
@@ -2867,6 +3041,8 @@ window.FS_LAB_DATA = Object.freeze({
   webPlans: [{"id":"web-99","category":"Venta de Páginas","game":"Landing Esencial","package":"1 página · hasta 5 secciones","priceLabel":"USD 99","description":"Diseño responsive, WhatsApp, redes, SEO técnico básico, SSL y publicación."},{"id":"web-299","category":"Venta de Páginas","game":"Web Negocio","package":"Hasta 5 páginas/secciones · catálogo base","priceLabel":"USD 299","description":"Catálogo de hasta 30 productos o servicios, WhatsApp, formulario, SEO básico y publicación."},{"id":"web-799","category":"Venta de Páginas","game":"Sistema Completo","package":"Usuarios · catálogo · pedidos · administración","priceLabel":"USD 799","description":"Sistema a medida con base de datos, PWA, APIs y automatizaciones según alcance."}]
 });
 
+</script>
+  <script>
 (() => {
   "use strict";
 
@@ -2882,6 +3058,11 @@ window.FS_LAB_DATA = Object.freeze({
   const all = (s, root = document) => [...root.querySelectorAll(s)];
   const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", pases: "Pases", ajustes: "Ajustes", producto: "Producto", checkout: "Checkout", admin: "Admin" };
   const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
+  const standalone = new URLSearchParams(location.search).has('standalone');
+  document.documentElement.classList.toggle('standalone', standalone);
+  let infoReturnFocus = null;
+  let cartReturnFocus = null;
+  let experienceReturnFocus = null;
   let currentView = "inicio";
   let activeFilter = "Todos";
   let toastTimer;
@@ -2906,6 +3087,8 @@ window.FS_LAB_DATA = Object.freeze({
     "paginas": "Venta de Páginas"
   };
   const prefersLitePerformance = Boolean(
+    new URLSearchParams(location.search).get("performance") === "lite" ||
+    navigator.connection?.saveData ||
     window.matchMedia?.("(max-width: 700px)")?.matches ||
     (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
@@ -2965,17 +3148,29 @@ window.FS_LAB_DATA = Object.freeze({
     toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
   }
 
+  function syncOverlayInert(){
+    const infoOpen=$('#infoHub')?.classList.contains('open');
+    const cartOpen=$('#xCartDrawer')?.classList.contains('open');
+    const experienceOpen=$('#xExperience')?.classList.contains('open');
+    all('.store-header,.welcome-ticker,.store-view,.xarena-dock,.whatsapp-float').forEach(el=>el.inert=Boolean(infoOpen||cartOpen||experienceOpen));
+    if ($('#xExperience')) $('#xExperience').inert=Boolean(!experienceOpen||infoOpen||cartOpen);
+  }
+
   function setInfoHub(open){
     const hub = $("#infoHub");
     const backdrop = $("#infoHubBackdrop");
-    const toggle = $("[data-info-toggle]");
+    const toggles = all("[data-info-toggle]");
     const isOpen = Boolean(open);
+    if (isOpen) infoReturnFocus = document.activeElement;
+    if (hub) hub.inert = !isOpen;
     hub?.classList.toggle("open", isOpen);
     backdrop?.classList.toggle("open", isOpen);
     hub?.setAttribute("aria-hidden", isOpen ? "false" : "true");
-    toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    toggles.forEach(toggle => toggle.setAttribute("aria-expanded", isOpen ? "true" : "false"));
     document.body.classList.toggle("info-center-open", isOpen);
-    if (isOpen) setInfoPanel("social");
+    syncOverlayInert();
+    if (isOpen) { setInfoPanel("social"); hub?.querySelector('[data-info-close]')?.focus({preventScroll:true}); }
+    else if (infoReturnFocus) { infoReturnFocus.focus({preventScroll:true}); infoReturnFocus=null; }
     scheduleDeviceScale();
   }
 
@@ -3000,12 +3195,13 @@ window.FS_LAB_DATA = Object.freeze({
     return diff;
   }
 
+  const embeddedArt={"recargas-id":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgMzAwIiBmaWxsPSJub25lIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNoZWxsIiB4MT0iMTMwIiB5MT0iNDAiIHgyPSIzMjUiIHkyPSIyNjAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDg3YmJhIi8+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iIzE0MmI1OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA0MGYyOSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJlZGdlIj48c3RvcCBzdG9wLWNvbG9yPSIjMjg3M2U4Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iIzM1ZThmZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2U0ZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJnbGFzcyIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjMzVlOGZmIiBzdG9wLW9wYWNpdHk9Ii4yNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzI4NzNlOCIgc3RvcC1vcGFjaXR5PSIuMDMiLz48L2xpbmVhckdyYWRpZW50PjxyYWRpYWxHcmFkaWVudCBpZD0iaGFsbyI+PHN0b3Agc3RvcC1jb2xvcj0iIzM1ZThmZiIgc3RvcC1vcGFjaXR5PSIuMjMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzNWU4ZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxlbGxpcHNlIGN4PSIyNDAiIGN5PSIxNTEiIHJ4PSIyMTAiIHJ5PSIxNDQiIGZpbGw9InVybCgjaGFsbykiLz48ZWxsaXBzZSBjeD0iMjQwIiBjeT0iMjU4IiByeD0iMTUwIiByeT0iMTMiIGZpbGw9IiMwMjA5MWMiIG9wYWNpdHk9Ii42Ii8+PGVsbGlwc2UgY3g9IjI0MCIgY3k9IjI1MiIgcng9IjE2NiIgcnk9IjE3IiBzdHJva2U9IiMzNWU4ZmYiIHN0cm9rZS1vcGFjaXR5PSIuNCIvPjxwYXRoIGQ9Im0zOCAyMzcgNjItMjhtMjgwIDAgNjIgMjhNNzAgNjhoMzBtMjgwIDBoMzAiIHN0cm9rZT0iIzM1ZThmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4yNSIvPjxnPjxwYXRoIGQ9Ik0xNjQgODZjLTMxIDEtNDUgMjUtNTQgNTRsLTE3IDYzYy05IDM2IDE4IDUyIDQwIDI1bDMxLTM0aDE1MmwzMSAzNGMyMiAyNyA0OSAxMSA0MC0yNWwtMTctNjNjLTktMjktMjMtNTMtNTQtNTRaIiBmaWxsPSJ1cmwoI3NoZWxsKSIgc3Ryb2tlPSJ1cmwoI2VkZ2UpIiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNMTY0IDkxYy0yNiAxLTQwIDIzLTQ5IDQ5bTIwMS00OWMyNiAxIDQwIDIzIDQ5IDQ5IiBzdHJva2U9IiNkOWZmZmYiIHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHJlY3QgeD0iMTk5IiB5PSI5MyIgd2lkdGg9IjgzIiBoZWlnaHQ9IjU4IiByeD0iMTIiIGZpbGw9IiMwMzE3MmMiIHN0cm9rZT0iIzRkYTVkNyIvPjxyZWN0IHg9IjIwNSIgeT0iOTgiIHdpZHRoPSI3MSIgaGVpZ2h0PSI0NyIgcng9IjgiIGZpbGw9InVybCgjZ2xhc3MpIi8+PHBhdGggZD0iTTE1MyAxMjB2MzltLTIwLTIwaDQwIiBzdHJva2U9IiMwMjA5MTgiIHN0cm9rZS13aWR0aD0iMTUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNTMgMTIzdjMybS0xNi0xNmgzMiIgc3Ryb2tlPSIjNjliZGQ4IiBzdHJva2Utd2lkdGg9IjMiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIxNzciIHI9IjIyIiBmaWxsPSIjMDgxNjI2IiBzdHJva2U9IiM0YWM0ZTUiIHN0cm9rZS13aWR0aD0iMiIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE3NyIgcj0iMTQiIGZpbGw9IiMxNTJiNDkiIHN0cm9rZT0iIzQ4ODI5OCIvPjxjaXJjbGUgY3g9IjI4NyIgY3k9IjE3NyIgcj0iMjIiIGZpbGw9IiMwODE2MjYiIHN0cm9rZT0iIzRhYzRlNSIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMjg3IiBjeT0iMTc3IiByPSIxNCIgZmlsbD0iIzE1MmI0OSIgc3Ryb2tlPSIjNDg4Mjk4Ii8+PGcgZmlsbD0iIzE0MmM0YyIgc3Ryb2tlPSIjNjNlNmZmIiBzdHJva2Utd2lkdGg9IjIiPjxjaXJjbGUgY3g9IjMyNiIgY3k9IjEyMCIgcj0iOSIvPjxjaXJjbGUgY3g9IjMwOSIgY3k9IjEzOCIgcj0iOSIvPjxjaXJjbGUgY3g9IjM0MyIgY3k9IjEzOCIgcj0iOSIvPjxjaXJjbGUgY3g9IjMyNiIgY3k9IjE1NiIgcj0iOSIvPjwvZz48cGF0aCBkPSJtMjM3IDExMy0xMCAxMiAxMyAxMiAxNC0xMi0xMS0xMloiIHN0cm9rZT0iI2EwZjhmZiIvPjxwYXRoIGQ9Im0yMTUgNTcgNS0yMCAxOSAxMCAxOS0xMCA1IDIwWiIgZmlsbD0idXJsKCNnbGFzcykiIHN0cm9rZT0iIzViZTlmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTIxNCAyMDdoNTAiIHN0cm9rZT0iIzQ5ZGRmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9nPjxnIGZpbGw9IiMzNWU4ZmYiPjxjaXJjbGUgY3g9Ijc1IiBjeT0iMTQwIiByPSIyIi8+PGNpcmNsZSBjeD0iMzg4IiBjeT0iNzIiIHI9IjIiLz48Y2lyY2xlIGN4PSIzNTkiIGN5PSIyNDciIHI9IjIiLz48cGF0aCBkPSJtMTEzIDUxIDIgNSA1IDItNSAyLTIgNS0yLTUtNS0yIDUtMlptMjcwIDEzOSAyIDUgNSAyLTUgMi0yIDUtMi01LTUtMiA1LTJaIi8+PC9nPjwvc3ZnPg==","recargas-cuenta":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgMzAwIiBmaWxsPSJub25lIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNoZWxsIiB4MT0iMTMwIiB5MT0iNDAiIHgyPSIzMjUiIHkyPSIyNjAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDg3YmJhIi8+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iIzE0MmI1OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA0MGYyOSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJlZGdlIj48c3RvcCBzdG9wLWNvbG9yPSIjOGQ2NGZmIi8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iIzkyYzdmZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2U0ZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJnbGFzcyIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjOTJjN2ZmIiBzdG9wLW9wYWNpdHk9Ii4yNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzhkNjRmZiIgc3RvcC1vcGFjaXR5PSIuMDMiLz48L2xpbmVhckdyYWRpZW50PjxyYWRpYWxHcmFkaWVudCBpZD0iaGFsbyI+PHN0b3Agc3RvcC1jb2xvcj0iIzkyYzdmZiIgc3RvcC1vcGFjaXR5PSIuMjMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM5MmM3ZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxlbGxpcHNlIGN4PSIyNDAiIGN5PSIxNTEiIHJ4PSIyMTAiIHJ5PSIxNDQiIGZpbGw9InVybCgjaGFsbykiLz48ZWxsaXBzZSBjeD0iMjQwIiBjeT0iMjU4IiByeD0iMTUwIiByeT0iMTMiIGZpbGw9IiMwMjA5MWMiIG9wYWNpdHk9Ii42Ii8+PGVsbGlwc2UgY3g9IjI0MCIgY3k9IjI1MiIgcng9IjE2NiIgcnk9IjE3IiBzdHJva2U9IiM5MmM3ZmYiIHN0cm9rZS1vcGFjaXR5PSIuNCIvPjxwYXRoIGQ9Im0zOCAyMzcgNjItMjhtMjgwIDAgNjIgMjhNNzAgNjhoMzBtMjgwIDBoMzAiIHN0cm9rZT0iIzkyYzdmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4yNSIvPjxnPjxjaXJjbGUgY3g9IjI0MiIgY3k9IjE0NSIgcj0iOTQiIGZpbGw9InVybCgjc2hlbGwpIiBzdHJva2U9InVybCgjZWRnZSkiIHN0cm9rZS13aWR0aD0iMyIvPjxjaXJjbGUgY3g9IjI0MiIgY3k9IjE0NSIgcj0iODUiIHN0cm9rZT0iIzc1OGJkZCIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+PGNpcmNsZSBjeD0iMjQyIiBjeT0iMTE4IiByPSIyOSIgZmlsbD0idXJsKCNlZGdlKSIvPjxwYXRoIGQ9Ik0xOTEgMTkzdi04YTUxIDQxIDAgMCAxIDEwMiAwdjhaIiBmaWxsPSJ1cmwoI2VkZ2UpIi8+PGNpcmNsZSBjeD0iMzA3IiBjeT0iMjA4IiByPSIyNyIgZmlsbD0iIzEwMjI0MSIgc3Ryb2tlPSIjNjZlN2ZmIiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMzA3IDE5NHYyOG0tMTQtMTRoMjgiIHN0cm9rZT0iIzhjZWFmZiIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTIgMTA2IDE0MSkiPjxyZWN0IHg9IjczIiB5PSI5NCIgd2lkdGg9IjY0IiBoZWlnaHQ9Ijg3IiByeD0iMTAiIGZpbGw9InVybCgjZ2xhc3MpIiBzdHJva2U9IiM4YTkxZWYiLz48Y2lyY2xlIGN4PSIxMDUiIGN5PSIxMjMiIHI9IjEyIiBmaWxsPSIjODVhMWVmIi8+PHBhdGggZD0iTTg2IDE1M2ExOSAxOSAwIDAgMSAzOCAwbS0zNiAxMmgzMSIgc3Ryb2tlPSIjODlhM2VmIiBzdHJva2Utd2lkdGg9IjQiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoMTIgMzc3IDE0NykiPjxyZWN0IHg9IjM0OCIgeT0iMTEzIiB3aWR0aD0iNTciIGhlaWdodD0iNzYiIHJ4PSIxMCIgZmlsbD0idXJsKCNnbGFzcykiIHN0cm9rZT0iIzZlZGVlZCIvPjxjaXJjbGUgY3g9IjM3NiIgY3k9IjEzNiIgcj0iMTAiIGZpbGw9IiM2NmNjZWQiLz48cGF0aCBkPSJNMzYxIDE2NmExNSAxNSAwIDAgMSAzMCAwIiBzdHJva2U9IiM2NmNjZWQiIHN0cm9rZS13aWR0aD0iNCIvPjwvZz48L2c+PGcgZmlsbD0iIzkyYzdmZiI+PGNpcmNsZSBjeD0iNzUiIGN5PSIxNDAiIHI9IjIiLz48Y2lyY2xlIGN4PSIzODgiIGN5PSI3MiIgcj0iMiIvPjxjaXJjbGUgY3g9IjM1OSIgY3k9IjI0NyIgcj0iMiIvPjxwYXRoIGQ9Im0xMTMgNTEgMiA1IDUgMi01IDItMiA1LTItNS01LTIgNS0yWm0yNzAgMTM5IDIgNSA1IDItNSAyLTIgNS0yLTUtNS0yIDUtMloiLz48L2c+PC9zdmc+","giftcards":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgMzAwIiBmaWxsPSJub25lIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNoZWxsIiB4MT0iMTMwIiB5MT0iNDAiIHgyPSIzMjUiIHkyPSIyNjAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDg3YmJhIi8+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iIzE0MmI1OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA0MGYyOSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJlZGdlIj48c3RvcCBzdG9wLWNvbG9yPSIjODY2MGZmIi8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI2M3YTRmZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2U0ZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJnbGFzcyIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjYzdhNGZmIiBzdG9wLW9wYWNpdHk9Ii4yNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzg2NjBmZiIgc3RvcC1vcGFjaXR5PSIuMDMiLz48L2xpbmVhckdyYWRpZW50PjxyYWRpYWxHcmFkaWVudCBpZD0iaGFsbyI+PHN0b3Agc3RvcC1jb2xvcj0iI2M3YTRmZiIgc3RvcC1vcGFjaXR5PSIuMjMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNjN2E0ZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxlbGxpcHNlIGN4PSIyNDAiIGN5PSIxNTEiIHJ4PSIyMTAiIHJ5PSIxNDQiIGZpbGw9InVybCgjaGFsbykiLz48ZWxsaXBzZSBjeD0iMjQwIiBjeT0iMjU4IiByeD0iMTUwIiByeT0iMTMiIGZpbGw9IiMwMjA5MWMiIG9wYWNpdHk9Ii42Ii8+PGVsbGlwc2UgY3g9IjI0MCIgY3k9IjI1MiIgcng9IjE2NiIgcnk9IjE3IiBzdHJva2U9IiNjN2E0ZmYiIHN0cm9rZS1vcGFjaXR5PSIuNCIvPjxwYXRoIGQ9Im0zOCAyMzcgNjItMjhtMjgwIDAgNjIgMjhNNzAgNjhoMzBtMjgwIDBoMzAiIHN0cm9rZT0iI2M3YTRmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4yNSIvPjxnPjxnIHRyYW5zZm9ybT0icm90YXRlKC0xMiAyMzkgMTUwKSI+PHJlY3QgeD0iMTE2IiB5PSI2MCIgd2lkdGg9IjI1MyIgaGVpZ2h0PSIxNTkiIHJ4PSIxNyIgZmlsbD0idXJsKCNzaGVsbCkiIHN0cm9rZT0idXJsKCNlZGdlKSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHJlY3QgeD0iMTMwIiB5PSI3NSIgd2lkdGg9IjIyNCIgaGVpZ2h0PSIxMjkiIHJ4PSIxMCIgZmlsbD0idXJsKCNnbGFzcykiLz48cGF0aCBkPSJNMjM5IDYxdjE1N00xMTcgMTI3aDI1MSIgc3Ryb2tlPSIjYjNhMGZmIiBzdHJva2Utd2lkdGg9IjEyIi8+PHBhdGggZD0iTTIzOSAxMjVjLTY4LTktNzMtNjMtMzUtNTEgMjAgNyAyNyAzMyAzNSA1MVptMCAwYzY4LTkgNzMtNjMgMzUtNTEtMjAgNy0yNyAzMy0zNSA1MVoiIGZpbGw9InVybCgjZ2xhc3MpIiBzdHJva2U9IiNkMmJjZmYiIHN0cm9rZS13aWR0aD0iNCIvPjxwYXRoIGQ9Ik0xNDkgMTgwaDU2bTgxIDBoNDciIHN0cm9rZT0iIzc3ODZjMiIgc3Ryb2tlLXdpZHRoPSI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L2c+PC9nPjxnIGZpbGw9IiNjN2E0ZmYiPjxjaXJjbGUgY3g9Ijc1IiBjeT0iMTQwIiByPSIyIi8+PGNpcmNsZSBjeD0iMzg4IiBjeT0iNzIiIHI9IjIiLz48Y2lyY2xlIGN4PSIzNTkiIGN5PSIyNDciIHI9IjIiLz48cGF0aCBkPSJtMTEzIDUxIDIgNSA1IDItNSAyLTIgNS0yLTUtNS0yIDUtMlptMjcwIDEzOSAyIDUgNSAyLTUgMi0yIDUtMi01LTUtMiA1LTJaIi8+PC9nPjwvc3ZnPg==","streaming":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgMzAwIiBmaWxsPSJub25lIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNoZWxsIiB4MT0iMTMwIiB5MT0iNDAiIHgyPSIzMjUiIHkyPSIyNjAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDg3YmJhIi8+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iIzE0MmI1OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA0MGYyOSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJlZGdlIj48c3RvcCBzdG9wLWNvbG9yPSIjMWY5ZWFlIi8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iIzYzZjJkNCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2U0ZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJnbGFzcyIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjNjNmMmQ0IiBzdG9wLW9wYWNpdHk9Ii4yNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFmOWVhZSIgc3RvcC1vcGFjaXR5PSIuMDMiLz48L2xpbmVhckdyYWRpZW50PjxyYWRpYWxHcmFkaWVudCBpZD0iaGFsbyI+PHN0b3Agc3RvcC1jb2xvcj0iIzYzZjJkNCIgc3RvcC1vcGFjaXR5PSIuMjMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2M2YyZDQiIHN0b3Atb3BhY2l0eT0iMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxlbGxpcHNlIGN4PSIyNDAiIGN5PSIxNTEiIHJ4PSIyMTAiIHJ5PSIxNDQiIGZpbGw9InVybCgjaGFsbykiLz48ZWxsaXBzZSBjeD0iMjQwIiBjeT0iMjU4IiByeD0iMTUwIiByeT0iMTMiIGZpbGw9IiMwMjA5MWMiIG9wYWNpdHk9Ii42Ii8+PGVsbGlwc2UgY3g9IjI0MCIgY3k9IjI1MiIgcng9IjE2NiIgcnk9IjE3IiBzdHJva2U9IiM2M2YyZDQiIHN0cm9rZS1vcGFjaXR5PSIuNCIvPjxwYXRoIGQ9Im0zOCAyMzcgNjItMjhtMjgwIDAgNjIgMjhNNzAgNjhoMzBtMjgwIDBoMzAiIHN0cm9rZT0iIzYzZjJkNCIgc3Ryb2tlLW9wYWNpdHk9Ii4yNSIvPjxnPjxyZWN0IHg9Ijk4IiB5PSI1NiIgd2lkdGg9IjI4NyIgaGVpZ2h0PSIxNzYiIHJ4PSIxOCIgZmlsbD0idXJsKCNzaGVsbCkiIHN0cm9rZT0idXJsKCNlZGdlKSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHJlY3QgeD0iMTEwIiB5PSI2OCIgd2lkdGg9IjI2MyIgaGVpZ2h0PSIxNDgiIHJ4PSI5IiBmaWxsPSJ1cmwoI2dsYXNzKSIvPjxjaXJjbGUgY3g9IjI0MSIgY3k9IjE0MSIgcj0iNDQiIGZpbGw9IiMwNzI0MzkiIHN0cm9rZT0iIzZmZWFkNSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0ibTIzMCAxMTcgMzQgMjQtMzQgMjRaIiBmaWxsPSJ1cmwoI2VkZ2UpIi8+PHBhdGggZD0iTTIyMCAyMzJ2MTZoLTQ0bTg0LTE2djE2aDQ0IiBzdHJva2U9IiM1NmJhY2EiIHN0cm9rZS13aWR0aD0iNSIvPjxwYXRoIGQ9Ik0xNDQgMTA0di04bTAgNTJ2LThtMTk0LTM2di04bTAgNTJ2LTgiIHN0cm9rZT0iIzU3ZGZkMCIgc3Ryb2tlLXdpZHRoPSIxMiIvPjxwYXRoIGQ9Ik0xMzEgMTk1aDIxOSIgc3Ryb2tlPSIjMjE0ZjYyIiBzdHJva2Utd2lkdGg9IjMiLz48L2c+PGcgZmlsbD0iIzYzZjJkNCI+PGNpcmNsZSBjeD0iNzUiIGN5PSIxNDAiIHI9IjIiLz48Y2lyY2xlIGN4PSIzODgiIGN5PSI3MiIgcj0iMiIvPjxjaXJjbGUgY3g9IjM1OSIgY3k9IjI0NyIgcj0iMiIvPjxwYXRoIGQ9Im0xMTMgNTEgMiA1IDUgMi01IDItMiA1LTItNS01LTIgNS0yWm0yNzAgMTM5IDIgNSA1IDItNSAyLTIgNS0yLTUtNS0yIDUtMloiLz48L2c+PC9zdmc+","cuentas":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgMzAwIiBmaWxsPSJub25lIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNoZWxsIiB4MT0iMTMwIiB5MT0iNDAiIHgyPSIzMjUiIHkyPSIyNjAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDg3YmJhIi8+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iIzE0MmI1OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA0MGYyOSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJlZGdlIj48c3RvcCBzdG9wLWNvbG9yPSIjM2Q3N2QwIi8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iIzc5ZDVmZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2U0ZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJnbGFzcyIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjNzlkNWZmIiBzdG9wLW9wYWNpdHk9Ii4yNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzNkNzdkMCIgc3RvcC1vcGFjaXR5PSIuMDMiLz48L2xpbmVhckdyYWRpZW50PjxyYWRpYWxHcmFkaWVudCBpZD0iaGFsbyI+PHN0b3Agc3RvcC1jb2xvcj0iIzc5ZDVmZiIgc3RvcC1vcGFjaXR5PSIuMjMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3OWQ1ZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxlbGxpcHNlIGN4PSIyNDAiIGN5PSIxNTEiIHJ4PSIyMTAiIHJ5PSIxNDQiIGZpbGw9InVybCgjaGFsbykiLz48ZWxsaXBzZSBjeD0iMjQwIiBjeT0iMjU4IiByeD0iMTUwIiByeT0iMTMiIGZpbGw9IiMwMjA5MWMiIG9wYWNpdHk9Ii42Ii8+PGVsbGlwc2UgY3g9IjI0MCIgY3k9IjI1MiIgcng9IjE2NiIgcnk9IjE3IiBzdHJva2U9IiM3OWQ1ZmYiIHN0cm9rZS1vcGFjaXR5PSIuNCIvPjxwYXRoIGQ9Im0zOCAyMzcgNjItMjhtMjgwIDAgNjIgMjhNNzAgNjhoMzBtMjgwIDBoMzAiIHN0cm9rZT0iIzc5ZDVmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4yNSIvPjxnPjxnIHRyYW5zZm9ybT0icm90YXRlKC03IDI0MCAxNTApIj48cmVjdCB4PSIxMTciIHk9IjU1IiB3aWR0aD0iMjUxIiBoZWlnaHQ9IjE3NCIgcng9IjIwIiBmaWxsPSJ1cmwoI3NoZWxsKSIgc3Ryb2tlPSJ1cmwoI2VkZ2UpIiBzdHJva2Utd2lkdGg9IjMiLz48cmVjdCB4PSIxMzAiIHk9IjY5IiB3aWR0aD0iMjI2IiBoZWlnaHQ9IjE0NiIgcng9IjEyIiBmaWxsPSJ1cmwoI2dsYXNzKSIvPjxjaXJjbGUgY3g9IjE4NCIgY3k9IjEyMiIgcj0iMjMiIGZpbGw9InVybCgjZWRnZSkiLz48cGF0aCBkPSJNMTUxIDE4MHYtNmEzMyAzMCAwIDAgMSA2NiAwdjZaIiBmaWxsPSJ1cmwoI2VkZ2UpIi8+PHBhdGggZD0iTTI0NiAxMDdoODBtLTgwIDIwaDYwbS02MCAyMGg3MiIgc3Ryb2tlPSIjNjU5N2M4IiBzdHJva2Utd2lkdGg9IjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0yNzQgMTg0aDQ2IiBzdHJva2U9IiM3OGRmZmYiIHN0cm9rZS13aWR0aD0iNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjxwYXRoIGQ9Im0zMzAgMTg1IDM0LTEzIDM0IDEzdjI5Yy0yIDE5LTE4IDMxLTM0IDM3LTE2LTYtMzItMTgtMzQtMzdaIiBmaWxsPSIjMGEyMzQwIiBzdHJva2U9IiM3YWRmZmYiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Im0zNDcgMjEyIDEyIDEyIDIyLTI3IiBzdHJva2U9IiM3OWY5ZTciIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjxnIGZpbGw9IiM3OWQ1ZmYiPjxjaXJjbGUgY3g9Ijc1IiBjeT0iMTQwIiByPSIyIi8+PGNpcmNsZSBjeD0iMzg4IiBjeT0iNzIiIHI9IjIiLz48Y2lyY2xlIGN4PSIzNTkiIGN5PSIyNDciIHI9IjIiLz48cGF0aCBkPSJtMTEzIDUxIDIgNSA1IDItNSAyLTIgNS0yLTUtNS0yIDUtMlptMjcwIDEzOSAyIDUgNSAyLTUgMi0yIDUtMi01LTUtMiA1LTJaIi8+PC9nPjwvc3ZnPg==","paginas":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgMzAwIiBmaWxsPSJub25lIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNoZWxsIiB4MT0iMTMwIiB5MT0iNDAiIHgyPSIzMjUiIHkyPSIyNjAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDg3YmJhIi8+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iIzE0MmI1OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA0MGYyOSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJlZGdlIj48c3RvcCBzdG9wLWNvbG9yPSIjNTQ2ZmZmIi8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI2IyOWNmZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2U0ZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJnbGFzcyIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjYjI5Y2ZmIiBzdG9wLW9wYWNpdHk9Ii4yNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzU0NmZmZiIgc3RvcC1vcGFjaXR5PSIuMDMiLz48L2xpbmVhckdyYWRpZW50PjxyYWRpYWxHcmFkaWVudCBpZD0iaGFsbyI+PHN0b3Agc3RvcC1jb2xvcj0iI2IyOWNmZiIgc3RvcC1vcGFjaXR5PSIuMjMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNiMjljZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxlbGxpcHNlIGN4PSIyNDAiIGN5PSIxNTEiIHJ4PSIyMTAiIHJ5PSIxNDQiIGZpbGw9InVybCgjaGFsbykiLz48ZWxsaXBzZSBjeD0iMjQwIiBjeT0iMjU4IiByeD0iMTUwIiByeT0iMTMiIGZpbGw9IiMwMjA5MWMiIG9wYWNpdHk9Ii42Ii8+PGVsbGlwc2UgY3g9IjI0MCIgY3k9IjI1MiIgcng9IjE2NiIgcnk9IjE3IiBzdHJva2U9IiNiMjljZmYiIHN0cm9rZS1vcGFjaXR5PSIuNCIvPjxwYXRoIGQ9Im0zOCAyMzcgNjItMjhtMjgwIDAgNjIgMjhNNzAgNjhoMzBtMjgwIDBoMzAiIHN0cm9rZT0iI2IyOWNmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4yNSIvPjxnPjxnIHRyYW5zZm9ybT0icm90YXRlKC03IDI0MCAxNTApIj48cmVjdCB4PSIxMjEiIHk9IjUyIiB3aWR0aD0iMjQ5IiBoZWlnaHQ9IjE2MiIgcng9IjEyIiBmaWxsPSJ1cmwoI3NoZWxsKSIgc3Ryb2tlPSJ1cmwoI2VkZ2UpIiBzdHJva2Utd2lkdGg9IjMiLz48cmVjdCB4PSIxMzEiIHk9IjYzIiB3aWR0aD0iMjI5IiBoZWlnaHQ9IjE0MCIgcng9IjUiIGZpbGw9IiMwNjE0MmMiIHN0cm9rZT0iIzQ0NjhhYyIvPjxwYXRoIGQ9Ik0xMzIgODNoMjI3IiBzdHJva2U9IiMzNTUzODAiLz48ZyBmaWxsPSIjN2Y5MmY3Ij48Y2lyY2xlIGN4PSIxNDIiIGN5PSI3NCIgcj0iMiIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9Ijc0IiByPSIyIi8+PGNpcmNsZSBjeD0iMTU4IiBjeT0iNzQiIHI9IjIiLz48L2c+PHJlY3QgeD0iMTQ1IiB5PSIxMDAiIHdpZHRoPSI5MyIgaGVpZ2h0PSI4NyIgcng9IjciIGZpbGw9InVybCgjZ2xhc3MpIi8+PGNpcmNsZSBjeD0iMTkyIiBjeT0iMTQxIiByPSIzMSIgc3Ryb2tlPSIjNzNkZmZmIiBzdHJva2Utd2lkdGg9IjIiLz48ZWxsaXBzZSBjeD0iMTkyIiBjeT0iMTQxIiByeD0iMTMiIHJ5PSIzMSIgc3Ryb2tlPSIjNzNkZmZmIi8+PHBhdGggZD0iTTE2MiAxNDFoNjBtLTU1LTE1aDQ4bS00OCAzMGg0OCIgc3Ryb2tlPSIjNzNkZmZmIi8+PHJlY3QgeD0iMjU0IiB5PSIxMDUiIHdpZHRoPSI4OSIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iIzg2OWRmZiIvPjxyZWN0IHg9IjI1NCIgeT0iMTI0IiB3aWR0aD0iNzAiIGhlaWdodD0iNSIgcng9IjIiIGZpbGw9IiM0NTY1OTEiLz48cmVjdCB4PSIyNTQiIHk9IjEzNiIgd2lkdGg9IjgxIiBoZWlnaHQ9IjUiIHJ4PSIyIiBmaWxsPSIjNDU2NTkxIi8+PHJlY3QgeD0iMjU0IiB5PSIxNTciIHdpZHRoPSI1NCIgaGVpZ2h0PSIyMiIgcng9IjUiIGZpbGw9InVybCgjZWRnZSkiLz48cGF0aCBkPSJtMTIxIDIxNC0zNSAyN3EtMyA2IDggOGgzMDJxMTAtMyA1LThsLTMxLTI3WiIgZmlsbD0idXJsKCNzaGVsbCkiIHN0cm9rZT0idXJsKCNlZGdlKSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTIyMCAyMTdoNTVsOSAxMmgtNzNaIiBmaWxsPSIjMzg1MTgwIi8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDcgODkgMTczKSI+PHJlY3QgeD0iNjIiIHk9IjEyMSIgd2lkdGg9IjU4IiBoZWlnaHQ9IjEwMCIgcng9IjkiIGZpbGw9IiMwYzFmM2MiIHN0cm9rZT0iIzgxOTZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHJlY3QgeD0iNjkiIHk9IjEzMiIgd2lkdGg9IjQ0IiBoZWlnaHQ9Ijc0IiByeD0iMyIgZmlsbD0idXJsKCNnbGFzcykiLz48cGF0aCBkPSJNNzggMTUxaDI1bS0yNSAxMGgxOG0tMTggMTBoMjIiIHN0cm9rZT0iI2IyYTlmZiIgc3Ryb2tlLXdpZHRoPSIzIi8+PC9nPjwvZz48ZyBmaWxsPSIjYjI5Y2ZmIj48Y2lyY2xlIGN4PSI3NSIgY3k9IjE0MCIgcj0iMiIvPjxjaXJjbGUgY3g9IjM4OCIgY3k9IjcyIiByPSIyIi8+PGNpcmNsZSBjeD0iMzU5IiBjeT0iMjQ3IiByPSIyIi8+PHBhdGggZD0ibTExMyA1MSAyIDUgNSAyLTUgMi0yIDUtMi01LTUtMiA1LTJabTI3MCAxMzkgMiA1IDUgMi01IDItMiA1LTItNS01LTIgNS0yWiIvPjwvZz48L3N2Zz4="};
   function categoryCard(item, index){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
     return '<article class="category-card category-arena-card" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + escapeHtml(item.name) + '" role="group">'+
       '<span class="category-card-grid" aria-hidden="true"></span>'+
       '<span class="category-card-top"><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
-      '<span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span><span class="category-visual-lines"></span></span>'+
+      '<span class="category-art" aria-hidden="true"><img src="' + embeddedArt[item.id] + '" width="480" height="300" alt="" decoding="async"></span>'+
       '<span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
       '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
       '</article>';
@@ -3038,7 +3234,9 @@ window.FS_LAB_DATA = Object.freeze({
       card.classList.toggle("roulette-hidden", distance >= 3);
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
       card.setAttribute("aria-hidden", distance >= 3 ? "true" : "false");
-      card.tabIndex = distance <= 1 ? 0 : -1;
+      card.tabIndex = -1;
+      card.inert = distance > 1;
+      card.querySelector('button').tabIndex = distance <= 1 ? 0 : -1;
       if (instant) card.classList.add("roulette-instant");
       else card.classList.remove("roulette-instant");
     });
@@ -3132,7 +3330,7 @@ window.FS_LAB_DATA = Object.freeze({
     return '<button class="x-game-card" type="button" data-x-game-index="'+index+'" aria-label="'+escapeHtml(game.name)+'">'+
       '<span class="x-game-thumb-shell">'+image+'<i>'+escapeHtml(initials(game.name))+'</i></span>'+
       '<span class="x-game-name">'+escapeHtml(game.name)+'</span>'+
-      '<small>'+String(game.packages.length).padStart(2,"0")+' opciones</small></button>';
+      '</button>';
   }
 
   function wrapExperienceIndex(index){
@@ -3208,7 +3406,7 @@ window.FS_LAB_DATA = Object.freeze({
     if (breadcrumb) breadcrumb.textContent=game.name;
     if (title) title.textContent=game.name;
     if (type) type.textContent=category?.tag || "FRENCH STORE";
-    if (meta) meta.textContent=game.packages.length+" opciones · "+(activeExperienceGame+1)+" / "+experienceGames.length;
+    if (meta) meta.textContent=category?.subtitle || "Elige tu experiencia";
     if (fallback) fallback.textContent=initials(game.name);
     if (image) {
       image.classList.remove("loaded","failed");
@@ -3342,10 +3540,14 @@ window.FS_LAB_DATA = Object.freeze({
     const drawer=$("#xCartDrawer");
     const backdrop=$("#xCartBackdrop");
     const active=Boolean(open);
+    if (active) cartReturnFocus=document.activeElement;
+    if (drawer) drawer.inert=!active;
     drawer?.classList.toggle("open",active);
     backdrop?.classList.toggle("open",active);
     drawer?.setAttribute("aria-hidden",active?"false":"true");
-    if (active) renderLabCart();
+    syncOverlayInert();
+    if (active) { renderLabCart(); drawer?.querySelector('[data-x-cart-close]')?.focus({preventScroll:true}); }
+    else if (cartReturnFocus) {cartReturnFocus.focus({preventScroll:true});cartReturnFocus=null;}
   }
 
   function toggleExperienceFavorite(){
@@ -3386,6 +3588,7 @@ window.FS_LAB_DATA = Object.freeze({
     const overlay=$("#xExperience");
     if (!overlay?.classList.contains("open")) return;
 
+    if (standalone) { overlay.classList.remove("force-landscape"); setOrientationGate(false); return; }
     const mobile=isTouchMobileViewport();
     if (!mobile) {
       experienceForceLandscape=false;
@@ -3437,6 +3640,7 @@ window.FS_LAB_DATA = Object.freeze({
   }
 
   function openExperience(categoryId){
+    experienceReturnFocus=document.activeElement;
     experienceCategoryId=experienceCategoryMap[categoryId]?categoryId:"recargas-id";
     experienceGames=sortExperienceGames(categorySnapshot(experienceCategoryId));
     activeExperienceGame=0;
@@ -3448,10 +3652,12 @@ window.FS_LAB_DATA = Object.freeze({
     overlay?.classList.add("open");
     overlay?.setAttribute("aria-hidden","false");
     document.body.classList.add("experience-open");
+    syncOverlayInert();
+    overlay?.querySelector("[data-x-back]")?.focus({preventScroll:true});
     renderExperienceWheel(true);
     updateCartBadges();
     syncExperienceOrientation();
-    tryLandscapeLock();
+    if (!standalone) tryLandscapeLock();
     scheduleDeviceScale();
   }
 
@@ -3464,6 +3670,9 @@ window.FS_LAB_DATA = Object.freeze({
     experienceForceLandscape=false;
     unlockExperienceOrientation();
     document.body.classList.remove("experience-open");
+    syncOverlayInert();
+    experienceReturnFocus?.focus({preventScroll:true});
+    experienceReturnFocus=null;
     if (goHome) setView("inicio");
     scheduleDeviceScale();
   }
@@ -3507,6 +3716,7 @@ window.FS_LAB_DATA = Object.freeze({
   }
 
   function setView(view){
+    if ($("#xExperience")?.classList.contains("open")) closeExperience(false);
     currentView = titleMap[view] ? view : "inicio";
     all(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
     all("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
@@ -3540,6 +3750,8 @@ window.FS_LAB_DATA = Object.freeze({
   }, true);
 
   document.addEventListener("click", (event) => {
+    const pause = event.target.closest('.ticker-pause');
+    if (pause) { const paused = pause.getAttribute('aria-pressed') !== 'true'; pause.setAttribute('aria-pressed', String(paused)); pause.setAttribute('aria-label', paused ? 'Reanudar bienvenida' : 'Pausar bienvenida'); pause.textContent = paused ? '▷' : 'Ⅱ'; $('.welcome-ticker').classList.toggle('paused',paused); return; }
     const infoToggle = event.target.closest("[data-info-toggle]");
     if (infoToggle) {
       setInfoHub(infoToggle.getAttribute("aria-expanded") !== "true");
@@ -3559,7 +3771,8 @@ window.FS_LAB_DATA = Object.freeze({
 
     const infoAction = event.target.closest("[data-info-action]");
     if (infoAction) {
-      toast(infoAction.dataset.infoAction + " se abrirá aquí cuando conectemos la versión real.");
+      if (infoAction.dataset.infoAction === 'WhatsApp') window.open('https://wa.me/59177057379','_blank','noopener,noreferrer');
+      else { setInfoHub(true); setInfoPanel('support'); }
       return;
     }
 
@@ -3730,6 +3943,7 @@ window.FS_LAB_DATA = Object.freeze({
     const dx=event.clientX-experienceGestureStartX;
     experienceGestureStartY=null;
     experienceGestureStartX=null;
+    if (standalone && window.innerWidth<=600) { if(Math.abs(dx)>=34 && Math.abs(dx)>Math.abs(dy)*1.05) moveExperienceGame(dx<0?1:-1); return; }
     if (Math.abs(dy)<34 || Math.abs(dy)<=Math.abs(dx)*1.05) return;
     moveExperienceGame(dy<0?1:-1);
   },{passive:true});
@@ -3764,6 +3978,7 @@ window.FS_LAB_DATA = Object.freeze({
     const viewport = $("#deviceViewport");
     const frame = $("#deviceFrame");
     if (!viewport || !frame) return;
+    if (standalone) { root.style.setProperty("--device-height", window.innerHeight + "px"); return; }
     const preset = devicePresets[root.dataset.device] || devicePresets.desktop;
     const available = Math.max(1, viewport.clientWidth);
     const scale = Math.min(1, available / preset.width);
@@ -3895,7 +4110,7 @@ window.FS_LAB_DATA = Object.freeze({
   }, {passive:true});
 
   const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
-  setDevice(initialDevice);
+  setDevice(standalone ? (window.innerWidth <= 600 ? "mobile" : window.innerWidth <= 1000 ? "tablet" : "desktop") : initialDevice);
   window.addEventListener("orientationchange", () => {
     if (!document.body.classList.contains("experience-open")) return;
     setTimeout(syncExperienceOrientation,120);
@@ -3907,9 +4122,23 @@ window.FS_LAB_DATA = Object.freeze({
   render();
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
-  setTimeout(runLoadingDemo, 220);
+  // The intro stays available in the lab; it must not delay the review or navigation.
+  if (new URLSearchParams(location.search).has('intro')) runLoadingDemo();
+  document.addEventListener('keydown', event => {
+    const cartOpen=$('#xCartDrawer')?.classList.contains('open');
+    const infoOpen=$('#infoHub')?.classList.contains('open');
+    if(cartOpen && event.key==='Escape'){event.preventDefault();setCartDrawer(false);return;}
+    if(!cartOpen && !infoOpen && $('#xExperience')?.classList.contains('open') && event.key==='Escape'){event.preventDefault();closeExperience(false);return;}
+    if(!cartOpen && !infoOpen) return;
+    if (event.key === 'Escape') { event.preventDefault(); setInfoHub(false); return; }
+    if (event.key !== 'Tab') return;
+    const focusable=all('button,a[href]', $(cartOpen ? '#xCartDrawer' : '#infoHub')).filter(el=>el.getClientRects().length && !el.disabled);
+    const first=focusable[0], last=focusable.at(-1);
+    if(event.shiftKey && document.activeElement===first) {event.preventDefault();last?.focus();}
+    else if(!event.shiftKey && document.activeElement===last) {event.preventDefault();first?.focus();}
+  });
 })();
 
-  </script>
+</script>
 </body>
 </html>

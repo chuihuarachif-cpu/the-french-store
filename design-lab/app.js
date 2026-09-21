@@ -13,6 +13,11 @@
   const all = (s, root = document) => [...root.querySelectorAll(s)];
   const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", pases: "Pases", ajustes: "Ajustes", producto: "Producto", checkout: "Checkout", admin: "Admin" };
   const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
+  const standalone = new URLSearchParams(location.search).has('standalone');
+  document.documentElement.classList.toggle('standalone', standalone);
+  let infoReturnFocus = null;
+  let cartReturnFocus = null;
+  let experienceReturnFocus = null;
   let currentView = "inicio";
   let activeFilter = "Todos";
   let toastTimer;
@@ -37,6 +42,8 @@
     "paginas": "Venta de Páginas"
   };
   const prefersLitePerformance = Boolean(
+    new URLSearchParams(location.search).get("performance") === "lite" ||
+    navigator.connection?.saveData ||
     window.matchMedia?.("(max-width: 700px)")?.matches ||
     (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
@@ -96,17 +103,29 @@
     toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
   }
 
+  function syncOverlayInert(){
+    const infoOpen=$('#infoHub')?.classList.contains('open');
+    const cartOpen=$('#xCartDrawer')?.classList.contains('open');
+    const experienceOpen=$('#xExperience')?.classList.contains('open');
+    all('.store-header,.welcome-ticker,.store-view,.xarena-dock,.whatsapp-float').forEach(el=>el.inert=Boolean(infoOpen||cartOpen||experienceOpen));
+    if ($('#xExperience')) $('#xExperience').inert=Boolean(!experienceOpen||infoOpen||cartOpen);
+  }
+
   function setInfoHub(open){
     const hub = $("#infoHub");
     const backdrop = $("#infoHubBackdrop");
-    const toggle = $("[data-info-toggle]");
+    const toggles = all("[data-info-toggle]");
     const isOpen = Boolean(open);
+    if (isOpen) infoReturnFocus = document.activeElement;
+    if (hub) hub.inert = !isOpen;
     hub?.classList.toggle("open", isOpen);
     backdrop?.classList.toggle("open", isOpen);
     hub?.setAttribute("aria-hidden", isOpen ? "false" : "true");
-    toggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    toggles.forEach(toggle => toggle.setAttribute("aria-expanded", isOpen ? "true" : "false"));
     document.body.classList.toggle("info-center-open", isOpen);
-    if (isOpen) setInfoPanel("social");
+    syncOverlayInert();
+    if (isOpen) { setInfoPanel("social"); hub?.querySelector('[data-info-close]')?.focus({preventScroll:true}); }
+    else if (infoReturnFocus) { infoReturnFocus.focus({preventScroll:true}); infoReturnFocus=null; }
     scheduleDeviceScale();
   }
 
@@ -136,7 +155,7 @@
     return '<article class="category-card category-arena-card" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + escapeHtml(item.name) + '" role="group">'+
       '<span class="category-card-grid" aria-hidden="true"></span>'+
       '<span class="category-card-top"><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
-      '<span class="category-icon-stage" aria-hidden="true"><span class="category-icon-orbit"></span><span class="icon">' + item.icon + '</span><span class="category-visual-lines"></span></span>'+
+      '<span class="category-art" aria-hidden="true"><img src="./assets/' + item.id + '.svg" width="480" height="300" alt="" decoding="async"></span>'+
       '<span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
       '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
       '</article>';
@@ -169,7 +188,9 @@
       card.classList.toggle("roulette-hidden", distance >= 3);
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
       card.setAttribute("aria-hidden", distance >= 3 ? "true" : "false");
-      card.tabIndex = distance <= 1 ? 0 : -1;
+      card.tabIndex = -1;
+      card.inert = distance > 1;
+      card.querySelector('button').tabIndex = distance <= 1 ? 0 : -1;
       if (instant) card.classList.add("roulette-instant");
       else card.classList.remove("roulette-instant");
     });
@@ -263,7 +284,7 @@
     return '<button class="x-game-card" type="button" data-x-game-index="'+index+'" aria-label="'+escapeHtml(game.name)+'">'+
       '<span class="x-game-thumb-shell">'+image+'<i>'+escapeHtml(initials(game.name))+'</i></span>'+
       '<span class="x-game-name">'+escapeHtml(game.name)+'</span>'+
-      '<small>'+String(game.packages.length).padStart(2,"0")+' opciones</small></button>';
+      '</button>';
   }
 
   function wrapExperienceIndex(index){
@@ -339,7 +360,7 @@
     if (breadcrumb) breadcrumb.textContent=game.name;
     if (title) title.textContent=game.name;
     if (type) type.textContent=category?.tag || "FRENCH STORE";
-    if (meta) meta.textContent=game.packages.length+" opciones · "+(activeExperienceGame+1)+" / "+experienceGames.length;
+    if (meta) meta.textContent=category?.subtitle || "Elige tu experiencia";
     if (fallback) fallback.textContent=initials(game.name);
     if (image) {
       image.classList.remove("loaded","failed");
@@ -473,10 +494,14 @@
     const drawer=$("#xCartDrawer");
     const backdrop=$("#xCartBackdrop");
     const active=Boolean(open);
+    if (active) cartReturnFocus=document.activeElement;
+    if (drawer) drawer.inert=!active;
     drawer?.classList.toggle("open",active);
     backdrop?.classList.toggle("open",active);
     drawer?.setAttribute("aria-hidden",active?"false":"true");
-    if (active) renderLabCart();
+    syncOverlayInert();
+    if (active) { renderLabCart(); drawer?.querySelector('[data-x-cart-close]')?.focus({preventScroll:true}); }
+    else if (cartReturnFocus) {cartReturnFocus.focus({preventScroll:true});cartReturnFocus=null;}
   }
 
   function toggleExperienceFavorite(){
@@ -517,6 +542,7 @@
     const overlay=$("#xExperience");
     if (!overlay?.classList.contains("open")) return;
 
+    if (standalone) { overlay.classList.remove("force-landscape"); setOrientationGate(false); return; }
     const mobile=isTouchMobileViewport();
     if (!mobile) {
       experienceForceLandscape=false;
@@ -568,6 +594,7 @@
   }
 
   function openExperience(categoryId){
+    experienceReturnFocus=document.activeElement;
     experienceCategoryId=experienceCategoryMap[categoryId]?categoryId:"recargas-id";
     experienceGames=sortExperienceGames(categorySnapshot(experienceCategoryId));
     activeExperienceGame=0;
@@ -579,10 +606,12 @@
     overlay?.classList.add("open");
     overlay?.setAttribute("aria-hidden","false");
     document.body.classList.add("experience-open");
+    syncOverlayInert();
+    overlay?.querySelector("[data-x-back]")?.focus({preventScroll:true});
     renderExperienceWheel(true);
     updateCartBadges();
     syncExperienceOrientation();
-    tryLandscapeLock();
+    if (!standalone) tryLandscapeLock();
     scheduleDeviceScale();
   }
 
@@ -595,6 +624,9 @@
     experienceForceLandscape=false;
     unlockExperienceOrientation();
     document.body.classList.remove("experience-open");
+    syncOverlayInert();
+    experienceReturnFocus?.focus({preventScroll:true});
+    experienceReturnFocus=null;
     if (goHome) setView("inicio");
     scheduleDeviceScale();
   }
@@ -638,6 +670,7 @@
   }
 
   function setView(view){
+    if ($("#xExperience")?.classList.contains("open")) closeExperience(false);
     currentView = titleMap[view] ? view : "inicio";
     all(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
     all("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
@@ -671,6 +704,8 @@
   }, true);
 
   document.addEventListener("click", (event) => {
+    const pause = event.target.closest('.ticker-pause');
+    if (pause) { const paused = pause.getAttribute('aria-pressed') !== 'true'; pause.setAttribute('aria-pressed', String(paused)); pause.setAttribute('aria-label', paused ? 'Reanudar bienvenida' : 'Pausar bienvenida'); pause.textContent = paused ? '▷' : 'Ⅱ'; $('.welcome-ticker').classList.toggle('paused',paused); return; }
     const infoToggle = event.target.closest("[data-info-toggle]");
     if (infoToggle) {
       setInfoHub(infoToggle.getAttribute("aria-expanded") !== "true");
@@ -690,7 +725,8 @@
 
     const infoAction = event.target.closest("[data-info-action]");
     if (infoAction) {
-      toast(infoAction.dataset.infoAction + " se abrirá aquí cuando conectemos la versión real.");
+      if (infoAction.dataset.infoAction === 'WhatsApp') window.open('https://wa.me/59177057379','_blank','noopener,noreferrer');
+      else { setInfoHub(true); setInfoPanel('support'); }
       return;
     }
 
@@ -861,6 +897,7 @@
     const dx=event.clientX-experienceGestureStartX;
     experienceGestureStartY=null;
     experienceGestureStartX=null;
+    if (standalone && window.innerWidth<=600) { if(Math.abs(dx)>=34 && Math.abs(dx)>Math.abs(dy)*1.05) moveExperienceGame(dx<0?1:-1); return; }
     if (Math.abs(dy)<34 || Math.abs(dy)<=Math.abs(dx)*1.05) return;
     moveExperienceGame(dy<0?1:-1);
   },{passive:true});
@@ -895,6 +932,7 @@
     const viewport = $("#deviceViewport");
     const frame = $("#deviceFrame");
     if (!viewport || !frame) return;
+    if (standalone) { root.style.setProperty("--device-height", window.innerHeight + "px"); return; }
     const preset = devicePresets[root.dataset.device] || devicePresets.desktop;
     const available = Math.max(1, viewport.clientWidth);
     const scale = Math.min(1, available / preset.width);
@@ -1026,7 +1064,7 @@
   }, {passive:true});
 
   const initialDevice = window.matchMedia?.("(max-width: 700px)")?.matches ? "mobile" : (document.documentElement.dataset.device || "desktop");
-  setDevice(initialDevice);
+  setDevice(standalone ? (window.innerWidth <= 600 ? "mobile" : window.innerWidth <= 1000 ? "tablet" : "desktop") : initialDevice);
   window.addEventListener("orientationchange", () => {
     if (!document.body.classList.contains("experience-open")) return;
     setTimeout(syncExperienceOrientation,120);
@@ -1038,5 +1076,19 @@
   render();
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
-  setTimeout(runLoadingDemo, 220);
+  // The intro stays available in the lab; it must not delay the review or navigation.
+  if (new URLSearchParams(location.search).has('intro')) runLoadingDemo();
+  document.addEventListener('keydown', event => {
+    const cartOpen=$('#xCartDrawer')?.classList.contains('open');
+    const infoOpen=$('#infoHub')?.classList.contains('open');
+    if(cartOpen && event.key==='Escape'){event.preventDefault();setCartDrawer(false);return;}
+    if(!cartOpen && !infoOpen && $('#xExperience')?.classList.contains('open') && event.key==='Escape'){event.preventDefault();closeExperience(false);return;}
+    if(!cartOpen && !infoOpen) return;
+    if (event.key === 'Escape') { event.preventDefault(); setInfoHub(false); return; }
+    if (event.key !== 'Tab') return;
+    const focusable=all('button,a[href]', $(cartOpen ? '#xCartDrawer' : '#infoHub')).filter(el=>el.getClientRects().length && !el.disabled);
+    const first=focusable[0], last=focusable.at(-1);
+    if(event.shiftKey && document.activeElement===first) {event.preventDefault();last?.focus();}
+    else if(!event.shiftKey && document.activeElement===last) {event.preventDefault();first?.focus();}
+  });
 })();
