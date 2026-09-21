@@ -181,6 +181,8 @@
 
     const next = wrapCategoryIndex(index);
     activeCategoryIndex = next;
+    // One scene change per selection; fog and floor inherit the same color.
+    $(".store-app").dataset.scene = data.categories[next].id;
 
     cards.forEach((card, cardIndex) => {
       const diff = circularDifference(cardIndex, next);

@@ -46,11 +46,13 @@ La vista `desktop.html` se adapta al tamaño real de la pantalla y carga `index.
 
 ### Archivos y comprobación
 
-`crystal.css` contiene la base visual y `hud.css` refina las superficies al estilo XArena; `assets/*.svg` contiene el arte. Tras editar HTML, CSS o JS, ejecutar `node design-lab/build-preview.mjs` para regenerar `preview.html` con los recursos nuevos incrustados.
+`crystal.css` contiene la base visual, `hud.css` refina las superficies al estilo XArena y `atmosphere.css` añade iluminación ambiental y el panel inferior; `assets/*.svg` contiene el arte. Tras editar HTML, CSS o JS, ejecutar `node design-lab/build-preview.mjs` para regenerar `preview.html` con los recursos nuevos incrustados.
 
 La refinación HUD añade cristal angular, reflejos estáticos, mayor énfasis en la selección central y el botón Ingresar integrado en la consola. El Centro de información usa iconos SVG en su menú y un panel lateral de ayuda accionable. Instagram queda identificado como enlace por confirmar hasta recibir la cuenta oficial.
 
 La tarima es una sola plataforma central fija, independiente de los bloques y de su selección, inspirada en la referencia XArena. `assets/arena-platform.svg` contiene su volumen metálico, anillos luminosos y reflejo del suelo ya dibujados, sin filtros SVG ni animación. Los seis bloques usan luz cian, ámbar, violeta, rosa, menta y coral. El efecto de profundidad se extiende a cabecera, panel informativo, catálogo, perfil, pases, ajustes y carrito mediante biseles, luz lateral y sombras estáticas. Es una ilusión 2.5D con iluminación prediseñada; no utiliza ray tracing ni iluminación calculada en tiempo real. No hay seguimiento del puntero, WebGL, vídeo ni un bucle de renderizado. El modo ligero conserva colores y tarima y elimina bloom, desenfoques y sombras amplias.
+
+La escena incluye neblina suave en portada, vistas de tienda, selector y panel informativo. Su color y el reflejo del piso heredan la categoría activa mediante un solo cambio de atributo al seleccionar un bloque. Dos capas de gradientes se desplazan con transform/opacity; en modo ligero se usa una sola capa de altura limitada y se detienen los pulsos de luz. Las capas de superficies cerradas y las que quedan detrás de un diálogo se pausan; ocultar la pestaña pausa las animaciones y el modo sin movimiento las elimina. El carrusel deja espacio entre bloques y responde con un pequeño relieve al toque. «Más información» permanece en una pestaña inferior fija y despliega el panel hacia arriba; la pestaña del propio panel permite cerrarlo, al igual que Escape o el botón de cierre. La apertura sólo anima transform y opacity.
 
 Servir el repositorio por HTTP y abrir `design-lab/tests/crystal.html`. La regresión cubre 360, 390, 768, 1024 y 1440 px, seis categorías, ocho paneles informativos, navegación, controles accesibles, carrito y aislamiento de red. No ejecutar estas pruebas contra producción.
 

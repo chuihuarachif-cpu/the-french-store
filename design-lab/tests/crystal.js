@@ -21,6 +21,10 @@
     const stage=q('.category-arena-viewport').getBoundingClientRect(),base=q('.arena-platform').getBoundingClientRect();
     check(base.top>stage.top&&base.bottom<=stage.bottom+1&&base.left>=stage.left-1&&base.right<=stage.right+1,`${w}: tarima central completa sin recorte`);
     check(new Set(all('.category-glass').map(e=>win.getComputedStyle(e).borderTopColor)).size===6,`${w}: seis colores de iluminación diferenciados`);
+    const centerCard=q('.category-arena-card.active').getBoundingClientRect(),leftCard=q('.category-arena-card[data-roulette-slot="-1"]').getBoundingClientRect(),rightCard=q('.category-arena-card[data-roulette-slot="1"]').getBoundingClientRect();
+    check(centerCard.left-leftCard.right>=14&&rightCard.left-centerCard.right>=14,`${w}: separación real entre los bloques`);
+    const launcher=q('.info-launcher').getBoundingClientRect();
+    check(q('.info-launcher b').textContent==='Más información'&&launcher.bottom<=h+1&&launcher.top>=0,`${w}: pestaña inferior visible Más información`);
     const cta=q('.category-arena-card.active .category-enter').getBoundingClientRect();
     check(cta.left>=0&&cta.right<=w+1&&cta.height>=40,`${w}: acción principal visible y táctil`);
     check(win.getComputedStyle(q('.store-app')).backgroundImage==='none',`${w}: fondo azul simple`);
@@ -30,6 +34,9 @@
     check(hub.classList.contains('open')&&!hub.inert,`${w}: centro desplegable interactivo`);
     check(r.left>=0&&r.right<=w+1&&r.top>=0&&r.bottom<=h+1,`${w}: panel cabe en pantalla`);
     check(q('.store-header').inert,`${w}: fondo fuera del foco durante el diálogo`);
+    const handle=q('.info-sheet-handle'),hr=handle.getBoundingClientRect();
+    check(handle.contains(d.elementFromPoint(hr.left+hr.width/2,hr.top+hr.height/2)),`${w}: pestaña del panel recibe el toque sobre el fondo`);
+    check(win.getComputedStyle(hub).transform==='matrix(1, 0, 0, 1, 0, 0)',`${w}: panel desplegado hacia arriba sin desplazamiento lateral`);
     check(all('.social-card-grid .social-card').length===5&&q('.social-card.instagram').textContent.includes('Enlace por confirmar'),`${w}: cinco canales sin inventar Instagram`);
     for(const panel of ['social','terms','privacy','cookies','support','buy','delivery','about']){
       q(`.info-hub-nav [data-info-panel="${panel}"]`).click();
@@ -45,6 +52,7 @@
       check(!q('#xOrientationGate').classList.contains('open'),`${w}: productos sin bloqueo de orientación`);
       q('[data-x-back]').click();q('[data-arena-direction="1"]').click();await settle();
       const nextBase=q('.arena-platform').getBoundingClientRect(),nextStage=q('.category-arena-viewport').getBoundingClientRect();
+      check(q('.store-app').dataset.scene===q('.category-arena-card.active').dataset.category,`${w}: neblina sincronizada con la categoría ${i+1}`);
       // Focus restoration may scroll a short viewport; compare within the arena.
       check(Math.abs((nextBase.left-nextStage.left)-(base.left-stage.left))<1&&Math.abs((nextBase.top-nextStage.top)-(base.top-stage.top))<1&&Math.abs(nextBase.width-base.width)<1,`${w}: tarima inmóvil al cambiar categoría ${i+1}`);
     }
@@ -54,6 +62,7 @@
       q(`[data-nav-view="${view}"]`).click();check(shown(q(`.store-view[data-view="${view}"]`)),`${w}: vista ${view}`);
     }
     d.documentElement.classList.add('motion-off');check(win.getComputedStyle(q('.welcome-ticker-track')).animationName==='none',`${w}: modo sin movimiento`);
+    check(all('.fog-bank').every(e=>win.getComputedStyle(e).animationName==='none'),`${w}: neblina estática con movimiento desactivado`);
     frame.remove();
   }
   const frame=await makeFrame(1440,900),d=frame.contentDocument,win=frame.contentWindow,q=s=>d.querySelector(s);
@@ -77,6 +86,7 @@
   check(lw.getComputedStyle(ld.querySelector('.hud-energy')).animationName==='none','Gama baja: energía horizontal estática');
   check(lw.getComputedStyle(ld.querySelector('.store-header')).backdropFilter==='none','Gama baja: sin desenfoque de fondo');
   check(!ld.querySelector('canvas,video'),'Gama baja: sin WebGL, canvas ni vídeo decorativos');
+  check(lw.getComputedStyle(ld.querySelector('.fog-far')).display==='none'&&lw.getComputedStyle(ld.querySelector('.fog-near')).filter==='none','Gama baja: una sola capa de neblina sin desenfoque');
   check([...ld.querySelectorAll('.category-art img')].every(e=>e.src.startsWith(location.origin)),'Gama baja: portada sin imágenes remotas');
   lite.remove();
   output.textContent=`${failures.length?'FAIL':'PASS'} · ${passed} verificaciones · ${failures.length} fallos\n`+log.join('\n');

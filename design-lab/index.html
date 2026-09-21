@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./crystal.css">
   <link rel="stylesheet" href="./hud.css">
+  <link rel="stylesheet" href="./atmosphere.css">
 </head>
 <body>
   <div class="lab-shell">
@@ -80,7 +81,7 @@
 
       <div class="device-viewport" id="deviceViewport">
         <div class="device-frame" id="deviceFrame">
-        <div class="store-app">
+        <div class="store-app"><div class="shop-atmosphere" aria-hidden="true"><i class="fog-bank fog-near"></i><i class="fog-bank fog-far"></i></div>
           <div class="loading-demo" id="loadingDemo" aria-hidden="true">
             <div class="loading-demo-backdrop" aria-hidden="true"></div>
             <div class="loading-demo-content">
@@ -126,7 +127,7 @@
 
             <button class="info-hub-button" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub">
               <span class="info-hub-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg></span>
-              <span><small>REDES · AYUDA · POLÍTICAS</small><b>Centro de información</b></span>
+              <span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span>
               <i>＋</i>
             </button>
 
@@ -158,7 +159,7 @@
               <div class="category-arena">
                 <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
                 <div class="category-arena-viewport" id="categoryArenaViewport" tabindex="0" aria-label="Categorías de French Store">
-                  <span class="arena-platform" aria-hidden="true"><img src="./assets/arena-platform.svg" width="1000" height="240" alt="" decoding="async"></span>
+                  <span class="arena-floor-light" aria-hidden="true"></span><span class="arena-platform" aria-hidden="true"><img src="./assets/arena-platform.svg" width="1000" height="240" alt="" decoding="async"></span>
                   <div id="categoryGrid" class="category-arena-track"></div>
                 </div>
                 <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
@@ -306,7 +307,7 @@
           </section>
 
 
-          <section class="x-experience" id="xExperience" inert aria-hidden="true" aria-label="Selector de productos French Store">
+          <section class="x-experience" id="xExperience" inert aria-hidden="true" aria-label="Selector de productos French Store"><div class="shop-atmosphere" aria-hidden="true"><i class="fog-bank fog-near"></i><i class="fog-bank fog-far"></i></div>
             <div class="x-orientation-gate" id="xOrientationGate" aria-hidden="true">
               <div class="x-orientation-card">
                 <div class="x-phone-rotate" aria-hidden="true">
@@ -381,10 +382,10 @@
               <button class="x-cart-checkout" type="button" data-x-checkout>Continuar con un solo pago</button>
             </aside>
           <div class="info-hub-backdrop" id="infoHubBackdrop" data-info-close></div>
-          <section class="info-hub" id="infoHub" role="dialog" aria-modal="true" aria-hidden="true" inert aria-label="Centro de información">
+          <section class="info-hub" id="infoHub" role="dialog" aria-modal="true" aria-hidden="true" inert aria-label="Más información"><div class="shop-atmosphere" aria-hidden="true"><i class="fog-bank fog-near"></i><i class="fog-bank fog-far"></i></div>
             <header class="info-hub-head">
               <div class="info-hub-titlemark"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg></div>
-              <div><span class="eyebrow">FRENCH STORE</span><h2>Centro de información</h2><p>Todo lo que necesitas saber, en un solo lugar.</p></div>
+              <div><span class="eyebrow">FRENCH STORE</span><h2><button class="info-sheet-handle" type="button" data-info-close aria-label="Cerrar Más información">Más información <span aria-hidden="true">⌄</span></button></h2><p>Todo lo que necesitas saber, en un solo lugar.</p></div>
               <button type="button" data-info-close aria-label="Cerrar">×</button>
             </header>
 
@@ -430,7 +431,7 @@
             </div>
           </section>
 
-          <nav class="xarena-dock" aria-label="Accesos principales"><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>EXPLORA FRENCH STORE</small><b>Centro de información</b></span><i>⌃</i></button>
+          <nav class="xarena-dock" aria-label="Accesos principales"><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span><i>⌃</i></button>
             <button type="button" data-nav-view="pases"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><small>Pases</small></button>
             <button type="button" data-nav-view="ajustes"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 3 1-2h4l1 2 3 2 2 1 2 4-1 2 1 2-2 4-2 1-3 2-1 2h-4l-1-2-3-2-2-1-2-4 1-2-1-2 2-4 2-1Z"/><circle cx="12" cy="12" r="4"/></svg><small>Ajustes</small></button>
           </nav>
