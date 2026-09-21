@@ -27,7 +27,7 @@
     check(q('.info-launcher b').textContent==='Más información'&&launcher.bottom<=h+1&&launcher.top>=0,`${w}: pestaña inferior visible Más información`);
     const cta=q('.category-arena-card.active .category-enter').getBoundingClientRect();
     check(cta.left>=0&&cta.right<=w+1&&cta.height>=40,`${w}: acción principal visible y táctil`);
-    check(win.getComputedStyle(q('.store-app')).backgroundImage==='none',`${w}: fondo azul simple`);
+    check(win.getComputedStyle(q('.store-app')).backgroundImage!=='none',`${w}: showroom multicolor activo`);
     q('.ticker-pause').click();check(win.getComputedStyle(q('.welcome-ticker-track')).animationPlayState==='paused',`${w}: bienvenida pausable`);
     q('.info-launcher').focus();q('.info-launcher').click();await settle();
     const hub=q('#infoHub'),r=hub.getBoundingClientRect();

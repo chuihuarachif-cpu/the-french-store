@@ -1,11 +1,11 @@
 window.FS_LAB_DATA = Object.freeze({
   categories: [
     { id: "recargas-id", icon: "🎮", code: "01", tag: "GAMING", accentRgb: "74,229,255", name: "Recargas por ID", subtitle: "Directo al jugador" },
-    { id: "recargas-cuenta", icon: "👤", code: "02", tag: "ASISTIDO", accentRgb: "76,166,255", name: "Recargas por Cuenta", subtitle: "Entrega asistida" },
-    { id: "giftcards", icon: "🎁", code: "03", tag: "CÓDIGOS", accentRgb: "151,128,255", name: "Gift Cards", subtitle: "Códigos digitales" },
-    { id: "streaming", icon: "📺", code: "04", tag: "STREAM", accentRgb: "70,238,211", name: "Plataformas de Streaming", subtitle: "Series, música y más" },
-    { id: "cuentas", icon: "🪪", code: "05", tag: "CUENTAS", accentRgb: "103,201,255", name: "Venta de Cuentas", subtitle: "Cuentas listas para usar" },
-    { id: "paginas", icon: "💻", code: "06", tag: "WEB", accentRgb: "126,143,255", name: "Venta de Páginas", subtitle: "Diseño web a medida" }
+    { id: "recargas-cuenta", icon: "👤", code: "02", tag: "ASISTIDO", accentRgb: "255,184,92", name: "Recargas por Cuenta", subtitle: "Entrega asistida" },
+    { id: "giftcards", icon: "🎁", code: "03", tag: "CÓDIGOS", accentRgb: "255,103,215", name: "Gift Cards", subtitle: "Códigos digitales" },
+    { id: "streaming", icon: "📺", code: "04", tag: "STREAM", accentRgb: "77,239,196", name: "Plataformas de Streaming", subtitle: "Series, música y más" },
+    { id: "cuentas", icon: "🪪", code: "05", tag: "CUENTAS", accentRgb: "255,126,118", name: "Venta de Cuentas", subtitle: "Cuentas listas para usar" },
+    { id: "paginas", icon: "💻", code: "06", tag: "WEB", accentRgb: "171,111,255", name: "Venta de Páginas", subtitle: "Diseño web a medida" }
   ],
   products: [
     { id: "p1", icon: "◇", name: "Diamantes Nova · 500", category: "Recargas", price: 49.90, featured: true },
