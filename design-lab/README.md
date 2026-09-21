@@ -35,7 +35,7 @@ El laboratorio sirve para presentación e interacción visual. La lógica real p
 
 La vista `desktop.html` se adapta al tamaño real de la pantalla y carga `index.html?standalone=1`. `index.html` conserva los controles externos del laboratorio.
 
-- Fondo azul oscuro liso y superficies de cristal en portada, catálogo, perfil, pases, ajustes, productos y carrito.
+- Fondo grafito liso y superficies de cristal en portada, catálogo, perfil, pases, ajustes, productos y carrito.
 - Seis ilustraciones SVG locales originales; sin dependencias ni peticiones de imágenes en la portada a terceros.
 - Acceso inferior al Centro de información, perfil superior, carrito compartido y acceso a WhatsApp.
 - Redes y páginas informativas enlazadas a los destinos ya publicados por la tienda. No se inventa una cuenta de Instagram.
@@ -46,7 +46,7 @@ La vista `desktop.html` se adapta al tamaño real de la pantalla y carga `index.
 
 ### Archivos y comprobación
 
-`crystal.css` contiene la base visual, `hud.css` refina las superficies al estilo XArena y `atmosphere.css` añade iluminación ambiental y el panel inferior; `assets/*.svg` contiene el arte. Tras editar HTML, CSS o JS, ejecutar `node design-lab/build-preview.mjs` para regenerar `preview.html` con los recursos nuevos incrustados.
+`crystal.css` contiene la base visual, `hud.css` refina las superficies al estilo XArena, `atmosphere.css` añade iluminación ambiental y el panel inferior, y `cabinet.css` aporta la paleta mineral y el diseño compacto; `assets/*.svg` contiene el arte. Tras editar HTML, CSS o JS, ejecutar `node design-lab/build-preview.mjs` para regenerar `preview.html` con los recursos nuevos incrustados.
 
 La refinación HUD añade cristal angular, reflejos estáticos, mayor énfasis en la selección central y el botón Ingresar integrado en la consola. El Centro de información usa iconos SVG en su menú y un panel lateral de ayuda accionable. Instagram queda identificado como enlace por confirmar hasta recibir la cuenta oficial.
 
@@ -57,4 +57,11 @@ La escena incluye neblina suave en portada, vistas de tienda, selector y panel i
 Servir el repositorio por HTTP y abrir `design-lab/tests/crystal.html`. La regresión cubre 360, 390, 768, 1024 y 1440 px, seis categorías, ocho paneles informativos, navegación, controles accesibles, carrito y aislamiento de red. No ejecutar estas pruebas contra producción.
 
 Modo ligero: automático en móviles, equipos de hasta 4 núcleos o 4 GB reportados y conexiones con ahorro de datos. Elimina desenfoques, sombras amplias y capas decorativas, y acorta transiciones. Para comprobarlo en PC: `index.html?standalone=1&performance=lite`. No se afirma rendimiento medido en un teléfono físico de gama baja; las comprobaciones son de interfaz y de la política de efectos.
-\n\n### Showroom premium realista · 21/09/2026\n\nLa portada del Lab adopta la dirección visual aprobada: sala gamer oscura con iluminación multicolor, header de cristal, hero con degradado, carrusel 3D con seis paletas por categoría, pedestal reactivo y dock inferior continuo Pases → Más información → Ajustes. La implementación vive en premium-showroom.css, mantiene la rama aislada y conserva el modo ligero para equipos modestos.\n
+
+### Pantalla compacta y paleta mineral
+
+La paleta de la referencia se traduce a un estudio cálido: grafito y carbón para la sala, marfil para texto y controles, champagne y cobre para los bordes, y madera oscura para la tarima. Los bloques conservan acentos suaves de jade, rosa y ámbar para que las categorías sigan diferenciándose. Reflejos, biseles, vetas lineales, sombras de contacto e iluminación del piso son capas prediseñadas que dan realismo 2.5D sin un renderer en tiempo real. En PC/laptop y móviles horizontales desde 600 px, la vista limpia ocupa 100dvh sin scroll exterior; se adapta a la proporción disponible en lugar de recortar a 16:9. Las tarjetas son rectangulares y el panel informativo se abre sobre la escena. Las vistas secundarias extensas conservan desplazamiento dentro de su panel.
+
+La rueda del ratón sobre la ruleta acumula los deltas y selecciona el juego final después de 220 ms sin desplazamiento. Durante ese intervalo se ocultan los precios anteriores y se bloquean sus acciones; no se renderizan paquetes intermedios. Selección por botones/teclado/tacto sigue siendo inmediata. Cerrar el selector cancela cualquier actualización pendiente. La lista de paquetes tiene scroll independiente, filas sin compresión y reinicia su posición al cambiar de juego; Comprar queda accesible fuera de esa lista.
+
+`tests/cabinet.html` cubre 1366×768, 1920×1080, 1024×600, 844×390, 667×375 y 390×844: encaje, proporciones, precios legibles, scroll independiente, bloqueo temporal de acciones y un solo render al detener la ruleta. Complementa la regresión de `tests/crystal.html`.

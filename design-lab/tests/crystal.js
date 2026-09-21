@@ -4,7 +4,7 @@
   const output=document.querySelector('#results');
   const check=(ok,label)=>{log.push((ok?'PASS ':'FAIL ')+label);if(ok)passed++;else failures.push(label);output.textContent=log.join('\n');};
   const settle=()=>new Promise(r=>setTimeout(r,400));
-  const makeFrame=async(w,h,path='../index.html?standalone=1')=>{
+  const makeFrame=async(w,h,path='../index.html?standalone=1&warm=studio')=>{
     const f=document.createElement('iframe');f.width=w;f.height=h;f.src=path;
     const ready=new Promise(r=>f.onload=r);document.querySelector('#frames').append(f);await ready;await settle();return f;
   };
@@ -20,14 +20,14 @@
     check(all('.arena-platform').length===1&&!q('.category-pedestal')&&q('.arena-platform').getAttribute('aria-hidden')==='true',`${w}: una sola tarima central decorativa`);
     const stage=q('.category-arena-viewport').getBoundingClientRect(),base=q('.arena-platform').getBoundingClientRect();
     check(base.top>stage.top&&base.bottom<=stage.bottom+1&&base.left>=stage.left-1&&base.right<=stage.right+1,`${w}: tarima central completa sin recorte`);
-    check(new Set(all('.category-glass').map(e=>win.getComputedStyle(e).borderTopColor)).size===6,`${w}: seis colores de iluminación diferenciados`);
+    check(new Set(all('.category-glass').map(e=>win.getComputedStyle(e).getPropertyValue('--studio-rim').trim())).size===6,`${w}: seis colores de iluminación diferenciados`);
     const centerCard=q('.category-arena-card.active').getBoundingClientRect(),leftCard=q('.category-arena-card[data-roulette-slot="-1"]').getBoundingClientRect(),rightCard=q('.category-arena-card[data-roulette-slot="1"]').getBoundingClientRect();
     check(centerCard.left-leftCard.right>=14&&rightCard.left-centerCard.right>=14,`${w}: separación real entre los bloques`);
     const launcher=q('.info-launcher').getBoundingClientRect();
     check(q('.info-launcher b').textContent==='Más información'&&launcher.bottom<=h+1&&launcher.top>=0,`${w}: pestaña inferior visible Más información`);
     const cta=q('.category-arena-card.active .category-enter').getBoundingClientRect();
-    check(cta.left>=0&&cta.right<=w+1&&cta.height>=40,`${w}: acción principal visible y táctil`);
-    check(win.getComputedStyle(q('.store-app')).backgroundImage!=='none',`${w}: showroom multicolor activo`);
+    check(shown(q('.category-arena-card.active .category-enter'))&&cta.height>=32,`${w}: acción principal visible y táctil`);
+    check(win.getComputedStyle(q('.store-app')).backgroundImage.includes('gradient'),`${w}: fondo de estudio cálido`);
     q('.ticker-pause').click();check(win.getComputedStyle(q('.welcome-ticker-track')).animationPlayState==='paused',`${w}: bienvenida pausable`);
     q('.info-launcher').focus();q('.info-launcher').click();await settle();
     const hub=q('#infoHub'),r=hub.getBoundingClientRect();

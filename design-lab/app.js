@@ -55,6 +55,8 @@
   let experienceCategoryId = "recargas-id";
   let experienceGames = [];
   let activeExperienceGame = 0;
+  let wheelSettleTimer = 0;
+  let wheelDelta = 0;
   let selectedExperienceProduct = null;
   let experienceFieldValues = {};
   let experienceGestureStartY = null;
@@ -315,7 +317,8 @@
     setExperienceGame(activeExperienceGame, instant);
   }
 
-  function setExperienceGame(index, instant=false){
+  function setExperienceGame(index, instant=false, deferDetail=false){
+    clearTimeout(wheelSettleTimer);
     if (!experienceGames.length) return;
     const next=wrapExperienceIndex(index);
     activeExperienceGame=next;
@@ -347,7 +350,27 @@
     const down=$('[data-x-game-step="1"]');
     if (up) up.disabled=false;
     if (down) down.disabled=false;
-    renderExperienceDetail();
+    if (deferDetail) {
+      setWheelPending(true);
+      wheelSettleTimer=setTimeout(()=>{
+        wheelSettleTimer=0;wheelDelta=0;
+        if (!$("#xExperience")?.classList.contains("open")) return;
+        setWheelPending(false);
+        renderExperienceDetail();
+      },220);
+    } else {
+      wheelDelta=0;setWheelPending(false);renderExperienceDetail();
+    }
+  }
+
+  function setWheelPending(pending){
+    const stage=$(".x-product-stage");
+    stage?.classList.toggle("wheel-settling",pending);
+    stage?.setAttribute("aria-busy",String(pending));
+    if(stage) stage.inert=pending;
+    const favorite=$("[data-x-favorite]");
+    if(favorite) favorite.disabled=pending;
+    if(pending){$("#xBuyButton").disabled=true;$("#xGameBreadcrumb").textContent="Eligiendo juego…";}
   }
 
   function renderExperienceDetail(){
@@ -410,6 +433,7 @@
           '<button class="x-package-cart" type="button" data-x-add-package="'+index+'">Añadir al carrito</button>'+
           '</article>';
       }).join("");
+      list.scrollTop=0;
     }
     updateExperienceBuyState();
   }
@@ -622,6 +646,7 @@
   }
 
   function closeExperience(goHome=false){
+    clearTimeout(wheelSettleTimer);wheelSettleTimer=0;wheelDelta=0;setWheelPending(false);
     setCartDrawer(false);
     const overlay=$("#xExperience");
     overlay?.classList.remove("open","force-landscape");
@@ -893,6 +918,133 @@
   });
 
   const xWheel=$("#xGameWheel");
+  $(".x-wheel-panel")?.addEventListener("wheel",event=>{
+    if(event.ctrlKey || !$("#xExperience")?.classList.contains("open") || !experienceGames.length) return;
+    const raw=Math.abs(event.deltaY)>=Math.abs(event.deltaX)?event.deltaY:event.deltaX;
+    if(!raw) return;
+    event.preventDefault();
+    const delta=raw*(event.deltaMode===1?32:event.deltaMode===2?300:1);
+    // Trackpads accumulate small deltas; mouse notches move predictable steps.
+    if(wheelDelta && Math.sign(wheelDelta)!==Math.sign(delta)) wheelDelta=0;
+    wheelDelta+=delta;
+    const steps=Math.max(-4,Math.min(4,Math.trunc(wheelDelta/80)));
+    if(steps) wheelDelta-=steps*80;
+    setExperienceGame(activeExperienceGame+steps,false,true);
+  },{passive:false});
+  xWheel?.add continuar.");
+      return;
+    }
+
+    if (event.target.closest("#xBuyButton")) {
+      if (addCurrentToCart()) setCartDrawer(true);
+      return;
+    }
+
+    const searchButton = event.target.closest("[data-open-search]");
+    if (searchButton) {
+      setView("catalogo");
+      requestAnimationFrame(() => $("#catalogSearch")?.focus({preventScroll:false}));
+      return;
+    }
+
+    const accountAction = event.target.closest("[data-account-action]");
+    if (accountAction) {
+      const label = accountAction.dataset.accountAction || "Esta sección";
+      toast(label + " está disponible como interacción de diseño en el Lab.");
+      return;
+    }
+
+    const nav = event.target.closest("[data-nav-view]");
+    if (nav) {
+      setView(nav.dataset.navView);
+      return;
+    }
+
+    const labNav = event.target.closest("[data-lab-view]");
+    if (labNav) {
+      setView(labNav.dataset.labView);
+      return;
+    }
+
+    const filter = event.target.closest("[data-filter]");
+    if (filter) {
+      activeFilter = filter.dataset.filter;
+      render();
+      return;
+    }
+
+    const product = event.target.closest("[data-open-product]");
+    if (product) {
+      setView("producto");
+      return;
+    }
+
+    const demo = event.target.closest("[data-demo-action]");
+    if (demo) {
+      toast("🧪 Acción simulada. No se enviaron datos ni se realizó ningún pago.");
+    }
+  });
+
+  $("#catalogSearch")?.addEventListener("input", renderCatalog);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const product = event.target.closest?.("[data-open-product]");
+    if (!product) return;
+    event.preventDefault();
+    setView("producto");
+  });
+
+  const categoryViewport = $("#categoryArenaViewport");
+  categoryViewport?.addEventListener("pointerdown", (event) => {
+    categoryGestureStartX = event.clientX;
+    categoryGestureStartY = event.clientY;
+  }, {passive:true});
+
+  categoryViewport?.addEventListener("pointerup", (event) => {
+    if (categoryGestureStartX == null || categoryGestureStartY == null) return;
+    const dx = event.clientX - categoryGestureStartX;
+    const dy = event.clientY - categoryGestureStartY;
+    categoryGestureStartX = null;
+    categoryGestureStartY = null;
+    if (Math.abs(dx) < 42 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
+    moveCategory(dx < 0 ? 1 : -1);
+  }, {passive:true});
+
+  categoryViewport?.addEventListener("pointercancel", () => {
+    categoryGestureStartX = null;
+    categoryGestureStartY = null;
+  }, {passive:true});
+
+  $("#xInputFields")?.addEventListener("input",(event)=>{
+    const field=event.target.closest("[data-x-field]");
+    if (!field) return;
+    experienceFieldValues[field.dataset.xField]=field.value;
+    field.classList.remove("needs-value");
+    updateExperienceBuyState();
+  });
+  $("#xInputFields")?.addEventListener("change",(event)=>{
+    const field=event.target.closest("[data-x-field]");
+    if (!field) return;
+    experienceFieldValues[field.dataset.xField]=field.value;
+    field.classList.remove("needs-value");
+    updateExperienceBuyState();
+  });
+
+  const xWheel=$("#xGameWheel");
+  $(".x-wheel-panel")?.addEventListener("wheel",event=>{
+    if(event.ctrlKey || !$("#xExperience")?.classList.contains("open") || !experienceGames.length) return;
+    const raw=Math.abs(event.deltaY)>=Math.abs(event.deltaX)?event.deltaY:event.deltaX;
+    if(!raw) return;
+    event.preventDefault();
+    const delta=raw*(event.deltaMode===1?32:event.deltaMode===2?300:1);
+    // Trackpads accumulate small deltas; mouse notches move predictable steps.
+    if(wheelDelta && Math.sign(wheelDelta)!==Math.sign(delta)) wheelDelta=0;
+    wheelDelta+=delta;
+    const steps=Math.max(-4,Math.min(4,Math.trunc(wheelDelta/80)));
+    if(steps) wheelDelta-=steps*80;
+    setExperienceGame(activeExperienceGame+steps,false,true);
+  },{passive:false});
   xWheel?.addEventListener("pointerdown",(event)=>{
     experienceGestureStartY=event.clientY;
     experienceGestureStartX=event.clientX;

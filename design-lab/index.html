@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./crystal.css">
   <link rel="stylesheet" href="./hud.css">
-  <link rel="stylesheet" href="./atmosphere.css">\n  <link rel="stylesheet" href="./premium-showroom.css">
+  <link rel="stylesheet" href="./atmosphere.css">
+  <link rel="stylesheet" href="./cabinet.css">
 </head>
 <body>
   <div class="lab-shell">
@@ -151,7 +152,7 @@
           <section class="store-view active" data-view="inicio">
             <div class="home-intro reveal">
               <span class="eyebrow">FRENCH STORE · CENTRO DE ACCESO</span>
-              <h1>Elige tu próxima <span>experiencia.</span></h1>
+              <h1>Elige tu próxima experiencia.</h1>
               <p>Todo French Store, a un toque de distancia.</p>
             </div>
             <section class="section category-arena-section reveal" aria-label="Explora nuestros servicios">
@@ -342,7 +343,7 @@
                   <button class="x-wheel-arrow" type="button" data-x-game-step="1" aria-label="Siguiente">⌄</button>
                 </aside>
 
-                <main class="x-product-stage">
+                <main class="x-product-stage"><div class="x-wheel-pending" role="status"><span>ELIGE TU JUEGO</span><b>Detén la ruleta para ver sus productos</b><small>Los precios aparecerán al terminar de desplazarte.</small></div>
                   <div class="x-stage-gamehead">
                     <div class="x-stage-game-icon">
                       <img id="xShowcaseImage" class="x-showcase-img" alt="" decoding="async">
@@ -359,7 +360,7 @@
                     </div>
                   </div>
                   <div class="x-input-fields" id="xInputFields"></div>
-                  <div class="x-package-list" id="xPackageList"></div>
+                  <div class="x-package-list" id="xPackageList" tabindex="0" role="region" aria-label="Paquetes y precios; desplázate para ver más"></div>
                   <div class="x-buy-dock">
                     <button class="x-buy-button" id="xBuyButton" type="button" disabled>Comprar</button>
                     <small class="x-config-note">Vista del laboratorio · no procesa pagos reales.</small>
@@ -432,6 +433,24 @@
           </section>
 
           <nav class="xarena-dock" aria-label="Accesos principales"><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span><i>⌃</i></button>
+            <button type="button" data-nav-view="pases"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><small>Pases</small></button>
+            <button type="button" data-nav-view="ajustes"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 3 1-2h4l1 2 3 2 2 1 2 4-1 2 1 2-2 4-2 1-3 2-1 2h-4l-1-2-3-2-2-1-2-4 1-2-1-2 2-4 2-1Z"/><circle cx="12" cy="12" r="4"/></svg><small>Ajustes</small></button>
+          </nav>
+          <button class="whatsapp-float" type="button" data-info-action="WhatsApp" aria-label="Contactar por WhatsApp">
+            <span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><b>¿Necesitas ayuda?</b><small>Escríbenos por WhatsApp</small>
+          </button>
+        </div>
+      </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./mock-data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
+her" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span><i>⌃</i></button>
             <button type="button" data-nav-view="pases"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><small>Pases</small></button>
             <button type="button" data-nav-view="ajustes"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 3 1-2h4l1 2 3 2 2 1 2 4-1 2 1 2-2 4-2 1-3 2-1 2h-4l-1-2-3-2-2-1-2-4 1-2-1-2 2-4 2-1Z"/><circle cx="12" cy="12" r="4"/></svg><small>Ajustes</small></button>
           </nav>

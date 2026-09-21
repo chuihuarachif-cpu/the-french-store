@@ -1,0 +1,146 @@
+/* Prism / mineral palette: graphite, plum, jade, champagne and rose.
+   Reflections are authored gradients; no runtime ray tracing. */
+:root{--bg:#10111c;--panel:#242235;--panel-2:#253831;--muted:#bebacc}
+html,body{background:#10111c!important}
+.store-app,.x-experience,.x-experience-bg{background:#10111c!important}
+.store-header{background:linear-gradient(112deg,#283b38,#292137 48%,#302838 76%,#183332)!important;border-top-color:#e8d9b331!important;border-bottom-color:#bf91d658!important;box-shadow:inset 0 1px #fff2,0 4px 0 #090a13,0 10px 20px #08071166!important}
+.brand-button .ui-icon{color:#92ebd4!important}.header-profile-avatar{background:linear-gradient(145deg,#4b3655,#1e2939)!important;border-color:#c89ada70!important}
+.info-hub-button{background:linear-gradient(115deg,#424052,#233c3e 58%,#253535)!important;border-color:#bca6dc88!important}
+.header-search{background:#171823!important;border-color:#b299be65!important}.cart-button{background:linear-gradient(140deg,#4a4033,#252530)!important;border-color:#d2b57980!important}.cart-button span{background:#f4d79c!important;color:#2b2633!important}
+.welcome-ticker{background:linear-gradient(100deg,#243c38,#2c243c 52%,#40302d)!important;border-top-color:#d3b17844!important;border-bottom-color:#b18bcb75!important;box-shadow:inset 0 -1px #d9b5f225!important}.welcome-ticker-track{color:#eee1ea}.ticker-pause{background:#292536!important;color:#e6d7f5}
+.home-intro h1{color:#f5f0f7}.home-intro .eyebrow{color:#a0ebce}.home-intro p{color:#c0bccb!important}
+.category-arena-card .category-glass{background:linear-gradient(120deg,#fff2,transparent 29%,#fff1 57%,transparent 74%),radial-gradient(ellipse at 85% 0,rgba(var(--rim-rgb),.23),transparent 66%),linear-gradient(155deg,#302d42,#171927 64%,#242335)!important}
+.category-arena-card.active .category-glass{background:linear-gradient(118deg,#fff3,transparent 30%,#fff1 57%,transparent 73%),radial-gradient(ellipse at 90% 10%,rgba(var(--rim-rgb),.3),transparent 67%),linear-gradient(155deg,#353249,#1d2233 58%,#292538)!important}
+.category-console{background:linear-gradient(108deg,rgba(var(--rim-rgb),.28),#24203677)!important}.category-copy small{color:#d1cedb!important}
+.info-launcher:before{background:linear-gradient(125deg,#424652,#32263f 62%,#272636)!important}
+html .store-app .info-hub{background:linear-gradient(120deg,#e6c8ff12,transparent 35%),#1a1c2c!important;border-color:#bea3e56e!important}
+.info-hub-aside{background:linear-gradient(145deg,#314238,#212335)!important;border-color:#a1d8b84f!important}.info-hub-nav button.active{background:linear-gradient(95deg,#376758,#45304f)!important;border-color:#ade8cb69!important;border-left-color:#b9f6dc!important}
+.social-card{background:linear-gradient(124deg,#ffffff12,transparent 42%),linear-gradient(155deg,rgba(var(--social),.16),#201d30)!important}
+.info-important button{background:linear-gradient(130deg,#343347,#222234)!important}.info-hub-head p,.info-panel-head p,.info-panel>p{color:#c7bfd2!important}
+.x-product-stage,.product-card,.profile-card,.pass-card,.wallet-panel,.wallet-card,.settings-grid button,.order-summary,.product-detail,.metric-grid article,.order-row,.x-cart-drawer{background:linear-gradient(120deg,#fff1,transparent 38%),linear-gradient(150deg,#302e43,#1d2231 62%,#252136)!important;border-color:#ac94c757!important}
+.x-product-stage{border-left-color:#81bbaa66!important;border-top-color:#dfc8fc80!important;box-shadow:inset 1px 1px #fff2,4px 5px #0b0c17,0 10px 24px #a36bd312!important}
+.x-game-card{background:linear-gradient(125deg,#363448,#202230)!important;border-color:#ad98b63f!important}.x-game-card.active{background:linear-gradient(110deg,#3c5d52,#3d304c)!important;border-color:#afe9cb9c!important;box-shadow:inset 1px 1px #e9ffeb47,2px 4px #101322,0 0 12px #9de0bd1a!important}
+.x-package-card{background:linear-gradient(135deg,#383345,#222335)!important;border-color:#c6a9d748!important}.x-package-card:nth-child(3n+2){background:linear-gradient(135deg,#35483f,#222b31)!important;border-color:#91c8aa51!important}.x-package-card:nth-child(3n){background:linear-gradient(135deg,#4b3d35,#2a2332)!important;border-color:#d8b48258!important}
+.x-package-card.active{border-color:#e9cca5!important}.x-package-price{color:#f2d8a9!important}.x-package-cart{background:linear-gradient(90deg,#bfa6d31c,#9ad8bd19)!important;color:#d9f0e5!important;border-top:1px solid #dac3f226!important}
+.x-input-field input,.x-input-field select{background:#151923!important;border-color:#b49fc251!important;color:#eee8f4!important}.x-buy-button{background:linear-gradient(105deg,#f3ddac,#aee0c7)!important;color:#20262b!important}
+.x-wheel-pending{display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:25px;color:#d6c6e8}
+.x-wheel-pending>span{font-size:.62rem;letter-spacing:.2em;color:#a9dfc8}.x-wheel-pending b{font-size:clamp(1rem,2vw,1.4rem)}.x-wheel-pending small{font-size:.75rem;color:#b7b0c4}
+.x-product-stage.wheel-settling>.x-wheel-pending{display:flex}
+.x-product-stage.wheel-settling>:not(.x-wheel-pending){visibility:hidden!important}
+/* Price cards must never shrink to fit all rows. The list owns scrolling. */
+html .store-app .x-product-stage{position:relative;display:flex!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important}
+html .store-app .x-stage-gamehead,html .store-app .x-input-fields,html .store-app .x-buy-dock{flex:0 0 auto}
+html .store-app .x-package-list{flex:1 1 0!important;min-height:0!important;overflow:auto!important;overscroll-behavior:contain;touch-action:pan-y;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:max-content!important;align-content:start!important;gap:10px!important;padding:3px 5px 7px 2px!important;scrollbar-color:#a69ac069 #171b29}
+html .store-app .x-package-card{display:flex!important;flex-direction:column!important;min-height:124px!important;height:auto!important;flex-shrink:0!important;overflow:hidden!important}
+html .store-app .x-package-select{display:flex!important;flex-direction:column!important;align-items:flex-start;justify-content:space-between;gap:8px!important;min-height:84px!important;height:auto!important;flex:1 0 auto!important;padding:12px 14px!important}
+html .store-app .x-package-name{white-space:normal!important;display:block!important;-webkit-line-clamp:unset!important;font-size:.83rem!important;line-height:1.3!important}
+html .store-app .x-package-price{display:block!important;visibility:visible!important;font-size:1.1rem!important;line-height:1.2!important;padding:0!important;align-self:flex-start!important}
+html .store-app .x-package-cart{display:block!important;width:100%;min-height:38px!important;flex:0 0 auto!important;padding:8px!important;font-size:.73rem!important}
+.x-wheel-panel{overscroll-behavior:contain}.x-game-wheel{overscroll-behavior:contain}
+/* Desktop/laptop and landscape, including installed standalone applications:
+   occupy the available display without forcing a 16:9 crop or page scrolling. */
+@media(min-width:900px),(min-width:600px) and (orientation:landscape){
+ html.standalone,html.standalone body{height:100%;overflow:hidden!important}
+ html.standalone .lab-shell,html.standalone .preview-stage,html.standalone .device-viewport,html.standalone .device-frame{height:100dvh!important;min-height:0!important;overflow:hidden!important}
+ html.standalone .store-app{--cab-header:68px;--cab-ticker:32px;--cab-footer:64px;--cab-card-h:min(300px,calc(100dvh - 320px));height:100dvh!important;min-height:0!important;overflow:hidden!important}
+ html.standalone .store-app .fs-command-header{height:var(--cab-header)!important;padding:9px 2.5%!important;gap:14px!important}
+ html.standalone .store-app .welcome-ticker{height:var(--cab-ticker)!important;margin-inline:2%!important}.ticker-pause{height:31px!important}
+ html.standalone .store-view{position:absolute!important;inset:calc(var(--cab-header) + var(--cab-ticker)) 0 var(--cab-footer)!important;overflow:auto!important;padding:20px 4%!important;min-height:0!important;overscroll-behavior:contain}
+ html.standalone .store-view[data-view="inicio"]{padding:8px 1% 0!important;overflow:hidden!important}
+ html.standalone .store-view[data-view="inicio"].active{display:flex!important;flex-direction:column!important}
+ html.standalone .home-intro{flex:0 0 auto;width:100%;padding:8px!important;margin:0 auto 8px!important;min-height:72px;text-align:center}
+ html.standalone .home-intro h1{font-size:clamp(1.55rem,2.6cqw,2.3rem)!important;margin:4px 0!important;line-height:1.15!important}.home-intro .eyebrow{margin-bottom:5px!important}
+ html.standalone .home-intro p{font-size:.78rem!important;margin:0!important}
+ html.standalone .category-arena-section{flex:1;min-height:0!important;height:auto!important;margin:0!important}
+ html.standalone .category-arena{height:100%!important;min-height:0!important;padding:0 38px!important;display:flex;align-items:center}
+ html.standalone .category-arena-viewport{height:100%!important;max-height:435px;min-height:0!important;overflow:hidden!important}
+ html.standalone .category-arena-track{--arena-card-width:min(38cqw,550px)!important}
+ html.standalone .category-arena-card{top:10px!important;min-height:0!important;height:min(var(--cab-card-h),24cqw)!important}
+ html.standalone .category-art{height:auto!important;min-height:0!important;flex:1 1 0!important;padding:26px 14px 0!important}
+ html.standalone .category-art img{object-fit:contain!important}
+ html.standalone .category-console{flex:0 0 auto;min-height:70px!important;padding:12px 20px!important;grid-template-columns:minmax(0,1fr) 112px!important}
+ html.standalone .category-copy b{font-size:1.12rem!important}.category-copy small{font-size:.67rem!important}
+ html.standalone .hud-module-foot{flex:0 0 24px!important;padding:5px 20px!important}
+ html.standalone .category-arena-card[data-roulette-slot="-1"]{transform:translateX(-167%) translateY(19px) perspective(950px) rotateY(13deg) rotateZ(-2deg) scale(.79)!important}
+ html.standalone .category-arena-card[data-roulette-slot="1"]{transform:translateX(67%) translateY(19px) perspective(950px) rotateY(-13deg) rotateZ(2deg) scale(.79)!important}
+ html.standalone .arena-platform{width:min(64cqw,740px)!important;max-height:125px;bottom:4px!important}
+ html.standalone .arena-floor-light{height:115px;bottom:0}
+ html.standalone .store-app .xarena-dock{height:var(--cab-footer)!important}.xarena-dock>button[data-nav-view]{height:49px!important}
+ html.standalone .store-app .xarena-dock .info-launcher{height:73px!important}
+ html.standalone .store-app .whatsapp-float{bottom:76px!important;right:16px!important}
+ html.standalone .x-experience{height:100dvh!important;overflow:hidden!important}
+ html.standalone .x-experience-shell{height:100%!important;min-height:0!important;grid-template-rows:60px minmax(0,1fr)!important;padding:16px!important;gap:10px!important}
+ html.standalone .x-experience-grid{height:100%!important;min-height:0!important;grid-template-columns:minmax(150px,23%) minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;overflow:hidden!important}
+ html.standalone .x-wheel-panel{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:34px minmax(0,1fr) 34px!important;min-height:0!important}
+ html.standalone .x-game-wheel{height:100%!important;min-height:0!important}
+ html.standalone .x-wheel-arrow{transform:none!important}
+ html.standalone .x-game-card{width:91%!important;min-height:64px!important;padding:9px!important;grid-template-columns:40px minmax(0,1fr)!important}
+ html.standalone .x-game-name{font-size:.8rem!important;white-space:normal!important}
+ html.standalone .x-product-stage{height:100%!important;padding:16px!important;gap:12px!important}
+ html.standalone .x-stage-gamecopy h2{font-size:1.4rem!important}.x-stage-gamecopy p{font-size:.71rem!important}
+ html.standalone .x-input-fields{max-height:110px;overflow:auto;overscroll-behavior:contain}
+ html.standalone .x-buy-dock{position:static!important;min-height:44px;grid-template-columns:minmax(160px,260px) 1fr!important;background:transparent!important;padding:0!important}
+ html.standalone .x-buy-button{min-height:42px!important}
+ html.standalone .store-app .info-hub{height:calc(100dvh - 75px)!important;max-height:740px!important}
+}
+@media(min-width:600px) and (orientation:landscape) and (max-height:540px){
+ html.standalone .store-app{--cab-header:47px;--cab-ticker:24px;--cab-footer:43px;--cab-card-h:clamp(130px,calc(100dvh - 230px),240px)}
+ html.standalone .store-app .fs-command-header{padding:5px 16px!important;grid-template-columns:auto 1fr auto auto!important;gap:8px!important}
+ html.standalone .header-profile{height:36px!important}.header-profile-avatar{height:34px!important}.header-profile-copy small{display:none!important}.brand-button{font-size:1rem!important}
+ html.standalone .header-search,html.standalone .cart-button,html.standalone .icon-button{height:34px!important;min-height:34px!important}
+ html.standalone .welcome-ticker-track{font-size:.61rem!important}.ticker-pause{height:23px!important}
+ html.standalone .home-intro{min-height:42px;padding:2px!important;margin:0!important}.home-intro .eyebrow,.home-intro p{display:none!important}
+ html.standalone .home-intro h1{font-size:1.25rem!important;margin:0!important}
+ html.standalone .category-arena{padding:0 26px!important}
+ html.standalone .category-arena-card{top:4px!important}
+ html.standalone .category-card-top{top:9px!important;left:15px!important;right:15px!important}.hud-module-label{font-size:.38rem!important}.category-tag{font-size:.4rem!important;padding:3px 6px!important}
+ html.standalone .category-art{padding:16px 8px 0!important}
+ html.standalone .category-console{min-height:51px!important;padding:7px 12px!important;grid-template-columns:minmax(0,1fr) 95px!important;gap:9px!important}
+ html.standalone .category-copy b{font-size:.88rem!important}.category-copy small{font-size:.53rem!important}
+ html.standalone .category-enter{min-height:36px!important;font-size:.74rem!important}
+ html.standalone .hud-module-foot{display:none!important}
+ html.standalone .arena-platform{max-height:69px!important;width:58cqw!important}
+ html.standalone .arena-floor-light{height:69px}
+ html.standalone .store-app .xarena-dock .info-launcher{height:53px!important;padding-top:16px!important;width:280px!important}.info-launcher i{top:7px!important}.info-launcher small{display:none!important}.info-launcher b{font-size:.8rem!important}
+ html.standalone .xarena-dock>button[data-nav-view]{height:38px!important;padding:4px!important;flex-direction:row!important}
+ html.standalone .store-app .whatsapp-float{bottom:52px!important;width:41px!important;min-height:40px!important;padding:3px!important;grid-template-columns:31px!important}.whatsapp-float>span{width:31px!important;height:31px!important}.whatsapp-float b,.whatsapp-float small{display:none!important}
+ html.standalone .x-experience-shell{padding:9px!important;grid-template-rows:42px minmax(0,1fr)!important;gap:7px!important}.x-experience-topbar{margin:0!important;padding-bottom:4px!important}.x-experience-title b{font-size:.88rem!important}
+ html.standalone .x-experience-grid{grid-template-columns:22% minmax(0,1fr)!important;gap:9px!important}
+ html.standalone .x-wheel-panel{grid-template-rows:27px minmax(0,1fr) 27px!important;gap:0!important}.x-wheel-arrow{height:27px!important}
+ html.standalone .x-game-card{min-height:45px!important;padding:6px!important;grid-template-columns:28px minmax(0,1fr)!important;--wheel-y:0px!important}.x-game-thumb-shell{width:28px!important;height:28px!important}
+ html.standalone .x-game-card[data-x-slot="-1"]{transform:translateY(-50%) translateY(-51px) scale(.88)!important}html.standalone .x-game-card[data-x-slot="1"]{transform:translateY(-50%) translateY(51px) scale(.88)!important}
+ html.standalone .x-game-card[data-x-distance="2"]{visibility:hidden!important}
+ html.standalone .x-game-name{font-size:.64rem!important;line-height:1.2!important}
+ html.standalone .store-app .x-product-stage{padding:10px!important;gap:7px!important}
+ html.standalone .x-stage-gamehead{grid-template-columns:30px minmax(0,1fr)!important}.x-config-selection{display:none!important}.x-stage-gamecopy p,.x-stage-gamecopy>span{display:none!important}
+ html.standalone .x-stage-gamecopy h2{font-size:1rem!important}.x-stage-game-icon{width:30px!important;height:30px!important}
+ html.standalone .x-input-fields{max-height:60px;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}.x-input-field span{font-size:.61rem!important}
+ html.standalone .x-input-field input,html.standalone .x-input-field select{min-height:32px!important;padding:6px 8px!important;font-size:16px!important}
+ html.standalone .store-app .x-package-card{min-height:106px!important}.x-package-select{min-height:70px!important}
+ html.standalone .x-buy-dock{min-height:34px!important;grid-template-columns:150px 1fr!important}.x-buy-button{min-height:34px!important;font-size:.79rem!important}.x-config-note{font-size:.53rem!important}
+ html.standalone .store-app .info-hub{height:calc(100dvh - 12px)!important}
+}
+html.perf-lite .store-header,html.perf-lite .x-product-stage,html.perf-lite .x-game-card.active{box-shadow:none!important}
+
+/* Warm studio cabinet treatment. The reference uses a charcoal room, ivory
+   glass, champagne edge lights and dark wood. These are static composited
+   layers so the visual stays convincing without a real-time renderer. */
+:root{--studio-void:#101011;--studio-charcoal:#1d1c1c;--studio-panel:#292625;--studio-ivory:#f7f1e8;--studio-champagne:#efbd80;--studio-copper:#a86742;--studio-wood:#4b2b1c;--studio-sage:#a9c4ae}
+html,body,.store-app,.x-experience,.x-experience-bg{background:var(--studio-void)!important}
+.store-app{background-image:radial-gradient(ellipse at 50% 67%,#8d573526 0 17%,transparent 48%),linear-gradient(180deg,#191818 0,#0e0f10 66%,#151210 100%)!important}
+.store-header{background:linear-gradient(110deg,#292526 0,#161617 40%,#2b2420 76%,#171717 100%)!important;border-top-color:#fff4!important;border-bottom-color:#d89b604d!important;box-shadow:inset 0 1px #fff5,0 5px 0 #080808,0 14px 28px #000b!important}
+.brand-button,.header-profile-copy b,.info-hub-button b,.header-search,.cart-button,.header-profile-copy small{color:var(--studio-ivory)!important}
+.brand-button .ui-icon,.info-hub-button .ui-icon{color:var(--studio-champagne)!important}.header-profile-avatar{background:linear-gradient(145deg,#c07d4e,#33231b)!important;border-color:#ffd49b!important;box-shadow:inset 1px 1px #fff7,0 3px 10px #0009!important}
+.info-hub-button{background:linear-gradient(105deg,#332c29,#211f20 53%,#4a3023)!important;border-color:#efbd808c!important;box-shadow:inset 1px 1px #fff4,0 5px 12px #0009!important}.header-search{background:#151516!important;border-color:#c88f5b8a!important}.cart-button{background:linear-gradient(145deg,#4a3022,#1b1919)!important;border-color:#e6b06f9c!important;box-shadow:inset 1px 1px #fff4,0 4px 12px #000b!important}.cart-button span{background:var(--studio-champagne)!important;color:#251812!important}
+.welcome-ticker{background:linear-gradient(100deg,#32251e,#1d1d1c 48%,#3b2820)!important;border-top-color:#f2c5897d!important;border-bottom-color:#d48e524d!important;box-shadow:inset 0 1px #fff3,0 4px 12px #0007!important}.welcome-ticker-track{color:#f2dfca!important}.ticker-pause{background:#2b221d!important;color:#f7d9ad!important}
+.home-intro h1{color:var(--studio-ivory)!important;text-shadow:0 2px 0 #000,0 0 24px #f5c98a1f}.home-intro .eyebrow{color:#e8b776!important}.home-intro p{color:#d4c9bd!important}
+.category-arena-card{--studio-rim:#d7b07a;--studio-rim-soft:#805533}.category-arena-card[data-category="recargas-id"]{--studio-rim:#efbd80;--studio-rim-soft:#9d5d35}.category-arena-card[data-category="recargas-cuenta"]{--studio-rim:#d59665;--studio-rim-soft:#70422c}.category-arena-card[data-category="paginas"]{--studio-rim:#d7c0a0;--studio-rim-soft:#74604b}.category-arena-card[data-category="giftcards"]{--studio-rim:#e7a77f;--studio-rim-soft:#82442d}.category-arena-card[data-category="streaming"]{--studio-rim:#b3c8ad;--studio-rim-soft:#4e6e5b}.category-arena-card[data-category="cuentas"]{--studio-rim:#edc5a0;--studio-rim-soft:#8e5b3b}
+.category-arena-card .category-glass{border-color:color-mix(in srgb,var(--studio-rim) 80%,#fff 20%)!important;border-top-color:#fff9!important;background:linear-gradient(120deg,#fff8 0 1%,transparent 8% 31%,#fff2 36% 39%,transparent 45% 66%,#fff1 70% 72%,transparent 79%),radial-gradient(ellipse at 86% 1%,color-mix(in srgb,var(--studio-rim) 32%,transparent),transparent 67%),linear-gradient(155deg,#4a4542,#252425 54%,#171717)!important;box-shadow:inset 2px 2px #fff5,inset -3px -3px 0 color-mix(in srgb,var(--studio-rim) 55%,transparent),3px 6px 0 #080808d9,0 0 0 1px #0008,0 10px 20px #000c,0 0 25px color-mix(in srgb,var(--studio-rim) 22%,transparent)!important}
+.category-arena-card.active .category-glass{border-color:var(--studio-rim)!important;background:linear-gradient(120deg,#fff9 0 1.5%,transparent 9% 30%,#fff3 36% 39%,transparent 45% 65%,#fff2 70% 72%,transparent 80%),radial-gradient(ellipse at 82% 0,color-mix(in srgb,var(--studio-rim) 42%,transparent),transparent 63%),linear-gradient(155deg,#5a514b,#2b2929 55%,#181818)!important;box-shadow:inset 2px 2px #fff9,inset -4px -4px 0 color-mix(in srgb,var(--studio-rim) 72%,transparent),4px 7px 0 #080808,0 0 0 1px #000b,0 10px 25px #000e,0 0 30px color-mix(in srgb,var(--studio-rim) 38%,transparent)!important}
+.category-glass:after{background:linear-gradient(118deg,transparent 12%,#fff5 12.3% 16%,transparent 16.3% 57%,#fff2 57.3% 58.5%,transparent 58.8%)!important}.category-card-top{color:#e7d5bf!important}.category-console{background:linear-gradient(100deg,#121212c9,#44342aef)!important;border-top-color:#f4c98d99!important;box-shadow:inset 0 1px #fff3,0 -3px 9px #0008!important}.category-copy b{color:var(--studio-ivory)!important;text-shadow:0 2px 0 #000}.category-copy small{color:#decabd!important}.category-enter{background:linear-gradient(135deg,#fffdf9,#e3d5c5 53%,#b67d54)!important;border-color:#fff8e9!important;color:#211914!important;box-shadow:inset 1px 1px #fff,0 2px 0 #8a5635,0 5px 12px #0009!important}.hud-module-foot{color:#d3b897!important;border-color:#eed0a055!important}
+.hud-module-edge{background:var(--studio-rim)!important;box-shadow:0 0 8px color-mix(in srgb,var(--studio-rim) 55%,transparent)!important}.category-tag{color:#fff5e6!important;border-color:color-mix(in srgb,var(--studio-rim) 70%,transparent)!important;background:#181514b8!important}.category-glass:before{border-color:color-mix(in srgb,var(--studio-rim) 42%,transparent)!important;border-bottom-color:color-mix(in srgb,var(--studio-rim) 62%,transparent)!important}
+.arena-platform{filter:drop-shadow(0 14px 10px #000d) drop-shadow(0 0 16px #e2a96a55)!important}.arena-floor-light{background:radial-gradient(ellipse,#f0bd7a55,transparent 68%)!important}
+.x-product-stage,.product-card,.profile-card,.pass-card,.wallet-panel,.wallet-card,.settings-grid button,.order-summary,.product-detail,.metric-grid article,.order-row,.x-cart-drawer{background:linear-gradient(120deg,#fff3,transparent 25% 70%,#e9a8680b),linear-gradient(145deg,#3e3936,#222122 62%,#171718)!important;border-color:#dbb3818a!important;box-shadow:inset 1px 1px #fff4,4px 6px 0 #080808,0 12px 24px #000c!important}
+.x-game-card{background:linear-gradient(145deg,#3a3735,#211f1e)!important;border-color:#c9956680!important}.x-game-card.active{background:linear-gradient(110deg,#594938,#282322)!important;border-color:#ffe0ad!important;box-shadow:inset 1px 1px #fff6,2px 4px 0 #090909,0 0 18px #d99b5b3d!important}.x-package-card{background:linear-gradient(140deg,#423b36,#242222)!important;border-color:#c7946488!important}.x-package-card:nth-child(3n+2){background:linear-gradient(140deg,#38413a,#222823)!important;border-color:#9db9a477!important}.x-package-card:nth-child(3n){background:linear-gradient(140deg,#4b3930,#28201d)!important;border-color:#e1ac7388!important}.x-package-price{color:#ffd59d!important}.x-package-cart{background:linear-gradient(90deg,#e6b47725,#d4a98713)!important;color:#f7e8d6!important}.x-input-field input,.x-input-field select{background:#141414!important;border-color:#c9946488!important;color:#f6ede5!important}.x-buy-button{background:linear-gradient(105deg,#fffaf1,#d6b18c)!important;color:#281a12!important;border-color:#fff6e6!important}
+.info-launcher:before{background:linear-gradient(130deg,#423833,#1d1c1c 56%,#543422)!important;border-color:#e5b37b!important;box-shadow:inset 1px 1px #fff4,0 -5px 14px #0008!important}.info-hub-button,.info-launcher b{color:#f5e8d8!important}.info-hub{background:linear-gradient(120deg,#fff3,transparent 28%),#242120!important;border-color:#dda878!important}.info-hub-aside{background:linear-gradient(145deg,#46362c,#242222)!important;border-color:#d8a97677!important}.info-hub-nav button.active{background:linear-gradient(95deg,#6a4935,#3d2c24)!important;border-color:#f2c48b!important}.social-card{background:linear-gradient(125deg,#fff3,transparent 40%),linear-gradient(155deg,#49372d,#252123)!important}
+html.perf-lite .store-app{background:#101011!important}.perf-lite .category-arena-card .category-glass,.perf-lite .category-arena-card.active .category-glass{background:linear-gradient(145deg,#413c39,#211f1f)!important;box-shadow:none!important}.perf-lite .category-enter{box-shadow:none!important}.perf-lite .arena-platform{filter:none!important}.perf-lite .x-product-stage,.perf-lite .product-card,.perf-lite .profile-card,.perf-lite .pass-card,.perf-lite .wallet-panel,.perf-lite .wallet-card,.perf-lite .settings-grid button,.perf-lite .order-summary,.perf-lite .product-detail,.perf-lite .metric-grid article,.perf-lite .order-row,.perf-lite .x-cart-drawer{box-shadow:none!important}
