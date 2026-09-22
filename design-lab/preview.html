@@ -4037,6 +4037,304 @@ html.perf-lite .category-arena-viewport.is-dragging .category-arena-card{will-ch
   }
 }
 
+/* FS_LANDSCAPE_REFERENCE_FIX_START */
+
+/* Approved reference correction: keep the whole composition inside one screen. */
+.store-app{--fs-ref-head:68px;--fs-ref-foot:64px}
+.welcome-ticker,.header-ticker-bridge,
+html.standalone .role-banner,
+html.standalone .hud-energy{display:none!important}
+
+/* Header: five compact segments stay visible, including orders + cart. */
+.store-header.fs-command-header{
+  display:grid!important;
+  grid-template-columns:minmax(150px,1.12fr) minmax(135px,.88fr) minmax(150px,.96fr) minmax(145px,.92fr) 108px!important;
+  align-items:center!important;
+  gap:6px!important;
+  min-height:var(--fs-ref-head)!important;
+  height:var(--fs-ref-head)!important;
+  padding:6px clamp(6px,1vw,13px)!important;
+  overflow:hidden!important;
+  border-radius:0!important;
+  border-bottom:1px solid rgba(72,229,255,.62)!important;
+  background:linear-gradient(110deg,rgba(20,111,162,.25),transparent 25% 75%,rgba(19,105,151,.20)),linear-gradient(180deg,#04192b,#020e1b)!important;
+  box-shadow:inset 0 -1px rgba(221,253,255,.14),0 6px 18px rgba(0,0,0,.23)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+}
+.store-header.fs-command-header::before{
+  inset:4px 5px 6px!important;
+  border-radius:2px!important;
+  border:1px solid rgba(72,229,255,.34)!important;
+  clip-path:polygon(0 0,21% 0,23% 9px,78% 9px,80% 0,100% 0,100% 82%,98.5% 100%,19% 100%,17.5% 83%,0 83%)!important
+}
+.store-header.fs-command-header::after{
+  top:-22%!important;bottom:-22%!important;left:-17%!important;width:13%!important;height:auto!important;
+  background:linear-gradient(108deg,transparent 22%,rgba(151,244,255,.07) 38%,rgba(247,255,255,.84) 49%,rgba(65,227,255,.48) 54%,transparent 69%)!important;
+  filter:none!important;mix-blend-mode:normal!important;box-shadow:none!important;
+  animation:fsRefTopSweep 9.6s cubic-bezier(.2,.72,.22,1) infinite!important
+}
+@keyframes fsRefTopSweep{
+  0%,70%{transform:translate3d(0,0,0);opacity:0}
+  73%{opacity:.72}
+  87%{transform:translate3d(900%,0,0);opacity:.58}
+  90%,100%{transform:translate3d(900%,0,0);opacity:0}
+}
+.store-header.fs-command-header>.brand-button,
+.store-header.fs-command-header>.header-profile,
+.store-header.fs-command-header>.info-hub-button,
+.store-header.fs-command-header>.header-search,
+.store-header.fs-command-header .header-actions>button{
+  width:100%!important;min-width:0!important;height:52px!important;min-height:52px!important;margin:0!important;
+  border:1px solid rgba(72,229,255,.26)!important;border-radius:4px 13px 4px 13px!important;
+  background:linear-gradient(120deg,rgba(130,236,255,.06),transparent 31%),linear-gradient(154deg,rgba(8,50,79,.93),rgba(3,20,37,.97))!important;
+  box-shadow:inset 1px 1px rgba(230,253,255,.08),0 3px 9px rgba(0,0,0,.16)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+}
+.store-header.fs-command-header>.brand-button{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;
+  padding:0 10px!important;font-size:clamp(.92rem,1.48cqw,1.27rem)!important;white-space:nowrap!important;overflow:hidden!important
+}
+.brand-button .ui-icon{width:24px!important;height:24px!important;min-width:24px!important;filter:none!important}
+.store-header.fs-command-header>.header-profile{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;padding:0 9px!important
+}
+.header-profile-avatar{width:31px!important;height:31px!important;min-width:31px!important}
+.header-profile-copy{display:grid!important;min-width:0!important;gap:1px!important;text-align:left!important}
+.header-profile-copy b{font-size:.72rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.header-profile-copy small{display:block!important;font-size:.50rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.store-header.fs-command-header>.info-hub-button{
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:0 9px!important
+}
+.info-hub-button>span:nth-child(2){min-width:0!important}
+.info-hub-button small{display:block!important;font-size:.40rem!important;letter-spacing:.12em!important;white-space:nowrap!important}
+.info-hub-button b{font-size:.72rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.info-hub-button>i{margin-left:auto!important;flex:none!important}
+.store-header.fs-command-header>.header-search{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;
+  padding:0 12px!important;border-radius:999px!important;background:#020f1d!important
+}
+.header-search .ui-icon{width:20px!important;height:20px!important;min-width:20px!important}
+.header-search-copy{display:block!important;min-width:0!important;font-size:.64rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.store-header.fs-command-header>.header-actions{
+  position:relative!important;z-index:2!important;width:108px!important;min-width:108px!important;
+  display:grid!important;grid-template-columns:43px 59px!important;align-items:center!important;gap:6px!important;justify-self:end!important
+}
+.store-header.fs-command-header .header-actions>.icon-button{display:grid!important;place-items:center!important;width:43px!important;padding:0!important}
+.store-header.fs-command-header .header-actions>.cart-button{width:59px!important;padding:0 5px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:4px!important}
+.header-actions .ui-icon{width:21px!important;height:21px!important}
+.cart-button span{width:20px!important;height:20px!important;min-width:20px!important;font-size:.62rem!important}
+
+/* Standalone uses exactly the visible browser viewport; nothing continues below. */
+html.standalone,html.standalone body,
+html.standalone .lab-shell,html.standalone .preview-stage,
+html.standalone .device-viewport,html.standalone .device-frame{
+  height:100%!important;min-height:0!important;overflow:hidden!important
+}
+html.standalone .store-app{height:100dvh!important;min-height:0!important;overflow:hidden!important}
+html.standalone .store-header.fs-command-header{position:absolute!important;inset:0 0 auto!important}
+html.standalone .store-view{position:absolute!important;inset:var(--fs-ref-head) 0 var(--fs-ref-foot)!important;min-height:0!important}
+html.standalone .store-view[data-view="inicio"]{
+  display:flex!important;flex-direction:column!important;padding:7px 1.1% 0!important;overflow:hidden!important
+}
+html.standalone .home-intro{
+  flex:0 0 auto!important;width:100%!important;max-width:980px!important;min-height:76px!important;
+  margin:0 auto 5px!important;padding:6px 14px 2px!important;text-align:center!important
+}
+html.standalone .home-intro .eyebrow{
+  display:block!important;margin:0 0 7px!important;font-size:clamp(.48rem,.72cqw,.66rem)!important;letter-spacing:.26em!important
+}
+html.standalone .home-intro h1{
+  display:block!important;margin:0 0 5px!important;font-size:clamp(1.72rem,3.35cqw,3rem)!important;line-height:1!important
+}
+html.standalone .home-intro p{
+  display:block!important;margin:0!important;font-size:clamp(.69rem,.92cqw,.88rem)!important;line-height:1.35!important
+}
+html.standalone .category-arena-section{flex:1 1 auto!important;min-height:0!important;height:auto!important;margin:0!important}
+
+/* Carousel: no arrows, smooth direct manipulation, larger neighbours at the true edge. */
+.category-arena{
+  height:100%!important;min-height:0!important;margin:0!important;padding:0 16px 2px!important;overflow:hidden!important;
+  border:1px solid rgba(72,229,255,.38)!important;border-radius:18px!important;
+  background:radial-gradient(ellipse at 50% 78%,rgba(29,218,255,.13),transparent 31%),linear-gradient(180deg,rgba(2,18,32,.18),rgba(1,9,17,.76))!important;
+  box-shadow:inset 0 1px rgba(218,252,255,.07)!important
+}
+.category-arena-viewport{
+  --category-drag-x:0px;width:100%!important;height:100%!important;min-height:0!important;padding:0!important;
+  overflow:visible!important;touch-action:pan-y pinch-zoom!important;overscroll-behavior-x:contain!important;cursor:grab!important
+}
+.category-arena-track{--arena-card-width:min(53cqw,760px)!important;width:100%!important;height:100%!important;min-height:0!important}
+.category-arena-card{
+  top:clamp(5px,1.1dvh,11px)!important;height:clamp(190px,44dvh,390px)!important;min-height:0!important;
+  translate:var(--category-drag-x) 0!important;backface-visibility:hidden!important;transform-style:preserve-3d!important;
+  transition:translate .28s cubic-bezier(.16,.86,.22,1),transform .38s cubic-bezier(.16,.86,.22,1),opacity .20s ease!important
+}
+.category-glass{height:100%!important;min-height:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.category-art{height:68%!important;min-height:0!important}
+.category-console{bottom:23px!important;min-height:68px!important;padding:11px 17px!important;gap:11px!important}
+.category-copy b{font-size:clamp(1rem,1.5cqw,1.38rem)!important}.category-copy small{font-size:clamp(.57rem,.80cqw,.74rem)!important}
+.category-enter{min-width:108px!important;height:43px!important;min-height:43px!important;font-size:.80rem!important}
+.hud-module-foot{bottom:0!important;height:23px!important;min-height:23px!important;padding:4px 15px!important;font-size:.36rem!important}
+.arena-platform{width:min(61cqw,800px)!important;max-height:112px!important;bottom:0!important}
+.arena-floor-light{height:100px!important;bottom:-2px!important}
+.category-arena-viewport.is-dragging{cursor:grabbing!important;user-select:none!important}
+.category-arena-viewport.is-dragging .category-arena-card{transition:none!important;will-change:transform,translate!important}
+.arena-arrow,.category-arena-status{display:none!important}
+.category-arena-card.roulette-hidden{visibility:hidden!important;pointer-events:none!important}
+@media(min-width:600px){
+  .category-arena-card[data-roulette-slot="-1"]{
+    left:-10cqw!important;right:auto!important;
+    transform:translate3d(0,27px,0) perspective(1050px) rotateY(8deg) rotateZ(-.7deg) scale(.64)!important;
+    transform-origin:left 76%!important;opacity:.78!important
+  }
+  .category-arena-card[data-roulette-slot="1"]{
+    left:auto!important;right:-10cqw!important;
+    transform:translate3d(0,27px,0) perspective(1050px) rotateY(-8deg) rotateZ(.7deg) scale(.64)!important;
+    transform-origin:right 76%!important;opacity:.78!important
+  }
+}
+
+/* Bottom rail: narrower like the second reference and fully inside the viewport. */
+html .store-app .xarena-dock{
+  position:absolute!important;z-index:41!important;left:50%!important;right:auto!important;
+  bottom:max(4px,env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;
+  width:min(620px,44cqw)!important;height:var(--fs-ref-foot)!important;
+  display:grid!important;grid-template-columns:minmax(70px,1fr) minmax(185px,2.35fr) minmax(70px,1fr)!important;align-items:end!important;
+  gap:0!important;padding:0 6px!important;overflow:hidden!important;border:0!important;border-top:1px solid rgba(72,229,255,.52)!important;border-radius:0!important;
+  background:linear-gradient(180deg,rgba(7,43,67,.97),rgba(2,17,31,.99))!important;
+  box-shadow:0 -5px 18px rgba(0,0,0,.20),inset 0 1px rgba(220,252,255,.06)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+}
+html.standalone .store-app .xarena-dock{position:fixed!important}
+.xarena-dock>.dock-contour{
+  left:50%!important;bottom:0!important;translate:-50% 0!important;width:100%!important;height:100%!important;
+  clip-path:polygon(0 100%,7% 40%,16% 14%,37% 14%,41% 0,59% 0,63% 14%,84% 14%,93% 40%,100% 100%)!important;
+  filter:none!important
+}
+.xarena-dock::before{display:none!important}
+.xarena-dock::after{
+  top:-24%!important;bottom:-24%!important;left:-22%!important;right:auto!important;width:18%!important;height:auto!important;
+  background:linear-gradient(108deg,transparent 21%,rgba(146,242,255,.07) 38%,rgba(249,255,255,.84) 49%,rgba(63,227,255,.48) 54%,transparent 69%)!important;
+  filter:none!important;mix-blend-mode:normal!important;box-shadow:none!important;
+  animation:fsRefBottomSweep 9.6s 1.1s cubic-bezier(.2,.72,.22,1) infinite!important
+}
+@keyframes fsRefBottomSweep{
+  0%,70%{transform:translate3d(0,0,0);opacity:0}
+  73%{opacity:.70}
+  87%{transform:translate3d(680%,0,0);opacity:.56}
+  90%,100%{transform:translate3d(680%,0,0);opacity:0}
+}
+.xarena-dock>button[data-nav-view]{
+  height:49px!important;padding:6px 7px!important;gap:2px!important;background:transparent!important;box-shadow:none!important
+}
+.xarena-dock>button[data-nav-view] .ui-icon{width:21px!important;height:21px!important;filter:none!important}
+.xarena-dock>button[data-nav-view] small{font-size:.56rem!important}
+html .store-app .xarena-dock .info-launcher{
+  height:62px!important;padding:13px 9px 6px!important;gap:7px!important;
+  clip-path:polygon(9% 100%,0 100%,10% 37%,19% 9%,81% 9%,90% 37%,100% 100%,91% 100%)!important
+}
+.info-launcher>.ui-icon{width:23px!important;height:23px!important;filter:none!important}
+.info-launcher small{font-size:.38rem!important}.info-launcher b{font-size:.80rem!important}.info-launcher>i{top:4px!important;font-size:.70rem!important}
+
+/* WhatsApp stays a small reference-style pill. */
+html.standalone .store-app .whatsapp-float{
+  right:11px!important;bottom:max(8px,env(safe-area-inset-bottom))!important;
+  width:auto!important;min-width:136px!important;height:41px!important;padding:4px 10px 4px 4px!important;
+  grid-template-columns:31px 1fr!important;gap:6px!important;border-radius:999px!important
+}
+html.standalone .store-app .whatsapp-float>span{width:31px!important;height:31px!important}
+html.standalone .store-app .whatsapp-float b{display:block!important;font-size:.56rem!important;white-space:nowrap!important}
+html.standalone .store-app .whatsapp-float small{display:block!important;font-size:.47rem!important;white-space:nowrap!important}
+
+/* Phone landscape/browser chrome: retain the same hierarchy instead of hiding the hero copy. */
+@media(max-width:1000px){
+  .store-header.fs-command-header{
+    grid-template-columns:minmax(128px,1.08fr) minmax(112px,.82fr) minmax(124px,.90fr) minmax(116px,.84fr) 96px!important;
+    gap:5px!important;padding-inline:6px!important
+  }
+  .store-header.fs-command-header>.header-actions{width:96px!important;min-width:96px!important;grid-template-columns:38px 53px!important;gap:5px!important}
+  .store-header.fs-command-header .header-actions>.icon-button{width:38px!important}
+  .store-header.fs-command-header .header-actions>.cart-button{width:53px!important}
+  .brand-button{font-size:.88rem!important}.brand-button .ui-icon{width:21px!important;height:21px!important;min-width:21px!important}
+  .header-profile-copy b{font-size:.64rem!important}.header-profile-copy small{font-size:.44rem!important}
+  .info-hub-button small{font-size:.34rem!important}.info-hub-button b{font-size:.64rem!important}
+  .header-search-copy{font-size:.56rem!important}
+  .category-arena-track{--arena-card-width:min(55cqw,600px)!important}
+  html .store-app .xarena-dock{width:min(500px,49cqw)!important}
+}
+@media(min-width:600px) and (orientation:landscape) and (max-height:560px){
+  .store-app{--fs-ref-head:56px;--fs-ref-foot:54px}
+  html.standalone .store-view{inset:56px 0 54px!important}
+  .store-header.fs-command-header{height:56px!important;min-height:56px!important;padding:4px 5px!important}
+  .store-header.fs-command-header>.brand-button,
+  .store-header.fs-command-header>.header-profile,
+  .store-header.fs-command-header>.info-hub-button,
+  .store-header.fs-command-header>.header-search,
+  .store-header.fs-command-header .header-actions>button{height:46px!important;min-height:46px!important}
+  html.standalone .home-intro{min-height:55px!important;margin:0 auto 2px!important;padding:3px 9px 1px!important}
+  html.standalone .home-intro .eyebrow{display:block!important;margin-bottom:3px!important;font-size:.43rem!important}
+  html.standalone .home-intro h1{display:block!important;font-size:1.32rem!important;margin-bottom:2px!important}
+  html.standalone .home-intro p{display:block!important;font-size:.59rem!important}
+  .category-arena{padding-inline:7px!important;border-radius:13px!important}
+  .category-arena-track{--arena-card-width:min(54cqw,460px)!important}
+  .category-arena-card{top:4px!important;height:clamp(178px,47dvh,218px)!important}
+  .category-card-top{top:11px!important;left:14px!important;right:14px!important}
+  .hud-module-label{font-size:.36rem!important}.category-tag{font-size:.38rem!important;padding:3px 5px!important}
+  .category-art{height:67%!important}
+  .category-console{bottom:19px!important;min-height:54px!important;padding:7px 11px!important;gap:7px!important}
+  .category-copy b{font-size:.85rem!important}.category-copy small{font-size:.50rem!important}
+  .category-enter{min-width:90px!important;height:34px!important;min-height:34px!important;font-size:.67rem!important}
+  .hud-module-foot{height:19px!important;min-height:19px!important;font-size:.27rem!important;padding:3px 11px!important}
+  .arena-platform{width:min(56cqw,500px)!important;max-height:68px!important}.arena-floor-light{height:64px!important}
+  .category-arena-card[data-roulette-slot="-1"]{left:-9cqw!important;transform:translate3d(0,17px,0) perspective(900px) rotateY(7deg) scale(.62)!important}
+  .category-arena-card[data-roulette-slot="1"]{right:-9cqw!important;transform:translate3d(0,17px,0) perspective(900px) rotateY(-7deg) scale(.62)!important}
+  html .store-app .xarena-dock{width:min(410px,48cqw)!important;height:54px!important}
+  .xarena-dock>button[data-nav-view]{height:42px!important}
+  html .store-app .xarena-dock .info-launcher{height:52px!important;padding:11px 6px 5px!important}
+  .info-launcher small{display:none!important}.info-launcher b{font-size:.70rem!important}.info-launcher>.ui-icon{width:19px!important;height:19px!important}
+  html.standalone .store-app .whatsapp-float{right:7px!important;min-width:118px!important;height:38px!important}
+  html.standalone .store-app .whatsapp-float>span{width:28px!important;height:28px!important}
+  html.standalone .store-app .whatsapp-float b{font-size:.50rem!important}
+  html.standalone .store-app .whatsapp-float small{font-size:.41rem!important}
+}
+
+/* Strong low-end path: remove expensive blur/filter layers, keep only transform/opacity motion. */
+html.perf-lite .shop-atmosphere,
+html.perf-lite .fog-bank,
+html.perf-lite .category-card-grid{display:none!important}
+html.perf-lite .store-header.fs-command-header,
+html.perf-lite .category-arena,
+html.perf-lite .category-glass,
+html.perf-lite .category-arena-card.active .category-glass,
+html.perf-lite .xarena-dock,
+html.perf-lite .info-launcher::before,
+html.perf-lite .whatsapp-float{
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important
+}
+html.perf-lite .category-art img,html.perf-lite .arena-platform{filter:none!important}
+html.perf-lite .arena-floor-light{box-shadow:none!important;opacity:.50!important}
+html.perf-lite .category-glass::before{opacity:.30!important;box-shadow:none!important}
+html.perf-lite .category-glass::after{opacity:.38!important}
+html.perf-lite .category-arena-card{
+  filter:none!important;
+  transition:translate .20s ease,transform .26s cubic-bezier(.2,.8,.2,1),opacity .16s linear!important
+}
+html.perf-lite .category-arena-viewport.is-dragging .category-arena-card{will-change:auto!important}
+html.perf-lite .store-header.fs-command-header::after,
+html.perf-lite .xarena-dock::after{
+  filter:none!important;mix-blend-mode:normal!important;animation-duration:12s!important
+}
+html.motion-off .store-header.fs-command-header::after,
+html.motion-off .xarena-dock::after,
+html.page-hidden .store-header.fs-command-header::after,
+html.page-hidden .xarena-dock::after{
+  animation:none!important;opacity:0!important
+}
+@media(prefers-reduced-motion:reduce){
+  .store-header.fs-command-header::after,.xarena-dock::after{animation:none!important;opacity:0!important}
+  .category-arena-card{transition:none!important}
+}
+
+/* FS_LANDSCAPE_REFERENCE_FIX_END */
 /* FS_SHOWROOM_COMPACT_PREVIEW_END */
 </style>
 </head>
@@ -4552,10 +4850,15 @@ window.FS_LAB_DATA = Object.freeze({
     "cuentas": "Venta de Cuentas",
     "paginas": "Venta de Páginas"
   };
+  const compactLandscapeLite = Boolean(
+    window.matchMedia?.("(orientation: landscape) and (max-height: 560px)")?.matches ||
+    window.matchMedia?.("(pointer: coarse) and (orientation: landscape)")?.matches
+  );
   const prefersLitePerformance = Boolean(
     new URLSearchParams(location.search).get("performance") === "lite" ||
     navigator.connection?.saveData ||
     window.matchMedia?.("(max-width: 700px)")?.matches ||
+    compactLandscapeLite ||
     (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
   );

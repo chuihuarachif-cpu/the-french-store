@@ -46,10 +46,15 @@
     "cuentas": "Venta de Cuentas",
     "paginas": "Venta de Páginas"
   };
+  const compactLandscapeLite = Boolean(
+    window.matchMedia?.("(orientation: landscape) and (max-height: 560px)")?.matches ||
+    window.matchMedia?.("(pointer: coarse) and (orientation: landscape)")?.matches
+  );
   const prefersLitePerformance = Boolean(
     new URLSearchParams(location.search).get("performance") === "lite" ||
     navigator.connection?.saveData ||
     window.matchMedia?.("(max-width: 700px)")?.matches ||
+    compactLandscapeLite ||
     (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
   );
