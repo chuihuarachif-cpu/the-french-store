@@ -24,6 +24,11 @@
   let activeCategoryIndex = 0;
   let categoryGestureStartX = null;
   let categoryGestureStartY = null;
+  let categoryGesturePointerId = null;
+  let categoryGestureDidDrag = false;
+  let categoryGestureOffset = 0;
+  let categoryGestureFrame = 0;
+  let categoryIgnoreClickUntil = 0;
   const categoryFilterMap = {
     "recargas-id": "Recargas",
     "recargas-cuenta": "Recargas",
@@ -193,9 +198,9 @@
       card.dataset.distance = String(distance);
       card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
       card.classList.toggle("active", diff === 0);
-      card.classList.toggle("roulette-hidden", distance >= 3);
+      card.classList.toggle("roulette-hidden", distance > 1);
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
-      card.setAttribute("aria-hidden", distance >= 3 ? "true" : "false");
+      card.setAttribute("aria-hidden", distance > 1 ? "true" : "false");
       card.tabIndex = -1;
       card.inert = distance > 1;
       card.querySelector('button').tabIndex = distance <= 1 ? 0 : -1;
@@ -205,10 +210,6 @@
 
     if (instant) requestAnimationFrame(() => cards.forEach(card => card.classList.remove("roulette-instant")));
 
-    const prev = $(".arena-arrow-prev");
-    const nextButton = $(".arena-arrow-next");
-    if (prev) prev.disabled = false;
-    if (nextButton) nextButton.disabled = false;
   }
 
   function moveCategory(direction){
@@ -761,9 +762,6 @@
       return;
     }
 
-    const arenaArrow = event.target.closest("[data-arena-direction]");
-    if (arenaArrow) { moveCategory(Number(arenaArrow.dataset.arenaDirection || 0)); return; }
-
     const arenaDot = event.target.closest("[data-arena-dot]");
     if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
 
@@ -780,6 +778,7 @@
 
     const category = event.target.closest("[data-category-index]");
     if (category) {
+      if (performance.now() < categoryIgnoreClickUntil) return;
       const index = wrapCategoryIndex(Number(category.dataset.categoryIndex));
       if (index !== activeCategoryIndex) setCategoryActive(index, true);
       return;
@@ -882,25 +881,83 @@
   });
 
   const categoryViewport = $("#categoryArenaViewport");
-  categoryViewport?.addEventListener("pointerdown", (event) => {
+  function drawCategoryDrag(viewport, offset){
+    categoryGestureOffset = Math.max(-118, Math.min(118, offset));
+    if (categoryGestureFrame) return;
+    categoryGestureFrame = requestAnimationFrame(() => {
+      categoryGestureFrame = 0;
+      viewport.style.setProperty("--category-drag-x", categoryGestureOffset + "px");
+    });
+  }
+
+  function finishCategoryGesture(viewport, event, cancelled = false, gestureId = event?.pointerId){
+    if (categoryGesturePointerId == null || (gestureId != null && gestureId !== categoryGesturePointerId)) return;
+    const dx = event ? event.clientX - categoryGestureStartX : 0;
+    const dy = event ? event.clientY - categoryGestureStartY : 0;
+    const threshold = Math.min(96, Math.max(42, viewport.clientWidth * .16));
+    const horizontal = Math.abs(dx) >= threshold && Math.abs(dx) > Math.abs(dy) * 1.12;
+    if (categoryGestureFrame) {
+      cancelAnimationFrame(categoryGestureFrame);
+      categoryGestureFrame = 0;
+    }
+    viewport.classList.remove("is-dragging");
+    viewport.style.removeProperty("--category-drag-x");
+    const pointerId = categoryGesturePointerId;
+    categoryGesturePointerId = null;
+    categoryGestureStartX = null;
+    categoryGestureStartY = null;
+    if (typeof pointerId === "number" && viewport.hasPointerCapture?.(pointerId)) {
+      viewport.releasePointerCapture(pointerId);
+    }
+    if (categoryGestureDidDrag) categoryIgnoreClickUntil = performance.now() + 220;
+    categoryGestureDidDrag = false;
+    if (!cancelled && horizontal) moveCategory(dx < 0 ? 1 : -1);
+  }
+
+  function beginCategoryGesture(viewport, gestureId, event){
+    if (event.target.closest(".category-enter")) return;
+    categoryGesturePointerId = gestureId;
     categoryGestureStartX = event.clientX;
     categoryGestureStartY = event.clientY;
-  }, {passive:true});
+    categoryGestureDidDrag = false;
+    categoryGestureOffset = 0;
+    if (typeof gestureId === "number") viewport.setPointerCapture?.(gestureId);
+  }
 
-  categoryViewport?.addEventListener("pointerup", (event) => {
-    if (categoryGestureStartX == null || categoryGestureStartY == null) return;
+  function continueCategoryGesture(viewport, gestureId, event){
+    if (gestureId !== categoryGesturePointerId || categoryGestureStartX == null || categoryGestureStartY == null) return;
     const dx = event.clientX - categoryGestureStartX;
     const dy = event.clientY - categoryGestureStartY;
-    categoryGestureStartX = null;
-    categoryGestureStartY = null;
-    if (Math.abs(dx) < 42 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
-    moveCategory(dx < 0 ? 1 : -1);
+    if (!categoryGestureDidDrag && Math.abs(dx) > 9 && Math.abs(dx) > Math.abs(dy) * 1.05) {
+      categoryGestureDidDrag = true;
+      viewport.classList.add("is-dragging");
+    }
+    if (categoryGestureDidDrag) drawCategoryDrag(viewport, dx);
+  }
+
+  categoryViewport?.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" || (event.button != null && event.button !== 0)) return;
+    beginCategoryGesture(categoryViewport, event.pointerId, event);
   }, {passive:true});
 
-  categoryViewport?.addEventListener("pointercancel", () => {
-    categoryGestureStartX = null;
-    categoryGestureStartY = null;
+  categoryViewport?.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "mouse") return;
+    continueCategoryGesture(categoryViewport, event.pointerId, event);
   }, {passive:true});
+
+  categoryViewport?.addEventListener("pointerup", (event) => finishCategoryGesture(categoryViewport, event), {passive:true});
+  categoryViewport?.addEventListener("pointercancel", (event) => finishCategoryGesture(categoryViewport, event, true), {passive:true});
+  categoryViewport?.addEventListener("lostpointercapture", () => {
+    if (categoryGesturePointerId != null) finishCategoryGesture(categoryViewport, null, true);
+  });
+
+  categoryViewport?.addEventListener("mousedown", (event) => {
+    if (event.button !== 0) return;
+    beginCategoryGesture(categoryViewport, "mouse", event);
+  }, {passive:true});
+  categoryViewport?.addEventListener("dragstart", (event) => event.preventDefault());
+  window.addEventListener("mousemove", (event) => continueCategoryGesture(categoryViewport, "mouse", event), {passive:true});
+  window.addEventListener("mouseup", (event) => finishCategoryGesture(categoryViewport, event, false, "mouse"), {passive:true});
 
   $("#xInputFields")?.addEventListener("input",(event)=>{
     const field=event.target.closest("[data-x-field]");

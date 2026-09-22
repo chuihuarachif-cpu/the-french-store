@@ -3041,7 +3041,7 @@ html.perf-lite .store-app{background:linear-gradient(180deg,#1b1817,#101011 70%,
   radial-gradient(ellipse at 80% 0,color-mix(in srgb,var(--studio-rim) 52%,transparent),transparent 60%),
   linear-gradient(145deg,#fff8e94a 0 7%,#756454b8 33%,#332a25dc 66%,#171615f5)!important;box-shadow:inset 2px 2px #fffdf0,inset -4px -5px color-mix(in srgb,var(--studio-rim) 78%,transparent),3px 7px 0 #070707,0 0 0 1px #fff5,0 16px 34px #000e,0 0 40px color-mix(in srgb,var(--studio-rim) 45%,transparent)!important}
 .category-glass:before{inset:8px!important;border-radius:15px!important;border-color:#fff5!important;border-bottom-color:color-mix(in srgb,var(--studio-rim) 65%,transparent)!important;box-shadow:inset 0 -20px 30px #0002!important}.category-glass:after{background:linear-gradient(122deg,transparent 9%,#fff7 9.3% 12.5%,transparent 12.8% 57%,#fff3 57.3% 58.8%,transparent 59.1%)!important;opacity:.85!important}
-.category-art{height:auto!important;flex:1 1 auto!important;min-height:0!important;padding:44px 26px 5px!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:1!important}.category-art img{width:100%!important;height:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;transform:scale(1.12) translateY(-5px)!important;filter:drop-shadow(0 17px 12px #000b) drop-shadow(0 0 16px color-mix(in srgb,var(--studio-rim) 38%,transparent))!important}
+.category-art{height:auto!important;flex:1 1 auto!important;min-height:0!important;padding:44px 26px 5px!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:1!important}.category-art img{width:100%!important;height:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;transform:scale(1.12) translateY(-5px)!important;filter:drop-shadow(0 17px 12px #000b) drop-shadow(0 0 16px color-mix(in srgb,var(--studio-rim) 38%,transparent))!important;-webkit-user-drag:none;user-drag:none}
 .category-console{min-height:79px!important;padding:15px 22px 13px!important;grid-template-columns:minmax(0,1fr) 126px!important;background:linear-gradient(105deg,#1b1715ee,#73533bd9 46%,#221b18f2)!important;border-top:1px solid color-mix(in srgb,var(--studio-rim) 80%,#fff 20%)!important;border-bottom:1px solid #fff3!important;box-shadow:inset 0 1px #fff5,0 -7px 18px #0008!important}.category-copy b{font-size:clamp(1.08rem,1.65cqw,1.65rem)!important;color:#fffaf1!important;text-shadow:0 2px 0 #1a100b,0 0 16px #fff2!important}.category-copy small{font-size:.72rem!important;color:#ecdac8!important}.category-enter{width:100%!important;min-height:45px!important;margin:0!important;border-radius:12px!important;background:linear-gradient(135deg,#fffef9,#f1dfca 48%,#c68050)!important;border-color:#fff8e9!important;color:#211711!important;box-shadow:inset 1px 1px #fff,0 2px 0 #8b5637,0 6px 14px #000b!important}.hud-module-foot{flex:0 0 28px!important;padding:7px 22px!important;color:#e9c398!important;border-top:1px solid #fff2!important}.hud-module-edge{background:linear-gradient(90deg,var(--studio-rim),#fff3,var(--studio-rim))!important;box-shadow:0 0 11px var(--studio-rim)!important}
 .arena-platform{z-index:2!important;left:50%!important;bottom:-5px!important;width:min(59cqw,840px)!important;transform:translateX(-50%)!important;filter:drop-shadow(0 16px 14px #000e) drop-shadow(0 0 22px #f0b87888)!important}.arena-floor-light{z-index:1!important;height:185px!important;bottom:-8px!important;background:radial-gradient(ellipse at 50% 62%,#f6bf7c77 0 9%,#b46b3b27 30%,transparent 70%)!important}.arena-platform:after{animation:none!important;opacity:.9!important}
 .arena-arrow{z-index:7!important;border-color:#eab7799c!important;background:#171210d9!important;color:#ffd596!important;box-shadow:0 0 22px #f2b97042!important}
@@ -3294,6 +3294,147 @@ html.perf-lite .store-app{background:linear-gradient(180deg,#08233a,#020914 70%,
 .perf-lite .xarena-dock:before,.perf-lite .xarena-dock:after{filter:none!important;opacity:.7!important}
 @media(prefers-reduced-motion:reduce){.welcome-ticker:after,.xarena-dock:before{animation:none!important}}
 
+/* Refined connector rails: one physical-looking bridge joins header and ticker,
+   while the lower dock follows the stepped outline requested for its three actions. */
+.store-header:before,.welcome-ticker:after{display:none!important}
+.header-ticker-bridge{
+  position:absolute;
+  z-index:39;
+  left:0;
+  top:51px;
+  width:min(218px,18cqw);
+  height:64px;
+  pointer-events:none;
+  background:linear-gradient(90deg,#28e3ff,#efffff) 0 0/36px 3px no-repeat;
+  filter:drop-shadow(0 0 5px #17dcff) drop-shadow(0 0 11px #0879c4);
+}
+.header-ticker-bridge:before{
+  content:"";
+  position:absolute;
+  left:26px;
+  top:3px;
+  width:72px;
+  height:3px;
+  transform:rotate(48deg);
+  transform-origin:left center;
+  background:linear-gradient(90deg,#28e3ff,#efffff 58%,#22dfff);
+}
+.header-ticker-bridge:after{
+  content:"";
+  position:absolute;
+  left:72px;
+  top:55px;
+  width:146px;
+  height:8px;
+  border-radius:0;
+  background:linear-gradient(90deg,#22dfff,#efffff 56%,#22dfff) 0 0/138px 3px no-repeat,radial-gradient(circle,#f2ffff 0 2px,#2ae7ff 3px,transparent 5px) 138px 0/8px 8px no-repeat;
+  box-shadow:none;
+}
+.category-arena-section,.category-arena,.category-arena-viewport{overflow:visible!important}
+html.standalone .store-view[data-view="inicio"]{overflow:visible!important}
+.category-arena{padding-inline:20px!important}
+.category-arena-viewport{
+  --category-drag-x:0px;
+  touch-action:pan-y pinch-zoom!important;
+  cursor:grab;
+}
+.category-arena-card{
+  translate:var(--category-drag-x) 0;
+  transition:translate .46s cubic-bezier(.16,.86,.22,1),transform .56s cubic-bezier(.16,.86,.22,1),opacity .34s ease,border-color .34s ease,box-shadow .4s ease!important;
+}
+.category-arena-viewport.is-dragging{cursor:grabbing;user-select:none}
+.category-arena-viewport.is-dragging .category-arena-card{
+  transition:none!important;
+  will-change:transform,translate;
+}
+html.perf-lite .category-arena-viewport.is-dragging .category-arena-card{will-change:auto!important}
+@media(min-width:600px){
+  html.standalone .category-arena-card[data-roulette-slot="-1"],.category-arena-card[data-roulette-slot="-1"]{
+    left:-42px!important;
+    right:auto!important;
+    transform:translate3d(0,52px,0) perspective(1100px) rotateY(15deg) rotateZ(-1.5deg) scale(.29)!important;
+    transform-origin:left 78%!important;
+  }
+  html.standalone .category-arena-card[data-roulette-slot="1"],.category-arena-card[data-roulette-slot="1"]{
+    left:auto!important;
+    right:-42px!important;
+    transform:translate3d(0,52px,0) perspective(1100px) rotateY(-15deg) rotateZ(1.5deg) scale(.29)!important;
+    transform-origin:right 78%!important;
+  }
+}
+html .store-app .xarena-dock{
+  isolation:isolate;
+  overflow:visible!important;
+  height:78px!important;
+  background:linear-gradient(180deg,#0a3554d9,#031625f6)!important;
+  border-top-color:#55e8ff!important;
+}
+.dock-contour{
+  position:absolute;
+  z-index:1;
+  left:50%;
+  bottom:-1px;
+  width:min(43rem,58cqw);
+  height:96px;
+  translate:-50% 0;
+  pointer-events:none;
+  clip-path:polygon(0 100%,7% 35%,18% 8%,38% 0,62% 0,82% 8%,93% 35%,100% 100%);
+  background:linear-gradient(108deg,#13d9ff,#edffff 48%,#13d9ff);
+  filter:drop-shadow(0 -1px 6px #31e5ff) drop-shadow(0 -8px 19px #075da455);
+}
+.dock-contour:after{
+  content:"";
+  position:absolute;
+  inset:2px 2px 0;
+  clip-path:polygon(0 100%,7% 35%,18% 8%,38% 0,62% 0,82% 8%,93% 35%,100% 100%);
+  background:linear-gradient(154deg,#0b3655ed,#04182bf8 68%,#03111ef9);
+}
+.xarena-dock:before{
+  z-index:2!important;
+  inset:auto 50% 16px!important;
+  width:min(38rem,52cqw)!important;
+  height:54px!important;
+  transform:translateX(-50%)!important;
+  background:
+    linear-gradient(90deg,transparent 0,#28e3ff 12%,#dfffff 50%,#28e3ff 88%,transparent 100%) 0 45px/100% 2px no-repeat,
+    linear-gradient(180deg,transparent,#2be4ff 32%,#efffff) 14% 13px/2px 34px no-repeat,
+    linear-gradient(180deg,#efffff,#2be4ff 72%,transparent) 50% 0/2px 47px no-repeat,
+    linear-gradient(180deg,transparent,#2be4ff 32%,#efffff) 86% 13px/2px 34px no-repeat,
+    radial-gradient(circle at 14% 46px,#f7ffff 0 2px,#2de5ff 3px,transparent 7px),
+    radial-gradient(circle at 50% 46px,#f7ffff 0 2px,#2de5ff 3px,transparent 7px),
+    radial-gradient(circle at 86% 46px,#f7ffff 0 2px,#2de5ff 3px,transparent 7px)!important;
+  filter:drop-shadow(0 0 7px #13ddff)!important;
+}
+.xarena-dock:after{
+  z-index:2!important;
+  left:calc(50% - min(11rem,18cqw))!important;
+  right:calc(50% - min(11rem,18cqw))!important;
+  top:9px!important;
+  opacity:.8!important;
+}
+.xarena-dock>button,.xarena-dock .info-launcher{z-index:3!important}
+html .store-app .xarena-dock .info-launcher{background:rgba(4,28,47,.93)!important}
+html.standalone .store-app .whatsapp-float{
+  position:fixed!important;
+  z-index:42!important;
+  right:18px!important;
+  bottom:10px!important;
+  min-width:164px!important;
+  height:44px!important;
+  box-shadow:0 4px 16px #00110dbb,0 0 18px #19d98255!important;
+}
+@media(max-width:599px){
+  .header-ticker-bridge{top:45px;width:124px;height:45px;filter:drop-shadow(0 0 5px #17dcff)}
+  .category-arena{padding-inline:8px!important}
+  html .store-app .xarena-dock{height:68px!important}
+  .dock-contour{width:min(25rem,92cqw);height:81px}
+  .xarena-dock:before{width:min(22rem,82cqw)!important;bottom:11px!important;height:45px!important}
+  html.standalone .store-app .whatsapp-float{right:10px!important;bottom:9px!important;min-width:42px!important;width:42px!important;height:42px!important;padding:3px!important;border-radius:50%!important}
+  html.standalone .store-app .whatsapp-float b,html.standalone .store-app .whatsapp-float small{display:none!important}
+}
+html.perf-lite .header-ticker-bridge,html.perf-lite .dock-contour{filter:none!important}
+html.perf-lite .header-ticker-bridge:after{box-shadow:none!important}
+
 
 </style>
 </head>
@@ -3426,6 +3567,7 @@ html.perf-lite .store-app{background:linear-gradient(180deg,#08233a,#020914 70%,
             </div>
           </header>
 
+          <span class="header-ticker-bridge" aria-hidden="true"></span>
           <div class="welcome-ticker" aria-label="Mensajes de French Store">
             <div class="welcome-ticker-track"><div class="ticker-group"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>Gracias por tu compra</span><i>✦</i><span>Explora nuestras recargas, servicios y beneficios</span><i>✦</i></div><div class="ticker-group" aria-hidden="true"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>Gracias por tu compra</span><i>✦</i><span>Explora nuestras recargas, servicios y beneficios</span><i>✦</i></div></div><button class="ticker-pause" type="button" aria-label="Pausar bienvenida" aria-pressed="false">Ⅱ</button>
           </div>
@@ -3442,13 +3584,10 @@ html.perf-lite .store-app{background:linear-gradient(180deg,#08233a,#020914 70%,
             <section class="section category-arena-section reveal" aria-label="Explora nuestros servicios">
 
               <div class="category-arena">
-                <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
                 <div class="category-arena-viewport" id="categoryArenaViewport" tabindex="0" aria-label="Categorías de French Store">
                   <span class="arena-floor-light" aria-hidden="true"></span><span class="arena-platform" aria-hidden="true"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDEwMDAgMjQwIiBmaWxsPSJub25lIj4KIDxkZWZzPgogIDxyYWRpYWxHcmFkaWVudCBpZD0ic3BpbGwiPjxzdG9wIHN0b3AtY29sb3I9IiNhN2Y4ZmYiIHN0b3Atb3BhY2l0eT0iLjQyIi8+PHN0b3Agb2Zmc2V0PSIuNTUiIHN0b3AtY29sb3I9IiMxYWNmZjEiIHN0b3Atb3BhY2l0eT0iLjIyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDA2N2E4IiBzdG9wLW9wYWNpdHk9IjAiLz48L3JhZGlhbEdyYWRpZW50PgogIDxyYWRpYWxHcmFkaWVudCBpZD0idG9wIj48c3RvcCBzdG9wLWNvbG9yPSIjMTY0OTY2Ii8+PHN0b3Agb2Zmc2V0PSIuNjQiIHN0b3AtY29sb3I9IiMwODI1M2QiLz48c3RvcCBvZmZzZXQ9Ii44OCIgc3RvcC1jb2xvcj0iIzAzMTIxZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBiNGU3MiIvPjwvcmFkaWFsR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJ3YWxsIiB4MT0iMCIgeTE9IjkyIiB4Mj0iMCIgeTI9IjIwMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiMwZTY2OTAiLz48c3RvcCBvZmZzZXQ9Ii4xOCIgc3RvcC1jb2xvcj0iIzA4MjQzZCIvPjxzdG9wIG9mZnNldD0iLjM4IiBzdG9wLWNvbG9yPSIjMTE2ODhkIi8+PHN0b3Agb2Zmc2V0PSIuNTgiIHN0b3AtY29sb3I9IiMwNDE0MjYiLz48c3RvcCBvZmZzZXQ9Ii43OCIgc3RvcC1jb2xvcj0iIzBkNTA3MyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAyMDkxNCIvPjwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJzaWx2ZXIiPjxzdG9wIHN0b3AtY29sb3I9IiMwYTM1NTQiLz48c3RvcCBvZmZzZXQ9Ii4yMiIgc3RvcC1jb2xvcj0iIzI2YzllYiIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNmNmZmZmYiLz48c3RvcCBvZmZzZXQ9Ii43NSIgc3RvcC1jb2xvcj0iIzc1ZThmNiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBkNDY2OCIvPjwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJjeWFuIj48c3RvcCBzdG9wLWNvbG9yPSIjMGE3OWIyIi8+PHN0b3Agb2Zmc2V0PSIuMiIgc3RvcC1jb2xvcj0iIzE5ZDlmNCIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNlOWZmZmYiLz48c3RvcCBvZmZzZXQ9Ii44IiBzdG9wLWNvbG9yPSIjMjVjOWViIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDc1MjdkIi8+PC9saW5lYXJHcmFkaWVudD4KICA8bGluZWFyR3JhZGllbnQgaWQ9InZpb2xldCI+PHN0b3Agc3RvcC1jb2xvcj0iIzBlNmRhMiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuMyIgc3RvcC1jb2xvcj0iIzQzZTdmYSIgc3RvcC1vcGFjaXR5PSIuNzIiLz48c3RvcCBvZmZzZXQ9Ii42OCIgc3RvcC1jb2xvcj0iI2U1ZmZmZiIgc3RvcC1vcGFjaXR5PSIuNjUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwZDczYWEiIHN0b3Atb3BhY2l0eT0iMCIvPjwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8IS0tIEZpeGVkIHBhaW50ZWQgbGlnaHQgYW5kIHJlZmxlY3RlZCBmbG9vciBpbGx1bWluYXRpb247IG5vIFNWRyBmaWx0ZXJzLAogICAgICBzY3JpcHRzLCBtYXNrcywgYW5pbWF0aW9uLCBibHVyLCBvciBydW50aW1lIGxpZ2h0aW5nIGNhbGN1bGF0aW9ucy4gLS0+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iMTcwIiByeD0iNTAwIiByeT0iNzAiIGZpbGw9InVybCgjc3BpbGwpIi8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iMTYwIiByeD0iNDUzIiByeT0iNTgiIHN0cm9rZT0idXJsKCN2aW9sZXQpIiBzdHJva2Utd2lkdGg9IjMiLz4KIDxwYXRoIGQ9Ik02MSA4OEM2MSA0OCAyNTggMTcgNTAwIDE3czQzOSAzMSA0MzkgNzF2NjVjMCA0My0xOTcgNzItNDM5IDcyUzYxIDE5NiA2MSAxNTNaIiBmaWxsPSJ1cmwoI3dhbGwpIiBzdHJva2U9IiMyY2NkZTkiIHN0cm9rZS13aWR0aD0iMiIvPgogPHBhdGggZD0iTTYyIDEyOGMwIDQxIDE5NyA3NCA0MzggNzRzNDM4LTMzIDQzOC03NHYxMWMwIDQxLTE5NyA3NC00MzggNzRTNjIgMTgwIDYyIDEzOVoiIGZpbGw9InVybCgjc2lsdmVyKSIvPgogPGcgb3BhY2l0eT0iLjM0IiBzdHJva2U9IiM3ZGViZjciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KICA8cGF0aCBkPSJNMTIwIDE1MGM4MiAyNSAyMTYgMzkgMzgwIDM5czI5OC0xNCAzODAtMzkiLz4KICA8cGF0aCBkPSJNMTUwIDE3MGM5MSAyMyAyMTAgMzQgMzUwIDM0czI1OS0xMSAzNTAtMzQiLz4KICA8cGF0aCBkPSJNMjA1IDE5M2M3NiAxMyAxNzcgMTkgMjk1IDE5czIxOS02IDI5NS0xOSIvPgogIDxwYXRoIGQ9Ik0yNzAgMTE5YzM1IDYgNzkgOSAxMzAgOXM5NS0zIDEzMC05IiBvcGFjaXR5PSIuNDUiLz4KIDwvZz4KIDxwYXRoIGQ9Ik02MiAxMTFjMCA0MCAxOTcgNzIgNDM4IDcyczQzOC0zMiA0MzgtNzJ2OGMwIDQxLTE5NyA3My00MzggNzNTNjIgMTYwIDYyIDExOVoiIGZpbGw9InVybCgjY3lhbikiLz4KIDxwYXRoIGQ9Ik02NSAxMDBjMCA0MCAxOTUgNzEgNDM1IDcxczQzNS0zMSA0MzUtNzEiIHN0cm9rZT0iIzAyMDkxNCIgc3Ryb2tlLXdpZHRoPSI1Ii8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iODgiIHJ4PSI0MzkiIHJ5PSI3MSIgZmlsbD0idXJsKCN0b3ApIiBzdHJva2U9InVybCgjc2lsdmVyKSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iODUiIHJ4PSI0MTkiIHJ5PSI2MSIgc3Ryb2tlPSIjMGI0MzYyIiBzdHJva2Utd2lkdGg9IjgiLz4KIDxlbGxpcHNlIGN4PSI1MDAiIGN5PSI4NSIgcng9IjQxMSIgcnk9IjU3IiBzdHJva2U9InVybCgjY3lhbikiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iODMiIHJ4PSIzNzciIHJ5PSI0NiIgc3Ryb2tlPSIjYmRmN2ZmIiBzdHJva2Utb3BhY2l0eT0iLjMiLz4KIDxlbGxpcHNlIGN4PSI1MDAiIGN5PSI4NyIgcng9IjI4MCIgcnk9IjM0IiBmaWxsPSIjMDEwYjE1IiBmaWxsLW9wYWNpdHk9Ii40NCIvPgogPHBhdGggZD0iTTExNCAxMDNjNDcgMjcgMjAyIDQ5IDM4NiA0OXMzMzktMjIgMzg2LTQ5IiBzdHJva2U9IiNkZmZjZmYiIHN0cm9rZS1vcGFjaXR5PSIuODIiIHN0cm9rZS13aWR0aD0iMyIvPgogPHBhdGggZD0ibTQ1NyAxOTcgNDMtMTEgNDMgMTEtNDMtNFoiIGZpbGw9IiNlZmZmZmYiLz4KIDxwYXRoIGQ9Ik0xNzEgMjA1YzgxIDE1IDE5NyAyMyAzMjkgMjNzMjQ4LTggMzI5LTIzIiBzdHJva2U9IiMzY2RjZjMiIHN0cm9rZS1vcGFjaXR5PSIuNTUiIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4NCg==" width="1000" height="240" alt="" decoding="async"></span>
                   <div id="categoryGrid" class="category-arena-track"></div>
                 </div>
-                <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
-
               </div>
             </section>
           </section>
@@ -3716,7 +3855,7 @@ html.perf-lite .store-app{background:linear-gradient(180deg,#08233a,#020914 70%,
             </div>
           </section>
 
-          <nav class="xarena-dock" aria-label="Accesos principales"><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span><i>⌃</i></button>
+          <nav class="xarena-dock" aria-label="Accesos principales"><span class="dock-contour" aria-hidden="true"></span><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span><i>⌃</i></button>
             <button type="button" data-nav-view="pases"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><small>Pases</small></button>
             <button type="button" data-nav-view="ajustes"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 3 1-2h4l1 2 3 2 2 1 2 4-1 2 1 2-2 4-2 1-3 2-1 2h-4l-1-2-3-2-2-1-2-4 1-2-1-2 2-4 2-1Z"/><circle cx="12" cy="12" r="4"/></svg><small>Ajustes</small></button>
           </nav>
@@ -3789,6 +3928,11 @@ window.FS_LAB_DATA = Object.freeze({
   let activeCategoryIndex = 0;
   let categoryGestureStartX = null;
   let categoryGestureStartY = null;
+  let categoryGesturePointerId = null;
+  let categoryGestureDidDrag = false;
+  let categoryGestureOffset = 0;
+  let categoryGestureFrame = 0;
+  let categoryIgnoreClickUntil = 0;
   const categoryFilterMap = {
     "recargas-id": "Recargas",
     "recargas-cuenta": "Recargas",
@@ -3959,9 +4103,9 @@ window.FS_LAB_DATA = Object.freeze({
       card.dataset.distance = String(distance);
       card.dataset.side = diff < 0 ? "left" : diff > 0 ? "right" : "center";
       card.classList.toggle("active", diff === 0);
-      card.classList.toggle("roulette-hidden", distance >= 3);
+      card.classList.toggle("roulette-hidden", distance > 1);
       card.setAttribute("aria-current", diff === 0 ? "true" : "false");
-      card.setAttribute("aria-hidden", distance >= 3 ? "true" : "false");
+      card.setAttribute("aria-hidden", distance > 1 ? "true" : "false");
       card.tabIndex = -1;
       card.inert = distance > 1;
       card.querySelector('button').tabIndex = distance <= 1 ? 0 : -1;
@@ -3971,10 +4115,6 @@ window.FS_LAB_DATA = Object.freeze({
 
     if (instant) requestAnimationFrame(() => cards.forEach(card => card.classList.remove("roulette-instant")));
 
-    const prev = $(".arena-arrow-prev");
-    const nextButton = $(".arena-arrow-next");
-    if (prev) prev.disabled = false;
-    if (nextButton) nextButton.disabled = false;
   }
 
   function moveCategory(direction){
@@ -4527,9 +4667,6 @@ window.FS_LAB_DATA = Object.freeze({
       return;
     }
 
-    const arenaArrow = event.target.closest("[data-arena-direction]");
-    if (arenaArrow) { moveCategory(Number(arenaArrow.dataset.arenaDirection || 0)); return; }
-
     const arenaDot = event.target.closest("[data-arena-dot]");
     if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
 
@@ -4546,6 +4683,7 @@ window.FS_LAB_DATA = Object.freeze({
 
     const category = event.target.closest("[data-category-index]");
     if (category) {
+      if (performance.now() < categoryIgnoreClickUntil) return;
       const index = wrapCategoryIndex(Number(category.dataset.categoryIndex));
       if (index !== activeCategoryIndex) setCategoryActive(index, true);
       return;
@@ -4648,25 +4786,83 @@ window.FS_LAB_DATA = Object.freeze({
   });
 
   const categoryViewport = $("#categoryArenaViewport");
-  categoryViewport?.addEventListener("pointerdown", (event) => {
+  function drawCategoryDrag(viewport, offset){
+    categoryGestureOffset = Math.max(-118, Math.min(118, offset));
+    if (categoryGestureFrame) return;
+    categoryGestureFrame = requestAnimationFrame(() => {
+      categoryGestureFrame = 0;
+      viewport.style.setProperty("--category-drag-x", categoryGestureOffset + "px");
+    });
+  }
+
+  function finishCategoryGesture(viewport, event, cancelled = false, gestureId = event?.pointerId){
+    if (categoryGesturePointerId == null || (gestureId != null && gestureId !== categoryGesturePointerId)) return;
+    const dx = event ? event.clientX - categoryGestureStartX : 0;
+    const dy = event ? event.clientY - categoryGestureStartY : 0;
+    const threshold = Math.min(96, Math.max(42, viewport.clientWidth * .16));
+    const horizontal = Math.abs(dx) >= threshold && Math.abs(dx) > Math.abs(dy) * 1.12;
+    if (categoryGestureFrame) {
+      cancelAnimationFrame(categoryGestureFrame);
+      categoryGestureFrame = 0;
+    }
+    viewport.classList.remove("is-dragging");
+    viewport.style.removeProperty("--category-drag-x");
+    const pointerId = categoryGesturePointerId;
+    categoryGesturePointerId = null;
+    categoryGestureStartX = null;
+    categoryGestureStartY = null;
+    if (typeof pointerId === "number" && viewport.hasPointerCapture?.(pointerId)) {
+      viewport.releasePointerCapture(pointerId);
+    }
+    if (categoryGestureDidDrag) categoryIgnoreClickUntil = performance.now() + 220;
+    categoryGestureDidDrag = false;
+    if (!cancelled && horizontal) moveCategory(dx < 0 ? 1 : -1);
+  }
+
+  function beginCategoryGesture(viewport, gestureId, event){
+    if (event.target.closest(".category-enter")) return;
+    categoryGesturePointerId = gestureId;
     categoryGestureStartX = event.clientX;
     categoryGestureStartY = event.clientY;
-  }, {passive:true});
+    categoryGestureDidDrag = false;
+    categoryGestureOffset = 0;
+    if (typeof gestureId === "number") viewport.setPointerCapture?.(gestureId);
+  }
 
-  categoryViewport?.addEventListener("pointerup", (event) => {
-    if (categoryGestureStartX == null || categoryGestureStartY == null) return;
+  function continueCategoryGesture(viewport, gestureId, event){
+    if (gestureId !== categoryGesturePointerId || categoryGestureStartX == null || categoryGestureStartY == null) return;
     const dx = event.clientX - categoryGestureStartX;
     const dy = event.clientY - categoryGestureStartY;
-    categoryGestureStartX = null;
-    categoryGestureStartY = null;
-    if (Math.abs(dx) < 42 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
-    moveCategory(dx < 0 ? 1 : -1);
+    if (!categoryGestureDidDrag && Math.abs(dx) > 9 && Math.abs(dx) > Math.abs(dy) * 1.05) {
+      categoryGestureDidDrag = true;
+      viewport.classList.add("is-dragging");
+    }
+    if (categoryGestureDidDrag) drawCategoryDrag(viewport, dx);
+  }
+
+  categoryViewport?.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" || (event.button != null && event.button !== 0)) return;
+    beginCategoryGesture(categoryViewport, event.pointerId, event);
   }, {passive:true});
 
-  categoryViewport?.addEventListener("pointercancel", () => {
-    categoryGestureStartX = null;
-    categoryGestureStartY = null;
+  categoryViewport?.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "mouse") return;
+    continueCategoryGesture(categoryViewport, event.pointerId, event);
   }, {passive:true});
+
+  categoryViewport?.addEventListener("pointerup", (event) => finishCategoryGesture(categoryViewport, event), {passive:true});
+  categoryViewport?.addEventListener("pointercancel", (event) => finishCategoryGesture(categoryViewport, event, true), {passive:true});
+  categoryViewport?.addEventListener("lostpointercapture", () => {
+    if (categoryGesturePointerId != null) finishCategoryGesture(categoryViewport, null, true);
+  });
+
+  categoryViewport?.addEventListener("mousedown", (event) => {
+    if (event.button !== 0) return;
+    beginCategoryGesture(categoryViewport, "mouse", event);
+  }, {passive:true});
+  categoryViewport?.addEventListener("dragstart", (event) => event.preventDefault());
+  window.addEventListener("mousemove", (event) => continueCategoryGesture(categoryViewport, "mouse", event), {passive:true});
+  window.addEventListener("mouseup", (event) => finishCategoryGesture(categoryViewport, event, false, "mouse"), {passive:true});
 
   $("#xInputFields")?.addEventListener("input",(event)=>{
     const field=event.target.closest("[data-x-field]");

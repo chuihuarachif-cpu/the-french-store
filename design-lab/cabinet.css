@@ -178,7 +178,7 @@ html.perf-lite .store-app{background:linear-gradient(180deg,#1b1817,#101011 70%,
   radial-gradient(ellipse at 80% 0,color-mix(in srgb,var(--studio-rim) 52%,transparent),transparent 60%),
   linear-gradient(145deg,#fff8e94a 0 7%,#756454b8 33%,#332a25dc 66%,#171615f5)!important;box-shadow:inset 2px 2px #fffdf0,inset -4px -5px color-mix(in srgb,var(--studio-rim) 78%,transparent),3px 7px 0 #070707,0 0 0 1px #fff5,0 16px 34px #000e,0 0 40px color-mix(in srgb,var(--studio-rim) 45%,transparent)!important}
 .category-glass:before{inset:8px!important;border-radius:15px!important;border-color:#fff5!important;border-bottom-color:color-mix(in srgb,var(--studio-rim) 65%,transparent)!important;box-shadow:inset 0 -20px 30px #0002!important}.category-glass:after{background:linear-gradient(122deg,transparent 9%,#fff7 9.3% 12.5%,transparent 12.8% 57%,#fff3 57.3% 58.8%,transparent 59.1%)!important;opacity:.85!important}
-.category-art{height:auto!important;flex:1 1 auto!important;min-height:0!important;padding:44px 26px 5px!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:1!important}.category-art img{width:100%!important;height:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;transform:scale(1.12) translateY(-5px)!important;filter:drop-shadow(0 17px 12px #000b) drop-shadow(0 0 16px color-mix(in srgb,var(--studio-rim) 38%,transparent))!important}
+.category-art{height:auto!important;flex:1 1 auto!important;min-height:0!important;padding:44px 26px 5px!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:1!important}.category-art img{width:100%!important;height:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;transform:scale(1.12) translateY(-5px)!important;filter:drop-shadow(0 17px 12px #000b) drop-shadow(0 0 16px color-mix(in srgb,var(--studio-rim) 38%,transparent))!important;-webkit-user-drag:none;user-drag:none}
 .category-console{min-height:79px!important;padding:15px 22px 13px!important;grid-template-columns:minmax(0,1fr) 126px!important;background:linear-gradient(105deg,#1b1715ee,#73533bd9 46%,#221b18f2)!important;border-top:1px solid color-mix(in srgb,var(--studio-rim) 80%,#fff 20%)!important;border-bottom:1px solid #fff3!important;box-shadow:inset 0 1px #fff5,0 -7px 18px #0008!important}.category-copy b{font-size:clamp(1.08rem,1.65cqw,1.65rem)!important;color:#fffaf1!important;text-shadow:0 2px 0 #1a100b,0 0 16px #fff2!important}.category-copy small{font-size:.72rem!important;color:#ecdac8!important}.category-enter{width:100%!important;min-height:45px!important;margin:0!important;border-radius:12px!important;background:linear-gradient(135deg,#fffef9,#f1dfca 48%,#c68050)!important;border-color:#fff8e9!important;color:#211711!important;box-shadow:inset 1px 1px #fff,0 2px 0 #8b5637,0 6px 14px #000b!important}.hud-module-foot{flex:0 0 28px!important;padding:7px 22px!important;color:#e9c398!important;border-top:1px solid #fff2!important}.hud-module-edge{background:linear-gradient(90deg,var(--studio-rim),#fff3,var(--studio-rim))!important;box-shadow:0 0 11px var(--studio-rim)!important}
 .arena-platform{z-index:2!important;left:50%!important;bottom:-5px!important;width:min(59cqw,840px)!important;transform:translateX(-50%)!important;filter:drop-shadow(0 16px 14px #000e) drop-shadow(0 0 22px #f0b87888)!important}.arena-floor-light{z-index:1!important;height:185px!important;bottom:-8px!important;background:radial-gradient(ellipse at 50% 62%,#f6bf7c77 0 9%,#b46b3b27 30%,transparent 70%)!important}.arena-platform:after{animation:none!important;opacity:.9!important}
 .arena-arrow{z-index:7!important;border-color:#eab7799c!important;background:#171210d9!important;color:#ffd596!important;box-shadow:0 0 22px #f2b97042!important}
@@ -430,4 +430,145 @@ html.perf-lite .store-app{background:linear-gradient(180deg,#08233a,#020914 70%,
 .perf-lite .category-enter,.perf-lite .arena-platform,.perf-lite .arena-floor-light,.perf-lite .xarena-dock,.perf-lite .store-header,.perf-lite .info-launcher:before{filter:none!important;box-shadow:none!important}
 .perf-lite .xarena-dock:before,.perf-lite .xarena-dock:after{filter:none!important;opacity:.7!important}
 @media(prefers-reduced-motion:reduce){.welcome-ticker:after,.xarena-dock:before{animation:none!important}}
+
+/* Refined connector rails: one physical-looking bridge joins header and ticker,
+   while the lower dock follows the stepped outline requested for its three actions. */
+.store-header:before,.welcome-ticker:after{display:none!important}
+.header-ticker-bridge{
+  position:absolute;
+  z-index:39;
+  left:0;
+  top:51px;
+  width:min(218px,18cqw);
+  height:64px;
+  pointer-events:none;
+  background:linear-gradient(90deg,#28e3ff,#efffff) 0 0/36px 3px no-repeat;
+  filter:drop-shadow(0 0 5px #17dcff) drop-shadow(0 0 11px #0879c4);
+}
+.header-ticker-bridge:before{
+  content:"";
+  position:absolute;
+  left:26px;
+  top:3px;
+  width:72px;
+  height:3px;
+  transform:rotate(48deg);
+  transform-origin:left center;
+  background:linear-gradient(90deg,#28e3ff,#efffff 58%,#22dfff);
+}
+.header-ticker-bridge:after{
+  content:"";
+  position:absolute;
+  left:72px;
+  top:55px;
+  width:146px;
+  height:8px;
+  border-radius:0;
+  background:linear-gradient(90deg,#22dfff,#efffff 56%,#22dfff) 0 0/138px 3px no-repeat,radial-gradient(circle,#f2ffff 0 2px,#2ae7ff 3px,transparent 5px) 138px 0/8px 8px no-repeat;
+  box-shadow:none;
+}
+.category-arena-section,.category-arena,.category-arena-viewport{overflow:visible!important}
+html.standalone .store-view[data-view="inicio"]{overflow:visible!important}
+.category-arena{padding-inline:20px!important}
+.category-arena-viewport{
+  --category-drag-x:0px;
+  touch-action:pan-y pinch-zoom!important;
+  cursor:grab;
+}
+.category-arena-card{
+  translate:var(--category-drag-x) 0;
+  transition:translate .46s cubic-bezier(.16,.86,.22,1),transform .56s cubic-bezier(.16,.86,.22,1),opacity .34s ease,border-color .34s ease,box-shadow .4s ease!important;
+}
+.category-arena-viewport.is-dragging{cursor:grabbing;user-select:none}
+.category-arena-viewport.is-dragging .category-arena-card{
+  transition:none!important;
+  will-change:transform,translate;
+}
+html.perf-lite .category-arena-viewport.is-dragging .category-arena-card{will-change:auto!important}
+@media(min-width:600px){
+  html.standalone .category-arena-card[data-roulette-slot="-1"],.category-arena-card[data-roulette-slot="-1"]{
+    left:-42px!important;
+    right:auto!important;
+    transform:translate3d(0,52px,0) perspective(1100px) rotateY(15deg) rotateZ(-1.5deg) scale(.29)!important;
+    transform-origin:left 78%!important;
+  }
+  html.standalone .category-arena-card[data-roulette-slot="1"],.category-arena-card[data-roulette-slot="1"]{
+    left:auto!important;
+    right:-42px!important;
+    transform:translate3d(0,52px,0) perspective(1100px) rotateY(-15deg) rotateZ(1.5deg) scale(.29)!important;
+    transform-origin:right 78%!important;
+  }
+}
+html .store-app .xarena-dock{
+  isolation:isolate;
+  overflow:visible!important;
+  height:78px!important;
+  background:linear-gradient(180deg,#0a3554d9,#031625f6)!important;
+  border-top-color:#55e8ff!important;
+}
+.dock-contour{
+  position:absolute;
+  z-index:1;
+  left:50%;
+  bottom:-1px;
+  width:min(43rem,58cqw);
+  height:96px;
+  translate:-50% 0;
+  pointer-events:none;
+  clip-path:polygon(0 100%,7% 35%,18% 8%,38% 0,62% 0,82% 8%,93% 35%,100% 100%);
+  background:linear-gradient(108deg,#13d9ff,#edffff 48%,#13d9ff);
+  filter:drop-shadow(0 -1px 6px #31e5ff) drop-shadow(0 -8px 19px #075da455);
+}
+.dock-contour:after{
+  content:"";
+  position:absolute;
+  inset:2px 2px 0;
+  clip-path:polygon(0 100%,7% 35%,18% 8%,38% 0,62% 0,82% 8%,93% 35%,100% 100%);
+  background:linear-gradient(154deg,#0b3655ed,#04182bf8 68%,#03111ef9);
+}
+.xarena-dock:before{
+  z-index:2!important;
+  inset:auto 50% 16px!important;
+  width:min(38rem,52cqw)!important;
+  height:54px!important;
+  transform:translateX(-50%)!important;
+  background:
+    linear-gradient(90deg,transparent 0,#28e3ff 12%,#dfffff 50%,#28e3ff 88%,transparent 100%) 0 45px/100% 2px no-repeat,
+    linear-gradient(180deg,transparent,#2be4ff 32%,#efffff) 14% 13px/2px 34px no-repeat,
+    linear-gradient(180deg,#efffff,#2be4ff 72%,transparent) 50% 0/2px 47px no-repeat,
+    linear-gradient(180deg,transparent,#2be4ff 32%,#efffff) 86% 13px/2px 34px no-repeat,
+    radial-gradient(circle at 14% 46px,#f7ffff 0 2px,#2de5ff 3px,transparent 7px),
+    radial-gradient(circle at 50% 46px,#f7ffff 0 2px,#2de5ff 3px,transparent 7px),
+    radial-gradient(circle at 86% 46px,#f7ffff 0 2px,#2de5ff 3px,transparent 7px)!important;
+  filter:drop-shadow(0 0 7px #13ddff)!important;
+}
+.xarena-dock:after{
+  z-index:2!important;
+  left:calc(50% - min(11rem,18cqw))!important;
+  right:calc(50% - min(11rem,18cqw))!important;
+  top:9px!important;
+  opacity:.8!important;
+}
+.xarena-dock>button,.xarena-dock .info-launcher{z-index:3!important}
+html .store-app .xarena-dock .info-launcher{background:rgba(4,28,47,.93)!important}
+html.standalone .store-app .whatsapp-float{
+  position:fixed!important;
+  z-index:42!important;
+  right:18px!important;
+  bottom:10px!important;
+  min-width:164px!important;
+  height:44px!important;
+  box-shadow:0 4px 16px #00110dbb,0 0 18px #19d98255!important;
+}
+@media(max-width:599px){
+  .header-ticker-bridge{top:45px;width:124px;height:45px;filter:drop-shadow(0 0 5px #17dcff)}
+  .category-arena{padding-inline:8px!important}
+  html .store-app .xarena-dock{height:68px!important}
+  .dock-contour{width:min(25rem,92cqw);height:81px}
+  .xarena-dock:before{width:min(22rem,82cqw)!important;bottom:11px!important;height:45px!important}
+  html.standalone .store-app .whatsapp-float{right:10px!important;bottom:9px!important;min-width:42px!important;width:42px!important;height:42px!important;padding:3px!important;border-radius:50%!important}
+  html.standalone .store-app .whatsapp-float b,html.standalone .store-app .whatsapp-float small{display:none!important}
+}
+html.perf-lite .header-ticker-bridge,html.perf-lite .dock-contour{filter:none!important}
+html.perf-lite .header-ticker-bridge:after{box-shadow:none!important}
 

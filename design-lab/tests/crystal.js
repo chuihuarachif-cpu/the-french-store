@@ -14,6 +14,7 @@
     const shown=e=>e&&e.getBoundingClientRect().width>0&&win.getComputedStyle(e).visibility==='visible'&&win.getComputedStyle(e).display!=='none';
     check(d.documentElement.scrollWidth<=w+1,`${w}: sin desbordamiento horizontal`);
     check(shown(q('.header-profile')),`${w}: perfil visible en cabecera`);
+    check(!q('.arena-arrow'),`${w}: sin flechas de navegación en los bloques`);
     check(q('.category-art img').complete&&q('.category-art img').naturalWidth>0,`${w}: ilustración disponible`);
     check(all('.category-enter').length===6&&all('.category-enter').every(e=>e.textContent.trim()==='Ingresar →'),`${w}: botón Ingresar en las seis categorías`);
     check(!q('.category-code')&&!q('.category-arena-status'),`${w}: sin numeración de categorías`);
@@ -50,7 +51,7 @@
       check(q('#xExperience').classList.contains('open')&&q('#xGameWheel').children.length>0,`${w}: navega a ${card.dataset.category}`);
       check(!/\d+\s*(opciones|\/)/.test(q('#xShowcaseMeta').textContent),`${w}: productos sin contador`);
       check(!q('#xOrientationGate').classList.contains('open'),`${w}: productos sin bloqueo de orientación`);
-      q('[data-x-back]').click();q('[data-arena-direction="1"]').click();await settle();
+      q('[data-x-back]').click();q('.category-arena-card[data-roulette-slot="1"]').click();await settle();
       const nextBase=q('.arena-platform').getBoundingClientRect(),nextStage=q('.category-arena-viewport').getBoundingClientRect();
       check(q('.store-app').dataset.scene===q('.category-arena-card.active').dataset.category,`${w}: neblina sincronizada con la categoría ${i+1}`);
       // Focus restoration may scroll a short viewport; compare within the arena.
@@ -75,7 +76,7 @@
     check(!q('#xShowcaseMeta').textContent.includes('opciones'), 'Detalle sin cantidad de páginas/opciones');
     let blocked=false;try{await win.fetch('/blocked-test');}catch{blocked=true;}check(blocked,'Aislamiento de red del Lab conservado');
   }finally{if(previous===null)win.localStorage.removeItem('fs-design-lab-cart-v1');else win.localStorage.setItem('fs-design-lab-cart-v1',previous);frame.remove();}
-  const standalone=await makeFrame(768,1024,'../preview.html?standalone=1'),sd=standalone.contentDocument;
+  const standalone=await makeFrame(768,1024,'../preview.html?standalone=1&build=rail-touch'),sd=standalone.contentDocument;
   check(sd.querySelector('.category-art img').src.startsWith('data:')&&sd.querySelector('.category-art img').naturalWidth>0,'Exportación: ilustraciones incrustadas y carga correcta');
   check(sd.querySelector('.arena-platform img').src.startsWith('data:')&&sd.querySelector('.arena-platform img').naturalWidth>0,'Exportación: tarima fija incrustada y disponible');standalone.remove();
   const lite=await makeFrame(390,844,'../index.html?standalone=1&performance=lite'),ld=lite.contentDocument,lw=lite.contentWindow;

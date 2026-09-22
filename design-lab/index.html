@@ -142,6 +142,7 @@
             </div>
           </header>
 
+          <span class="header-ticker-bridge" aria-hidden="true"></span>
           <div class="welcome-ticker" aria-label="Mensajes de French Store">
             <div class="welcome-ticker-track"><div class="ticker-group"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>Gracias por tu compra</span><i>✦</i><span>Explora nuestras recargas, servicios y beneficios</span><i>✦</i></div><div class="ticker-group" aria-hidden="true"><span>Bienvenido a French Store</span><i>✦</i><span>Disfruta tu estancia</span><i>✦</i><span>Gracias por tu compra</span><i>✦</i><span>Explora nuestras recargas, servicios y beneficios</span><i>✦</i></div></div><button class="ticker-pause" type="button" aria-label="Pausar bienvenida" aria-pressed="false">Ⅱ</button>
           </div>
@@ -158,13 +159,10 @@
             <section class="section category-arena-section reveal" aria-label="Explora nuestros servicios">
 
               <div class="category-arena">
-                <button class="arena-arrow arena-arrow-prev" type="button" data-arena-direction="-1" aria-label="Categoría anterior">‹</button>
                 <div class="category-arena-viewport" id="categoryArenaViewport" tabindex="0" aria-label="Categorías de French Store">
                   <span class="arena-floor-light" aria-hidden="true"></span><span class="arena-platform" aria-hidden="true"><img src="./assets/arena-platform.svg" width="1000" height="240" alt="" decoding="async"></span>
                   <div id="categoryGrid" class="category-arena-track"></div>
                 </div>
-                <button class="arena-arrow arena-arrow-next" type="button" data-arena-direction="1" aria-label="Categoría siguiente">›</button>
-
               </div>
             </section>
           </section>
@@ -432,7 +430,7 @@
             </div>
           </section>
 
-          <nav class="xarena-dock" aria-label="Accesos principales"><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span><i>⌃</i></button>
+          <nav class="xarena-dock" aria-label="Accesos principales"><span class="dock-contour" aria-hidden="true"></span><button class="info-launcher" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg><span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span><i>⌃</i></button>
             <button type="button" data-nav-view="pases"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><small>Pases</small></button>
             <button type="button" data-nav-view="ajustes"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 3 1-2h4l1 2 3 2 2 1 2 4-1 2 1 2-2 4-2 1-3 2-1 2h-4l-1-2-3-2-2-1-2-4 1-2-1-2 2-4 2-1Z"/><circle cx="12" cy="12" r="4"/></svg><small>Ajustes</small></button>
           </nav>
