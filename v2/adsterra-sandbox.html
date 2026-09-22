@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src https:; connect-src https: wss:; img-src https: data: blob:; style-src 'unsafe-inline' https:; font-src https: data:; frame-src https:; media-src https: blob:; worker-src blob:; object-src 'none'; base-uri 'none'; form-action https:">
+  <title>Adsterra isolated test</title>
+  <style>
+    html,body{margin:0;min-height:100%;background:#06111d;color:#e6f8ff;font-family:Inter,system-ui,sans-serif}
+    body{padding:10px;box-sizing:border-box}
+    .status{position:relative;z-index:2147483647;display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid rgba(103,232,249,.35);border-radius:10px;background:rgba(3,14,24,.9);font-size:12px}
+    .dot{width:8px;height:8px;border-radius:50%;background:#facc15;box-shadow:0 0 10px currentColor;flex:none}
+    #detail{margin-top:4px;color:#9fd8e6;font-weight:500}
+    #adstage{position:relative;min-height:210px;margin-top:8px;border:1px dashed rgba(103,232,249,.2);border-radius:12px;overflow:hidden}
+    .hint{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:#7893a4;font-size:12px;pointer-events:none}
+  </style>
+</head>
+<body>
+  <div class="status">
+    <span class="dot" id="dot"></span>
+    <div><b id="label">Adsterra aislado: conectando…</b><div id="detail">La publicidad corre en un entorno separado de tu sesión.</div></div>
+  </div>
+  <div id="adstage"><div class="hint">Esperando creatividad publicitaria…</div></div>
+  <script>
+    (() => {
+      'use strict';
+      const label=document.getElementById('label');
+      const detail=document.getElementById('detail');
+      const dot=document.getElementById('dot');
+      const set=(l,d,c)=>{label.textContent=l;detail.textContent=d;dot.style.background=c;dot.style.color=c};
+      const initialCount=performance.getEntriesByType('resource').length;
+      const ad=document.createElement('script');
+      ad.src='https://pl31459668.profitableratecpmnetwork.com/a1/06/60/a10660f91fb339f7d5ca5d230aa1bb66.js';
+      ad.async=true;
+      ad.referrerPolicy='no-referrer';
+      ad.onload=()=>{
+        set('Adsterra aislado: script cargado','El código principal respondió. Esperando una creatividad…','#22c55e');
+        setTimeout(()=>{
+          const resources=performance.getEntriesByType('resource').slice(initialCount).map(x=>x.name).filter(x=>!x.includes('adsterra-sandbox.html'));
+          const frames=[...document.querySelectorAll('iframe')].length;
+          const foreign=[...document.body.children].filter(el=>!['SCRIPT','STYLE'].includes(el.tagName)&&!['adstage'].includes(el.id)&&!el.classList.contains('status')).length;
+          if(frames||resources.length>1||foreign){
+            set('Adsterra aislado: activo',`Recursos publicitarios detectados: ${resources.length} · frames: ${frames}`,'#22c55e');
+          }else{
+            set('Adsterra aislado: sin creatividad','La red cargó, pero no entregó un anuncio visible en esta visita.','#fb923c');
+          }
+        },6000);
+      };
+      ad.onerror=()=>set('Adsterra aislado: bloqueado','No pudo cargarse el script principal de Adsterra.','#ef4444');
+      document.body.appendChild(ad);
+    })();
+  </script>
+</body>
+</html>
