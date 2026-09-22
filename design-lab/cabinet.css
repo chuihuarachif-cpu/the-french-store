@@ -200,3 +200,4 @@ html.perf-lite .category-glass{backdrop-filter:none!important;-webkit-backdrop-f
  html.standalone .arena-platform{width:58cqw!important;bottom:0!important}.arena-floor-light{height:84px!important}
 }
 .arena-platform{bottom:0!important}
+@media(min-width:600px){.arena-platform{bottom:18px!important}}
