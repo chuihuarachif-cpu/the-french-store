@@ -3,7 +3,7 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r234-adsterra-sandbox-20260922';
+const CACHE='fs-store-r235-adsterra-worker-origin-20260922';
 const SHELL=[
   '/v2/',
   '/v2/index.html',
@@ -16,8 +16,7 @@ const SHELL=[
   '/v2/push-notifications.css',
   '/v2/push-notifications.js',
   '/v2/official-icons.js',
-  '/v2/adsterra-owner-test.js',
-  '/v2/adsterra-sandbox.html'
+  '/v2/adsterra-owner-test.js'
 ];
 
 self.addEventListener('install',event=>{
