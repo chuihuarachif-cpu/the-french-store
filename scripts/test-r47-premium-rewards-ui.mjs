@@ -32,10 +32,11 @@ for (const file of isolatedJs) {
 assert.equal(fs.existsSync('v2/reward-opportunity-invites.js'), false, 'duplicate Rewards invitation controller must stay removed');
 assert.equal(index.includes('reward-opportunity-invites.js'), false, 'index must not load the removed duplicate controller');
 
-// Third-party frames are explicit CSP allow-list entries; no provider iframe is eagerly embedded in HTML.
-assert.match(index, /frame-src 'self' https:\/\/offers\.cpx-research\.com https:\/\/\*\.profitableratecpmnetwork\.com;/);
+// CPX remains the only third-party frame origin allowed by the main storefront CSP.
+// Adsterra is isolated behind a same-site sandboxed child document instead.
+assert.match(index, /frame-src 'self' https:\/\/offers\.cpx-research\.com;/);
 assert.equal(/<iframe[^>]+src=["']https:\/\/offers\.cpx-research\.com/i.test(index), false);
-assert.equal(/<iframe[^>]+src=["']https:\/\/[^"']*profitableratecpmnetwork\.com/i.test(index), false);
+assert.equal(index.includes('profitableratecpmnetwork.com'), false);
 
 for (const required of [
   'notifications.css',
