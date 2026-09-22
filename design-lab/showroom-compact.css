@@ -509,7 +509,7 @@ html.standalone .store-app .whatsapp-float{
   html .store-app .xarena-dock{width:min(600px,78cqw)!important}
 }
 @container (max-width:720px){
-  :root{--fs-compact-head:58px;--fs-compact-foot:58px}
+  .store-app{--fs-compact-head:58px;--fs-compact-foot:58px}
   .store-header.fs-command-header{
     grid-template-columns:minmax(138px,1.12fr) 42px minmax(104px,.75fr) 38px auto!important;
     min-height:58px!important;height:58px!important;
