@@ -34,7 +34,8 @@ assert.equal(index.includes('reward-opportunity-invites.js'), false, 'index must
 
 // Third-party frames are explicit CSP allow-list entries; no provider iframe is eagerly embedded in HTML.
 assert.match(index, /frame-src 'self' https:\/\/offers\.cpx-research\.com https:\/\/\*\.profitableratecpmnetwork\.com;/);
-assert.equal(/<iframe[^>]+src=["']https:\/\/offers\.cpx-research\.com/i.test(index), false);\nassert.equal(/<iframe[^>]+src=["']https:\/\/[^"']*profitableratecpmnetwork\.com/i.test(index), false);
+assert.equal(/<iframe[^>]+src=["']https:\/\/offers\.cpx-research\.com/i.test(index), false);
+assert.equal(/<iframe[^>]+src=["']https:\/\/[^"']*profitableratecpmnetwork\.com/i.test(index), false);
 
 for (const required of [
   'notifications.css',
