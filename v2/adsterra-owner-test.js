@@ -41,9 +41,9 @@
         '<b style="flex:1">Prueba Adsterra aislada · solo tu cuenta</b>' +
         '<button type="button" data-fs-ad-close style="all:unset;cursor:pointer;padding:2px 6px;color:#9fd8e6">×</button>' +
       '</div>' +
-      '<iframe title="Prueba aislada de Adsterra" src="./adsterra-sandbox.html?v=20260922-r234" ' +
-        'sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" ' +
-        'referrerpolicy="no-referrer" loading="eager" ' +
+      '<iframe title="Prueba aislada de Adsterra" src="https://api.frenchstorebo.com/adsterra-test?v=20260922-r235" ' +
+        'sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" credentialless ' +
+        'referrerpolicy="strict-origin-when-cross-origin" loading="eager" ' +
         'style="display:block;width:100%;height:280px;border:0;background:#06111d"></iframe>';
 
     wrap.querySelector('[data-fs-ad-close]').addEventListener('click', () => {

@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r234-adsterra-sandbox-20260922';
+  const VERSION = 'r235-adsterra-worker-origin-20260922';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -310,7 +310,7 @@
     try {
       captureReferralParam();
       await loadCore();
-      await loadScript('./adsterra-owner-test.js', 'fs-adsterra-owner-test-js', '20260922-r234');
+      await loadScript('./adsterra-owner-test.js', 'fs-adsterra-owner-test-js', '20260922-r235');
       installLazyTriggers();
       installLoyaltyAuthGate();
 
