@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r230-mobile-motion-20260919';
+  const VERSION = 'r231-adsterra-owner-test-20260922';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -310,6 +310,7 @@
     try {
       captureReferralParam();
       await loadCore();
+      await loadScript('./adsterra-owner-test.js', 'fs-adsterra-owner-test-js', '20260922-r231');
       installLazyTriggers();
       installLoyaltyAuthGate();
 

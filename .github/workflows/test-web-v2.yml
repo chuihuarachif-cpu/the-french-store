@@ -39,6 +39,7 @@ jobs:
           test -s v2/core/runtime.js
           test -s v2/core/navigation.js
           test -s v2/core/ui.js
+          test -s v2/adsterra-owner-test.js
           test -s v2/features/catalog.js
           test -s v2/features/cart.js
           test -s v2/features/auth.js
@@ -84,6 +85,7 @@ jobs:
           node --check v2/core/runtime.js
           node --check v2/core/navigation.js
           node --check v2/core/ui.js
+          node --check v2/adsterra-owner-test.js
           node --check v2/features/catalog.js
           node --check v2/features/cart.js
           node --check v2/features/auth.js
@@ -135,6 +137,9 @@ jobs:
           grep -q './features/wallet.js' v2/bootstrap.js
           grep -q './features/orders-admin.js' v2/bootstrap.js
           grep -q './core/ui.js' v2/bootstrap.js
+          grep -q './adsterra-owner-test.js' v2/bootstrap.js
+          grep -q 'chuihuarachif@gmail.com' v2/adsterra-owner-test.js
+          grep -q 'profitableratecpmnetwork.com' v2/adsterra-owner-test.js
           grep -q './tiers/owner-classic-r7.js' v2/bootstrap.js
           grep -q "CLASSIC_R7_MODE = 'single-interface'" v2/tiers/owner-classic-r7.js
           ! grep -q 'FSTierGate?.isOwner' v2/tiers/owner-classic-r7.js

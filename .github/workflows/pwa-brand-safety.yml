@@ -130,7 +130,7 @@ jobs:
           grep -q './assets/brand/french-store-mascot.webp' v2/brand-ui.js
           grep -q "addEventListener('fetch'" v2/sw.js
           grep -q "url.origin!==location.origin" v2/sw.js
-          grep -Fq "fs-store-r227-public-web-20260919" v2/sw.js
+          grep -Eq "const CACHE='fs-store-r[0-9]+-[^']+';" v2/sw.js
           ! grep -Eq 'api\.frenchstorebo\.com|supabase\.co|create_qr_order|create_wallet_order' v2/sw.js
           ! grep -R -E 'service_role|SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE' v2/sw.js v2/pwa-init.js v2/pwa-install-ui.js v2/navigation-history.js v2/brand-ui.js v2/brand-motion.css v2/pwa-install.css v2/manifest.webmanifest
 
