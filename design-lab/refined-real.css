@@ -4,6 +4,8 @@
    Visual-only override: no business logic, backend, auth or payment changes. */
 
 :root{
+  --fs-compact-head:96px;
+  --fs-compact-foot:108px;
   --rf-bg:#0b1a2b;
   --rf-bg-2:#11263a;
   --rf-bg-3:#1c3347;
@@ -264,7 +266,7 @@ html.standalone .home-intro::after{display:block!important;position:fixed!import
   transform-origin:right 70%!important;
 }
 .category-glass{
-  min-height:500px!important;overflow:hidden!important;
+  min-height:clamp(360px,52dvh,500px)!important;overflow:hidden!important;
   border:1px solid rgba(190,210,224,.28)!important;border-radius:18px!important;
   background:linear-gradient(180deg,#172c40,#0d1f31)!important;
   color:#fff!important;
