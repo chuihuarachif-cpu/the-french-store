@@ -14,7 +14,17 @@
 - Use Sonnet for implementation, debugging, refactors, browser verification and performance work.
 - Use Opus only for difficult architecture, high-impact visual direction, complex material/lighting decisions, or after two serious visual attempts still miss the target.
 - Never use Opus for routine search, renames, formatting, simple bugs, or ordinary file edits.
-- If the Advisor tool is available, prefer consulting the stronger advisor for one hard decision instead of moving the whole task to an expensive model.
+- If a stronger external advisor can answer one hard question, prefer a narrow consultation instead of moving the whole session to an expensive model.
+
+## Claude + Codex routing
+- The official OpenAI Codex plugin is an optional second-opinion lane, not the default worker.
+- Use Codex review for substantial multi-file work, pre-merge review, or when an independent implementation critique materially reduces risk.
+- Use adversarial Codex review only for important architecture/security/reliability decisions.
+- Use Codex rescue only after Claude has made two serious attempts without resolving a problem, or when the user explicitly asks to delegate to Codex.
+- Prefer background Codex jobs for long reviews.
+- Keep the Codex review gate DISABLED by default; automatic stop-gate loops can drain both Claude and Codex quotas.
+- Do not send the same trivial task to Claude and Codex.
+- Codex authentication should use ChatGPT sign-in when the user wants subscription usage; do not silently switch to an API key.
 
 ## Token economy
 - Search before reading many files.
@@ -22,10 +32,13 @@
 - Do not reread unchanged files.
 - Keep subagent prompts narrow and return summaries, not raw logs.
 - Use existing project knowledge and Auto Memory instead of rediscovering facts.
+- Prefer deterministic local hooks/checks over model calls for syntax and mechanical validation.
 - Prefer CLI/built-in tools when they solve the same task more cheaply than a large external-tool workflow.
 - Avoid agent teams for ordinary frontend work.
 - Use /clear between unrelated tasks and /compact during long related tasks.
 - Keep this CLAUDE.md short; put specialized knowledge in skills.
+- Use quick-reviewer for meaningful code review; do not invoke it after trivial edits.
+- Use security-auditor only for auth/admin/payment/backend/secrets/access-control or explicit security work.
 
 ## Visual direction
 - Target physical realism, not generic AI UI.
@@ -47,12 +60,16 @@
 ## Verification
 For meaningful frontend changes:
 1. implement;
-2. build/run;
-3. inspect the real rendered page;
-4. check desktop + mobile;
-5. fix the largest visible mismatch first;
-6. run performance review if effects/animation/WebGL changed;
-7. only then report completion.
+2. deterministic hook checks run automatically after edits;
+3. build/run;
+4. inspect the real rendered page;
+5. check desktop + mobile;
+6. fix the largest visible mismatch first;
+7. run quick-reviewer for meaningful multi-file/risky code;
+8. run performance review if effects/animation/WebGL changed;
+9. run security-auditor only if the security-sensitive surface changed;
+10. use Codex review only when an independent second opinion is worth the extra quota;
+11. only then report completion.
 
 Compiling is not enough; verify the rendered result.
 
