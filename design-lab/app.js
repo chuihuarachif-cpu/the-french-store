@@ -767,6 +767,9 @@
       return;
     }
 
+    const arenaMove = event.target.closest("[data-arena-move]");
+    if (arenaMove) { moveCategory(Number(arenaMove.dataset.arenaMove)); return; }
+
     const arenaDot = event.target.closest("[data-arena-dot]");
     if (arenaDot) { setCategoryActive(Number(arenaDot.dataset.arenaDot), true); return; }
 
