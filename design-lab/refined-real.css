@@ -209,7 +209,8 @@ html.standalone .home-intro,
 }
 .home-intro::before,
 .home-intro::after{
-  position:fixed!important;
+  display:none!important;
+  position:absolute!important;
   top:22%!important;
   z-index:0!important;
   color:#7f94a5!important;
@@ -230,6 +231,8 @@ html.standalone .home-intro,
   right:5%!important;text-align:left!important;
   border-left:2px solid rgba(232,201,137,.78)!important;padding-left:18px!important;
 }
+html.standalone .home-intro::before,
+html.standalone .home-intro::after{display:block!important;position:fixed!important}
 .home-intro .eyebrow{
   margin:0 0 8px!important;color:#c5d4df!important;font-size:.56rem!important;letter-spacing:.30em!important;text-shadow:none!important;
 }
