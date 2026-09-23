@@ -81,3 +81,6 @@ html.standalone body .store-app .whatsapp-float{bottom:8px!important;right:12px!
 @media (max-width:999px){html.standalone body .store-app .category-arena-card{background:none!important;box-shadow:none!important;border:0!important;outline:0!important}}
 
 @media (max-width:999px) and (orientation:landscape){html.standalone body .store-app .category-art img{object-fit:contain!important}}
+@media (prefers-reduced-motion:reduce){html.standalone body .store-app .category-arena-card{transition:none!important;will-change:auto!important}}
+
+html.standalone body .store-app .category-arena-card[data-distance="2"],html.standalone body .store-app .category-arena-card[data-distance="3"]{will-change:auto!important}

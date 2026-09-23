@@ -129,3 +129,8 @@ html.standalone body .whatsapp-float>small{display:block!important;position:abso
 html.standalone body .store-app .category-arena-card[data-roulette-slot="-1"] .category-art img{margin:0 calc(60*var(--u)) 0 auto!important;-webkit-mask-image:none!important;mask-image:none!important}
 html.standalone body .store-app .category-arena-card[data-roulette-slot="1"] .category-art img{margin:0 auto 0 calc(60*var(--u))!important;-webkit-mask-image:none!important;mask-image:none!important}
 }
+@media (prefers-reduced-motion:reduce){html.standalone body .store-app .category-arena-card{transition:none!important;will-change:auto!important}}
+.arena-nav{display:none}
+@media (min-width:1000px){html.standalone body .store-app .arena-nav{display:grid}html.standalone .arena-nav:focus-visible{outline:2px solid var(--gold);outline-offset:3px}}
+
+html.standalone body .store-app .category-arena-card[data-distance="2"],html.standalone body .store-app .category-arena-card[data-distance="3"]{will-change:auto!important}

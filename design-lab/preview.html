@@ -5696,6 +5696,11 @@ html.standalone body .whatsapp-float>small{display:block!important;position:abso
 html.standalone body .store-app .category-arena-card[data-roulette-slot="-1"] .category-art img{margin:0 calc(60*var(--u)) 0 auto!important;-webkit-mask-image:none!important;mask-image:none!important}
 html.standalone body .store-app .category-arena-card[data-roulette-slot="1"] .category-art img{margin:0 auto 0 calc(60*var(--u))!important;-webkit-mask-image:none!important;mask-image:none!important}
 }
+@media (prefers-reduced-motion:reduce){html.standalone body .store-app .category-arena-card{transition:none!important;will-change:auto!important}}
+.arena-nav{display:none}
+@media (min-width:1000px){html.standalone body .store-app .arena-nav{display:grid}html.standalone .arena-nav:focus-visible{outline:2px solid var(--gold);outline-offset:3px}}
+
+html.standalone body .store-app .category-arena-card[data-distance="2"],html.standalone body .store-app .category-arena-card[data-distance="3"]{will-change:auto!important}
 
 </style>
   <style>
@@ -5782,6 +5787,9 @@ html.standalone body .store-app .whatsapp-float{bottom:8px!important;right:12px!
 @media (max-width:999px){html.standalone body .store-app .category-arena-card{background:none!important;box-shadow:none!important;border:0!important;outline:0!important}}
 
 @media (max-width:999px) and (orientation:landscape){html.standalone body .store-app .category-art img{object-fit:contain!important}}
+@media (prefers-reduced-motion:reduce){html.standalone body .store-app .category-arena-card{transition:none!important;will-change:auto!important}}
+
+html.standalone body .store-app .category-arena-card[data-distance="2"],html.standalone body .store-app .category-arena-card[data-distance="3"]{will-change:auto!important}
 
 </style>
 </head>
@@ -5934,7 +5942,7 @@ html.standalone body .store-app .whatsapp-float{bottom:8px!important;right:12px!
                 <div class="category-arena-viewport" id="categoryArenaViewport" tabindex="0" aria-label="Categorías de French Store">
                   <span class="arena-floor-light" aria-hidden="true"></span><span class="arena-platform" aria-hidden="true"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDEwMDAgMjQwIiBmaWxsPSJub25lIj4KIDxkZWZzPgogIDxyYWRpYWxHcmFkaWVudCBpZD0ic3BpbGwiPjxzdG9wIHN0b3AtY29sb3I9IiNhN2Y4ZmYiIHN0b3Atb3BhY2l0eT0iLjQyIi8+PHN0b3Agb2Zmc2V0PSIuNTUiIHN0b3AtY29sb3I9IiMxYWNmZjEiIHN0b3Atb3BhY2l0eT0iLjIyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDA2N2E4IiBzdG9wLW9wYWNpdHk9IjAiLz48L3JhZGlhbEdyYWRpZW50PgogIDxyYWRpYWxHcmFkaWVudCBpZD0idG9wIj48c3RvcCBzdG9wLWNvbG9yPSIjMTY0OTY2Ii8+PHN0b3Agb2Zmc2V0PSIuNjQiIHN0b3AtY29sb3I9IiMwODI1M2QiLz48c3RvcCBvZmZzZXQ9Ii44OCIgc3RvcC1jb2xvcj0iIzAzMTIxZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBiNGU3MiIvPjwvcmFkaWFsR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJ3YWxsIiB4MT0iMCIgeTE9IjkyIiB4Mj0iMCIgeTI9IjIwMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiMwZTY2OTAiLz48c3RvcCBvZmZzZXQ9Ii4xOCIgc3RvcC1jb2xvcj0iIzA4MjQzZCIvPjxzdG9wIG9mZnNldD0iLjM4IiBzdG9wLWNvbG9yPSIjMTE2ODhkIi8+PHN0b3Agb2Zmc2V0PSIuNTgiIHN0b3AtY29sb3I9IiMwNDE0MjYiLz48c3RvcCBvZmZzZXQ9Ii43OCIgc3RvcC1jb2xvcj0iIzBkNTA3MyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAyMDkxNCIvPjwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJzaWx2ZXIiPjxzdG9wIHN0b3AtY29sb3I9IiMwYTM1NTQiLz48c3RvcCBvZmZzZXQ9Ii4yMiIgc3RvcC1jb2xvcj0iIzI2YzllYiIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNmNmZmZmYiLz48c3RvcCBvZmZzZXQ9Ii43NSIgc3RvcC1jb2xvcj0iIzc1ZThmNiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBkNDY2OCIvPjwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJjeWFuIj48c3RvcCBzdG9wLWNvbG9yPSIjMGE3OWIyIi8+PHN0b3Agb2Zmc2V0PSIuMiIgc3RvcC1jb2xvcj0iIzE5ZDlmNCIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNlOWZmZmYiLz48c3RvcCBvZmZzZXQ9Ii44IiBzdG9wLWNvbG9yPSIjMjVjOWViIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDc1MjdkIi8+PC9saW5lYXJHcmFkaWVudD4KICA8bGluZWFyR3JhZGllbnQgaWQ9InZpb2xldCI+PHN0b3Agc3RvcC1jb2xvcj0iIzBlNmRhMiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuMyIgc3RvcC1jb2xvcj0iIzQzZTdmYSIgc3RvcC1vcGFjaXR5PSIuNzIiLz48c3RvcCBvZmZzZXQ9Ii42OCIgc3RvcC1jb2xvcj0iI2U1ZmZmZiIgc3RvcC1vcGFjaXR5PSIuNjUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwZDczYWEiIHN0b3Atb3BhY2l0eT0iMCIvPjwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8IS0tIEZpeGVkIHBhaW50ZWQgbGlnaHQgYW5kIHJlZmxlY3RlZCBmbG9vciBpbGx1bWluYXRpb247IG5vIFNWRyBmaWx0ZXJzLAogICAgICBzY3JpcHRzLCBtYXNrcywgYW5pbWF0aW9uLCBibHVyLCBvciBydW50aW1lIGxpZ2h0aW5nIGNhbGN1bGF0aW9ucy4gLS0+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iMTcwIiByeD0iNTAwIiByeT0iNzAiIGZpbGw9InVybCgjc3BpbGwpIi8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iMTYwIiByeD0iNDUzIiByeT0iNTgiIHN0cm9rZT0idXJsKCN2aW9sZXQpIiBzdHJva2Utd2lkdGg9IjMiLz4KIDxwYXRoIGQ9Ik02MSA4OEM2MSA0OCAyNTggMTcgNTAwIDE3czQzOSAzMSA0MzkgNzF2NjVjMCA0My0xOTcgNzItNDM5IDcyUzYxIDE5NiA2MSAxNTNaIiBmaWxsPSJ1cmwoI3dhbGwpIiBzdHJva2U9IiMyY2NkZTkiIHN0cm9rZS13aWR0aD0iMiIvPgogPHBhdGggZD0iTTYyIDEyOGMwIDQxIDE5NyA3NCA0MzggNzRzNDM4LTMzIDQzOC03NHYxMWMwIDQxLTE5NyA3NC00MzggNzRTNjIgMTgwIDYyIDEzOVoiIGZpbGw9InVybCgjc2lsdmVyKSIvPgogPGcgb3BhY2l0eT0iLjM0IiBzdHJva2U9IiM3ZGViZjciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KICA8cGF0aCBkPSJNMTIwIDE1MGM4MiAyNSAyMTYgMzkgMzgwIDM5czI5OC0xNCAzODAtMzkiLz4KICA8cGF0aCBkPSJNMTUwIDE3MGM5MSAyMyAyMTAgMzQgMzUwIDM0czI1OS0xMSAzNTAtMzQiLz4KICA8cGF0aCBkPSJNMjA1IDE5M2M3NiAxMyAxNzcgMTkgMjk1IDE5czIxOS02IDI5NS0xOSIvPgogIDxwYXRoIGQ9Ik0yNzAgMTE5YzM1IDYgNzkgOSAxMzAgOXM5NS0zIDEzMC05IiBvcGFjaXR5PSIuNDUiLz4KIDwvZz4KIDxwYXRoIGQ9Ik02MiAxMTFjMCA0MCAxOTcgNzIgNDM4IDcyczQzOC0zMiA0MzgtNzJ2OGMwIDQxLTE5NyA3My00MzggNzNTNjIgMTYwIDYyIDExOVoiIGZpbGw9InVybCgjY3lhbikiLz4KIDxwYXRoIGQ9Ik02NSAxMDBjMCA0MCAxOTUgNzEgNDM1IDcxczQzNS0zMSA0MzUtNzEiIHN0cm9rZT0iIzAyMDkxNCIgc3Ryb2tlLXdpZHRoPSI1Ii8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iODgiIHJ4PSI0MzkiIHJ5PSI3MSIgZmlsbD0idXJsKCN0b3ApIiBzdHJva2U9InVybCgjc2lsdmVyKSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iODUiIHJ4PSI0MTkiIHJ5PSI2MSIgc3Ryb2tlPSIjMGI0MzYyIiBzdHJva2Utd2lkdGg9IjgiLz4KIDxlbGxpcHNlIGN4PSI1MDAiIGN5PSI4NSIgcng9IjQxMSIgcnk9IjU3IiBzdHJva2U9InVybCgjY3lhbikiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiA8ZWxsaXBzZSBjeD0iNTAwIiBjeT0iODMiIHJ4PSIzNzciIHJ5PSI0NiIgc3Ryb2tlPSIjYmRmN2ZmIiBzdHJva2Utb3BhY2l0eT0iLjMiLz4KIDxlbGxpcHNlIGN4PSI1MDAiIGN5PSI4NyIgcng9IjI4MCIgcnk9IjM0IiBmaWxsPSIjMDEwYjE1IiBmaWxsLW9wYWNpdHk9Ii40NCIvPgogPHBhdGggZD0iTTExNCAxMDNjNDcgMjcgMjAyIDQ5IDM4NiA0OXMzMzktMjIgMzg2LTQ5IiBzdHJva2U9IiNkZmZjZmYiIHN0cm9rZS1vcGFjaXR5PSIuODIiIHN0cm9rZS13aWR0aD0iMyIvPgogPHBhdGggZD0ibTQ1NyAxOTcgNDMtMTEgNDMgMTEtNDMtNFoiIGZpbGw9IiNlZmZmZmYiLz4KIDxwYXRoIGQ9Ik0xNzEgMjA1YzgxIDE1IDE5NyAyMyAzMjkgMjNzMjQ4LTggMzI5LTIzIiBzdHJva2U9IiMzY2RjZjMiIHN0cm9rZS1vcGFjaXR5PSIuNTUiIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4NCg==" width="1000" height="240" alt="" decoding="async"></span>
                   <div id="categoryGrid" class="category-arena-track"></div>
-                  <button class="arena-nav prev" type="button" data-arena-move="-1" aria-label="Anterior">‹</button><button class="arena-nav next" type="button" data-arena-move="1" aria-label="Siguiente">›</button>
+                  <button class="arena-nav prev" type="button" data-arena-move="-1" aria-label="Categoría anterior"><span aria-hidden="true">‹</span></button><button class="arena-nav next" type="button" data-arena-move="1" aria-label="Categoría siguiente"><span aria-hidden="true">›</span></button>
                 </div>
               </div>
             </section>
@@ -7176,7 +7184,7 @@ window.FS_LAB_DATA = Object.freeze({
   }
 
   function beginCategoryGesture(viewport, gestureId, event){
-    if (event.target.closest(".category-enter")) return;
+    if (event.target.closest(".category-enter, .arena-nav")) return;
     categoryGesturePointerId = gestureId;
     categoryGestureStartX = event.clientX;
     categoryGestureStartY = event.clientY;

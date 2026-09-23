@@ -923,7 +923,7 @@
   }
 
   function beginCategoryGesture(viewport, gestureId, event){
-    if (event.target.closest(".category-enter")) return;
+    if (event.target.closest(".category-enter, .arena-nav")) return;
     categoryGesturePointerId = gestureId;
     categoryGestureStartX = event.clientX;
     categoryGestureStartY = event.clientY;
