@@ -40,6 +40,11 @@
 - Use quick-reviewer for meaningful code review; do not invoke it after trivial edits.
 - Use security-auditor only for auth/admin/payment/backend/secrets/access-control or explicit security work.
 
+## Subagents and escalation
+- Before Sonnet codes in unfamiliar code, delegate search/exploration to Explore (Haiku); library docs to docs-researcher (Haiku + Context7).
+- Give each subagent only: goal, relevant files, constraints, expected output. Never paste the conversation.
+- Escalate Haiku -> Sonnet -> Opus only when the lower tier failed or cannot decide; drop back to the cheap tier once the task is simple again.
+- Playwright: use browser-verifier for real-page checks. Codex: only per the routing above.
 ## Visual direction
 - Target physical realism, not generic AI UI.
 - Prefer believable construction, glass, metal, plastic, wood, lighting, reflections, contact shadows, depth and restrained imperfections.
