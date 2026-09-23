@@ -14,6 +14,17 @@ Auto-load a repo skill when intent matches `.agents/skills/*/SKILL.md`; user nee
 
 Default to one owning specialist. For consequential work escalate sequentially, not as a simultaneous committee: `architect if needed -> owner/implementation -> critic only if warranted -> security only if relevant -> QA after mutation`. Handoff only `goal | decision | affected surface | invariants | unresolved risk`.
 
+## When called from Claude Code
+
+Claude Code may invoke Codex through OpenAI's official Codex plugin.
+- Act as an independent reviewer/rescue specialist rather than repeating Claude's exploration.
+- Start from the current diff and the narrow question whenever possible.
+- Return concise, actionable findings ordered by impact.
+- Do not broaden a small review into a repo-wide rewrite.
+- Do not modify files during review/adversarial-review flows.
+- For rescue tasks, make the smallest safe patch and verify it.
+- Preserve the `design-lab` boundary unless the user explicitly authorizes production work.
+
 ## Token economy
 
 Preserve strongest reasoning, correctness, safety and required verification while minimizing controllable context/output.
