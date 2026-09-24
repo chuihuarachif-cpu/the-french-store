@@ -46,7 +46,7 @@ La vista `desktop.html` se adapta al tamaño real de la pantalla y carga `index.
 
 ### Archivos y comprobación
 
-`crystal.css` contiene la base visual, `hud.css` refina las superficies al estilo XArena, `atmosphere.css` añade iluminación ambiental y el panel inferior, y `cabinet.css` aporta la paleta mineral y el diseño compacto; `assets/*.svg` contiene el arte. Tras editar HTML, CSS o JS, ejecutar `node design-lab/build-preview.mjs` para regenerar `preview.html` con los recursos nuevos incrustados.
+`crystal.css` contiene la base visual, `hud.css` refina las superficies al estilo XArena, `atmosphere.css` añade iluminación ambiental y el panel inferior, y `cabinet.css` aporta la paleta mineral y el diseño compacto; `assets/*.svg` contiene el arte.
 
 La refinación HUD añade cristal angular, reflejos estáticos, mayor énfasis en la selección central y el botón Ingresar integrado en la consola. El Centro de información usa iconos SVG en su menú y un panel lateral de ayuda accionable. Instagram queda identificado como enlace por confirmar hasta recibir la cuenta oficial.
 

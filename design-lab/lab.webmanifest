@@ -2,7 +2,7 @@
   "name": "French Store Lab",
   "short_name": "FS Lab",
   "description": "French Store Lab: consola horizontal de diseño. Manifest propio; no afecta a la tienda principal.",
-  "start_url": "./index.html?standalone=1",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "landscape",

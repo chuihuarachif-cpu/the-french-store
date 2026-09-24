@@ -15,7 +15,7 @@
   const roleMap = { visitor: "Visitante", user: "Usuario Base", gold: "Usuario Gold", diamond: "Usuario Diamond", reseller: "Reseller", admin: "Admin" };
   // Real membership tier derived from the (simulated) account; visitors and staff roles have none.
   const planForRole = { user: "base", gold: "gold", diamond: "diamond" };
-  const standalone = new URLSearchParams(location.search).has('standalone');
+  const standalone = !new URLSearchParams(location.search).has('panel'); // Lab default = full-screen store; ?panel opens the device-test panel
   document.documentElement.classList.toggle('standalone', standalone);
   // The staged entrance is decided once by intro-gate.js (idle -> playing -> complete, persisted per session).
   // Navigation inside the app never touches it; this only finishes the running timeline.
@@ -908,7 +908,7 @@
     if (categoryEnter) {
       const index=wrapCategoryIndex(Number(categoryEnter.dataset.categoryEnter));
       const selected=data.categories[index];
-      if (selected && selected.href) { window.location.href = selected.href + (standalone ? "?standalone=1" : ""); return; }
+      if (selected && selected.href) { window.location.href = selected.href; return; }
       if (selected) {
         setCategoryActive(index,true);
         openExperience(selected.id);

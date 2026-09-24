@@ -12,6 +12,4 @@ cat > "$OUT/_headers" <<H
   Cache-Control: no-cache
 H
 printf 'User-agent: *\nDisallow: /\n' > "$OUT/robots.txt"
-printf "/ /desktop.html 200
-" > "$OUT/_redirects"
 npx wrangler pages deploy "$OUT" --project-name french-store-lab --branch main --commit-dirty=true

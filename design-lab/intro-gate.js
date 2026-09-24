@@ -3,7 +3,7 @@
    The session flag is written as soon as the intro starts, so a reload or fast re-entry cannot start a second timeline. */
 (function () {
   "use strict";
-  try { if (new URLSearchParams(location.search).has("standalone")) document.documentElement.classList.add("standalone"); } catch (e) {}
+  try { if (!new URLSearchParams(location.search).has("panel")) document.documentElement.classList.add("standalone"); } catch (e) {}
   var KEY = "frenchStoreIntroPlayed", root = document.documentElement, played = false, reduced = false, force = false;
   try { played = sessionStorage.getItem(KEY) === "true"; } catch (e) {}
   try { reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
