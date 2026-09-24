@@ -2,8 +2,8 @@
    Weights used: 400 body · 500-550 menus · 600 titles/names/numbers · 700 emphasis only. Numbers: lining + tabular everywhere. */
 @font-face{font-family:"Source Sans 3";font-style:normal;font-weight:200 900;font-display:swap;src:url(./assets/fonts/source-sans-3-latin-wght.woff2) format("woff2")}
 html.standalone{
-  --fs-font-ui:"Source Sans 3","Segoe UI",Arial,sans-serif;
-  --fs-font-display:"Source Sans 3","Segoe UI",Arial,sans-serif;
+  --fs-font-ui:"Avenir Next","Segoe UI Variable","Segoe UI",system-ui,-apple-system,sans-serif;
+  --fs-font-display:"Avenir Next","Segoe UI Variable Display","Segoe UI Variable","Segoe UI",system-ui,-apple-system,sans-serif;
   /* type scale (proportional to the stage unit --k, never below a readable floor) */
   --font-xs:max(12px,calc(12.5*var(--k)));
   --font-sm:max(13.5px,calc(14.5*var(--k)));
