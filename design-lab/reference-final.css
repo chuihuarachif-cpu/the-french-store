@@ -79,3 +79,11 @@ html.standalone body .store-app .settings-grid button[aria-pressed="true"]{box-s
 @media (hover:hover){html.standalone body .store-app .settings-grid button:hover{translate:0 -1px}}
 html.standalone body .store-app .settings-grid button:active{translate:0 1px}
 html.standalone body .store-app .settings-grid button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+/* ---------- inner rooms: the Home stage steps back completely (no ghost cards behind panels), panel clears the dock ---------- */
+html.standalone body .store-app .category-arena-section,html.standalone body .store-app .home-intro,html.standalone body .store-app .home-side-copy{transition:opacity .22s ease,visibility 0s}
+html.standalone:not([data-view="inicio"]) body .store-app .category-arena-section,
+html.standalone:not([data-view="inicio"]) body .store-app .home-intro,
+html.standalone:not([data-view="inicio"]) body .store-app .store-view[data-view="inicio"]::before,
+html.standalone:not([data-view="inicio"]) body .store-app .store-view[data-view="inicio"]::after{opacity:0!important;visibility:hidden!important;transition:opacity .22s ease,visibility 0s .22s}
+@media (min-width:1000px){html.standalone body .store-app .store-view:not([data-view="inicio"]){height:calc(680*var(--u))!important}}
