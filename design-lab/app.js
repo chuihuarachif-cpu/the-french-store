@@ -21,7 +21,7 @@
   // Navigation inside the app never touches it; this only finishes the running timeline.
   const introRoot = document.documentElement;
   if (introRoot.dataset.intro === "playing") {
-    setTimeout(() => { introRoot.classList.remove("fs-intro"); introRoot.dataset.intro = "complete"; }, 3100);
+    setTimeout(() => { introRoot.classList.remove("fs-intro"); introRoot.dataset.intro = "complete"; }, 4700);
   }
 
   // Optional intro sound: synthesized (no asset), off by default, only after the user has interacted with the page.

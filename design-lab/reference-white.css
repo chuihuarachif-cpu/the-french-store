@@ -83,23 +83,23 @@ html.standalone body .store-app .category-enter:active{translate:0 calc(3*var(--
 html.standalone.fs-intro .fs-scene{animation:fsInLight .5s ease backwards}
 html.standalone.fs-intro body .store-app .store-header.fs-command-header{animation:fsInBar .9s cubic-bezier(.22,1,.36,1) backwards}
 html.standalone.fs-intro .fs-pendant{animation:fsInLamp .8s cubic-bezier(.22,1,.36,1) backwards}
-html.standalone.fs-intro .fs-pendant[data-side="left"]{animation-delay:.7s}
-html.standalone.fs-intro .fs-pendant[data-side="center"]{animation-delay:.78s}
-html.standalone.fs-intro .fs-pendant[data-side="right"]{animation-delay:.86s}
+html.standalone.fs-intro .fs-pendant[data-side="left"]{animation-delay:1s}
+html.standalone.fs-intro .fs-pendant[data-side="center"]{animation-delay:1.1s}
+html.standalone.fs-intro .fs-pendant[data-side="right"]{animation-delay:1.2s}
 html.standalone.fs-intro .fs-pendant :is(.fs-light,.fs-glass-on){animation:fsInLight .4s ease backwards}
-html.standalone.fs-intro .fs-pendant[data-side="left"] :is(.fs-light,.fs-glass-on){animation-delay:1.25s}
-html.standalone.fs-intro .fs-pendant[data-side="center"] :is(.fs-light,.fs-glass-on){animation-delay:1.33s}
-html.standalone.fs-intro .fs-pendant[data-side="right"] :is(.fs-light,.fs-glass-on){animation-delay:1.41s}
+html.standalone.fs-intro .fs-pendant[data-side="left"] :is(.fs-light,.fs-glass-on){animation-delay:1.85s}
+html.standalone.fs-intro .fs-pendant[data-side="center"] :is(.fs-light,.fs-glass-on){animation-delay:1.93s}
+html.standalone.fs-intro .fs-pendant[data-side="right"] :is(.fs-light,.fs-glass-on){animation-delay:2.01s}
 html.standalone.fs-intro .fs-lamp-layer{animation:fsInLight .5s ease backwards}
-html.standalone.fs-intro .fs-lit-left{animation-delay:1.25s}
-html.standalone.fs-intro .fs-lit-center{animation-delay:1.33s}
-html.standalone.fs-intro .fs-lit-right{animation-delay:1.41s}
-html.standalone.fs-intro body .store-app .home-intro{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 1s backwards}
-html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="-1"] .category-glass{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 1.15s backwards!important}
-html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="1"] .category-glass{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 1.25s backwards!important}
-html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="0"] .category-glass{animation:fsInBlock .75s cubic-bezier(.22,1,.36,1) 1.35s backwards!important}
-html.standalone.fs-intro body .store-app .xarena-dock{animation:fsInDock .65s cubic-bezier(.16,.84,.3,1) 1.8s backwards}
-html.standalone.fs-intro body .store-app .whatsapp-float{animation:fsInWa .6s cubic-bezier(.16,.84,.3,1) 2.05s backwards!important}
+html.standalone.fs-intro .fs-lit-left{animation-delay:1.85s}
+html.standalone.fs-intro .fs-lit-center{animation-delay:1.93s}
+html.standalone.fs-intro .fs-lit-right{animation-delay:2.01s}
+html.standalone.fs-intro body .store-app .home-intro{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 2.2s backwards}
+html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="-1"] .category-glass{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 2.35s backwards!important}
+html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="1"] .category-glass{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 2.45s backwards!important}
+html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="0"] .category-glass{animation:fsInBlock .75s cubic-bezier(.22,1,.36,1) 2.55s backwards!important}
+html.standalone.fs-intro body .store-app .xarena-dock{animation:fsInDock .65s cubic-bezier(.16,.84,.3,1) 3.3s backwards}
+html.standalone.fs-intro body .store-app .whatsapp-float{animation:fsInWa .6s cubic-bezier(.16,.84,.3,1) 3.8s backwards!important}
 /* no second animation on card text while the intro moves the card */
 html.standalone.fs-intro body .store-app .category-arena-card :is(.category-console,.cat-mark,.category-copy b,.category-copy small,.cat-tags,.category-enter,.cta-sheen){animation:none!important}
 
