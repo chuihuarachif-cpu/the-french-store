@@ -314,9 +314,24 @@
 
   }
 
+  // Strict one-step state machine: idle -> moving -> idle. Any input that arrives while a card is travelling is dropped (never queued).
+  let categoryMoving = false;
+  let categoryMoveTimer = 0;
+  function releaseCategoryMove(){
+    clearTimeout(categoryMoveTimer);
+    categoryMoveTimer = 0;
+    categoryMoving = false;
+  }
   function moveCategory(direction){
-    if (!direction) return;
+    if (!direction || categoryMoving) return false;
+    categoryMoving = true;
+    const active = document.querySelector(".category-arena-card.active");
+    const done = event => { if (!event || (event.target === active && event.propertyName === "transform")) { active?.removeEventListener("transitionend", done); releaseCategoryMove(); } };
+    active?.addEventListener("transitionend", done);
+    // Fallback so a missed transitionend (reduced motion, hidden tab) can never leave the carousel locked.
+    categoryMoveTimer = setTimeout(() => { active?.removeEventListener("transitionend", done); releaseCategoryMove(); }, 620);
     setCategoryActive(activeCategoryIndex + (direction < 0 ? -1 : 1));
+    return true;
   }
 
   function categorySnapshot(categoryId){
@@ -1023,13 +1038,18 @@
   });
 
   const categoryViewport = $("#categoryArenaViewport");
+  function categoryDragCards(){ return all(".category-arena-card").filter(card => Number(card.dataset.distance) <= 1); }
   function drawCategoryDrag(viewport, offset){
     categoryGestureOffset = Math.max(-118, Math.min(118, offset));
     if (categoryGestureFrame) return;
     categoryGestureFrame = requestAnimationFrame(() => {
       categoryGestureFrame = 0;
-      viewport.style.setProperty("--category-drag-x", categoryGestureOffset + "px");
+      const value = categoryGestureOffset + "px";
+      categoryDragCards().forEach(card => card.style.setProperty("--category-drag-x", value));
     });
+  }
+  function clearCategoryDrag(){
+    all(".category-arena-card").forEach(card => card.style.removeProperty("--category-drag-x"));
   }
 
   function finishCategoryGesture(viewport, event, cancelled = false, gestureId = event?.pointerId){
@@ -1046,7 +1066,7 @@
       categoryGestureFrame = 0;
     }
     viewport.classList.remove("is-dragging");
-    viewport.style.removeProperty("--category-drag-x");
+    clearCategoryDrag();
     const pointerId = categoryGesturePointerId;
     categoryGesturePointerId = null;
     categoryGestureStartX = null;
@@ -1062,7 +1082,7 @@
   }
 
   function beginCategoryGesture(viewport, gestureId, event){
-    if (event.target.closest(".category-enter, .arena-nav")) return;
+    if (event.target.closest(".category-enter, .arena-nav") || categoryMoving) return;
     categoryGesturePointerId = gestureId;
     categoryGestureStartX = event.clientX;
     categoryGestureStartY = event.clientY;
@@ -1104,6 +1124,30 @@
   });
 
   categoryViewport?.addEventListener("dragstart", (event) => event.preventDefault());
+
+  // Wheel / trackpad: one step per burst. Inertial tails are swallowed until the wheel has been quiet for 160ms.
+  let categoryWheelQuiet = 0, categoryWheelArmed = true, categoryWheelSum = 0;
+  categoryViewport?.addEventListener("wheel", (event) => {
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : (event.shiftKey ? event.deltaY : event.deltaY);
+    if (!delta) return;
+    event.preventDefault();
+    clearTimeout(categoryWheelQuiet);
+    categoryWheelQuiet = setTimeout(() => { categoryWheelArmed = true; categoryWheelSum = 0; }, 160);
+    if (!categoryWheelArmed) return;
+    categoryWheelSum += delta;
+    if (Math.abs(categoryWheelSum) < 36) return;
+    if (moveCategory(categoryWheelSum > 0 ? 1 : -1)) { categoryWheelArmed = false; }
+    categoryWheelSum = 0;
+  }, { passive: false });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (document.querySelector('.store-view.active[data-view]')?.dataset.view !== "inicio") return;
+    if (event.target.closest?.("input,textarea,select,[contenteditable]")) return;
+    event.preventDefault();
+    moveCategory(event.key === "ArrowRight" ? 1 : -1);
+  });
 
   $("#xInputFields")?.addEventListener("input",(event)=>{
     const field=event.target.closest("[data-x-field]");
