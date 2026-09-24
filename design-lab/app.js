@@ -1126,18 +1126,25 @@
 
   categoryViewport?.addEventListener("dragstart", (event) => event.preventDefault());
 
-  // Wheel / trackpad: one step per burst. Inertial tails are swallowed until the wheel has been quiet for 160ms.
+  // Wheel / trackpad: exactly one category per physical scroll gesture.
+  // Keep the gesture latched through slow input and inertial tails so one gesture can never queue a second card.
   let categoryWheelQuiet = 0, categoryWheelArmed = true, categoryWheelSum = 0;
+  const CATEGORY_WHEEL_REARM_MS = 700;
   categoryViewport?.addEventListener("wheel", (event) => {
-    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : (event.shiftKey ? event.deltaY : event.deltaY);
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
     if (!delta) return;
     event.preventDefault();
     clearTimeout(categoryWheelQuiet);
-    categoryWheelQuiet = setTimeout(() => { categoryWheelArmed = true; categoryWheelSum = 0; }, 160);
+    categoryWheelQuiet = setTimeout(() => {
+      categoryWheelArmed = true;
+      categoryWheelSum = 0;
+    }, CATEGORY_WHEEL_REARM_MS);
     if (!categoryWheelArmed) return;
+    if (categoryWheelSum && Math.sign(categoryWheelSum) !== Math.sign(delta)) categoryWheelSum = 0;
     categoryWheelSum += delta;
     if (Math.abs(categoryWheelSum) < 36) return;
-    if (moveCategory(categoryWheelSum > 0 ? 1 : -1)) { categoryWheelArmed = false; }
+    categoryWheelArmed = false;
+    moveCategory(categoryWheelSum > 0 ? 1 : -1);
     categoryWheelSum = 0;
   }, { passive: false });
 
