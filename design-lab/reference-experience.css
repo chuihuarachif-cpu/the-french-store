@@ -1,0 +1,130 @@
+/* French Store Lab · Recargas por ID (game selector, Player ID, products, purchase dock)
+   Restyle only: same markup hooks/JS. Blue-charcoal surfaces, white/ivory light, champagne hairlines. Static gradients + shadows. */
+html body .x-experience{
+  --xe-edge:rgba(236,240,238,.22);--xe-edge-hi:rgba(246,245,240,.85);
+  --xe-plate:linear-gradient(180deg,#1b2b34,#111d24 60%,#0c161c);
+  --xe-lift:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -2px 3px rgba(0,0,0,.4),0 4px 0 -1px rgba(0,0,0,.55),0 10px 14px -8px rgba(0,0,0,.6);
+  --xe-lit:0 0 0 1px var(--xe-edge-hi),0 0 14px rgba(255,255,255,.18),inset 0 1px 0 rgba(255,255,255,.3),0 10px 16px -8px rgba(0,0,0,.7);
+}
+html body .x-experience .x-experience-bg{background:radial-gradient(ellipse at 62% 30%,rgba(120,160,178,.16),transparent 45%),radial-gradient(ellipse at 50% 110%,rgba(30,64,80,.4),transparent 55%),linear-gradient(180deg,#0b171e,#071116 70%,#050b0f)!important}
+
+/* top bar */
+html body .x-experience .x-experience-topbar{position:relative;border-bottom:1px solid rgba(236,240,238,.12);padding-bottom:6px}
+html body .x-experience .x-experience-title span{color:#AEB9BC!important;letter-spacing:.2em;font-size:.68rem;font-weight:700}
+html body .x-experience .x-experience-title b{color:#F6F5F0!important;font-size:clamp(1.05rem,1.9vw,1.6rem)}
+html body .x-experience .x-experience-topbar::after{content:"◆  French Store  ◆";position:absolute;left:50%;top:50%;translate:-50% -50%;padding:6px 26px;border-radius:0 0 18px 18px;color:#ECE9E1;font-weight:700;letter-spacing:.06em;font-size:.95rem;white-space:nowrap;pointer-events:none;
+  background:linear-gradient(180deg,#22343d,#101c23);box-shadow:0 0 0 1px var(--xe-edge),inset 0 1px 0 rgba(255,255,255,.16),0 6px 10px -4px rgba(0,0,0,.6)}
+@media (max-width:760px){html body .x-experience .x-experience-topbar::after{display:none}}
+html body .x-experience .x-experience-actions button{border:0!important;border-radius:12px!important;color:#F6F5F0!important;background:linear-gradient(180deg,#2A3B44,#15222A)!important;
+  box-shadow:0 0 0 1px var(--xe-edge),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 3px rgba(0,0,0,.4),0 3px 0 -1px rgba(0,0,0,.6)!important;transition:translate .12s,box-shadow .12s}
+html body .x-experience .x-experience-actions button:active{translate:0 2px;box-shadow:0 0 0 1px var(--xe-edge),inset 0 2px 5px rgba(0,0,0,.6)!important}
+html body .x-experience .x-experience-actions .ui-icon{color:#F6F5F0}
+html body .x-experience [data-x-cart] span,html body .x-experience #xExperience [data-x-cart] span{color:#F6F5F0!important}
+
+/* game selector: column of physical modules */
+html body .x-experience .x-wheel-panel{border-radius:20px;padding:6px;background:linear-gradient(180deg,rgba(21,34,42,.9),rgba(9,17,22,.94));box-shadow:0 0 0 1px rgba(236,240,238,.14),inset 0 1px 0 rgba(255,255,255,.08)}
+html body .x-experience .x-wheel-arrow{border:0!important;border-radius:10px!important;color:#F6F5F0!important;background:linear-gradient(180deg,#2A3B44,#15222A)!important;box-shadow:0 0 0 1px var(--xe-edge),inset 0 1px 0 rgba(255,255,255,.16),0 3px 0 -1px rgba(0,0,0,.6)!important}
+html body .x-experience .x-wheel-arrow:active{translate:0 1px}
+html body .x-experience .x-game-card{border:0!important;border-radius:14px!important;background:var(--xe-plate)!important;color:#F6F5F0!important;
+  opacity:calc(.6 + var(--wheel-opacity)*.4)!important;box-shadow:0 0 0 1px var(--xe-edge),var(--xe-lift)!important;align-items:center}
+html body .x-experience .x-game-card::after{content:"›";position:absolute;right:14px;top:50%;translate:0 -52%;font-size:1.5rem;line-height:1;color:#DDE2E2;opacity:.85}
+html body .x-experience .x-game-card .x-game-name{color:#ECE9E1!important;font-weight:700;padding-right:22px}
+html body .x-experience .x-game-card.active{opacity:1!important;background:linear-gradient(180deg,#26404c,#152630 60%,#0f1c24)!important;box-shadow:var(--xe-lit)!important}
+html body .x-experience .x-game-card.active .x-game-name{color:#fff!important}
+html body .x-experience .x-game-thumb-shell{border-radius:10px!important;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+html body .x-experience .x-game-card:focus-visible{outline:2px solid #F6F5F0;outline-offset:2px}
+
+/* hero */
+html body .x-experience .x-product-stage{border:0!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(18,31,39,.96),rgba(8,15,20,.98))!important;box-shadow:0 0 0 1px rgba(236,240,238,.16),inset 0 1px 0 rgba(255,255,255,.1)!important}
+html body .x-experience .x-stage-gamehead{position:relative;isolation:isolate;grid-template-columns:auto minmax(0,1fr)!important;gap:16px!important;padding:12px 14px!important;border:0!important;border-radius:16px;overflow:hidden;
+  background:linear-gradient(90deg,#101c23 0,#101c23 38%,rgba(16,28,35,.55) 70%,rgba(16,28,35,.25)),var(--hero-img,none) right center/cover no-repeat,#101c23;box-shadow:0 0 0 1px rgba(236,240,238,.14)}
+html body .x-experience .x-stage-game-icon{width:clamp(56px,8vw,84px)!important;height:clamp(56px,8vw,84px)!important;border-radius:16px!important;overflow:hidden;box-shadow:0 0 0 1px rgba(236,240,238,.4),0 6px 10px -4px rgba(0,0,0,.7)}
+html body .x-experience #xShowcaseType{color:#AEB9BC!important;letter-spacing:.26em;font-weight:700}
+html body .x-experience #xShowcaseTitle{color:#F6F5F0!important;font-size:clamp(1.3rem,3vw,2.5rem)!important;line-height:1.05}
+html body .x-experience #xShowcaseMeta{color:#C4CDCF!important}
+html body .x-experience .x-config-selection{display:none!important}
+
+/* Player ID: ivory field */
+html body .x-experience .x-input-fields{grid-template-columns:minmax(0,1fr)!important}
+html body .x-experience .x-input-field span{color:#ECE9E1!important;font-size:.8rem!important;font-weight:700;letter-spacing:.02em}
+html body .x-experience .x-input-field input,html body .x-experience .x-input-field select{
+  min-height:44px;border:1px solid rgba(255,255,255,.55)!important;border-radius:12px!important;background:linear-gradient(180deg,#E9E6DD,#F6F5F0)!important;color:#1d2a31!important;font-size:.9rem!important;padding:0 14px!important;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.22),0 1px 0 rgba(255,255,255,.12)!important;transition:box-shadow .12s,border-color .12s}
+html body .x-experience .x-input-field input::placeholder{color:#5c6a70}
+html body .x-experience .x-input-field input:focus,html body .x-experience .x-input-field select:focus{border-color:#fff!important;box-shadow:inset 0 2px 4px rgba(0,0,0,.18),0 0 0 2px rgba(255,255,255,.4)!important}
+html body .x-experience .x-input-field .needs-value,html body .x-experience .x-input-field input.needs-value{border-color:#e7a0a0!important}
+html body .x-experience .x-no-inputs{color:#AEB9BC}
+
+/* products: whole card is the button */
+html body .x-experience .x-package-list{gap:12px!important;padding:2px 6px 6px 2px!important}
+html body .x-experience .x-package-card{border:0!important;background:none!important;padding:0!important;box-shadow:none!important;display:block!important;min-height:0!important}
+html body .x-experience .x-package-select{position:relative;display:grid!important;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"thumb name go" "thumb price go";column-gap:14px;row-gap:2px;align-items:center;width:100%;min-height:84px;padding:12px 16px 12px 12px;text-align:left;cursor:pointer;
+  border:0!important;border-radius:16px!important;color:#F6F5F0!important;background:var(--xe-plate)!important;box-shadow:0 0 0 1px var(--xe-edge),var(--xe-lift)!important;transition:translate .14s,box-shadow .14s}
+html body .x-experience .x-package-thumb{grid-area:thumb;display:grid;place-items:center;width:60px;height:60px;border-radius:12px;overflow:hidden;background:#0c161c;box-shadow:0 0 0 1px rgba(255,255,255,.16)}
+html body .x-experience .x-package-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+html body .x-experience .x-package-name{grid-area:name;align-self:end;color:#ECE9E1!important;font-size:.95rem;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+html body .x-experience .x-package-price{grid-area:price;align-self:start;color:#fff!important;font-size:1.35rem!important;font-weight:800;line-height:1.15}
+html body .x-experience .x-package-go{grid-area:go;font-style:normal;font-size:1.7rem;color:#DDE2E2;opacity:.8}
+html body .x-experience .x-package-cart{display:none!important}
+@media (hover:hover){html body .x-experience .x-package-select:hover{translate:0 -2px}}
+html body .x-experience .x-package-select:active{translate:0 1px;box-shadow:0 0 0 1px var(--xe-edge),inset 0 2px 5px rgba(0,0,0,.5)!important}
+html body .x-experience .x-package-select:focus-visible{outline:2px solid #F6F5F0;outline-offset:2px}
+html body .x-experience .x-package-card.active .x-package-select{translate:0 -2px;background:linear-gradient(180deg,#26404c,#152630 60%,#0f1c24)!important;box-shadow:var(--xe-lit)!important}
+
+/* purchase dock */
+html body .x-experience .x-buy-dock{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto auto auto;grid-template-areas:"thumb copy total add buy" "note note note note note";column-gap:16px;row-gap:6px;align-items:center;
+  padding:12px 14px 8px!important;border-radius:18px;background:linear-gradient(180deg,#1a2a33,#0f1a21);box-shadow:0 0 0 1px var(--xe-edge),inset 0 1px 0 rgba(255,255,255,.12),0 -8px 14px -10px rgba(0,0,0,.6)}
+html body .x-experience .x-dock-thumb{grid-area:thumb;position:relative;display:grid;place-items:center;width:52px;height:52px;border-radius:12px;overflow:hidden;background:#0c161c;box-shadow:0 0 0 1px rgba(255,255,255,.18);color:#DDE2E2;font-style:normal;font-weight:800}
+html body .x-experience .x-dock-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+html body .x-experience .x-dock-thumb img[hidden]{display:none}
+html body .x-experience .x-dock-thumb i{font-style:normal}
+html body .x-experience .x-dock-copy{grid-area:copy;display:grid;gap:2px;min-width:0}
+html body .x-experience .x-dock-copy b{color:#F6F5F0;font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body .x-experience .x-dock-copy small{color:#AEB9BC;font-size:.8rem}
+html body .x-experience .x-dock-total{grid-area:total;display:grid;gap:2px;padding-left:16px;border-left:1px solid rgba(236,240,238,.16)}
+html body .x-experience .x-dock-total small{color:#AEB9BC;font-size:.75rem}
+html body .x-experience .x-dock-total b{color:#fff;font-size:1.5rem;line-height:1}
+html body .x-experience .x-dock-add{grid-area:add;width:46px;height:46px;display:grid;place-items:center;border:0;border-radius:12px;color:#F6F5F0;cursor:pointer;background:linear-gradient(180deg,#2A3B44,#15222A);box-shadow:0 0 0 1px var(--xe-edge),inset 0 1px 0 rgba(255,255,255,.18),0 3px 0 -1px rgba(0,0,0,.6)}
+html body .x-experience .x-dock-add .ui-icon{width:22px;height:22px}
+html body .x-experience .x-dock-add:disabled{opacity:.4;cursor:not-allowed}
+html body .x-experience .x-dock-add:not(:disabled):active{translate:0 2px}
+html body .x-experience .x-buy-button{grid-area:buy;min-height:50px;padding:0 26px;border:0!important;border-radius:14px!important;cursor:pointer;color:#0B151B!important;font-weight:800;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase;filter:none!important;
+  background:linear-gradient(180deg,#FBFAF6,#ECE9E1 55%,#D5D3CB)!important;box-shadow:0 0 0 1px rgba(201,178,122,.55),inset 0 1px 0 #fff,inset 0 -3px 0 rgba(120,116,104,.3),0 4px 0 rgba(58,66,70,.85),0 8px 10px -4px rgba(0,0,0,.55)!important;transition:translate .12s,box-shadow .12s}
+html body .x-experience .x-buy-button i{font-style:normal;margin-left:8px}
+html body .x-experience .x-buy-button:not(:disabled):active{translate:0 3px;box-shadow:0 0 0 1px rgba(201,178,122,.5),inset 0 2px 4px rgba(60,60,55,.3),0 1px 0 rgba(58,66,70,.85)!important}
+html body .x-experience .x-buy-button:disabled{opacity:.45!important;cursor:not-allowed;box-shadow:0 0 0 1px rgba(236,240,238,.2),0 3px 0 rgba(30,38,42,.8)!important}
+html body .x-experience .x-buy-button:focus-visible,html body .x-experience .x-dock-add:focus-visible{outline:2px solid #fff;outline-offset:2px}
+html body .x-experience .x-config-note{grid-area:note;text-align:center;color:#8d9a9e!important;font-size:.72rem}
+
+/* quiet scrollbars */
+html body .x-experience *{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
+html body .x-experience ::-webkit-scrollbar{width:4px;height:4px}
+html body .x-experience ::-webkit-scrollbar-track{background:transparent}
+html body .x-experience ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:4px}
+@media (pointer:coarse){html body .x-experience *{scrollbar-width:none}html body .x-experience ::-webkit-scrollbar{display:none}}
+
+/* phones / short landscape screens: compact cards, one-row dock that stays below the list */
+@media (max-width:960px),(max-height:520px){
+  html body .x-experience .x-package-select{min-height:60px;padding:8px 12px 8px 8px;column-gap:10px}
+  html body .x-experience .x-package-thumb{width:44px;height:44px}
+  html body .x-experience .x-package-name{font-size:.82rem}
+  html body .x-experience .x-package-price{font-size:1.05rem!important}
+  html body .x-experience .x-package-go{font-size:1.3rem}
+  html body .x-experience .x-buy-dock{grid-template-columns:auto minmax(0,1fr) auto auto auto;grid-template-areas:"thumb copy total add buy";padding:8px 10px!important;column-gap:10px;position:relative;z-index:2}
+  html body .x-experience .x-config-note{display:none!important}
+  html body .x-experience .x-dock-thumb{width:38px;height:38px}
+  html body .x-experience .x-dock-copy b{font-size:.82rem}
+  html body .x-experience .x-dock-copy small{font-size:.7rem}
+  html body .x-experience .x-dock-total{padding-left:10px}
+  html body .x-experience .x-dock-total b{font-size:1.05rem}
+  html body .x-experience .x-dock-add{width:40px;height:40px}
+  html body .x-experience .x-buy-button{min-height:40px;padding:0 14px;font-size:.78rem;letter-spacing:.03em}
+  html body .x-experience .x-stage-gamehead{padding:8px 10px!important}
+  html body .x-experience #xShowcaseTitle{font-size:1.25rem!important}
+  html body .x-experience .x-game-card .x-game-name{font-size:.8rem!important}
+}
+@media (max-width:640px){html body .x-experience .x-package-list{grid-template-columns:minmax(0,1fr)!important}}
+html body .x-experience .x-dock-copy{text-align:left}
+html body .x-experience .x-package-list{border:0!important;background:none!important;box-shadow:none!important}
+html body .x-experience .x-game-card .x-game-name{font-size:.92rem!important;line-height:1.15}
+html body .x-experience .x-game-wheel{background:none!important;border:0!important}

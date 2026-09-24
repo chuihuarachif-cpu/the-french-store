@@ -1,0 +1,129 @@
+/* French Store Lab · white/ivory/silver identity on blue-charcoal (Arena Breakout reference).
+   Loaded after reference-header.css. ~70% dark blue-charcoal, ~25% white/ivory/silver, <=5% champagne.
+   Contains: tokens, physical plan modules, white pendant light, staged intro, quiet scrollbars. */
+html.standalone{
+  --fs-bg:#071116;--fs-bg-deep:#050B0F;
+  --fs-surface:#101B22;--fs-surface-2:#16242C;--fs-surface-3:#1D2D35;
+  --fs-white:#F6F5F0;--fs-ivory:#ECE9E1;--fs-soft-white:#DDE2E2;--fs-silver:#AEB9BC;
+  --fs-border:rgba(240,245,245,.20);--fs-light:rgba(255,255,250,.82);--fs-light-soft:rgba(255,255,250,.16);
+  --fs-champagne:#C9B27A;--fs-champagne-soft:#DDE2E2;--fs-muted:#AEB9BC;
+  --fs-panel-hi:#21323B;--fs-panel-mid:#16242C;--fs-panel-dark:#0B151B;
+  --fs-edge-line:rgba(236,240,238,.22);--fs-metal-highlight:rgba(246,245,240,.26);
+  --fs-rim:linear-gradient(180deg,rgba(246,245,240,.55),rgba(174,185,188,.24) 45%,rgba(60,78,88,.4));
+  --fs-joint:linear-gradient(90deg,rgba(0,0,0,.72) 0 1px,rgba(236,240,238,.28) 1px 2px);
+  --ft-gold-a:#F1F0EA;--ft-gold-b:#D8DEDE;--ft-gold-c:#AEB9BC;--ft-navy:#101B22;--ft-navy-2:#0B151B;
+}
+
+/* header + dock controls: dark glass, thin white edge, top highlight */
+html.standalone body .store-app .store-header.fs-command-header .header-actions>button{
+  background:linear-gradient(180deg,#2A3B44,#15222A)!important;
+}
+html.standalone body .store-app .store-header.fs-command-header .header-actions>button:hover{background:linear-gradient(180deg,#324650,#19272F)!important}
+html.standalone body .store-app .store-header.fs-command-header .header-actions>button:active{translate:0 calc(2*var(--k));background:linear-gradient(180deg,#131f26,#1b2a32)!important;
+  box-shadow:0 0 0 1px rgba(236,240,238,.26),inset 0 calc(2*var(--k)) calc(5*var(--k)) rgba(0,0,0,.6)!important}
+html.standalone body .store-app .store-header.fs-command-header>.header-search{background:linear-gradient(180deg,#08121a,#0f1c24)!important}
+html.standalone body .store-app .header-profile-avatar{background:linear-gradient(180deg,#0f1c24,#1a2a33)!important}
+html.standalone body .store-app .brand-button .ui-icon,html.standalone body .store-app .brand-button svg:last-of-type{color:var(--fs-soft-white)!important}
+html.standalone body .store-app .cart-button span{background:linear-gradient(180deg,#F6F5F0,#D8DCD8)!important;color:#0B151B!important}
+
+/* ---------- plan modules (Base / Gold / Diamond) ---------- */
+html.standalone body .store-app .header-plans{display:flex;align-items:center;gap:calc(8*var(--k));height:100%}
+html.standalone body .store-app .plan-card{
+  position:relative;display:flex!important;align-items:center;gap:calc(9*var(--k));height:calc(38*var(--k))!important;padding:0 calc(13*var(--k))!important;margin:0!important;
+  border:0!important;border-radius:calc(11*var(--k))!important;cursor:pointer;color:var(--fs-soft-white)!important;overflow:hidden;
+  background:linear-gradient(180deg,#26373F,#131F26)!important;
+  box-shadow:0 0 0 1px rgba(236,240,238,.24),inset 0 1px 0 rgba(255,255,255,.2),inset 0 calc(-2*var(--k)) calc(3*var(--k)) rgba(0,0,0,.45),0 calc(3*var(--k)) 0 calc(-1*var(--k)) rgba(0,0,0,.6),0 calc(6*var(--k)) calc(7*var(--k)) calc(-3*var(--k)) rgba(0,0,0,.5)!important;
+  transition:translate .14s ease,box-shadow .14s ease;-webkit-tap-highlight-color:transparent;
+}
+html.standalone body .store-app .plan-card span{font-size:calc(11*var(--k));font-weight:700;letter-spacing:.16em;line-height:1;white-space:nowrap}
+html.standalone body .store-app .plan-led{flex:0 0 auto;width:calc(8*var(--k));height:calc(8*var(--k));border-radius:50%;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
+/* the lit LED follows the real plan of the current account (html[data-plan]) */
+html.standalone[data-plan="base"] .plan-card[data-plan="base"] .plan-led,
+html.standalone[data-plan="gold"] .plan-card[data-plan="gold"] .plan-led,
+html.standalone[data-plan="diamond"] .plan-card[data-plan="diamond"] .plan-led{background:#F7F7F2;box-shadow:0 0 4px rgba(255,255,255,.9),0 0 10px rgba(255,255,255,.35)}
+html.standalone[data-plan="base"] .plan-card[data-plan="base"],
+html.standalone[data-plan="gold"] .plan-card[data-plan="gold"],
+html.standalone[data-plan="diamond"] .plan-card[data-plan="diamond"]{color:#fff!important}
+/* GOLD: one hairline of champagne only */
+html.standalone body .store-app .plan-card[data-plan="gold"]::after{content:"";position:absolute;left:calc(12*var(--k));right:calc(12*var(--k));bottom:calc(4*var(--k));height:calc(1.5*var(--k));background:linear-gradient(90deg,transparent,#C9B27A,transparent);opacity:.85;pointer-events:none}
+/* DIAMOND: barely-there prismatic glint */
+html.standalone body .store-app .plan-card[data-plan="diamond"]::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 38%,rgba(196,226,255,.10) 46%,rgba(255,232,242,.08) 52%,rgba(214,255,236,.07) 57%,transparent 66%)}
+@media (hover:hover){html.standalone body .store-app .plan-card:hover{translate:0 -2px}}
+html.standalone body .store-app .plan-card:active{translate:0 1px;box-shadow:0 0 0 1px rgba(236,240,238,.22),inset 0 calc(2*var(--k)) calc(4*var(--k)) rgba(0,0,0,.55),0 calc(1*var(--k)) 0 rgba(0,0,0,.6)!important}
+html.standalone body .store-app .plan-card:focus-visible{outline:2px solid var(--fs-white);outline-offset:2px}
+@media (max-width:999px){html.standalone body .store-app .header-plans{display:none}}
+
+/* ---------- white pendant light (4000-4800K), soft champagne only at the core ---------- */
+html.standalone .fs-cable{background:linear-gradient(rgba(174,185,188,.5),rgba(174,185,188,.3))}
+html.standalone .fs-glass-on{background:radial-gradient(ellipse at 50% 30%,#fffffb 0,#fff4df 50%,#e9dcc0 100%);box-shadow:0 0 calc(10*var(--k,1px)) calc(2*var(--k,1px)) rgba(255,250,240,.5)}
+html.standalone .fs-halo{background:radial-gradient(circle,rgba(255,250,240,.26),rgba(255,246,232,.08) 42%,transparent 68%)}
+html.standalone .fs-cone{background:linear-gradient(180deg,rgba(255,250,240,.14),rgba(255,250,240,.04) 55%,transparent)}
+
+/* ---------- CTA on cards: warm ivory key, hairline champagne edge ---------- */
+html.standalone body .store-app .category-enter,html.standalone body .store-app .category-arena-card:not(.active) .category-enter{
+  background:linear-gradient(180deg,#FBFAF6 0,#ECE9E1 55%,#D5D3CB 100%)!important;color:#0B151B!important;
+  box-shadow:0 0 0 1px rgba(201,178,122,.55),inset 0 1px 0 #fff,inset 0 calc(-3*var(--k)) 0 rgba(120,116,104,.3),0 calc(4*var(--k)) 0 rgba(58,66,70,.85),0 calc(8*var(--k)) calc(8*var(--k)) calc(-3*var(--k)) rgba(0,0,0,.55)!important;
+}
+html.standalone body .store-app .category-enter:hover{background:linear-gradient(180deg,#fff,#F1EFE8 55%,#DCDAD2)!important}
+html.standalone body .store-app .category-enter:active{translate:0 calc(3*var(--k));box-shadow:0 0 0 1px rgba(201,178,122,.5),inset 0 2px 4px rgba(60,60,55,.3),0 calc(1*var(--k)) 0 rgba(58,66,70,.85)!important}
+
+/* legacy one-shot .reveal fade on Home content replayed the moment fs-intro was removed (text blinking twice): off for Home */
+:where(html.standalone body .store-app .store-view[data-view="inicio"]) .reveal{animation:none}
+
+/* ---------- staged entrance (single master timeline, ~2.6s, transform/opacity only) ----------
+   Runs only while html.fs-intro exists (set once by intro-gate.js). Each element is animated ONCE, on its container,
+   so children (text, icons) travel with it. Inner one-shot animations are suppressed during the intro. */
+@keyframes fsInBar{from{translate:0 -130px;scale:.985;opacity:.85}}
+@keyframes fsInLamp{0%{translate:0 -80px}68%{translate:0 5px}84%{translate:0 -1.5px}100%{translate:0 0}}
+@keyframes fsInBlock{from{translate:0 -60px;opacity:0}}
+@keyframes fsInDock{from{translate:0 80px;opacity:0}}
+@keyframes fsInWa{from{translate:0 80px;scale:.92;opacity:0}}
+@keyframes fsInLight{from{opacity:0}}
+html.standalone.fs-intro .fs-scene{animation:fsInLight .5s ease backwards}
+html.standalone.fs-intro body .store-app .store-header.fs-command-header{animation:fsInBar .9s cubic-bezier(.22,1,.36,1) backwards}
+html.standalone.fs-intro .fs-pendant{animation:fsInLamp .8s cubic-bezier(.22,1,.36,1) backwards}
+html.standalone.fs-intro .fs-pendant[data-side="left"]{animation-delay:.7s}
+html.standalone.fs-intro .fs-pendant[data-side="center"]{animation-delay:.78s}
+html.standalone.fs-intro .fs-pendant[data-side="right"]{animation-delay:.86s}
+html.standalone.fs-intro .fs-pendant :is(.fs-light,.fs-glass-on){animation:fsInLight .4s ease backwards}
+html.standalone.fs-intro .fs-pendant[data-side="left"] :is(.fs-light,.fs-glass-on){animation-delay:1.25s}
+html.standalone.fs-intro .fs-pendant[data-side="center"] :is(.fs-light,.fs-glass-on){animation-delay:1.33s}
+html.standalone.fs-intro .fs-pendant[data-side="right"] :is(.fs-light,.fs-glass-on){animation-delay:1.41s}
+html.standalone.fs-intro .fs-lamp-layer{animation:fsInLight .5s ease backwards}
+html.standalone.fs-intro .fs-lit-left{animation-delay:1.25s}
+html.standalone.fs-intro .fs-lit-center{animation-delay:1.33s}
+html.standalone.fs-intro .fs-lit-right{animation-delay:1.41s}
+html.standalone.fs-intro body .store-app .home-intro{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 1s backwards}
+html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="-1"] .category-glass{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 1.15s backwards!important}
+html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="1"] .category-glass{animation:fsInBlock .7s cubic-bezier(.22,1,.36,1) 1.25s backwards!important}
+html.standalone.fs-intro body .store-app .category-arena-card[data-roulette-slot="0"] .category-glass{animation:fsInBlock .75s cubic-bezier(.22,1,.36,1) 1.35s backwards!important}
+html.standalone.fs-intro body .store-app .xarena-dock{animation:fsInDock .65s cubic-bezier(.16,.84,.3,1) 1.8s backwards}
+html.standalone.fs-intro body .store-app .whatsapp-float{animation:fsInWa .6s cubic-bezier(.16,.84,.3,1) 2.05s backwards!important}
+/* no second animation on card text while the intro moves the card */
+html.standalone.fs-intro body .store-app .category-arena-card :is(.category-console,.cat-mark,.category-copy b,.category-copy small,.cat-tags,.category-enter,.cta-sheen){animation:none!important}
+
+/* ---------- quiet scrollbars ---------- */
+html.standalone *{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
+html.standalone ::-webkit-scrollbar{width:4px;height:4px}
+html.standalone ::-webkit-scrollbar-track{background:transparent}
+html.standalone ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:4px}
+@media (pointer:coarse){html.standalone *{scrollbar-width:none}html.standalone ::-webkit-scrollbar{display:none}}
+
+/* ---------- ambient light (runs after the intro; opacity only, values come from scene.js custom properties) ---------- */
+html.standalone .fs-scene,html.standalone .fs-scene *{pointer-events:none!important;user-select:none;cursor:default}
+@keyframes fsAmbBulb{
+  0%{opacity:calc(1 - (1 - var(--bulb-lo,.9))*.3)}17%{opacity:calc(1 - (1 - var(--bulb-lo,.9))*.8)}31%{opacity:1}
+  54%{opacity:calc(1 - (1 - var(--bulb-lo,.9))*.5)}71%{opacity:var(--bulb-lo,.9)}88%{opacity:calc(1 - (1 - var(--bulb-lo,.9))*.25)}100%{opacity:calc(1 - (1 - var(--bulb-lo,.9))*.4)}}
+@keyframes fsAmbHalo{
+  0%{opacity:calc(1 - (1 - var(--halo-lo,.72))*.3)}17%{opacity:calc(1 - (1 - var(--halo-lo,.72))*.85)}31%{opacity:1}
+  54%{opacity:calc(1 - (1 - var(--halo-lo,.72))*.45)}71%{opacity:var(--halo-lo,.72)}88%{opacity:calc(1 - (1 - var(--halo-lo,.72))*.2)}100%{opacity:calc(1 - (1 - var(--halo-lo,.72))*.4)}}
+@keyframes fsAmbLit{
+  0%{opacity:calc(1 - (1 - var(--lit-lo,.85))*.3)}17%{opacity:calc(1 - (1 - var(--lit-lo,.85))*.8)}31%{opacity:1}
+  54%{opacity:calc(1 - (1 - var(--lit-lo,.85))*.5)}71%{opacity:var(--lit-lo,.85)}88%{opacity:calc(1 - (1 - var(--lit-lo,.85))*.25)}100%{opacity:calc(1 - (1 - var(--lit-lo,.85))*.4)}}
+html.standalone:not(.fs-intro) .fs-pendant .fs-glass-on{animation:fsAmbBulb var(--light-duration,5s) ease-in-out var(--light-delay,0s) infinite alternate}
+html.standalone:not(.fs-intro) .fs-pendant :is(.fs-halo,.fs-cone){animation:fsAmbHalo var(--light-duration,5s) ease-in-out var(--light-delay,0s) infinite alternate}
+html.standalone:not(.fs-intro) .fs-lamp-layer .fs-lit,html.standalone:not(.fs-intro) .fs-lamp-layer .fs-floor{animation:fsAmbLit var(--light-duration,5s) ease-in-out var(--light-delay,0s) infinite alternate}
+@media (prefers-reduced-motion:reduce){
+  html.standalone .fs-pendant :is(.fs-glass-on,.fs-halo,.fs-cone),html.standalone .fs-lamp-layer :is(.fs-lit,.fs-floor){animation:none!important;opacity:1}
+}

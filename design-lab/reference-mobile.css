@@ -84,3 +84,16 @@ html.standalone body .store-app .whatsapp-float{bottom:8px!important;right:12px!
 @media (prefers-reduced-motion:reduce){html.standalone body .store-app .category-arena-card{transition:none!important;will-change:auto!important}}
 
 html.standalone body .store-app .category-arena-card[data-distance="2"],html.standalone body .store-app .category-arena-card[data-distance="3"]{will-change:auto!important}
+
+@media (max-width:999px){
+html.standalone body .store-app .category-art img{object-fit:cover!important;object-position:var(--px,50%) 50%!important;transform:none!important;filter:none!important}
+}
+@media (max-width:999px) and (orientation:landscape){
+html.standalone body .store-app .category-art img{object-position:50% var(--py,50%)!important}
+html.standalone body .store-app .category-arena-card{height:210px!important}
+}
+
+html.standalone body .store-app .category-arena-card::before{display:none!important}
+html.standalone body .store-app .category-art::after{background:linear-gradient(180deg,rgba(9,22,36,.5),transparent 32%,transparent 75%,rgba(12,28,44,.3))!important}
+html.standalone body .store-app .category-card-top{z-index:3}
+html.standalone body .store-app .category-enter{white-space:nowrap!important}

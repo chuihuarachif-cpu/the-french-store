@@ -12,18 +12,75 @@
   const $ = (s, root = document) => root.querySelector(s);
   const all = (s, root = document) => [...root.querySelectorAll(s)];
   const titleMap = { inicio: "Inicio", catalogo: "Tienda", wallet: "Wallet", pedidos: "Pedidos", perfil: "Perfil", pases: "Pases", ajustes: "Ajustes", producto: "Producto", checkout: "Checkout", admin: "Admin" };
-  const roleMap = { visitor: "Visitante", user: "Usuario", reseller: "Reseller", admin: "Admin" };
+  const roleMap = { visitor: "Visitante", user: "Usuario Base", gold: "Usuario Gold", diamond: "Usuario Diamond", reseller: "Reseller", admin: "Admin" };
+  // Real membership tier derived from the (simulated) account; visitors and staff roles have none.
+  const planForRole = { user: "base", gold: "gold", diamond: "diamond" };
   const standalone = new URLSearchParams(location.search).has('standalone');
   document.documentElement.classList.toggle('standalone', standalone);
+  // The staged entrance is decided once by intro-gate.js (idle -> playing -> complete, persisted per session).
+  // Navigation inside the app never touches it; this only finishes the running timeline.
+  const introRoot = document.documentElement;
+  if (introRoot.dataset.intro === "playing") {
+    setTimeout(() => { introRoot.classList.remove("fs-intro"); introRoot.dataset.intro = "complete"; }, 3100);
+  }
+
+  // Optional intro sound: synthesized (no asset), off by default, only after the user has interacted with the page.
+  const SOUND_KEY = "fs-lab-intro-sound";
+  let soundOn = false;
+  try { soundOn = localStorage.getItem(SOUND_KEY) === "1"; } catch (_) {}
+  function playPowerUp() {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      const ctx = new AC();
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
+      const t = ctx.currentTime;
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.0001, t);
+      master.gain.exponentialRampToValueAtTime(0.14, t + 0.3);
+      master.gain.exponentialRampToValueAtTime(0.0001, t + 1.7);
+      master.connect(ctx.destination);
+      const low = ctx.createOscillator(); low.type = "sawtooth";
+      low.frequency.setValueAtTime(46, t); low.frequency.exponentialRampToValueAtTime(140, t + 1.1);
+      const lp = ctx.createBiquadFilter(); lp.type = "lowpass";
+      lp.frequency.setValueAtTime(180, t); lp.frequency.exponentialRampToValueAtTime(1400, t + 1.0);
+      low.connect(lp); lp.connect(master);
+      const hi = ctx.createOscillator(); hi.type = "sine";
+      hi.frequency.setValueAtTime(92, t); hi.frequency.exponentialRampToValueAtTime(420, t + 1.2);
+      const hiGain = ctx.createGain(); hiGain.gain.value = 0.3;
+      hi.connect(hiGain); hiGain.connect(master);
+      low.start(t); hi.start(t); low.stop(t + 1.8); hi.stop(t + 1.8);
+      setTimeout(() => ctx.close().catch(() => {}), 2300);
+    } catch (_) { /* audio unavailable: stay silent */ }
+  }
+  if (soundOn && introRoot.dataset.intro === "playing" && navigator.userActivation && navigator.userActivation.hasBeenActive) playPowerUp();
+  function syncSoundToggle() {
+    const btn = document.getElementById("settingsSoundToggle");
+    if (!btn) return;
+    btn.setAttribute("aria-pressed", String(soundOn));
+    const small = btn.querySelector("small");
+    if (small) small.textContent = soundOn ? "Activado \u00b7 suena al abrir la tienda" : "Desactivado";
+  }
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest("#settingsSoundToggle")) return;
+    soundOn = !soundOn;
+    try { localStorage.setItem(SOUND_KEY, soundOn ? "1" : "0"); } catch (_) {}
+    syncSoundToggle();
+    if (soundOn) playPowerUp();
+  });
+  syncSoundToggle();
   let infoReturnFocus = null;
   let cartReturnFocus = null;
   let experienceReturnFocus = null;
   let currentView = "inicio";
+  let viewReturnFocus = null;
   let activeFilter = "Todos";
   let toastTimer;
   let activeCategoryIndex = 0;
   let categoryGestureStartX = null;
   let categoryGestureStartY = null;
+  let categoryGestureLastX = null;
+  let categoryGestureLastY = null;
   let categoryGesturePointerId = null;
   let categoryGestureDidDrag = false;
   let categoryGestureOffset = 0;
@@ -50,15 +107,27 @@
     window.matchMedia?.("(orientation: landscape) and (max-height: 560px)")?.matches ||
     window.matchMedia?.("(pointer: coarse) and (orientation: landscape)")?.matches
   );
-  const prefersLitePerformance = Boolean(
-    new URLSearchParams(location.search).get("performance") === "lite" ||
-    navigator.connection?.saveData ||
-    window.matchMedia?.("(max-width: 700px)")?.matches ||
-    compactLandscapeLite ||
-    (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
-    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
-  );
-  document.documentElement.classList.toggle("perf-lite", prefersLitePerformance);
+  // Quality tier, decided ONCE per session (cached) so it can never oscillate:
+  //   high   -> every effect
+  //   medium -> same look, cheaper compositing (no live backdrop blur): class perf-lite
+  //   low    -> medium + static lamp light, no fog: classes perf-lite perf-low
+  // Missing APIs (deviceMemory / hardwareConcurrency / connection) never demote a device by themselves.
+  const qualityKey = "fs-lab-quality-v1";
+  let quality = "";
+  try { quality = sessionStorage.getItem(qualityKey) || ""; } catch (_) {}
+  if (!["high", "medium", "low"].includes(quality)) {
+    const q = new URLSearchParams(location.search).get("performance");
+    const mem = navigator.deviceMemory, cores = navigator.hardwareConcurrency;
+    const coarse = Boolean(window.matchMedia?.("(pointer: coarse)")?.matches);
+    if (q === "lite" || q === "low" || navigator.connection?.saveData || (mem && mem <= 2) || (cores && cores <= 2)) quality = "low";
+    else if (q === "high") quality = "high";
+    else if (q === "medium" || coarse || compactLandscapeLite || (mem && mem <= 4) || (cores && cores <= 4)) quality = "medium";
+    else quality = "high";
+    try { sessionStorage.setItem(qualityKey, quality); } catch (_) {}
+  }
+  document.documentElement.dataset.quality = quality;
+  document.documentElement.classList.toggle("perf-lite", quality !== "high");
+  document.documentElement.classList.toggle("perf-low", quality === "low");
 
   const favoriteStorageKey = "fs-design-lab-favorite-games-v1";
   const cartStorageKey = "fs-design-lab-cart-v1";
@@ -165,15 +234,43 @@
     return diff;
   }
 
+  // Gold glyphs used by the card footer (fill = shared gradient defined once in index.html).
+  const CAT_GLYPHS = {
+    "bolt": '<path d="M13.5 2 4.5 13.5H10l-1.2 8.5 9.2-12h-5.6z"/>',
+    "star": '<path d="m12 2.6 2.9 6 6.5.9-4.7 4.6 1.1 6.5L12 17.5l-5.8 3.1 1.1-6.5L2.6 9.5l6.5-.9z"/>',
+    "lock": '<rect x="5" y="10.5" width="14" height="10.5" rx="2.5"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9" fill="none" stroke="url(#fsGold)" stroke-width="2.2" stroke-linecap="round"/>',
+    "shield": '<path d="M12 2.4 4.6 5.4v5.9c0 4.4 3 8.2 7.4 9.9 4.4-1.7 7.4-5.5 7.4-9.9V5.4z"/><path d="m8.6 12 2.4 2.4 4.4-4.8" fill="none" stroke="#0b1a2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    "palette": '<path d="M12 2.5a9.5 9.5 0 1 0 0 19c1.7 0 2.4-1.2 1.8-2.4-.6-1.4.4-2.7 1.9-2.7H18a3.5 3.5 0 0 0 3.5-3.6C21.4 7.4 17.2 2.5 12 2.5z"/><circle cx="7.6" cy="11" r="1.4" fill="#0b1a2c"/><circle cx="10.8" cy="7" r="1.4" fill="#0b1a2c"/><circle cx="15.6" cy="7.6" r="1.4" fill="#0b1a2c"/>',
+    "gamepad": '<path d="M7 7h10a5 5 0 0 1 4.8 6.3l-1 3.4a2.4 2.4 0 0 1-4 1L15 15.5H9l-1.8 2.2a2.4 2.4 0 0 1-4-1l-1-3.4A5 5 0 0 1 7 7z"/><path d="M8 10v3M6.5 11.5h3" stroke="#0b1a2c" stroke-width="1.6" stroke-linecap="round"/><circle cx="16" cy="10.6" r="1" fill="#0b1a2c"/><circle cx="18" cy="12.4" r="1" fill="#0b1a2c"/>',
+    "user-lock": '<circle cx="10" cy="7.4" r="4.1"/><path d="M2.4 20.6c0-4 3.3-6.6 7.6-6.6 1.2 0 2.3.2 3.3.6L13 20.6z"/><circle cx="18" cy="17.6" r="4.6"/><rect x="15.7" y="17" width="4.6" height="3.4" rx=".9" fill="#0b1a2c"/><path d="M16.6 17v-.9a1.4 1.4 0 0 1 2.8 0v.9" fill="none" stroke="#0b1a2c" stroke-width="1.1"/>',
+    "user-shield": '<circle cx="9.6" cy="7.4" r="4.1"/><path d="M2.2 20.6c0-4 3.3-6.6 7.4-6.6 1.2 0 2.3.2 3.3.6L12.6 20.6z"/><path d="M17.6 12.4l-4.2 1.7v3.3c0 2.5 1.7 4.6 4.2 5.5 2.5-.9 4.2-3 4.2-5.5v-3.3z"/><path d="m15.6 17.6 1.6 1.6 2.8-3" fill="none" stroke="#0b1a2c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+    "stream": '<rect x="2.6" y="4" width="18.8" height="13" rx="2.2" fill="none" stroke="url(#fsGold)" stroke-width="2"/><path d="m10 7.4 5 2.8-5 2.8z"/><path d="M8 20.8h8" fill="none" stroke="url(#fsGold)" stroke-width="2" stroke-linecap="round"/>',
+    "window": '<rect x="3" y="4" width="18" height="16" rx="2.2" fill="none" stroke="url(#fsGold)" stroke-width="2"/><path d="M3 9h18" fill="none" stroke="url(#fsGold)" stroke-width="2"/><rect x="6" y="11.5" width="5.2" height="5" rx=".8"/><path d="M13.5 12.4h4.5M13.5 15.2h4.5" fill="none" stroke="url(#fsGold)" stroke-width="1.6" stroke-linecap="round"/>',
+    "joystick": '<circle cx="12" cy="5.8" r="3.4"/><path d="M10.9 9h2.2v5.4h-2.2z"/><path d="M3.6 21v-3.4a2.6 2.6 0 0 1 2.6-2.6h11.6a2.6 2.6 0 0 1 2.6 2.6V21z"/><circle cx="8" cy="18" r="1.1" fill="#0b1a2c"/><circle cx="12" cy="18" r="1.1" fill="#0b1a2c"/>',
+    "gift": '<rect x="3.2" y="9.4" width="17.6" height="11.6" rx="2"/><rect x="2.2" y="6" width="19.6" height="4.2" rx="1.2"/><path d="M12 6v15" stroke="#0b1a2c" stroke-width="1.6"/><path d="M12 6C10 2.6 6.6 3 7.2 5.2 7.6 6.4 10 6 12 6zm0 0c2-3.4 5.4-3 4.8-.8C16.4 6.4 14 6 12 6z" fill="none" stroke="url(#fsGold)" stroke-width="1.6"/>'
+  };
+  function catGlyph(key, cls){
+    return '<svg class="' + cls + '" viewBox="0 0 24 24" fill="url(#fsGold)" aria-hidden="true" focusable="false">' + (CAT_GLYPHS[key] || CAT_GLYPHS.star) + '</svg>';
+  }
+
+  // Single reusable card. Every category (and its footer panel) is described by data.categories.
   function categoryCard(item, index){
     const accent = /^\d{1,3},\d{1,3},\d{1,3}$/.test(String(item.accentRgb || "").replace(/\s/g, "")) ? item.accentRgb : "98,231,255";
+    const tags = (item.tags || []).map(tag => '<span class="cat-tag">' + catGlyph(tag.i, 'cat-tag-glyph') + '<span>' + escapeHtml(tag.t) + '</span></span>').join("");
+    const cta = escapeHtml(item.cta || "Ingresar");
+    const art = './assets/categories/' + item.id;
     return '<article class="category-card category-arena-card" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + escapeHtml(item.name) + '" role="group">'+
       '<div class="category-glass"><span class="hud-module-edge" aria-hidden="true"></span>'+
       '<span class="category-card-grid" aria-hidden="true"></span>'+
-      '<span class="category-card-top"><span class="hud-module-label">FRENCH STORE</span><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
-      '<span class="category-art" aria-hidden="true"><img src="./assets/' + item.id + '.svg" width="480" height="300" alt="" decoding="async"></span>'+
-      '<div class="category-console"><span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
-      '<button class="category-enter" type="button" data-category-enter="' + index + '">Ingresar <i>→</i></button>'+
+      '<span class="category-card-top"><span class="hud-module-label">' + escapeHtml(item.eyebrow || "FRENCH STORE") + '</span><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
+      '<span class="category-art" aria-hidden="true"><img src="' + art + '-1100.webp" srcset="' + art + '-640.webp 640w, ' + art + '-1100.webp 1100w, ' + art + '-1672.webp 1672w" sizes="(max-width:999px) 320px, 55vw" width="1672" height="941" alt="" decoding="async" loading="' + (index === 0 ? 'eager' : 'lazy') + '"' + (index === 0 ? ' fetchpriority="high"' : '') + '></span>'+
+      '<div class="category-console">'+
+        '<svg class="cat-wave" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="cat-wave-fill" d="M0 40V8C250 10 350 34 500 34S750 10 1000 8V40Z"/><path class="cat-wave-glow" d="M0 8C250 10 350 34 500 34S750 10 1000 8"/><path class="cat-wave-line" d="M0 8C250 10 350 34 500 34S750 10 1000 8"/></svg>'+
+        '<span class="cat-deco" aria-hidden="true"></span>'+
+        '<span class="cat-mark" aria-hidden="true">' + catGlyph(item.mark, 'cat-mark-glyph') + '</span>'+
+        '<span class="category-copy"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.subtitle) + '</small></span>'+
+        '<span class="cat-tags">' + tags + '</span>'+
+        '<button class="category-enter" type="button" data-category-enter="' + index + '" aria-label="' + cta + ' · ' + escapeHtml(item.name) + '"><span class="cta-sheen" aria-hidden="true"></span><span>' + cta + '</span><i aria-hidden="true">→</i></button>'+
       '</div><div class="hud-module-foot" aria-hidden="true"><i></i><span>EXPLORA · ELIGE · INGRESA</span><i></i></div></div></article>';
   }
 
@@ -397,6 +494,7 @@
     if (type) type.textContent=category?.tag || "FRENCH STORE";
     if (meta) meta.textContent=category?.subtitle || "Elige tu experiencia";
     if (fallback) fallback.textContent=initials(game.name);
+    $(".x-stage-gamehead")?.style.setProperty("--hero-img","url(\"./assets/categories/"+encodeURIComponent(experienceCategoryId)+"-1100.webp\")");
     if (image) {
       image.classList.remove("loaded","failed");
       if (game.icon) image.src=game.icon;
@@ -433,10 +531,11 @@
       list.innerHTML=game.packages.map((product,index)=>{
         return '<article class="x-package-card" data-x-package-index="'+index+'">'+
           '<button class="x-package-select" type="button" data-x-select-package="'+index+'" aria-pressed="false">'+
+            '<span class="x-package-thumb" aria-hidden="true">'+(game.icon?'<img src="'+escapeHtml(game.icon)+'" alt="" loading="lazy" decoding="async">':'<i>'+escapeHtml(initials(game.name))+'</i>')+'</span>'+
             '<span class="x-package-name">'+escapeHtml(product.package)+'</span>'+
             '<strong class="x-package-price">'+escapeHtml(priceLabel(product))+'</strong>'+
+            '<i class="x-package-go" aria-hidden="true">›</i>'+
           '</button>'+
-          '<button class="x-package-cart" type="button" data-x-add-package="'+index+'">Añadir al carrito</button>'+
           '</article>';
       }).join("");
       list.scrollTop=0;
@@ -459,6 +558,18 @@
     const label=$("#xSelectedProductLabel");
     if (label) label.textContent=selectedExperienceProduct ? selectedExperienceProduct.package+" · "+priceLabel(selectedExperienceProduct) : "Selecciona un producto";
     if (button) button.disabled=!currentFieldsValid();
+    const game=activeExperience();
+    const dock=$(".x-buy-dock");
+    if (dock) dock.classList.toggle("has-selection",Boolean(selectedExperienceProduct));
+    const add=$("[data-x-add-selected]");
+    if (add) add.disabled=!selectedExperienceProduct;
+    const set=(id,text)=>{const el=$(id);if(el)el.textContent=text;};
+    set("#xDockName",selectedExperienceProduct?selectedExperienceProduct.package:"Selecciona un producto");
+    set("#xDockGame",game?.name||"French Store");
+    set("#xDockPrice",selectedExperienceProduct?priceLabel(selectedExperienceProduct):"—");
+    set("#xDockFallback",initials(game?.name||"FS"));
+    const img=$("#xDockImg");
+    if (img) { if (game?.icon) { if (img.getAttribute("src")!==game.icon) img.src=game.icon; img.hidden=false; } else { img.removeAttribute("src"); img.hidden=true; } }
   }
 
   function selectExperiencePackage(index){
@@ -517,7 +628,7 @@
     const wrap=$("#xCartItems");
     if (!wrap) return;
     if (!labCart.length) {
-      wrap.innerHTML='<div class="x-cart-empty"><b>Tu carrito está vacío</b><span>Agrega productos para probar un pago conjunto.</span></div>';
+      wrap.innerHTML='<div class="x-cart-empty"><svg class="x-cart-art" viewBox="0 0 160 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="80" cy="102" rx="58" ry="9" opacity=".35"/><path d="M22 22h14l12 52h64l12-40H40"/><path d="M50 46h68" opacity=".5"/><circle cx="58" cy="90" r="6"/><circle cx="106" cy="90" r="6"/></svg><b>Tu carrito está vacío</b><span>Agrega productos para probar un pago conjunto.</span></div>';
     } else {
       wrap.innerHTML=labCart.map((item,index)=>'<article class="x-cart-item"><div><b>'+escapeHtml(item.game)+'</b><span>'+escapeHtml(item.package)+'</span></div><strong>'+escapeHtml(item.priceLabel)+'</strong><button type="button" data-x-remove-cart="'+index+'" aria-label="Quitar">×</button></article>').join("");
     }
@@ -673,11 +784,24 @@
     setExperienceGame(activeExperienceGame+(direction<0?-1:1));
   }
 
+  const productArt = { "Recargas": "recargas-id", "Streaming": "streaming", "Gift Cards": "giftcards", "Cuentas": "cuentas", "Páginas Web": "paginas" };
   function productCard(item){
-    return '<article class="product-card" tabindex="0" role="button" data-open-product="' + item.id + '"><div class="product-thumb">' + item.icon + '</div><div class="product-meta"><span>' + item.category + '</span><b>' + item.name + '</b><div class="product-price"><strong>' + money(item.price) + '</strong><small>DEMO</small></div></div></article>';
+    const art = productArt[item.category] || "recargas-id";
+    return '<article class="product-card" tabindex="0" role="button" data-open-product="' + item.id + '"><div class="product-thumb" style="--art:url(./assets/categories/' + art + '-640.webp)"><i aria-hidden="true">' + item.icon + '</i></div><div class="product-meta"><span>' + item.category + '</span><b>' + item.name + '</b><div class="product-price"><strong>' + money(item.price) + '</strong><small>DEMO</small></div></div></article>';
+  }
+
+  // Orders: built only from data the lab already holds (checkout items); no status or date is invented.
+  function renderOrders(){
+    const panel = $("#ordersPanel");
+    if (!panel) return;
+    const rows = data.checkout || [];
+    panel.innerHTML = '<div class="orders-tabs"><span class="active">Todos <b>' + rows.length + '</b></span></div>' +
+      (rows.length ? '<div class="orders-list">' + rows.map(item => '<article class="order-row"><span class="order-thumb" aria-hidden="true">' + item.icon + '</span><div class="order-main"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.detail) + '</small></div><strong class="order-price">' + money(item.price) + '</strong><button type="button" data-account-action="Detalles del pedido">Ver detalles <span aria-hidden="true">›</span></button></article>').join("") + '</div>'
+        : '<div class="lab-note"><b>Aún no tienes pedidos</b><p>Cuando compres, aparecerán aquí.</p></div>');
   }
 
   function render(){
+    renderOrders();
     renderCategoryArena();
     updateCartBadges();
 
@@ -708,7 +832,10 @@
 
   function setView(view){
     if ($("#xExperience")?.classList.contains("open")) closeExperience(false);
+    const previousView = currentView;
+    if (currentView === "inicio" && view !== "inicio" && document.activeElement && document.activeElement !== document.body) viewReturnFocus = document.activeElement;
     currentView = titleMap[view] ? view : "inicio";
+    document.documentElement.dataset.view = currentView;
     all(".store-view").forEach(el => el.classList.toggle("active", el.dataset.view === currentView));
     all("[data-nav-view]").forEach(el => el.classList.toggle("active", el.dataset.navView === currentView));
     all("#labMenu [data-lab-view]").forEach(el => el.classList.toggle("active", el.dataset.labView === currentView));
@@ -724,11 +851,15 @@
   function setRole(role){
     const safeRole = roleMap[role] ? role : "visitor";
     document.documentElement.dataset.role = safeRole;
+    document.documentElement.dataset.plan = planForRole[safeRole] || "none";
     const label = roleMap[safeRole];
     const banner = $("#roleBanner");
     if (banner) banner.textContent = "Vista simulada: " + label;
     const profile = $("#profileRole");
     if (profile) profile.textContent = label;
+    const plan = planForRole[safeRole];
+    const note = $("#headerRoleNote");
+    if (note) note.textContent = plan ? "Membresía " + plan.charAt(0).toUpperCase() + plan.slice(1) : safeRole === "visitor" ? "Inicia sesión para más beneficios" : label;
     const headerRole = $("#headerRoleName");
     if (headerRole) headerRole.textContent = "Hola, " + label;
     if (safeRole !== "admin" && currentView === "admin") setView("inicio");
@@ -777,6 +908,7 @@
     if (categoryEnter) {
       const index=wrapCategoryIndex(Number(categoryEnter.dataset.categoryEnter));
       const selected=data.categories[index];
+      if (selected && selected.href) { window.location.href = selected.href + (standalone ? "?standalone=1" : ""); return; }
       if (selected) {
         setCategoryActive(index,true);
         openExperience(selected.id);
@@ -827,6 +959,8 @@
       toast(labCart.length?"Pago conjunto listo como demostración; todavía no se envía nada.":"Añade productos antes de continuar.");
       return;
     }
+
+    if (event.target.closest("[data-x-add-selected]")) { addCurrentToCart(); return; }
 
     if (event.target.closest("#xBuyButton")) {
       if (addCurrentToCart()) setCartDrawer(true);
@@ -900,8 +1034,11 @@
 
   function finishCategoryGesture(viewport, event, cancelled = false, gestureId = event?.pointerId){
     if (categoryGesturePointerId == null || (gestureId != null && gestureId !== categoryGesturePointerId)) return;
-    const dx = event ? event.clientX - categoryGestureStartX : 0;
-    const dy = event ? event.clientY - categoryGestureStartY : 0;
+    // Use the last move position (not the pointerup coordinates, which some touch stacks report as 0,0).
+    const endX = categoryGestureLastX ?? event?.clientX ?? categoryGestureStartX;
+    const endY = categoryGestureLastY ?? event?.clientY ?? categoryGestureStartY;
+    const dx = event ? endX - categoryGestureStartX : 0;
+    const dy = event ? endY - categoryGestureStartY : 0;
     const threshold = Math.min(96, Math.max(42, viewport.clientWidth * .16));
     const horizontal = Math.abs(dx) >= threshold && Math.abs(dx) > Math.abs(dy) * 1.12;
     if (categoryGestureFrame) {
@@ -914,6 +1051,8 @@
     categoryGesturePointerId = null;
     categoryGestureStartX = null;
     categoryGestureStartY = null;
+    categoryGestureLastX = null;
+    categoryGestureLastY = null;
     if (typeof pointerId === "number" && viewport.hasPointerCapture?.(pointerId)) {
       viewport.releasePointerCapture(pointerId);
     }
@@ -929,43 +1068,42 @@
     categoryGestureStartY = event.clientY;
     categoryGestureDidDrag = false;
     categoryGestureOffset = 0;
-    if (typeof gestureId === "number") viewport.setPointerCapture?.(gestureId);
+    categoryGestureLastX = null;
+    categoryGestureLastY = null;
   }
 
   function continueCategoryGesture(viewport, gestureId, event){
     if (gestureId !== categoryGesturePointerId || categoryGestureStartX == null || categoryGestureStartY == null) return;
+    categoryGestureLastX = event.clientX;
+    categoryGestureLastY = event.clientY;
     const dx = event.clientX - categoryGestureStartX;
     const dy = event.clientY - categoryGestureStartY;
-    if (!categoryGestureDidDrag && Math.abs(dx) > 9 && Math.abs(dx) > Math.abs(dy) * 1.05) {
+    if (!categoryGestureDidDrag && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy) * 1.05) {
       categoryGestureDidDrag = true;
       viewport.classList.add("is-dragging");
+      if (typeof gestureId === "number") { try { viewport.setPointerCapture(gestureId); } catch (_) {} }
     }
     if (categoryGestureDidDrag) drawCategoryDrag(viewport, dx);
   }
 
   categoryViewport?.addEventListener("pointerdown", (event) => {
-    if (event.pointerType === "mouse" || (event.button != null && event.button !== 0)) return;
+    if (event.button != null && event.button !== 0) return;
     beginCategoryGesture(categoryViewport, event.pointerId, event);
   }, {passive:true});
 
   categoryViewport?.addEventListener("pointermove", (event) => {
-    if (event.pointerType === "mouse") return;
     continueCategoryGesture(categoryViewport, event.pointerId, event);
   }, {passive:true});
 
   categoryViewport?.addEventListener("pointerup", (event) => finishCategoryGesture(categoryViewport, event), {passive:true});
   categoryViewport?.addEventListener("pointercancel", (event) => finishCategoryGesture(categoryViewport, event, true), {passive:true});
-  categoryViewport?.addEventListener("lostpointercapture", () => {
+  categoryViewport?.addEventListener("lostpointercapture", (event) => {
+    // lostpointercapture bubbles: the browser's implicit touch capture on a child being handed to the viewport must not cancel the gesture.
+    if (event.target !== categoryViewport) return;
     if (categoryGesturePointerId != null) finishCategoryGesture(categoryViewport, null, true);
   });
 
-  categoryViewport?.addEventListener("mousedown", (event) => {
-    if (event.button !== 0) return;
-    beginCategoryGesture(categoryViewport, "mouse", event);
-  }, {passive:true});
   categoryViewport?.addEventListener("dragstart", (event) => event.preventDefault());
-  window.addEventListener("mousemove", (event) => continueCategoryGesture(categoryViewport, "mouse", event), {passive:true});
-  window.addEventListener("mouseup", (event) => finishCategoryGesture(categoryViewport, event, false, "mouse"), {passive:true});
 
   $("#xInputFields")?.addEventListener("input",(event)=>{
     const field=event.target.closest("[data-x-field]");
@@ -1183,6 +1321,7 @@
   // Avoid observing the whole frame continuously: on mobile it can cause
   // repeated layout reads while cards, drawers and orientation states change.
   render();
+  $("#fsBackdrop")?.addEventListener("click", () => { setView("inicio"); viewReturnFocus?.focus?.({preventScroll:true}); viewReturnFocus = null; });
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
   // The intro stays available in the lab; it must not delay the review or navigation.
@@ -1192,6 +1331,7 @@
     const infoOpen=$('#infoHub')?.classList.contains('open');
     if(cartOpen && event.key==='Escape'){event.preventDefault();setCartDrawer(false);return;}
     if(!cartOpen && !infoOpen && $('#xExperience')?.classList.contains('open') && event.key==='Escape'){event.preventDefault();closeExperience(false);return;}
+    if(!cartOpen && !infoOpen && event.key==='Escape' && currentView!=='inicio'){event.preventDefault();setView('inicio');viewReturnFocus?.focus?.({preventScroll:true});viewReturnFocus=null;return;}
     if(!cartOpen && !infoOpen) return;
     if (event.key === 'Escape') { event.preventDefault(); setInfoHub(false); return; }
     if (event.key !== 'Tab') return;
@@ -1201,3 +1341,7 @@
     else if(!event.shiftKey && document.activeElement===last) {event.preventDefault();first?.focus();}
   });
 })();
+
+/* iOS Safari only applies :active (pressed states) when a touchstart listener exists. */
+document.addEventListener("touchstart", () => {}, { passive: true });
+

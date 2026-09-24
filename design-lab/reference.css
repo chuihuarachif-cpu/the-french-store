@@ -111,7 +111,7 @@ html.standalone body .store-app .info-launcher>.ui-icon{width:calc(36*var(--u))!
 html.standalone body .store-app .info-launcher>i{position:absolute!important;top:calc(8*var(--u))!important;left:50%!important;transform:translateX(-50%)!important;font-size:calc(18*var(--u))!important}
 
 /* ---------- WhatsApp ---------- */
-html.standalone body .whatsapp-float{
+html.standalone body .store-app .whatsapp-float{
   position:absolute!important;right:auto!important;bottom:auto!important;left:calc(50% + 502*var(--u))!important;top:calc(800*var(--u))!important;
   width:calc(299*var(--u))!important;min-width:0!important;height:calc(82*var(--u))!important;border-radius:calc(41*var(--u))!important;
   grid-template-columns:calc(58*var(--u)) 1fr!important;column-gap:calc(16*var(--u))!important;padding:0 calc(38*var(--u)) 0 calc(14*var(--u))!important;
@@ -122,10 +122,10 @@ html.standalone body .store-app .whatsapp-float>small{grid-column:2!important;gr
 html.standalone body .store-app .whatsapp-float::after{content:"›";position:absolute;right:calc(20*var(--u));top:50%;transform:translateY(-50%);font-size:calc(26*var(--u));color:#fff}
 }
 @media (min-width:1000px){
-html.standalone body .whatsapp-float{display:block!important;padding:0 calc(38*var(--u)) 0 calc(90*var(--u))!important;text-align:left!important}
-html.standalone body .whatsapp-float>span{position:absolute!important;left:calc(12*var(--u))!important;top:50%!important;transform:translateY(-50%)!important;display:grid!important;place-items:center!important}
-html.standalone body .whatsapp-float>b{display:block!important;position:absolute!important;left:calc(90*var(--u))!important;top:calc(19*var(--u))!important}
-html.standalone body .whatsapp-float>small{display:block!important;position:absolute!important;left:calc(90*var(--u))!important;top:calc(44*var(--u))!important}
+html.standalone body .store-app .whatsapp-float{display:block!important;padding:0 calc(38*var(--u)) 0 calc(90*var(--u))!important;text-align:left!important}
+html.standalone body .store-app .whatsapp-float>span{position:absolute!important;left:calc(12*var(--u))!important;top:50%!important;transform:translateY(-50%)!important;display:grid!important;place-items:center!important}
+html.standalone body .store-app .whatsapp-float>b{display:block!important;position:absolute!important;left:calc(90*var(--u))!important;top:calc(19*var(--u))!important}
+html.standalone body .store-app .whatsapp-float>small{display:block!important;position:absolute!important;left:calc(90*var(--u))!important;top:calc(44*var(--u))!important}
 html.standalone body .store-app .category-arena-card[data-roulette-slot="-1"] .category-art img{margin:0 calc(60*var(--u)) 0 auto!important;-webkit-mask-image:none!important;mask-image:none!important}
 html.standalone body .store-app .category-arena-card[data-roulette-slot="1"] .category-art img{margin:0 auto 0 calc(60*var(--u))!important;-webkit-mask-image:none!important;mask-image:none!important}
 }
@@ -134,3 +134,47 @@ html.standalone body .store-app .category-arena-card[data-roulette-slot="1"] .ca
 @media (min-width:1000px){html.standalone body .store-app .arena-nav{display:grid}html.standalone .arena-nav:focus-visible{outline:2px solid var(--gold);outline-offset:3px}}
 
 html.standalone body .store-app .category-arena-card[data-distance="2"],html.standalone body .store-app .category-arena-card[data-distance="3"]{will-change:auto!important}
+
+/* ---------- Photo cards (real category photography) ---------- */
+html.standalone body .store-app .category-arena-card[data-category="recargas-id"]{--px:74%;--py:50%}
+html.standalone body .store-app .category-arena-card[data-category="recargas-cuenta"]{--px:76%;--py:36%}
+html.standalone body .store-app .category-arena-card[data-category="streaming"]{--px:71%;--py:22%}
+html.standalone body .store-app .category-arena-card[data-category="giftcards"]{--px:85%;--py:50%}
+html.standalone body .store-app .category-arena-card[data-category="cuentas"]{--px:96%;--py:59%}
+html.standalone body .store-app .category-arena-card[data-category="paginas"]{--px:85%;--py:34%}
+html.standalone body .store-app .category-arena-card[data-category="french-arcade"]{--px:91%;--py:50%}
+@media (min-width:1000px){
+html.standalone body .store-app .home-intro{top:calc(146*var(--u))!important}
+html.standalone body .store-app .category-arena-card{top:calc(300*var(--u))!important;height:calc(474*var(--u))!important}
+html.standalone body .store-app .category-art{height:72%!important;background:#1a2f44!important}
+html.standalone body .store-app .category-art::before{display:none!important}
+html.standalone body .store-app .category-art::after{background:linear-gradient(180deg,transparent 70%,rgba(12,28,44,.35))!important}
+html.standalone body .store-app .category-art img,
+html.standalone body .store-app .category-arena-card[data-roulette-slot] .category-art img{width:100%!important;height:100%!important;aspect-ratio:auto!important;margin:0!important;object-fit:cover!important;object-position:50% var(--py,50%)!important;transform:none!important;filter:none!important;-webkit-mask-image:none!important;mask-image:none!important}
+html.standalone body .store-app .category-console{height:28%!important}
+html.standalone body .store-app .arena-nav{top:calc(510*var(--u))}
+html.standalone body .store-app .xarena-dock{top:calc(792*var(--u))!important}
+html.standalone body .store-app .whatsapp-float{top:calc(812*var(--u))!important}
+}
+
+@media (min-width:1000px){
+html.standalone body .store-app .category-art{left:0!important;right:0!important;width:100%!important}
+html.standalone body .store-app .store-header.fs-command-header{clip-path:polygon(calc(22*var(--u)) 0,100% 0,calc(100% - 28*var(--u)) 100%,calc(69*var(--u)) 100%)!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+html.standalone body .store-app .store-header.fs-command-header::before{left:calc(22*var(--u))!important;top:0!important;bottom:0!important;width:calc(47*var(--u))!important;background:linear-gradient(to top right,transparent calc(50% - 1.5px),var(--gold) 50%,transparent calc(50% + 1.5px))!important;opacity:.9!important}
+html.standalone body .store-app .store-header.fs-command-header::after{content:""!important;display:block!important;position:absolute!important;right:calc(28*var(--u))!important;top:0!important;bottom:0!important;width:calc(28*var(--u))!important;background:linear-gradient(to top left,transparent calc(50% - 1.5px),rgba(230,207,154,.75) 50%,transparent calc(50% + 1.5px))!important}
+}
+
+html.standalone body .store-app .category-art{padding:0!important}
+html.standalone body .store-app .hud-module-edge,html.standalone body .store-app .category-card-grid{display:none!important}
+@media (min-width:1000px){
+html.standalone body .store-app .store-header.fs-command-header::before{height:100%!important}
+}
+
+html.standalone body .store-app .category-arena-card::before{display:none!important}
+html.standalone body .store-app .category-glass::before{background:linear-gradient(118deg,rgba(255,255,255,.16),transparent 30%)!important;z-index:2;pointer-events:none}
+html.standalone body .store-app .category-art::after{background:linear-gradient(180deg,rgba(9,22,36,.5),transparent 30%,transparent 72%,rgba(12,28,44,.3))!important}
+html.standalone body .store-app .category-card-top{z-index:3}
+html.standalone body .store-app .category-enter{white-space:nowrap!important;width:auto!important;min-width:calc(153*var(--u))!important;padding:0 calc(22*var(--u))!important}
+
+html.standalone body .store-app .category-art::after{background:linear-gradient(180deg,rgba(9,22,36,.62),rgba(9,22,36,.18) 22%,transparent 34%,transparent 72%,rgba(12,28,44,.3))!important}
+html.standalone body .store-app .hud-module-label{color:#fff!important;font-weight:600!important}

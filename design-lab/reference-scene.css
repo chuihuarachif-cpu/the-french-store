@@ -1,0 +1,108 @@
+/* French Store Lab · showroom scene (wood + concrete, three pendant lamps), ambient motion and card physics.
+   Layers: dim base (all lamps off) + one masked "lit" layer per lamp. Only opacity is animated. Loaded last. */
+html.standalone body .store-app{background:linear-gradient(180deg,#060606 0,#0a0a0b 45%,#1b1c1e 100%)!important}
+html.standalone body .store-app::before{
+  z-index:1!important;
+  background:linear-gradient(90deg,rgba(0,0,0,.38),transparent 18% 82%,rgba(0,0,0,.38)),linear-gradient(180deg,rgba(0,0,0,.34),transparent 20% 78%,rgba(0,0,0,.24))!important;
+}
+html.standalone body .store-app::after{display:none!important}
+
+/* ---------- scene geometry: image aspect, sized to cover the viewport ---------- */
+html.standalone .fs-scene{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+html.standalone{--sw:max(100vw,calc(100dvh*2.66));--bulb-y:calc(149*var(--u,1px))}
+html.standalone .fs-stage{position:absolute;left:50%;top:calc(var(--bulb-y) - .0873*var(--sw));translate:-50% 0;width:var(--sw);aspect-ratio:1916/821}
+html.standalone .fs-img,html.standalone .fs-lamp-layer,html.standalone .fs-lit{position:absolute;inset:0}
+html.standalone .fs-dim,html.standalone .fs-lit{background-size:100% 100%;background-repeat:no-repeat}
+html.standalone .fs-dim{background-image:url(./assets/scene/scene-dim-1916.webp)}
+html.standalone .fs-lit{background-image:url(./assets/scene/scene-lit-1916.webp)}
+@media (max-width:999px){
+  html.standalone .fs-dim{background-image:url(./assets/scene/scene-dim-960.webp)}
+  html.standalone .fs-lit{background-image:url(./assets/scene/scene-lit-960.webp)}
+}
+/* portrait phones: show the whole room (three lamps) as a band behind the hero, fade its edges into the stage colour */
+@media (max-width:999px) and (orientation:portrait){
+  html.standalone{--sw:135vw;--bulb-y:84px}
+  html.standalone .fs-fade{display:block}
+}
+@media (max-width:999px) and (orientation:landscape){html.standalone{--sw:max(100vw,calc(100dvh*2.5));--bulb-y:68px}}
+html.standalone .fs-fade{display:none;position:absolute;left:0;right:0;height:22%;pointer-events:none}
+html.standalone .fs-fade-top{top:0;background:linear-gradient(#060606,transparent)}
+html.standalone .fs-fade-bottom{bottom:0;background:linear-gradient(transparent,#0d0d0e)}
+
+/* each lamp: the lit photo, masked to that lamp's wall pool + floor reflection */
+html.standalone .fs-lamp-layer{transition:opacity .32s ease}
+html.standalone .fs-lit-left{--cx:31.59%}
+html.standalone .fs-lit-center{--cx:49.95%}
+html.standalone .fs-lit-right{--cx:68.37%}
+html.standalone .fs-lit{
+  -webkit-mask-image:radial-gradient(ellipse 13.6% 40.1% at var(--cx) 36%,#000 84%,transparent 100%),radial-gradient(ellipse 11.8% 15.3% at var(--cx) 84%,#000 84%,transparent 100%);
+  mask-image:radial-gradient(ellipse 13.6% 40.1% at var(--cx) 36%,#000 84%,transparent 100%),radial-gradient(ellipse 11.8% 15.3% at var(--cx) 84%,#000 84%,transparent 100%);
+  animation:fsBreath 6s ease-in-out infinite;
+}
+html.standalone .fs-lit-left .fs-lit{animation-duration:5.6s;animation-delay:-1.4s}
+html.standalone .fs-lit-center .fs-lit{animation-duration:6.8s;animation-delay:-3.1s}
+html.standalone .fs-lit-right .fs-lit{animation-duration:4.9s;animation-delay:-0.6s}
+html.standalone .fs-floor{position:absolute;left:calc(var(--cx) - 10%);width:20%;top:76%;height:22%;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 30%,rgba(255,222,175,.12),transparent 70%);animation:fsFloor 8s ease-in-out infinite alternate}
+html.standalone .fs-lit-left .fs-floor{animation-delay:-2s}
+html.standalone .fs-lit-right .fs-floor{animation-delay:-5s}
+@keyframes fsBreath{0%,100%{opacity:1}50%{opacity:.945}}
+@keyframes fsFloor{from{opacity:.5}to{opacity:1}}
+
+/* text layers must not swallow clicks meant for the lamps behind them */
+html.standalone body .store-app .home-intro{pointer-events:none}
+
+/* ---------- cards: physical presence in the room ---------- */
+html.standalone body .store-app .category-glass{transition:transform .2s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease!important}
+html.standalone body .store-app .category-arena-card{--sh-contact:rgba(0,0,0,.30);--sh-drop:rgba(0,0,0,.20)}
+html.standalone body .store-app .category-arena-card.active{--sh-contact:rgba(0,0,0,.62);--sh-drop:rgba(0,0,0,.52);--hi:rgba(255,246,225,.34)}
+/* active card: faint warm halo (tiny, static) */
+html.standalone body .store-app .category-arena-card.active .category-glass{
+  box-shadow:0 0 0 1px var(--edge-line),inset 0 1px 0 var(--hi),inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -2px 4px var(--fs-metal-shade),
+    0 calc(9*var(--k)) calc(11*var(--k)) calc(-6*var(--k)) var(--sh-contact),0 calc(22*var(--k)) calc(30*var(--k)) calc(-14*var(--k)) var(--sh-drop),0 0 calc(26*var(--k)) rgba(230,190,120,.07)!important;
+}
+@media (hover:hover) and (min-width:1000px){
+  html.standalone body .store-app .category-arena-card:hover .category-glass{transform:translateY(calc(-3*var(--k)))}
+  html.standalone body .store-app .category-arena-card.active:hover .category-glass{
+    box-shadow:0 0 0 1px var(--edge-line),inset 0 1px 0 var(--hi),inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -2px 4px var(--fs-metal-shade),
+      0 calc(13*var(--k)) calc(14*var(--k)) calc(-6*var(--k)) var(--sh-contact),0 calc(28*var(--k)) calc(36*var(--k)) calc(-14*var(--k)) var(--sh-drop),0 0 calc(30*var(--k)) rgba(230,190,120,.09)!important;
+  }
+}
+html.standalone body .store-app .category-arena-card[data-roulette-slot="0"]::after{
+  background:radial-gradient(ellipse 50% 100% at 50% 0,rgba(0,0,0,.42),transparent 72%),radial-gradient(ellipse 62% 80% at 50% 0,rgba(255,222,175,.06),transparent 75%)}
+
+/* ---------- CTA: arrow nudge + rare sheen ---------- */
+html.standalone body .store-app .category-enter{overflow:hidden}
+html.standalone body .store-app .category-enter>i{display:inline-block;transition:translate .16s ease}
+@media (hover:hover){html.standalone body .store-app .category-enter:hover>i{translate:2px 0}}
+html.standalone body .store-app .cta-sheen{position:absolute;inset:0;pointer-events:none;translate:-130% 0;
+  background:linear-gradient(100deg,transparent 42%,rgba(255,255,255,.42) 50%,transparent 58%)}
+html.standalone body .store-app .category-arena-card.active .cta-sheen{animation:fsSheen 9s ease-in-out 2.2s infinite}
+@keyframes fsSheen{0%,86%{translate:-130% 0}100%{translate:130% 0}}
+
+/* ---------- cinematic entrance (≈1s, opacity/translate only, never blocks input) ---------- */
+@keyframes fsFade{from{opacity:0}}
+@keyframes fsRise{from{opacity:0;translate:0 8px}}
+@keyframes fsLampOn{from{opacity:0}}
+
+/* ---------- reduced motion: static and functional ---------- */
+@media (prefers-reduced-motion:reduce){
+  html.standalone .fs-lit,html.standalone .fs-floor,html.standalone body .store-app .cta-sheen,html.standalone body .store-app .category-arena-card.active .cta-sheen{animation:none!important}
+  html.standalone .fs-scene,html.standalone .fs-lamp-layer,html.standalone body .store-app .store-header.fs-command-header,html.standalone body .store-app .home-intro,
+  html.standalone body .store-app .category-arena-section,html.standalone body .store-app .xarena-dock,html.standalone body .store-app .whatsapp-float{animation:none!important}
+  html.standalone .fs-lamp-layer{transition-duration:.01ms}
+  html.standalone body .store-app .category-glass,html.standalone body .store-app .category-enter>i{transition:none!important}
+  html.standalone body .store-app .category-arena-card:hover .category-glass{transform:none!important}
+}
+
+/* legibility over the lit wood + keep the centre lamp clear of the eyebrow line */
+html.standalone{--bulb-y:calc(149*var(--u,1px))}
+@media (max-width:999px) and (orientation:portrait){html.standalone{--bulb-y:84px}}
+@media (max-width:999px) and (orientation:landscape){html.standalone{--bulb-y:68px}}
+@media (min-width:1000px){html.standalone body .store-app .home-intro{top:calc(158*var(--u))!important}}
+html.standalone body .store-app .home-intro .eyebrow,html.standalone body .store-app .home-intro h1,html.standalone body .store-app .home-intro p{text-shadow:0 1px 10px rgba(0,0,0,.7),0 0 2px rgba(0,0,0,.5)!important}
+@media (max-width:999px) and (orientation:portrait){html.standalone .fs-fade-bottom{height:48%;background:linear-gradient(transparent,rgba(13,13,14,.94))}}
+
+/* legacy decorative loops that kept the compositor busy: header sweep, and hidden overlays (loading demo, orientation gate) */
+html.standalone body .store-app .store-header.fs-command-header::before,html.standalone body .store-app .store-header.fs-command-header::after{animation:none!important}
+html.standalone .loading-demo[aria-hidden="true"] *,html.standalone .x-orientation-gate[aria-hidden="true"] *{animation-play-state:paused!important}

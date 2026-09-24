@@ -1,0 +1,250 @@
+/* French Store Lab · material system (machined metal edges, satin glass, one-piece dock).
+   Loaded last. Static gradients and small shadows only: no blur, no backdrop-filter, no animation. */
+html.standalone{
+  --fs-champagne:#cdbb94;
+  --fs-edge-line:rgba(226,232,232,.36);
+  --fs-metal-highlight:rgba(255,250,235,.26);
+  --fs-metal-shade:rgba(0,0,0,.34);
+  --fs-panel-hi:#1f3c58;
+  --fs-panel-mid:#16304a;
+  --fs-panel-dark:#0f2438;
+  --fs-contact:rgba(3,10,20,.55);
+  --fs-drop:rgba(3,10,20,.42);
+  --fs-stage-light:rgba(120,170,215,.15);
+  --fs-floor-top:#5b768d;
+  --fs-floor-mid:#7a93a8;
+  --fs-floor-low:#66798c;
+  --gold:var(--fs-champagne);
+}
+@media (min-width:1000px){html.standalone{--k:var(--u);--dk-h:calc(84*var(--u));--dk-r:calc(40*var(--u));--hd-t:calc(30*var(--u))}}
+@media (max-width:999px){html.standalone{--k:1px;--dk-h:60px;--dk-r:30px;--hd-t:16px}}
+@media (max-width:999px) and (orientation:landscape){html.standalone{--dk-h:46px;--dk-r:23px;--hd-t:13px}}
+
+/* ---------- Stage: showroom wall melting into a satin floor (static gradients) ---------- */
+html.standalone body .store-app{
+  background:
+    radial-gradient(ellipse 58% 46% at 50% 57%,var(--fs-stage-light),transparent 72%),
+    radial-gradient(ellipse 75% 20% at 50% 90%,rgba(190,212,230,.20),transparent 72%),
+    linear-gradient(180deg,#0e2236 0%,#142e4a 26%,#1d3d5a 44%,#2c4e69 54%,var(--fs-floor-top) 68%,var(--fs-floor-mid) 82%,var(--fs-floor-low) 100%)!important;
+}
+html.standalone body .store-app::before{
+  background:
+    linear-gradient(90deg,rgba(4,12,22,.5),transparent 20% 80%,rgba(4,12,22,.55)),
+    linear-gradient(180deg,rgba(4,12,22,.32),transparent 22%,transparent 76%,rgba(6,16,28,.38))!important;
+}
+html.standalone body .store-app::after{
+  top:calc(430*var(--k))!important;height:calc(160*var(--k))!important;
+  background:linear-gradient(180deg,transparent,rgba(200,220,238,.055) 50%,transparent)!important;
+}
+@media (max-width:999px){
+  html.standalone body .store-app::after{top:52%!important;height:14%!important}
+}
+
+/* ---------- Panels: machined edge built from stacked shadows (no CSS border) ---------- */
+html.standalone body .store-app .category-arena-card{--edge-line:var(--fs-edge-line);--hi:var(--fs-metal-highlight);--sh-contact:var(--fs-contact);--sh-drop:var(--fs-drop)}
+html.standalone body .store-app .category-arena-card:not(.active){--edge-line:rgba(226,232,232,.15);--hi:rgba(255,250,235,.10);--sh-contact:rgba(3,10,20,.32);--sh-drop:rgba(3,10,20,.22)}
+html.standalone body .store-app .category-glass{
+  border:0!important;
+  border-radius:calc(18*var(--k)) calc(22*var(--k)) calc(18*var(--k)) calc(22*var(--k))!important;
+  background:linear-gradient(180deg,var(--fs-panel-hi),var(--fs-panel-dark))!important;
+  filter:none!important;
+  box-shadow:
+    0 0 0 1px var(--edge-line),
+    inset 0 1px 0 var(--hi),
+    inset 0 0 0 1px rgba(255,255,255,.04),
+    inset 0 -2px 4px var(--fs-metal-shade),
+    0 calc(9*var(--k)) calc(11*var(--k)) calc(-6*var(--k)) var(--sh-contact),
+    0 calc(20*var(--k)) calc(28*var(--k)) calc(-14*var(--k)) var(--sh-drop)!important;
+}
+html.standalone body .store-app .category-glass::before{display:none!important}
+/* light by orientation + cheap dimming for unselected cards (opacity layer instead of a filter) */
+html.standalone body .store-app .category-glass::after{
+  content:""!important;display:block!important;position:absolute!important;inset:0!important;top:0!important;bottom:0!important;height:auto!important;
+  border-radius:inherit!important;box-shadow:none!important;pointer-events:none!important;z-index:3!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.09),transparent 26%),linear-gradient(315deg,rgba(0,0,0,.20),transparent 22%)!important;
+}
+html.standalone body .store-app .category-arena-card:not(.active) .category-glass::after{
+  background:linear-gradient(rgba(6,16,28,.30),rgba(6,16,28,.30)),linear-gradient(135deg,rgba(255,255,255,.06),transparent 26%),linear-gradient(315deg,rgba(0,0,0,.20),transparent 22%)!important;
+}
+html.standalone body .store-app .category-console{
+  border-top:1px solid rgba(2,8,16,.65)!important;
+  background:linear-gradient(180deg,var(--fs-panel-mid),var(--fs-panel-dark))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html.standalone body .store-app .category-tag{border:0!important;background:rgba(9,22,36,.72)!important;box-shadow:0 0 0 1px rgba(226,232,232,.22),inset 0 1px 0 rgba(255,255,255,.08)!important}
+/* contact + faint floor light under the active card */
+html.standalone body .store-app .category-arena-card[data-roulette-slot="0"]::after{
+  content:"";position:absolute;left:4%;right:4%;top:100%;height:calc(36*var(--k));pointer-events:none;
+  background:radial-gradient(ellipse 50% 100% at 50% 0,rgba(3,10,20,.36),transparent 72%),radial-gradient(ellipse 62% 80% at 50% 0,rgba(170,200,225,.09),transparent 75%);
+}
+
+/* ---------- Header: same material ---------- */
+
+
+/* ---------- Buttons ---------- */
+html.standalone body .store-app .category-enter{
+  border:0!important;
+  background:linear-gradient(180deg,#f0dfb9 0,#e2c688 55%,#d3b070 100%)!important;
+  color:#1a2a3a!important;
+  box-shadow:0 0 0 1px rgba(140,104,48,.65),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(120,84,26,.28),0 calc(3*var(--k)) calc(5*var(--k)) calc(-1*var(--k)) rgba(3,10,20,.5)!important;
+  transition:box-shadow .12s,translate .12s;
+}
+html.standalone body .store-app .category-enter:active{translate:0 1px;box-shadow:0 0 0 1px rgba(140,104,48,.65),inset 0 2px 4px rgba(90,60,15,.35),0 0 0 rgba(0,0,0,0)!important}
+html.standalone body .store-app .category-arena-card:not(.active) .category-enter{
+  background:linear-gradient(180deg,#c9dbe8 0,#9fbbd0 55%,#88a6bd 100%)!important;color:#12293c!important;
+  box-shadow:0 0 0 1px rgba(60,90,116,.6),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 0 rgba(30,55,80,.25),0 calc(3*var(--k)) calc(5*var(--k)) calc(-1*var(--k)) rgba(3,10,20,.45)!important;
+}
+html.standalone body .store-app .arena-nav{
+  border:0!important;background:linear-gradient(180deg,#25445f,#132a40)!important;
+  box-shadow:0 0 0 1px rgba(226,232,232,.30),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 3px rgba(0,0,0,.3),0 4px 6px -2px rgba(3,10,20,.5)!important;
+}
+html.standalone body .store-app .arena-nav:active{translate:0 1px;box-shadow:0 0 0 1px rgba(226,232,232,.30),inset 0 2px 4px rgba(0,0,0,.4)!important}
+
+/* legacy arena floor wedge: replaced by the stage gradient above */
+html.standalone body .store-app .category-arena::before,html.standalone body .store-app .category-arena::after,
+html.standalone body .store-app .category-arena-viewport::before,html.standalone body .store-app .category-arena-viewport::after,
+html.standalone body .store-app .category-arena-section::before,html.standalone body .store-app .category-arena-section::after,
+html.standalone body .store-app .category-arena-track::before,html.standalone body .store-app .category-arena-track::after{display:none!important}
+
+
+/* ---------- Shared physical-control language (header + dock) ---------- */
+html.standalone{--fs-rim:linear-gradient(180deg,rgba(240,230,204,.72),rgba(160,148,122,.34) 42%,rgba(84,80,74,.40));--fs-joint:linear-gradient(90deg,rgba(2,8,16,.62) 0 1px,rgba(226,232,232,.34) 1px 2px)}
+
+/* ---------- Bottom dock: one uniform-height pill, three zones ---------- */
+html.standalone body .store-app .xarena-dock{
+  --dk-clip:inset(0 round var(--dk-r));
+  height:var(--dk-h)!important;align-items:stretch!important;grid-template-columns:24fr 52fr 24fr!important;
+  background:none!important;border:0!important;box-shadow:none!important;
+  filter:drop-shadow(0 calc(6*var(--k)) calc(7*var(--k)) rgba(3,10,20,.42))!important;
+  -webkit-tap-highlight-color:transparent;
+}
+@media (min-width:1000px){html.standalone body .store-app .xarena-dock{top:calc(812*var(--u))!important}}
+html.standalone body .store-app .xarena-dock::before{
+  content:""!important;display:block!important;position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;
+  width:auto!important;height:auto!important;transform:none!important;opacity:1!important;animation:none!important;
+  clip-path:var(--dk-clip)!important;background:var(--fs-rim)!important;
+}
+html.standalone body .store-app .xarena-dock::after{
+  content:""!important;display:block!important;position:absolute!important;inset:calc(1.5*var(--k))!important;z-index:0!important;pointer-events:none!important;
+  width:auto!important;height:auto!important;transform:none!important;opacity:1!important;animation:none!important;
+  clip-path:inset(0 round calc(var(--dk-r) - 1.5*var(--k)))!important;
+  background:
+    radial-gradient(ellipse 34% 90% at 50% 45%,rgba(255,255,255,.04),transparent 72%),
+    linear-gradient(180deg,rgba(255,255,255,.08),transparent 30%),
+    linear-gradient(180deg,#1f3c58,#15304a 55%,#0e2337)!important;
+}
+html.standalone body .store-app .xarena-dock>button{position:relative;z-index:1}
+html.standalone body .store-app .xarena-dock>button[data-nav-view],
+html.standalone body .store-app .xarena-dock .info-launcher{
+  height:100%!important;margin:0!important;align-self:stretch!important;padding:0!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;clip-path:none!important;
+  transition:background-color .08s,box-shadow .08s;-webkit-tap-highlight-color:transparent;
+}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:nth-of-type(2){grid-column:1;grid-row:1;border-radius:var(--dk-r) 0 0 var(--dk-r)!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:nth-of-type(3){grid-column:3;grid-row:1;border-radius:0 var(--dk-r) var(--dk-r) 0!important}
+html.standalone body .store-app .xarena-dock .info-launcher{grid-column:2;grid-row:1;border-radius:0!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:calc(20*var(--k))!important}
+html.standalone body .store-app .xarena-dock .info-launcher>i{display:none!important}
+html.standalone body .store-app .xarena-dock .info-launcher::after{display:none!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]{gap:calc(3*var(--k))!important}
+/* engraved joints (dark groove + champagne edge) drawn on the buttons: no gap */
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:nth-of-type(2)::after,
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:nth-of-type(3)::before{content:"";position:absolute;top:18%;bottom:18%;width:2px;pointer-events:none;background:var(--fs-joint)}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:nth-of-type(2)::after{right:-1px;left:auto}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:nth-of-type(3)::before{left:-1px;right:auto;transform:scaleX(-1)}
+/* states: hover = light, active = pressed in (inset shadow + 1px content shift), focus = ring */
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:hover,
+html.standalone body .store-app .xarena-dock .info-launcher:hover{background:rgba(255,255,255,.045)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:active,
+html.standalone body .store-app .xarena-dock .info-launcher:active{background:rgba(0,0,0,.18)!important;box-shadow:inset 0 calc(2*var(--k)) calc(6*var(--k)) rgba(0,0,0,.55),inset 0 0 0 1px rgba(0,0,0,.18)!important}
+html.standalone body .store-app .xarena-dock>button:active>*{translate:0 1px}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:focus-visible,
+html.standalone body .store-app .xarena-dock .info-launcher:focus-visible{outline:2px solid var(--fs-champagne);outline-offset:-5px}
+
+/* ---------- Header: hexagonal console shell (same construction as the dock) ---------- */
+html.standalone{--hd-clip:polygon(0 50%,var(--hd-t) 0,calc(100% - var(--hd-t)) 0,100% 50%,calc(100% - var(--hd-t)) 100%,var(--hd-t) 100%)}
+html.standalone body .store-app .store-header.fs-command-header{
+  clip-path:none!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;
+  filter:drop-shadow(0 calc(4*var(--k)) calc(5*var(--k)) rgba(3,10,20,.42))!important;
+}
+html.standalone body .store-app .store-header.fs-command-header::before{
+  content:""!important;display:block!important;position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;
+  width:auto!important;height:auto!important;transform:none!important;opacity:1!important;
+  clip-path:var(--hd-clip)!important;background:var(--fs-rim)!important;
+}
+html.standalone body .store-app .store-header.fs-command-header::after{
+  content:""!important;display:block!important;position:absolute!important;inset:calc(1.8*var(--k))!important;z-index:0!important;pointer-events:none!important;
+  width:auto!important;height:auto!important;transform:none!important;opacity:1!important;
+  clip-path:var(--hd-clip)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 30%),linear-gradient(180deg,var(--fs-panel-hi),var(--fs-panel-mid) 58%,var(--fs-panel-dark))!important;
+}
+@media (min-width:1000px){
+  /* joints between modules (grid tracks 351/308/340/328/190) */
+  html.standalone body .store-app .store-header.fs-command-header::after{
+    background:
+      linear-gradient(90deg,transparent calc(23.14% - 1px),rgba(2,8,16,.62) calc(23.14% - 1px) 23.14%,rgba(226,232,232,.32) 23.14% calc(23.14% + 1px),transparent calc(23.14% + 1px)) 0 50%/100% 58% no-repeat,
+      linear-gradient(90deg,transparent calc(43.44% - 1px),rgba(2,8,16,.62) calc(43.44% - 1px) 43.44%,rgba(226,232,232,.32) 43.44% calc(43.44% + 1px),transparent calc(43.44% + 1px)) 0 50%/100% 58% no-repeat,
+      linear-gradient(90deg,transparent calc(65.86% - 1px),rgba(2,8,16,.62) calc(65.86% - 1px) 65.86%,rgba(226,232,232,.32) 65.86% calc(65.86% + 1px),transparent calc(65.86% + 1px)) 0 50%/100% 58% no-repeat,
+      linear-gradient(90deg,transparent calc(87.47% - 1px),rgba(2,8,16,.62) calc(87.47% - 1px) 87.47%,rgba(226,232,232,.32) 87.47% calc(87.47% + 1px),transparent calc(87.47% + 1px)) 0 50%/100% 58% no-repeat,
+      linear-gradient(180deg,rgba(255,255,255,.08),transparent 30%),
+      linear-gradient(180deg,var(--fs-panel-hi),var(--fs-panel-mid) 58%,var(--fs-panel-dark))!important;
+  }
+  html.standalone body .store-app .brand-button{padding-left:calc(64*var(--k))!important}
+}
+html.standalone body .store-app .store-header.fs-command-header>*{position:relative;z-index:1;-webkit-tap-highlight-color:transparent}
+html.standalone body .store-app .store-header.fs-command-header>.brand-button,
+html.standalone body .store-app .store-header.fs-command-header>.header-profile,
+html.standalone body .store-app .store-header.fs-command-header>.info-hub-button{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;transition:background-color .08s,box-shadow .08s}
+html.standalone body .store-app .store-header.fs-command-header>.header-profile:hover,
+html.standalone body .store-app .store-header.fs-command-header>.info-hub-button:hover{background:rgba(255,255,255,.04)!important}
+html.standalone body .store-app .store-header.fs-command-header>.header-profile:active,
+html.standalone body .store-app .store-header.fs-command-header>.info-hub-button:active{background:rgba(0,0,0,.16)!important;box-shadow:inset 0 calc(2*var(--k)) calc(6*var(--k)) rgba(0,0,0,.5)!important}
+html.standalone body .store-app .store-header.fs-command-header>.header-profile:active>*,
+html.standalone body .store-app .store-header.fs-command-header>.info-hub-button:active>*{translate:0 1px}
+html.standalone body .store-app .store-header.fs-command-header>.header-profile:focus-visible,
+html.standalone body .store-app .store-header.fs-command-header>.info-hub-button:focus-visible{outline:2px solid var(--fs-champagne);outline-offset:-4px}
+html.standalone body .store-app .header-profile-avatar{
+  background:linear-gradient(180deg,#0b1c2e,#10263a)!important;border:0!important;border-radius:50%!important;
+  box-shadow:inset 0 calc(2*var(--k)) calc(4*var(--k)) rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(226,232,232,.28)!important;
+}
+/* "+" : round recessed control with a champagne ring */
+html.standalone body .store-app .info-hub-button>i{
+  display:grid!important;place-items:center;width:calc(34*var(--k));height:calc(34*var(--k));border-radius:50%;font-style:normal;line-height:1;
+  color:var(--fs-champagne)!important;background:linear-gradient(180deg,#0b1c2e,#10263a);
+  box-shadow:inset 0 calc(2*var(--k)) calc(3*var(--k)) rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(226,232,232,.42);
+}
+html.standalone body .store-app .info-hub-button:hover>i{background:linear-gradient(180deg,#10263a,#16304a)}
+html.standalone body .store-app .info-hub-button:active>i{box-shadow:inset 0 calc(3*var(--k)) calc(5*var(--k)) rgba(0,0,0,.65),0 0 0 1px rgba(226,232,232,.36)}
+/* search: sunken pill slot */
+html.standalone body .store-app .store-header.fs-command-header>.header-search{
+  border:0!important;border-radius:999px!important;background:linear-gradient(180deg,#07172a,#0c2035)!important;
+  box-shadow:inset 0 calc(2*var(--k)) calc(6*var(--k)) rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(226,232,232,.38)!important;
+  transition:background-color .08s,box-shadow .08s,translate .08s;
+}
+html.standalone body .store-app .header-search-copy{color:#b9c8d5!important}
+html.standalone body .store-app .store-header.fs-command-header>.header-search:hover{background:linear-gradient(180deg,#091b30,#0e2439)!important}
+html.standalone body .store-app .store-header.fs-command-header>.header-search:active{translate:0 1px;box-shadow:inset 0 calc(3*var(--k)) calc(8*var(--k)) rgba(0,0,0,.7),0 0 0 1px rgba(226,232,232,.3)!important}
+html.standalone body .store-app .store-header.fs-command-header>.header-search:focus-visible{outline:2px solid var(--fs-champagne);outline-offset:2px}
+/* right controls: raised buttons with champagne outline */
+html.standalone body .store-app .store-header.fs-command-header .header-actions>button{
+  border:0!important;border-radius:calc(14*var(--k))!important;background:linear-gradient(180deg,#27455f,#17304a)!important;
+  box-shadow:0 0 0 1px rgba(226,232,232,.42),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 3px rgba(0,0,0,.3),0 calc(3*var(--k)) calc(4*var(--k)) calc(-1*var(--k)) rgba(3,10,20,.5)!important;
+  transition:background-color .08s,box-shadow .08s,translate .08s;
+}
+html.standalone body .store-app .store-header.fs-command-header .header-actions>button:hover{background:linear-gradient(180deg,#2d4d69,#1b3650)!important;box-shadow:0 0 0 1px rgba(226,232,232,.5),inset 0 1px 0 rgba(255,255,255,.22),inset 0 -2px 3px rgba(0,0,0,.3),0 calc(3*var(--k)) calc(4*var(--k)) calc(-1*var(--k)) rgba(3,10,20,.5)!important}
+html.standalone body .store-app .store-header.fs-command-header .header-actions>button:active{translate:0 calc(2*var(--k));background:linear-gradient(180deg,#162e46,#1d3853)!important;box-shadow:0 0 0 1px rgba(226,232,232,.3),inset 0 calc(2*var(--k)) calc(5*var(--k)) rgba(0,0,0,.55)!important}
+html.standalone body .store-app .store-header.fs-command-header .header-actions>button:focus-visible{outline:2px solid var(--fs-champagne);outline-offset:2px}
+@media (min-width:1000px){
+  html.standalone body .store-app .store-header.fs-command-header .header-actions>.cart-button{min-width:calc(86*var(--k));gap:calc(8*var(--k))}
+  html.standalone body .store-app .store-header.fs-command-header .header-actions>.icon-button{width:calc(58*var(--k))}
+}
+html.standalone body .store-app .cart-button span{background:linear-gradient(180deg,#f0dfb9,#d8b874)!important;color:#1a2a3a!important;font-weight:800!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 1px 2px rgba(3,10,20,.5)}
+@media (max-width:999px){html.standalone body .store-app .brand-button b{font-size:17px!important}}
+@media (max-width:999px) and (orientation:landscape){
+  html.standalone body .store-app .header-profile-avatar{width:30px!important;height:30px!important;min-width:0!important}
+  html.standalone body .store-app .store-header.fs-command-header .header-actions>button,html.standalone body .store-app .store-header.fs-command-header>.header-profile,html.standalone body .store-app .store-header.fs-command-header>.header-search{height:34px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  html.standalone body .store-app .store-header.fs-command-header *,html.standalone body .store-app .xarena-dock>button{transition:none!important}
+}
+
+@media (max-width:999px) and (orientation:landscape){html.standalone{--dk-h:54px;--dk-r:27px}html.standalone body .store-app .xarena-dock>button[data-nav-view] .ui-icon{width:20px!important;height:20px!important}html.standalone body .store-app .xarena-dock>button[data-nav-view] small{font-size:10px!important}}

@@ -1,11 +1,12 @@
 window.FS_LAB_DATA = Object.freeze({
   categories: [
-    { id: "recargas-id", icon: "🎮", code: "01", tag: "GAMING", accentRgb: "123,196,246", name: "Recargas por ID", subtitle: "Directa al jugador" },
-    { id: "recargas-cuenta", icon: "👤", code: "02", tag: "ASISTIDO", accentRgb: "232,201,137", name: "Recargas por Cuenta", subtitle: "Entrega directa" },
-    { id: "giftcards", icon: "🎁", code: "03", tag: "CÓDIGOS", accentRgb: "152,177,198", name: "Gift Cards", subtitle: "Códigos digitales" },
-    { id: "streaming", icon: "📺", code: "04", tag: "STREAM", accentRgb: "112,168,201", name: "Plataformas de Streaming", subtitle: "Series, música y más" },
-    { id: "cuentas", icon: "🪪", code: "05", tag: "CUENTAS", accentRgb: "176,192,204", name: "Venta de Cuentas", subtitle: "Cuentas listas para usar" },
-    { id: "paginas", icon: "💻", code: "06", tag: "WEB", accentRgb: "137,160,181", name: "Venta de Páginas", subtitle: "Diseño web a medida" }
+    { id: "recargas-id", icon: "🎮", code: "01", tag: "GAMING", accentRgb: "123,196,246", name: "Recargas por ID", subtitle: "Directa al jugador", mark: "bolt", tags: [{ i: "bolt", t: "Entrega rápida" }, { i: "star", t: "Popular" }] },
+    { id: "recargas-cuenta", icon: "👤", code: "02", tag: "ASISTIDO", accentRgb: "232,201,137", name: "Recargas por cuenta", subtitle: "Acceso a tu cuenta", mark: "user-lock", tags: [{ i: "lock", t: "Ingreso seguro" }, { i: "star", t: "Asistido" }] },
+    { id: "giftcards", icon: "🎁", code: "03", tag: "CÓDIGOS", accentRgb: "152,177,198", name: "Gift Cards", subtitle: "Códigos digitales", mark: "gift", tags: [{ i: "bolt", t: "Entrega digital" }, { i: "star", t: "Popular" }] },
+    { id: "streaming", icon: "📺", code: "04", tag: "STREAM", accentRgb: "112,168,201", name: "Plataformas de Streaming", subtitle: "Entretenimiento al instante", mark: "stream", tags: [{ i: "bolt", t: "Entrega digital" }, { i: "star", t: "Popular" }] },
+    { id: "cuentas", icon: "🪪", code: "05", tag: "CUENTAS", accentRgb: "176,192,204", name: "Venta de cuentas", subtitle: "Listas para usar", mark: "user-shield", tags: [{ i: "bolt", t: "Entrega rápida" }, { i: "shield", t: "Verificado" }] },
+    { id: "paginas", icon: "💻", code: "06", tag: "WEB", accentRgb: "137,160,181", name: "Venta de páginas", subtitle: "Tu presencia digital", mark: "window", tags: [{ i: "palette", t: "Diseño premium" }, { i: "star", t: "Personalizable" }] },
+    { id: "french-arcade", icon: "🕹", code: "07", tag: "ARCADE", accentRgb: "126,214,200", name: "French Arcade", subtitle: "Juega y gana", eyebrow: "JUEGA · GANA · DISFRUTA", cta: "Entrar al Arcade", href: "./arcade.html", mark: "joystick", tags: [{ i: "gamepad", t: "Minijuegos" }, { i: "star", t: "Diversión" }] }
   ],
   products: [
     { id: "p1", icon: "◇", name: "Diamantes Nova · 500", category: "Recargas", price: 49.90, featured: true },

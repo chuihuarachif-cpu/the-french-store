@@ -1,12 +1,14 @@
 <!doctype html>
-<html lang="es" data-device="desktop" data-role="visitor">
+<html lang="es" data-device="desktop" data-role="visitor" data-plan="none">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#0b1a2b">
+  <link rel="manifest" href="./lab.webmanifest">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://raw.githubusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'self';">
   <title>French Store · Design Lab</title>
+  <script src="./intro-gate.js"></script>
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./crystal.css">
   <link rel="stylesheet" href="./hud.css">
@@ -17,8 +19,20 @@
   <link rel="stylesheet" href="./refined-real.css">
   <link rel="stylesheet" href="./reference.css">
   <link rel="stylesheet" href="./reference-mobile.css">
+  <link rel="stylesheet" href="./reference-materials.css">
+  <link rel="stylesheet" href="./reference-footer.css">
+  <link rel="stylesheet" href="./reference-scene.css">
+  <link rel="stylesheet" href="./reference-palette.css">
+  <link rel="stylesheet" href="./reference-header.css">
+  <link rel="stylesheet" href="./reference-white.css">
+  <link rel="stylesheet" href="./reference-experience.css">
+  <link rel="stylesheet" href="./reference-experience2.css">
+  <link rel="stylesheet" href="./reference-screens.css">
+  <link rel="stylesheet" href="./reference-final.css">
+  <link rel="stylesheet" href="./lab-orient.css">
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="fsGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6F5F0"/><stop offset="1" stop-color="#AEB9BC"/></linearGradient><linearGradient id="fsWaveGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c6a96b" stop-opacity=".45"/><stop offset=".5" stop-color="#d8c18b"/><stop offset="1" stop-color="#c6a96b" stop-opacity=".45"/></linearGradient></defs></svg>
   <div class="lab-shell">
     <aside class="lab-panel" aria-label="Herramientas del laboratorio">
       <div class="lab-brand">
@@ -47,7 +61,9 @@
         <span>Estado simulado</span>
         <select id="roleSelect">
           <option value="visitor">Visitante</option>
-          <option value="user">Usuario</option>
+          <option value="user">Usuario Base</option>
+          <option value="gold">Usuario Gold</option>
+          <option value="diamond">Usuario Diamond</option>
           <option value="reseller">Reseller</option>
           <option value="admin">Admin</option>
         </select>
@@ -87,7 +103,7 @@
 
       <div class="device-viewport" id="deviceViewport">
         <div class="device-frame" id="deviceFrame">
-        <div class="store-app"><div class="shop-atmosphere" aria-hidden="true"><i class="fog-bank fog-near"></i><i class="fog-bank fog-far"></i></div>
+        <div class="store-app"><div class="fs-scene" id="fsScene" aria-hidden="true"><div class="fs-stage"><div class="fs-img fs-dim"></div><div class="fs-lamp-layer fs-lit-left"><div class="fs-lit"></div><div class="fs-floor"></div></div><div class="fs-lamp-layer fs-lit-center"><div class="fs-lit"></div><div class="fs-floor"></div></div><div class="fs-lamp-layer fs-lit-right"><div class="fs-lit"></div><div class="fs-floor"></div></div><div class="fs-fade fs-fade-top"></div><div class="fs-fade fs-fade-bottom"></div></div><div class="fs-pendants"><div class="fs-pendant" data-side="left"><span class="fs-light"><i class="fs-cone"></i><i class="fs-halo"></i></span><i class="fs-cable"></i><span class="fs-shade"></span><span class="fs-glass"></span><span class="fs-glass-on"></span></div><div class="fs-pendant" data-side="center"><span class="fs-light"><i class="fs-cone"></i><i class="fs-halo"></i></span><i class="fs-cable"></i><span class="fs-shade"></span><span class="fs-glass"></span><span class="fs-glass-on"></span></div><div class="fs-pendant" data-side="right"><span class="fs-light"><i class="fs-cone"></i><i class="fs-halo"></i></span><i class="fs-cable"></i><span class="fs-shade"></span><span class="fs-glass"></span><span class="fs-glass-on"></span></div></div></div><div class="shop-atmosphere" aria-hidden="true"><i class="fog-bank fog-near"></i><i class="fog-bank fog-far"></i></div>
           <div class="loading-demo" id="loadingDemo" aria-hidden="true">
             <div class="loading-demo-backdrop" aria-hidden="true"></div>
             <div class="loading-demo-content">
@@ -118,33 +134,40 @@
               </div>
             </div>
           </div>
+          <div class="fs-backdrop" id="fsBackdrop" aria-hidden="true"></div>
           <header class="store-header fs-command-header">
-            <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio de French Store">
-              <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><b>French Store</b><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg>
-            </button>
-
             <button class="header-profile" type="button" data-nav-view="perfil" aria-label="Abrir perfil">
               <span class="header-profile-avatar"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg></span>
               <span class="header-profile-copy">
                 <b id="headerRoleName">Hola, Visitante</b>
-                <small>Inicia sesión para más beneficios</small>
+                <small id="headerRoleNote">Inicia sesión para más beneficios</small>
               </span>
             </button>
+            <nav class="header-plans" aria-label="Niveles French Store">
+              <button class="plan-card" type="button" data-plan="base" data-nav-view="pases" aria-label="Pase Base"><i class="plan-led" aria-hidden="true"></i><span>BASE</span></button>
+              <button class="plan-card" type="button" data-plan="gold" data-nav-view="pases" aria-label="Pase Gold"><i class="plan-led" aria-hidden="true"></i><span>GOLD</span></button>
+              <button class="plan-card" type="button" data-plan="diamond" data-nav-view="pases" aria-label="Pase Diamond"><i class="plan-led" aria-hidden="true"></i><span>DIAMOND</span></button>
+            </nav>
 
-            <button class="info-hub-button" type="button" data-info-toggle aria-expanded="false" aria-controls="infoHub">
-              <span class="info-hub-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/></svg></span>
-              <span><small>REDES · AYUDA · POLÍTICAS</small><b>Más información</b></span>
-              <i>＋</i>
+            <button class="brand-button" type="button" data-nav-view="inicio" aria-label="Inicio de French Store">
+              <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><b>French Store</b><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg>
             </button>
+
+            
+
+            
 
             <button class="header-search" type="button" data-open-search aria-label="Buscar en French Store">
               <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg><span class="header-search-copy">Buscar en French Store...</span>
             </button>
 
+            <button class="header-wallet" type="button" data-nav-view="wallet" aria-label="Wallet: saldo simulado" title="Wallet"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M16 13h3M3 10h15"/></svg><span class="header-wallet-copy"><small>WALLET</small><b id="headerWallet">Bs 125</b></span></button>
+
             <div class="header-actions">
               <button class="icon-button" type="button" data-nav-view="pedidos" aria-label="Mis pedidos" title="Mis pedidos"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5v11l-10 5-10-5V7Zm0 10 10-5M12 12 2 7m10 5v11M7 4l10 5v5"/></svg></button>
               <button class="cart-button" type="button" data-x-cart aria-label="Carrito"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h11l3-10H6M9 10h10"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg> <span id="cartCount">0</span></button>
             </div>
+
           </header>
 
           <span class="header-ticker-bridge" aria-hidden="true"></span>
@@ -241,8 +264,9 @@
             <div class="page-head reveal">
               <span class="eyebrow">PEDIDOS DEMO</span>
               <h1>Mis pedidos</h1>
-              <p>Base visual para diseñar después el historial y seguimiento.</p>
+              <p>Consulta tu historial de compras, estado y detalles.</p>
             </div>
+            <div class="orders-panel" id="ordersPanel"></div>
           </section>
 
           <section class="store-view" data-view="perfil">
@@ -252,15 +276,15 @@
                 <div><span class="eyebrow">PERFIL DEMO</span><h2 id="profileRole">Visitante</h2><p>demo@frenchstore.local</p></div>
               </div>
               <div class="metric-grid">
-                <article><span>Pedidos</span><strong>12</strong><small>ficticios</small></article>
-                <article><span>Favoritos</span><strong>8</strong><small>locales</small></article>
-                <article><span>Wallet</span><strong>Bs 125</strong><small>simulado</small></article>
+                <article><i class="fs-ic"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l1 12H5L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></i><div><span>Pedidos</span><strong>12</strong><small>ficticios</small></div><b class="fs-chev" aria-hidden="true">›</b></article>
+                <article><i class="fs-ic"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></i><div><span>Favoritos</span><strong>8</strong><small>locales</small></div><b class="fs-chev" aria-hidden="true">›</b></article>
+                <article><i class="fs-ic"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M16 13h3M3 10h15"/></svg></i><div><span>Wallet</span><strong id="profileWallet">Bs 125</strong><small>simulado</small></div><b class="fs-chev" aria-hidden="true">›</b></article>
               </div>
-              <div class="account-menu"><button type="button" data-nav-view="wallet">Mi Wallet <span>→</span></button>
-                <button type="button" data-nav-view="pedidos">Mis pedidos <span>→</span></button>
-                <button type="button" data-account-action="Favoritos">Favoritos <span>→</span></button>
-                <button type="button" data-account-action="Notificaciones">Notificaciones <span>→</span></button>
-                <button type="button" data-nav-view="ajustes">Configuración <span>→</span></button>
+              <div class="account-menu"><button type="button" data-nav-view="wallet"><i class="fs-ic"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M16 13h3M3 10h15"/></svg></i><span class="fs-lbl">Mi Wallet</span><b class="fs-chev" aria-hidden="true">›</b></button>
+                <button type="button" data-nav-view="pedidos"><i class="fs-ic"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5v11l-10 5-10-5V7Zm0 10 10-5M12 12 2 7m10 5v11"/></svg></i><span class="fs-lbl">Mis pedidos</span><b class="fs-chev" aria-hidden="true">›</b></button>
+                <button type="button" data-account-action="Favoritos"><i class="fs-ic"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></i><span class="fs-lbl">Favoritos</span><b class="fs-chev" aria-hidden="true">›</b></button>
+                <button type="button" data-account-action="Notificaciones"><i class="fs-ic"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4l2-2ZM10 21h4"/></svg></i><span class="fs-lbl">Notificaciones</span><b class="fs-chev" aria-hidden="true">›</b></button>
+                <button type="button" data-nav-view="ajustes"><i class="fs-ic"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></i><span class="fs-lbl">Configuración</span><b class="fs-chev" aria-hidden="true">›</b></button>
               </div>
             </div>
           </section>
@@ -272,9 +296,9 @@
               <p>Los pases pueden dar ventajas comerciales sin cambiar el diseño general de French Store.</p>
             </div>
             <div class="pass-grid reveal">
-              <article class="pass-card"><span>BASE</span><strong>French Base</strong><p>Acceso normal a la tienda, promociones y beneficios estándar.</p><button type="button" data-demo-action="pass-base">Ver beneficios</button></article>
-              <article class="pass-card pass-card-gold"><span>GOLD</span><strong>French Gold</strong><p>Beneficios superiores, promociones especiales y prioridad en campañas seleccionadas.</p><button type="button" data-demo-action="pass-gold">Ver beneficios</button></article>
-              <article class="pass-card pass-card-diamond"><span>DIAMOND</span><strong>French Diamond</strong><p>Nivel premium con los mejores beneficios, manteniendo la misma interfaz para todos.</p><button type="button" data-demo-action="pass-diamond">Ver beneficios</button></article>
+              <article class="pass-card" data-plan="base"><span class="pass-tag"><i class="plan-led" aria-hidden="true"></i>BASE</span><strong>French Base</strong><p>Acceso normal a la tienda, promociones y beneficios estándar.</p><ul class="pass-benefits"><li>Acceso a la tienda</li><li>Promociones estándar</li><li>Beneficios generales</li></ul><button type="button" data-demo-action="pass-base">Ver beneficios</button></article>
+              <article class="pass-card pass-card-gold" data-plan="gold"><span class="pass-tag"><i class="plan-led" aria-hidden="true"></i>GOLD</span><strong>French Gold</strong><p>Beneficios superiores, promociones especiales y prioridad en campañas seleccionadas.</p><ul class="pass-benefits"><li>Todo lo de French Base</li><li>Promociones exclusivas</li><li>Acceso prioritario a campañas</li><li>Beneficios especiales</li></ul><button type="button" data-demo-action="pass-gold">Ver beneficios</button></article>
+              <article class="pass-card pass-card-diamond" data-plan="diamond"><span class="pass-tag"><i class="plan-led" aria-hidden="true"></i>DIAMOND</span><strong>French Diamond</strong><p>Nivel premium con los mejores beneficios, manteniendo la misma interfaz para todos.</p><ul class="pass-benefits"><li>Todo lo de French Gold</li><li>Los mejores beneficios</li><li>Prioridad total</li><li>Experiencias exclusivas</li></ul><button type="button" data-demo-action="pass-diamond">Ver beneficios</button></article>
             </div>
           </section>
 
@@ -288,6 +312,7 @@
               <button type="button" data-demo-action="install"><span>⬇</span><div><b>Instalar French Store</b><small>PWA y acceso rápido</small></div><i>→</i></button>
               <button type="button" data-demo-action="notifications"><span>◉</span><div><b>Notificaciones</b><small>Vencimientos, novedades y avisos</small></div><i>→</i></button>
               <button type="button" id="settingsMotionShortcut"><span>✦</span><div><b>Animaciones</b><small>Reducir efectos en equipos modestos</small></div><i>→</i></button>
+              <button type="button" id="settingsSoundToggle" aria-pressed="false"><span>♪</span><div><b>Sonido de entrada</b><small>Desactivado</small></div><i>→</i></button>
               <button type="button" data-demo-action="help"><span>?</span><div><b>Ayuda y soporte</b><small>Preguntas, garantías y contacto</small></div><i>→</i></button>
             </div>
           </section>
@@ -366,7 +391,11 @@
                   <div class="x-input-fields" id="xInputFields"></div>
                   <div class="x-package-list" id="xPackageList" tabindex="0" role="region" aria-label="Paquetes y precios; desplázate para ver más"></div>
                   <div class="x-buy-dock">
-                    <button class="x-buy-button" id="xBuyButton" type="button" disabled>Comprar</button>
+                    <span class="x-dock-thumb" aria-hidden="true"><img id="xDockImg" alt="" decoding="async"><i id="xDockFallback">FS</i></span>
+                    <span class="x-dock-copy"><b id="xDockName">Selecciona un producto</b><small id="xDockGame">French Store</small></span>
+                    <span class="x-dock-total"><small>Precio total</small><b id="xDockPrice">—</b></span>
+                    <button class="x-dock-add" type="button" data-x-add-selected aria-label="Añadir al carrito" disabled><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h3l3 13h11l3-10H6M9 10h10"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg></button>
+                    <button class="x-buy-button" id="xBuyButton" type="button" disabled>Comprar ahora <i aria-hidden="true">→</i></button>
                     <small class="x-config-note">Vista del laboratorio · no procesa pagos reales.</small>
                   </div>
                 </main>
@@ -443,6 +472,7 @@
           <button class="whatsapp-float" type="button" data-info-action="WhatsApp" aria-label="Contactar por WhatsApp">
             <span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><b>¿Necesitas ayuda?</b><small>Escríbenos por WhatsApp</small>
           </button>
+          
         </div>
       </div>
       </div>
@@ -452,5 +482,15 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="./mock-data.js"></script>
   <script src="./app.js"></script>
+  <div class="lab-rotate" id="labRotate" role="alertdialog" aria-modal="true" aria-hidden="true" aria-labelledby="labRotateTitle" aria-describedby="labRotateCopy">
+    <div class="lab-rotate-inner">
+      <div class="lab-rotate-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg><span>French Store Lab</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg></div>
+      <div class="lab-rotate-phone" aria-hidden="true"></div>
+      <h2 class="lab-rotate-title" id="labRotateTitle">GIRA TU DISPOSITIVO</h2>
+      <p class="lab-rotate-copy" id="labRotateCopy">French Store Lab está diseñado para utilizarse en modo horizontal.</p>
+    </div>
+  </div>
+  <script src="./scene.js"></script>
+  <script src="./lab-device.js"></script>
 </body>
 </html>
