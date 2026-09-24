@@ -291,7 +291,8 @@
     const next = wrapCategoryIndex(index);
     activeCategoryIndex = next;
     // One scene change per selection; fog and floor inherit the same color.
-    $(".store-app").dataset.scene = data.categories[next].id;
+    // Legacy fog/floor tint only exists outside the standalone theme; writing it invalidates styles for the whole app (~75ms per step).
+    if (!standalone) $(".store-app").dataset.scene = data.categories[next].id;
 
     cards.forEach((card, cardIndex) => {
       const diff = circularDifference(cardIndex, next);
