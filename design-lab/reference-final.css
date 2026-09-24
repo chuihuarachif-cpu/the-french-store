@@ -1,21 +1,28 @@
-/* French Store Lab · typography system, membership tiers, wallet chip. Loaded last.
-   Two levels: UI face (legible, neutral, tabular numbers) and an accent/display face (technical, slightly condensed).
-   Only locally installed faces are referenced (no webfont request, no FOUT); drop self-hosted files into assets/fonts and add @font-face to upgrade. */
+/* French Store Lab · typography system. ONE family for everything: Source Sans 3 (self-hosted variable woff2, latin, 28 KB).
+   Weights used: 400 body · 500-550 menus · 600 titles/names/numbers · 700 emphasis only. Numbers: lining + tabular everywhere. */
+@font-face{font-family:"Source Sans 3";font-style:normal;font-weight:200 900;font-display:swap;src:url(./assets/fonts/source-sans-3-latin-wght.woff2) format("woff2")}
 html.standalone{
-  --fs-font-ui:"Inter","Inter Variable","Segoe UI Variable Text","SF Pro Text","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
-  --fs-font-display:"Sora","Space Grotesk","Bahnschrift","Segoe UI Variable Display","SF Pro Display","Segoe UI",system-ui,sans-serif;
+  --fs-font-ui:"Source Sans 3","Segoe UI",Arial,sans-serif;
+  --fs-font-display:"Source Sans 3","Segoe UI",Arial,sans-serif;
+  /* type scale (proportional to the stage unit --k, never below a readable floor) */
+  --font-xs:max(12px,calc(12.5*var(--k)));
+  --font-sm:max(13.5px,calc(14.5*var(--k)));
+  --font-md:max(15px,calc(16.5*var(--k)));
+  --font-lg:max(17px,calc(21*var(--k)));
+  --font-xl:max(20px,calc(26*var(--k)));
+  --font-display:clamp(28px,calc(44*var(--k)),46px);
 }
-html.standalone body,html.standalone body :where(button,input,select,textarea){font-family:var(--fs-font-ui);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-html.standalone body :where(strong,b,.price,.x-package-price,.order-price,.product-price strong,.metric-grid strong,#cartCount,#headerWallet,#profileWallet){font-variant-numeric:tabular-nums lining-nums}
+html.standalone body,html.standalone body :where(button,input,select,textarea){font-family:var(--fs-font-ui);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-variant-numeric:lining-nums tabular-nums}
+html.standalone body :where(strong,b,.price,.x-package-price,.order-price,.product-price strong,.metric-grid strong,#cartCount,#headerWallet,#profileWallet,input,.order-main small,time){font-variant-numeric:lining-nums tabular-nums}
 /* display level */
 html.standalone body .store-app :is(.brand-button b,.home-intro h1,.page-head h1,#xShowcaseTitle,.category-copy b,.x-experience-title b,.profile-card h2,.pass-card strong,.info-hub-head h2,.info-hub-head h2 button,.x-cart-head b,.info-panel h3,.info-panel-head h3,.x-cart-empty b,.x-stage-gamehead h2){
   font-family:var(--fs-font-display)!important;letter-spacing:-.005em}
-html.standalone body .store-app .brand-button b{font-weight:600!important;letter-spacing:.14em!important}
+html.standalone body .store-app .brand-button b{font-weight:600!important;letter-spacing:.09em!important}
 html.standalone body .store-app :is(.home-intro h1,.page-head h1,#xShowcaseTitle,.profile-card h2,.info-hub-head h2 button){font-weight:600!important;letter-spacing:-.012em!important}
 html.standalone body .store-app :is(.category-copy b,.pass-card strong,.x-cart-head b,.info-panel h3,.x-experience-title b){font-weight:600!important}
 /* labels / eyebrows / micro-text */
-html.standalone body .store-app :is(.eyebrow,.hud-module-label,.category-tag,.pass-tag,.plan-card span,.header-wallet small,.x-cart-head span,.orders-tabs span,.product-price small,#xShowcaseType,.x-experience-title span){font-family:var(--fs-font-ui)!important;font-weight:700!important;letter-spacing:.18em!important;text-transform:uppercase}
-html.standalone body .store-app :is(button,.category-enter,.x-buy-button,.x-cart-checkout,.filter-row button){font-weight:650;letter-spacing:.005em}
+html.standalone body .store-app :is(.eyebrow,.hud-module-label,.category-tag,.pass-tag,.plan-card span,.header-wallet small,.x-cart-head span,.orders-tabs span,.product-price small,#xShowcaseType,.x-experience-title span){font-family:var(--fs-font-ui)!important;font-weight:600!important;letter-spacing:.06em!important;text-transform:uppercase}
+html.standalone body .store-app :is(button,.category-enter,.x-buy-button,.x-cart-checkout,.filter-row button){font-weight:600;letter-spacing:0}
 html.standalone body .store-app :is(.header-profile-copy small,.category-copy small,.x-dock-copy small,.order-main small){letter-spacing:.01em}
 
 /* ---------- membership tiers (the lit LED belongs to the account's real plan) ---------- */
@@ -88,3 +95,11 @@ html.standalone:not([data-view="inicio"]) body .store-app .store-view[data-view=
 html.standalone:not([data-view="inicio"]) body .store-app .store-view[data-view="inicio"]::after{opacity:0!important;visibility:hidden!important;transition:opacity .22s ease,visibility 0s .22s}
 @media (min-width:1000px){html.standalone body .store-app .store-view:not([data-view="inicio"]){height:calc(680*var(--u))!important}}
 
+
+/* global header: legible micro-type (family/weights/tracking only; geometry untouched) */
+html.standalone body .store-app .header-profile-copy b{font-weight:600!important;font-size:max(15px,calc(16.5*var(--k)))!important}
+html.standalone body .store-app .header-profile-copy small{font-weight:400!important;font-size:var(--font-sm)!important;letter-spacing:0!important}
+html.standalone body .store-app .header-wallet small{font-weight:600!important;font-size:max(11px,calc(11.5*var(--k)))!important;letter-spacing:.06em!important}
+html.standalone body .store-app #headerWallet,html.standalone body .store-app #cartCount{font-weight:650!important;font-size:max(16px,calc(18*var(--k)))!important;letter-spacing:0!important}
+html.standalone body .store-app .plan-card span{font-weight:600!important;font-size:var(--font-xs)!important;letter-spacing:.05em!important}
+html.standalone body .store-app .header-search-copy{font-weight:450;font-size:var(--font-sm)}
