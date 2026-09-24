@@ -106,3 +106,8 @@ html.standalone body .store-app .home-intro .eyebrow,html.standalone body .store
 /* legacy decorative loops that kept the compositor busy: header sweep, and hidden overlays (loading demo, orientation gate) */
 html.standalone body .store-app .store-header.fs-command-header::before,html.standalone body .store-app .store-header.fs-command-header::after{animation:none!important}
 html.standalone .loading-demo[aria-hidden="true"] *,html.standalone .x-orientation-gate[aria-hidden="true"] *{animation-play-state:paused!important}
+
+/* ---------- lamp OFF = 0% light: every emitting layer of that lamp is removed from rendering ---------- */
+html.standalone .fs-lamp-layer,html.standalone .fs-pendant .fs-light,html.standalone .fs-pendant .fs-glass-on{transition:opacity .28s ease-out,visibility 0s}
+html.standalone .fs-lamp-layer[data-lamp="off"],html.standalone .fs-pendant[data-lamp="off"] :is(.fs-light,.fs-glass-on){opacity:0!important;visibility:hidden!important;transition:opacity .05s linear,visibility 0s .05s;animation:none!important}
+html.standalone .fs-lamp-layer[data-lamp="off"] :is(.fs-lit,.fs-floor){animation:none!important}

@@ -1,22 +1,47 @@
-/* Ambient light for the three pendant lamps. Decorative only: nothing here is interactive.
-   Random values are drawn ONCE and handed to CSS as custom properties; CSS animates opacity. No timers. */
+/* Pendant lamps: automatic, independent, non-interactive.
+   A lamp has exactly two states. ON = photo pool + floor reflection + halo + cone + hot glass.
+   OFF = every one of those layers is visibility:hidden (see reference-scene.css), i.e. 0% emission, no residual glow.
+   Each lamp runs its own randomized timer chain; at most one lamp is off at a time so the room never goes dark. */
 (() => {
   "use strict";
-  const sides = ["left", "center", "right"];
-  const durations = [4.7, 6.2, 5.4, 7.1].sort(() => Math.random() - .5);
+  const calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
   const rnd = (a, b) => a + Math.random() * (b - a);
-  sides.forEach((side, i) => {
-    const vars = {
-      "--light-duration": (durations[i] + rnd(-.4, .4)).toFixed(2) + "s",
-      "--light-delay": (-rnd(0, 7)).toFixed(2) + "s",
-      "--bulb-lo": rnd(.86, .94).toFixed(3),
-      "--halo-lo": rnd(.65, .8).toFixed(3),
-      "--lit-lo": rnd(.8, .9).toFixed(3)
-    };
-    document.querySelectorAll(".fs-pendant[data-side=\"" + side + "\"], .fs-lit-" + side).forEach((el) => {
-      for (const k in vars) el.style.setProperty(k, vars[k]);
-    });
-  });
+  const lamps = ["left", "center", "right"].map((side) => ({
+    side,
+    layer: document.querySelector(".fs-lit-" + side),
+    pendant: document.querySelector('.fs-pendant[data-side="' + side + '"]'),
+    off: false,
+    timer: 0
+  })).filter((l) => l.layer && l.pendant);
+  const set = (l, off) => {
+    l.off = off;
+    const v = off ? "off" : "on";
+    l.layer.dataset.lamp = v;
+    l.pendant.dataset.lamp = v;
+  };
+  const othersOff = (l) => lamps.some((o) => o !== l && o.off);
+  const later = (l, ms, fn) => { l.timer = setTimeout(fn, ms); };
+
+  function idle(l) {
+    // long, uneven stretch of steady light before the next fault
+    later(l, rnd(7000, 26000), () => fault(l));
+  }
+  function fault(l) {
+    if (document.hidden || othersOff(l) || document.documentElement.dataset.intro === "playing") return idle(l);
+    // 1-3 electrical stutters, then either recover or stay dark for a while
+    let steps = Math.floor(rnd(1, 4)) * 2, longOff = Math.random() < .45;
+    (function tick() {
+      set(l, !l.off);
+      steps--;
+      if (steps > 0) return later(l, rnd(50, 150), tick);
+      if (l.off) return later(l, longOff ? rnd(900, 3800) : rnd(120, 300), () => { set(l, false); idle(l); });
+      idle(l);
+    })();
+  }
+  if (!calm) lamps.forEach((l) => { set(l, false); later(l, rnd(9000, 20000), () => fault(l)); });
+  else lamps.forEach((l) => set(l, false));
+  document.addEventListener("visibilitychange", () => { if (document.hidden) lamps.forEach((l) => { clearTimeout(l.timer); set(l, false); idle(l); }); });
+  window.__fsLamps = lamps; // read-only handle for tests
 })();
 
 /* Micro parallax (desktop pointer only): the active card's photo shifts a few px against its panel.
