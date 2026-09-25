@@ -649,6 +649,24 @@
     const local=$("#xCartCount");
     if (main) main.textContent=String(count);
     if (local) local.textContent=String(count);
+    all("#cartCount,#xCartCount").forEach(badge => {
+      badge.classList.remove("cart-badge-pop");
+      // eslint-disable-next-line no-unused-expressions
+      badge.offsetWidth; // restart the animation even if it's already mid-run
+      badge.classList.add("cart-badge-pop");
+    });
+  }
+
+  // Compress -> check -> settle, ~450ms total. Does not open the cart so the
+  // user can keep browsing; the button reverts to its normal icon afterward
+  // (persistent "already in cart" state is out of scope for this pass).
+  function playAddToCartFeedback(button){
+    if (!button) return;
+    const reduced = document.documentElement.classList.contains("motion-off") ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    button.classList.add("cta-busy");
+    if (!reduced) button.classList.add("cta-added");
+    setTimeout(() => button.classList.remove("cta-added", "cta-busy"), reduced ? 160 : 480);
   }
 
   function renderLabCart(){
@@ -987,7 +1005,12 @@
       return;
     }
 
-    if (event.target.closest("[data-x-add-selected]")) { addCurrentToCart(); return; }
+    if (event.target.closest("[data-x-add-selected]")) {
+      const btn = event.target.closest("[data-x-add-selected]");
+      if (btn.classList.contains("cta-busy")) return; // guard: ignore a second click mid-animation
+      if (addCurrentToCart()) playAddToCartFeedback(btn);
+      return;
+    }
 
     if (event.target.closest("#xBuyButton")) {
       if (addCurrentToCart()) setCartDrawer(true);
