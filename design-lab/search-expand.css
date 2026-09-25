@@ -1,0 +1,186 @@
+/* Expandable header search. The compact .header-search button stays exactly
+   as themed elsewhere; this panel is a separate, anchored overlay so it
+   never has to fight the header's grid/width rules across the theme files.
+   Ice-blue / petrol / white / faint champagne only — no pink, no purple. */
+:root{
+  --fs-search-ice:#bfe6ff;
+  --fs-search-petrol:#2f6f8f;
+  --fs-search-champagne:#e9d9b8;
+}
+
+.fs-search-backdrop{
+  position:absolute;
+  inset:0;
+  z-index:70;
+  background:rgba(3,10,16,.5);
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .25s ease,visibility 0s linear .25s;
+}
+.fs-search-backdrop.open{
+  opacity:1;
+  visibility:visible;
+  transition-delay:0s;
+}
+
+.fs-search-overlay{
+  position:absolute;
+  left:50%;
+  top:78px;
+  z-index:71;
+  width:min(92%,620px);
+  transform:translate(-50%,-8px) scale(.92);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease,transform .45s cubic-bezier(.22,1,.36,1);
+}
+.fs-search-overlay.open{
+  transform:translate(-50%,0) scale(1);
+  opacity:1;
+  pointer-events:auto;
+}
+
+.fs-search-panel{
+  position:relative;
+  padding:2px;
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(10,24,36,.98),rgba(6,15,24,.98));
+  box-shadow:0 30px 70px rgba(0,0,0,.5),0 0 0 1px rgba(191,230,255,.12);
+  overflow:hidden;
+}
+.fs-search-ring{
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  padding:1.5px;
+  background:conic-gradient(from 0deg,
+    transparent 0%, rgba(191,230,255,.06) 30%,
+    var(--fs-search-ice) 48%, #fff 50%, var(--fs-search-ice) 52%,
+    rgba(233,217,184,.35) 70%, transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:fsSearchRingSpin 5s linear infinite;
+  pointer-events:none;
+}
+@keyframes fsSearchRingSpin{to{transform:rotate(360deg)}}
+
+.fs-search-field{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 16px;
+}
+.fs-search-field .ui-icon{width:20px;height:20px;flex:none;color:var(--fs-search-ice)}
+.fs-search-field input{
+  flex:1;
+  min-width:0;
+  background:none;
+  border:0;
+  outline:0;
+  color:#f2f8fb;
+  font-size:.95rem;
+  font-family:inherit;
+}
+.fs-search-field input::placeholder{color:#7f97a6}
+.fs-search-close{
+  flex:none;
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:9px;
+  background:rgba(255,255,255,.06);
+  color:#cfe3ee;
+  font-size:1.1rem;
+  line-height:1;
+  cursor:pointer;
+}
+.fs-search-close:hover{background:rgba(255,255,255,.12)}
+
+.fs-search-underline{
+  position:relative;
+  z-index:1;
+  display:block;
+  height:2px;
+  margin:0 16px;
+  background:rgba(191,230,255,.14);
+  overflow:hidden;
+  border-radius:2px;
+}
+.fs-search-overlay.searching .fs-search-underline::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  width:40%;
+  background:linear-gradient(90deg,transparent,var(--fs-search-ice),transparent);
+  animation:fsSearchScan 1s ease-in-out infinite;
+}
+@keyframes fsSearchScan{0%{transform:translateX(-110%)}100%{transform:translateX(360%)}}
+
+.fs-search-status{
+  position:relative;
+  z-index:1;
+  padding:10px 16px 0;
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.04em;
+  color:#8fa7b5;
+}
+.fs-search-status.empty{color:#8fa7b5}
+.fs-search-status.found{color:var(--fs-search-ice)}
+.fs-search-status.none{color:#c9b98f}
+
+.fs-search-results{
+  position:relative;
+  z-index:1;
+  max-height:min(48vh,340px);
+  overflow-y:auto;
+  padding:6px 8px 10px;
+}
+.fs-search-result{
+  display:grid;
+  grid-template-columns:44px 1fr auto;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  padding:8px;
+  border:0;
+  border-radius:14px;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+  transition:background .18s ease;
+}
+.fs-search-result:hover,
+.fs-search-result:focus-visible{background:rgba(191,230,255,.08)}
+.fs-search-result-thumb{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background-size:cover;
+  background-position:center;
+  display:grid;
+  place-items:center;
+  font-size:1.2rem;
+  background-color:rgba(191,230,255,.08);
+}
+.fs-search-result-meta{min-width:0;display:grid;gap:2px}
+.fs-search-result-meta b{font-size:.86rem;color:#f2f8fb;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-search-result-meta small{font-size:.68rem;color:#8fa7b5}
+.fs-search-result-price{font-size:.82rem;font-weight:800;color:var(--fs-search-champagne);white-space:nowrap}
+
+html[data-device="mobile"] .fs-search-overlay,
+html[data-device="mobile-landscape"] .fs-search-overlay{top:64px;width:94%}
+
+html.motion-off .fs-search-overlay,
+html.motion-off .fs-search-ring,
+html.motion-off .fs-search-backdrop{transition:none!important;animation:none!important}
+html.perf-lite .fs-search-ring{animation-duration:8s}
+@media (prefers-reduced-motion:reduce){
+  .fs-search-overlay{transition:opacity .15s ease!important;transform:translate(-50%,0) scale(1)!important}
+  .fs-search-ring{animation:none!important}
+  .fs-search-overlay.searching .fs-search-underline::after{animation:none!important;opacity:.6}
+}

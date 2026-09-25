@@ -682,6 +682,233 @@
     if (totalEl) totalEl.textContent=money(total)+(labCart.some(item=>item.price==null)?" + cotización":"");
   }
 
+  function cartTotal(){
+    return labCart.reduce((sum,item)=>sum+(Number.isFinite(Number(item.price))?Number(item.price):0),0);
+  }
+
+  // ---------- French Wallet identity card ----------
+  // Identity only: initials, a chosen display name, the simulated membership
+  // level and a short local code — never a bank card number, CVV or expiry.
+  const WALLET_NAME_KEY = "fs-lab-wallet-name";
+  const WALLET_CODE_KEY = "fs-lab-wallet-code";
+  function walletCode(){
+    let code = null;
+    try { code = localStorage.getItem(WALLET_CODE_KEY); } catch (_) {}
+    if (!code) {
+      code = Array.from({length:4}, () => "0123456789ABCDEF"[Math.floor(Math.random()*16)]).join("");
+      try { localStorage.setItem(WALLET_CODE_KEY, code); } catch (_) {}
+    }
+    return code;
+  }
+  function walletName(){
+    let name = "";
+    try { name = localStorage.getItem(WALLET_NAME_KEY) || ""; } catch (_) {}
+    return name || "Visitante French Store";
+  }
+  function walletLevelLabel(){
+    const role = document.documentElement.dataset.role || "visitor";
+    const plan = planForRole[role];
+    return (plan || "base").toUpperCase();
+  }
+  function renderWalletCard(){
+    const name = walletName();
+    const nameInput = $("#fsWalletNameInput");
+    if (nameInput && document.activeElement !== nameInput) nameInput.value = name === "Visitante French Store" ? "" : name;
+    const level = walletLevelLabel();
+    const balance = $("#headerWallet")?.textContent || "Bs 0";
+    const code = walletCode();
+    all("#fsWalletName,#fsCheckoutWalletName").forEach(el => el.textContent = name);
+    all("#fsWalletLevel,#fsCheckoutWalletLevel").forEach(el => el.textContent = level);
+    const initialsEl = $("#fsWalletInitials");
+    if (initialsEl) initialsEl.textContent = initials(name);
+    const idEl = $("#fsWalletId");
+    if (idEl) idEl.textContent = "FS • " + code;
+    const balanceEl = $("#fsWalletBalanceLine");
+    if (balanceEl) balanceEl.textContent = balance;
+  }
+  $("#fsWalletNameInput")?.addEventListener("input", (event) => {
+    const value = event.target.value.trim();
+    try { localStorage.setItem(WALLET_NAME_KEY, value || "Visitante French Store"); } catch (_) {}
+    renderWalletCard();
+  });
+  // Small cursor/touch parallax on the card — a hint of 3D, not a full tilt rig.
+  (() => {
+    const stage = $(".fs-wallet-stage");
+    const card = $("#fsWalletCard");
+    if (!stage || !card) return;
+    const reduced = () => document.documentElement.classList.contains("motion-off") ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    stage.addEventListener("pointermove", (event) => {
+      if (reduced()) return;
+      const rect = card.getBoundingClientRect();
+      const px = (event.clientX - rect.left) / rect.width - 0.5;
+      const py = (event.clientY - rect.top) / rect.height - 0.5;
+      card.style.setProperty("--wallet-tilt-x", (-py * 10) + "deg");
+      card.style.setProperty("--wallet-tilt-y", (px * 14) + "deg");
+    }, {passive:true});
+    stage.addEventListener("pointerleave", () => {
+      card.style.setProperty("--wallet-tilt-x", "0deg");
+      card.style.setProperty("--wallet-tilt-y", "0deg");
+    }, {passive:true});
+  })();
+
+  // ---------- Checkout: confirm -> process -> receipt ----------
+  function setCheckoutOpen(open){
+    const overlay = $("#fsCheckoutOverlay"), backdrop = $("#fsCheckoutBackdrop");
+    if (!overlay || !backdrop) return;
+    overlay.classList.toggle("open", open);
+    backdrop.classList.toggle("open", open);
+    overlay.setAttribute("aria-hidden", String(!open));
+    overlay.inert = !open;
+    if (open) {
+      renderWalletCard();
+      const itemsEl = $("#fsCheckoutItems");
+      if (itemsEl) {
+        itemsEl.innerHTML = labCart.length
+          ? labCart.map(item => '<div class="fs-checkout-item"><div><b>' + escapeHtml(item.game) + '</b><span>' + escapeHtml(item.package) + '</span></div><strong>' + escapeHtml(item.priceLabel) + '</strong></div>').join("")
+          : '<div class="fs-checkout-empty">Tu carrito está vacío.</div>';
+      }
+      const total = cartTotal();
+      $("#fsCheckoutSubtotal") && ($("#fsCheckoutSubtotal").textContent = money(total));
+      $("#fsCheckoutTotal") && ($("#fsCheckoutTotal").textContent = money(total));
+      const confirmBtn = $("#fsCheckoutConfirmBtn");
+      if (confirmBtn) { confirmBtn.classList.remove("processing"); confirmBtn.disabled = !labCart.length; }
+      const qrBtn = $("#fsCheckoutQrBtn");
+      if (qrBtn) qrBtn.disabled = !labCart.length;
+      requestAnimationFrame(() => $(".fs-checkout-panel button:not(:disabled)")?.focus?.({preventScroll:true}));
+    }
+  }
+  $("[data-open-checkout]")?.addEventListener("click", () => setCheckoutOpen(true));
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-checkout-close]")) setCheckoutOpen(false);
+  });
+  // The overlay itself spans the full screen (so its centered layout works),
+  // which would otherwise swallow clicks on the empty area around the panel
+  // before they reach the backdrop underneath. Closing on a direct click on
+  // the overlay element (not one of its children) is the actual "click
+  // outside the panel" handler; the backdrop stays for the fade-to-dark visual.
+  $("#fsCheckoutOverlay")?.addEventListener("click", (event) => {
+    if (event.target === event.currentTarget) setCheckoutOpen(false);
+  });
+
+  function pad2(n){ return String(n).padStart(2, "0"); }
+  function randomHex(len){
+    return Array.from({length:len}, () => "0123456789ABCDEF"[Math.floor(Math.random()*16)]).join("");
+  }
+  // Friendly presentation only — never replaces a real internal order id.
+  // The lab has no backend order id, so this *is* the order id here.
+  function generateOrderId(){ return "FS-" + randomHex(8); }
+  function generateTracking(){ return "FS-" + new Date().getFullYear() + "-" + randomHex(6); }
+
+  let checkoutProcessing = false;
+  document.addEventListener("click", (event) => {
+    const btn = event.target.closest("[data-checkout-confirm]");
+    if (!btn || checkoutProcessing || btn.disabled) return;
+    if (!labCart.length) { toast("Tu carrito está vacío."); return; }
+    checkoutProcessing = true;
+    const method = btn.dataset.checkoutMethod === "qr" ? "qr" : "wallet";
+    const confirmBtn = $("#fsCheckoutConfirmBtn");
+    confirmBtn?.classList.add("processing");
+    $("#fsCheckoutQrBtn")?.setAttribute("disabled", "true");
+    const order = {
+      id: generateOrderId(),
+      tracking: generateTracking(),
+      date: new Date(),
+      items: labCart.slice(),
+      total: cartTotal(),
+      method
+    };
+    const reduced = document.documentElement.classList.contains("motion-off") ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    setTimeout(() => {
+      checkoutProcessing = false;
+      confirmBtn?.classList.remove("processing");
+      setCheckoutOpen(false);
+      labCart = [];
+      saveLocalList(cartStorageKey, labCart);
+      updateCartBadges();
+      renderLabCart();
+      openReceipt(order);
+    }, reduced ? 120 : 1150);
+  });
+
+  function openReceipt(order){
+    const overlay = $("#fsReceiptOverlay"), backdrop = $("#fsReceiptBackdrop");
+    if (!overlay || !backdrop) return;
+    const d = order.date;
+    const dateLabel = pad2(d.getDate()) + "/" + pad2(d.getMonth()+1) + "/" + d.getFullYear() + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+    $("#fsReceiptOrder") && ($("#fsReceiptOrder").textContent = order.id);
+    $("#fsReceiptTracking") && ($("#fsReceiptTracking").textContent = order.tracking);
+    $("#fsReceiptDate") && ($("#fsReceiptDate").textContent = dateLabel);
+    $("#fsReceiptMethod") && ($("#fsReceiptMethod").textContent = order.method === "qr" ? "QR" : "French Wallet");
+    // Honest status: this lab has no real payment backend, so it never claims
+    // a confirmed payment — QR shows "en verificación" until something real
+    // confirms it (which never happens here), Wallet shows "Pedido recibido".
+    $("#fsReceiptStatus") && ($("#fsReceiptStatus").textContent = order.method === "qr" ? "Pago en verificación" : "Pedido recibido");
+    $("#fsReceiptTotal") && ($("#fsReceiptTotal").textContent = money(order.total));
+    const productsEl = $("#fsReceiptProducts");
+    if (productsEl) {
+      productsEl.innerHTML = order.items.map(item =>
+        '<div class="fs-receipt-product"><span>' + escapeHtml(item.game) + ' · ' + escapeHtml(item.package) + '</span><b>' + escapeHtml(item.priceLabel) + '</b></div>'
+      ).join("");
+    }
+    const barcode = $("#fsReceiptBarcode");
+    if (barcode) barcode.style.backgroundSize = (6 + (order.tracking.length % 5)) + "px 100%";
+    overlay.dataset.order = order.id;
+    overlay.dataset.tracking = order.tracking;
+    overlay.dataset.total = money(order.total);
+    overlay.dataset.method = order.method === "qr" ? "QR" : "French Wallet";
+    overlay.classList.add("open");
+    backdrop.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    overlay.inert = false;
+    requestAnimationFrame(() => $(".fs-receipt-actions button")?.focus?.({preventScroll:true}));
+  }
+  function closeReceipt(){
+    const overlay = $("#fsReceiptOverlay"), backdrop = $("#fsReceiptBackdrop");
+    if (!overlay) return;
+    overlay.classList.remove("open");
+    backdrop?.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.inert = true;
+  }
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-receipt-close]")) { closeReceipt(); setView("inicio"); }
+  });
+  $("#fsReceiptOverlay")?.addEventListener("click", (event) => {
+    if (event.target === event.currentTarget) { closeReceipt(); setView("inicio"); }
+  });
+  $("#fsReceiptWhatsapp")?.addEventListener("click", () => {
+    const overlay = $("#fsReceiptOverlay");
+    if (!overlay) return;
+    const message = "Hola French Store 👋\n" +
+      "Acabo de realizar un pedido.\n\n" +
+      "Pedido: " + overlay.dataset.order + "\n" +
+      "Método: " + overlay.dataset.method + "\n" +
+      "Total: " + overlay.dataset.total + "\n" +
+      "Seguimiento: " + overlay.dataset.tracking + "\n\n" +
+      "Quisiera recibir el seguimiento de mi pedido por este chat.";
+    // Opens WhatsApp with the text prefilled; the user still has to press
+    // send themselves inside WhatsApp — nothing is sent automatically here.
+    window.open("https://wa.me/59177057379?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
+  });
+  $("#fsReceiptCopy")?.addEventListener("click", (event) => {
+    const overlay = $("#fsReceiptOverlay");
+    const tracking = overlay?.dataset.tracking || "";
+    const button = event.currentTarget;
+    const done = () => {
+      button.classList.add("copied");
+      const original = button.textContent;
+      button.textContent = "Copiado";
+      setTimeout(() => { button.classList.remove("copied"); button.textContent = original; }, 1400);
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(tracking).then(done).catch(() => toast("No se pudo copiar. Seguimiento: " + tracking));
+    } else {
+      toast("Seguimiento: " + tracking);
+    }
+  });
+
   function setCartDrawer(open){
     const drawer=$("#xCartDrawer");
     const backdrop=$("#xCartBackdrop");
@@ -835,6 +1062,130 @@
     return '<article class="product-card" tabindex="0" role="button" data-open-product="' + item.id + '"><div class="product-thumb" style="--art:url(./assets/categories/' + art + '-640.webp)"><i aria-hidden="true">' + item.icon + '</i></div><div class="product-meta"><span>' + item.category + '</span><b>' + item.name + '</b><div class="product-price"><strong>' + money(item.price) + '</strong><small>DEMO</small></div></div></article>';
   }
 
+  // Single search-matching engine shared by the catalog's own search box and
+  // the header quick-search overlay, so there is only ever one place that
+  // knows how a query maps to a product. Aliases only widen the search terms
+  // tried against real product/category names — they never invent products.
+  const SEARCH_ALIASES = {
+    "ff": "free fire", "freefire": "free fire",
+    "ml": "mobile legends", "mlbb": "mobile legends",
+    "diamante": "diamantes", "diamond": "diamantes", "diamonds": "diamantes"
+  };
+  function searchTermsFor(query){
+    const q = String(query || "").trim().toLowerCase();
+    if (!q) return [];
+    const terms = new Set([q]);
+    if (SEARCH_ALIASES[q]) terms.add(SEARCH_ALIASES[q]);
+    return [...terms];
+  }
+  function productMatchesQuery(item, query){
+    const terms = searchTermsFor(query);
+    if (!terms.length) return true;
+    const haystack = (item.name + " " + item.category).toLowerCase();
+    return terms.some(term => haystack.includes(term));
+  }
+  function searchProducts(query, limit){
+    const terms = searchTermsFor(query);
+    if (!terms.length) return [];
+    const results = data.products.filter(item => productMatchesQuery(item, query));
+    return typeof limit === "number" ? results.slice(0, limit) : results;
+  }
+
+  function searchResultRow(item){
+    const art = productArt[item.category] || "recargas-id";
+    return '<button type="button" class="fs-search-result" data-search-open="' + escapeHtml(item.id) + '">' +
+      '<span class="fs-search-result-thumb" style="background-image:url(./assets/categories/' + art + '-640.webp)"><i aria-hidden="true">' + item.icon + '</i></span>' +
+      '<span class="fs-search-result-meta"><b>' + escapeHtml(item.name) + '</b><small>' + escapeHtml(item.category) + '</small></span>' +
+      '<span class="fs-search-result-price">' + money(item.price) + '</span>' +
+    '</button>';
+  }
+
+  let quickSearchTimer = 0;
+  function renderQuickSearch(){
+    const overlay = $("#fsSearchOverlay");
+    const status = $("#fsSearchStatus");
+    const results = $("#fsSearchResults");
+    const query = $("#fsSearchInput")?.value || "";
+    if (!overlay || !status || !results) return;
+    clearTimeout(quickSearchTimer);
+    if (!query.trim()) {
+      overlay.classList.remove("searching");
+      status.className = "fs-search-status empty";
+      status.textContent = "";
+      results.innerHTML = "";
+      return;
+    }
+    overlay.classList.add("searching");
+    status.className = "fs-search-status";
+    status.textContent = "Buscando…";
+    const reduced = document.documentElement.classList.contains("motion-off") ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    quickSearchTimer = setTimeout(() => {
+      overlay.classList.remove("searching");
+      const matches = searchProducts(query, 6);
+      if (matches.length) {
+        status.className = "fs-search-status found";
+        status.textContent = "Encontrado";
+        results.innerHTML = matches.map(searchResultRow).join("");
+      } else {
+        status.className = "fs-search-status none";
+        status.textContent = "No encontramos resultados";
+        results.innerHTML = "";
+      }
+    }, reduced ? 0 : 220);
+  }
+
+  function openQuickSearch(){
+    const overlay = $("#fsSearchOverlay");
+    const backdrop = $("#fsSearchBackdrop");
+    const button = $("[data-open-search]");
+    if (!overlay || !backdrop) return;
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    backdrop.classList.add("open");
+    button?.setAttribute("aria-expanded", "true");
+    requestAnimationFrame(() => $("#fsSearchInput")?.focus({preventScroll:true}));
+  }
+  function closeQuickSearch(){
+    const overlay = $("#fsSearchOverlay");
+    const backdrop = $("#fsSearchBackdrop");
+    const button = $("[data-open-search]");
+    const input = $("#fsSearchInput");
+    if (!overlay || !overlay.classList.contains("open")) return;
+    overlay.classList.remove("open", "searching");
+    overlay.setAttribute("aria-hidden", "true");
+    backdrop?.classList.remove("open");
+    button?.setAttribute("aria-expanded", "false");
+    if (input) input.value = "";
+    const status = $("#fsSearchStatus");
+    if (status) { status.textContent = ""; status.className = "fs-search-status"; }
+    const results = $("#fsSearchResults");
+    if (results) results.innerHTML = "";
+    button?.focus({preventScroll:true});
+  }
+  function openSearchResult(id){
+    const item = data.products.find(p => p.id === id);
+    closeQuickSearch();
+    activeFilter = "Todos";
+    setView("catalogo");
+    requestAnimationFrame(() => {
+      const input = $("#catalogSearch");
+      if (input && item) { input.value = item.name; renderCatalog(); }
+    });
+  }
+
+  $("#fsSearchInput")?.addEventListener("input", renderQuickSearch);
+  $("#fsSearchInput")?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") { event.preventDefault(); closeQuickSearch(); }
+  });
+  $("#fsSearchResults")?.addEventListener("click", (event) => {
+    const row = event.target.closest("[data-search-open]");
+    if (row) openSearchResult(row.dataset.searchOpen);
+  });
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-search-close]")) closeQuickSearch();
+  });
+
   // Orders: built only from data the lab already holds (checkout items); no status or date is invented.
   function renderOrders(){
     const panel = $("#ordersPanel");
@@ -864,11 +1215,10 @@
   }
 
   function renderCatalog(){
-    const query = ($("#catalogSearch")?.value || "").trim().toLowerCase();
+    const query = $("#catalogSearch")?.value || "";
     const items = data.products.filter(item => {
       const matchesFilter = activeFilter === "Todos" || item.category === activeFilter;
-      const matchesQuery = !query || (item.name + " " + item.category).toLowerCase().includes(query);
-      return matchesFilter && matchesQuery;
+      return matchesFilter && productMatchesQuery(item, query);
     });
     const grid = $("#catalogGrid");
     if (grid) grid.innerHTML = items.length ? items.map(productCard).join("") : '<div class="lab-note"><b>Sin resultados</b><p>Prueba otra búsqueda. Estos datos son ficticios.</p></div>';
@@ -891,6 +1241,7 @@
     setInfoHub(false);
     history.replaceState(null, "", "#" + currentView);
     scheduleDeviceScale();
+    if (currentView === "wallet") renderWalletCard();
   }
 
   function setRole(role){
@@ -1018,11 +1369,7 @@
     }
 
     const searchButton = event.target.closest("[data-open-search]");
-    if (searchButton) {
-      setView("catalogo");
-      requestAnimationFrame(() => $("#catalogSearch")?.focus({preventScroll:false}));
-      return;
-    }
+    if (searchButton) { openQuickSearch(); return; }
 
     const accountAction = event.target.closest("[data-account-action]");
     if (accountAction) {
@@ -1489,6 +1836,9 @@
   // Manual lab replay only; skip it when the real one-time intro already triggered the same overlay.
   if (new URLSearchParams(location.search).has('intro') && introRoot.dataset.intro !== "playing") runLoadingDemo();
   document.addEventListener('keydown', event => {
+    if (event.key==='Escape' && $('#fsSearchOverlay')?.classList.contains('open')) { event.preventDefault(); closeQuickSearch(); return; }
+    if (event.key==='Escape' && $('#fsReceiptOverlay')?.classList.contains('open')) { event.preventDefault(); closeReceipt(); return; }
+    if (event.key==='Escape' && $('#fsCheckoutOverlay')?.classList.contains('open')) { event.preventDefault(); setCheckoutOpen(false); return; }
     const cartOpen=$('#xCartDrawer')?.classList.contains('open');
     const infoOpen=$('#infoHub')?.classList.contains('open');
     if(cartOpen && event.key==='Escape'){event.preventDefault();setCartDrawer(false);return;}

@@ -36,6 +36,8 @@
   <link rel="stylesheet" href="./reference-info.css?v=14">
   <link rel="stylesheet" href="./electric-cards.css?v=1">
   <link rel="stylesheet" href="./mascot-loader.css?v=1">
+  <link rel="stylesheet" href="./search-expand.css?v=1">
+  <link rel="stylesheet" href="./wallet-checkout.css?v=1">
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="fsGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6F5F0"/><stop offset="1" stop-color="#AEB9BC"/></linearGradient><linearGradient id="fsWaveGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c6a96b" stop-opacity=".45"/><stop offset=".5" stop-color="#d8c18b"/><stop offset="1" stop-color="#c6a96b" stop-opacity=".45"/></linearGradient></defs></svg>
@@ -178,7 +180,7 @@
 
             
 
-            <button class="header-search" type="button" data-open-search aria-label="Buscar en French Store">
+            <button class="header-search" type="button" data-open-search aria-label="Buscar en French Store" aria-expanded="false" aria-controls="fsSearchOverlay">
               <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg><span class="header-search-copy">Buscar en French Store...</span>
             </button>
 
@@ -190,6 +192,21 @@
             </div>
 
           </header>
+
+          <div class="fs-search-backdrop" id="fsSearchBackdrop" data-search-close aria-hidden="true"></div>
+          <div class="fs-search-overlay" id="fsSearchOverlay" aria-hidden="true">
+            <div class="fs-search-panel" role="search">
+              <span class="fs-search-ring" aria-hidden="true"></span>
+              <div class="fs-search-field">
+                <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg>
+                <input id="fsSearchInput" type="search" placeholder="Buscar en French Store" autocomplete="off" aria-label="Buscar en French Store">
+                <button type="button" class="fs-search-close" data-search-close aria-label="Cerrar búsqueda">×</button>
+              </div>
+              <span class="fs-search-underline" aria-hidden="true"></span>
+              <div class="fs-search-status" id="fsSearchStatus" aria-live="polite"></div>
+              <div class="fs-search-results" id="fsSearchResults"></div>
+            </div>
+          </div>
 
           <span class="header-ticker-bridge" aria-hidden="true"></span>
           <div class="welcome-ticker" aria-label="Mensajes de French Store">
@@ -277,7 +294,40 @@
             <div class="page-head reveal">
               <span class="eyebrow">WALLET DEMO</span>
               <h1>French Wallet</h1>
-              <p>Base visual sin saldo, cargas ni conexiones reales.</p>
+              <p>Tu tarjeta de identidad French Store. Sin números bancarios, sin datos financieros reales.</p>
+            </div>
+            <div class="fs-wallet-stage reveal">
+              <div class="fs-wallet-card" id="fsWalletCard">
+                <div class="fs-wallet-sheen" aria-hidden="true"></div>
+                <div class="fs-wallet-top">
+                  <span class="fs-wallet-gem" aria-hidden="true">💎</span>
+                  <b>FRENCH STORE</b>
+                </div>
+                <div class="fs-wallet-initials" id="fsWalletInitials">FS</div>
+                <div class="fs-wallet-bottom">
+                  <div class="fs-wallet-holder">
+                    <small>TITULAR</small>
+                    <b id="fsWalletName">Visitante French Store</b>
+                  </div>
+                  <div class="fs-wallet-level">
+                    <small>NIVEL</small>
+                    <b id="fsWalletLevel">BASE</b>
+                  </div>
+                </div>
+                <div class="fs-wallet-id" id="fsWalletId">FS • ----</div>
+              </div>
+              <div class="fs-wallet-meta">
+                <label class="fs-wallet-name-field">
+                  <span>Nombre en tu tarjeta</span>
+                  <input id="fsWalletNameInput" type="text" maxlength="40" placeholder="Escribe tu nombre" autocomplete="off">
+                </label>
+                <div class="fs-wallet-balance">
+                  <span>Saldo French Wallet</span>
+                  <b id="fsWalletBalanceLine">Bs 125</b>
+                </div>
+                <button class="primary full" type="button" data-open-checkout>Pagar carrito</button>
+                <small class="fs-wallet-hint">Vista del laboratorio · no procesa pagos reales.</small>
+              </div>
             </div>
           </section>
 
@@ -486,7 +536,58 @@
           <button class="whatsapp-float" type="button" data-info-action="WhatsApp" aria-label="Contactar por WhatsApp">
             <span><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-13.4 7.9L2 21l1.6-5.4A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1a8 8 0 0 0 4 4l1-1 3 1c0 3-3 3-5 2-4-2-7-6-6-8Z"/></svg></span><b>¿Necesitas ayuda?</b><small>Escríbenos por WhatsApp</small>
           </button>
-          
+
+          <div class="fs-checkout-backdrop" id="fsCheckoutBackdrop" data-checkout-close aria-hidden="true"></div>
+          <section class="fs-checkout-overlay" id="fsCheckoutOverlay" role="dialog" aria-modal="true" aria-label="Confirmar pedido" aria-hidden="true" inert>
+            <div class="fs-checkout-panel">
+              <header class="fs-checkout-head">
+                <b>Confirmar pedido</b>
+                <button type="button" data-checkout-close aria-label="Cerrar">×</button>
+              </header>
+              <div class="fs-checkout-wallet-mini" aria-hidden="true">
+                <span class="fs-wallet-gem">💎</span>
+                <span class="fs-checkout-wallet-name" id="fsCheckoutWalletName">Visitante French Store</span>
+                <span class="fs-checkout-wallet-level" id="fsCheckoutWalletLevel">BASE</span>
+              </div>
+              <div class="fs-checkout-items" id="fsCheckoutItems"></div>
+              <div class="fs-checkout-summary">
+                <div><span>Subtotal</span><b id="fsCheckoutSubtotal">Bs 0,00</b></div>
+                <div class="total"><span>Total</span><strong id="fsCheckoutTotal">Bs 0,00</strong></div>
+              </div>
+              <button class="fs-checkout-confirm" type="button" id="fsCheckoutConfirmBtn" data-checkout-confirm data-checkout-method="wallet">
+                <span class="fs-checkout-confirm-label">Confirmar pago</span>
+                <span class="fs-checkout-confirm-dots" aria-hidden="true"><i></i><i></i></span>
+              </button>
+              <button class="fs-checkout-qr-link" type="button" id="fsCheckoutQrBtn" data-checkout-confirm data-checkout-method="qr">Pagar con QR en su lugar</button>
+              <small class="fs-checkout-note">Vista del laboratorio · no procesa pagos reales.</small>
+            </div>
+          </section>
+
+          <div class="fs-receipt-backdrop" id="fsReceiptBackdrop" data-receipt-close aria-hidden="true"></div>
+          <section class="fs-receipt-overlay" id="fsReceiptOverlay" role="dialog" aria-modal="true" aria-label="Comprobante de pedido" aria-hidden="true" inert>
+            <div class="fs-receipt-slot" aria-hidden="true"></div>
+            <div class="fs-receipt-paper" id="fsReceiptPaper">
+              <div class="fs-receipt-content">
+                <div class="fs-receipt-brand">💎 FRENCH STORE 💎</div>
+                <div class="fs-receipt-title">COMPROBANTE DE PEDIDO</div>
+                <div class="fs-receipt-row"><span>Pedido</span><b id="fsReceiptOrder">FS-00000000</b></div>
+                <div class="fs-receipt-row"><span>Seguimiento</span><b id="fsReceiptTracking">FS-2026-000000</b></div>
+                <div class="fs-receipt-row"><span>Fecha</span><b id="fsReceiptDate">—</b></div>
+                <div class="fs-receipt-products" id="fsReceiptProducts"></div>
+                <div class="fs-receipt-row"><span>Método</span><b id="fsReceiptMethod">French Wallet</b></div>
+                <div class="fs-receipt-row"><span>Estado</span><b id="fsReceiptStatus">Pedido recibido</b></div>
+                <div class="fs-receipt-total"><span>TOTAL</span><strong id="fsReceiptTotal">Bs 0,00</strong></div>
+                <div class="fs-receipt-barcode" id="fsReceiptBarcode" aria-hidden="true"></div>
+              </div>
+              <div class="fs-receipt-jagged" aria-hidden="true"></div>
+            </div>
+            <div class="fs-receipt-actions">
+              <button class="fs-receipt-whatsapp" type="button" id="fsReceiptWhatsapp">Enviar comprobante por WhatsApp</button>
+              <button class="fs-receipt-copy" type="button" id="fsReceiptCopy">Copiar seguimiento</button>
+              <button class="fs-receipt-close" type="button" data-receipt-close>Volver a la tienda</button>
+            </div>
+          </section>
+
         </div>
       </div>
       </div>
