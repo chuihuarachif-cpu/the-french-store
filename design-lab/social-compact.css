@@ -6,56 +6,90 @@
    here with higher specificity rather than editing either theme file. */
 html.standalone body .store-app .info-hub{z-index:62!important}
 
-/* Compact hover/tap-expand row for the four official networks (Facebook,
-   TikTok, YouTube, WhatsApp only). Additive: only the row that carries
-   .social-compact-row changes, so the underlying .social-card component and
-   its detailed layout stay exactly as built if that class is ever removed.
-   The icon and its name use fresh classes (.fs-chip-logo / .fs-chip-label)
-   instead of the shared .sc-logo/.sc-text/.sc-cta, so this never has to
-   fight the older theme files' many !important rules for those — only
-   .social-card itself (which those files do still theme) needs that. */
-html.standalone body .store-app .info-hub .social-card-grid.social-compact-row{
+/* Only the body (.info-hub-layout: nav + panels + aside + important) should
+   scroll — the header (title, "Conoce más..." subtitle, close button) stays
+   fixed so it's always reachable. .info-hub was overflow-y:auto as a plain
+   block, which scrolled the header away with everything else; making it a
+   column flex box lets the header keep its natural size while the layout
+   takes the rest and scrolls on its own. Thin, on-brand scrollbar instead
+   of the browser default. */
+html.standalone body .store-app .info-hub{
   display:flex!important;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:12px;
-  grid-template-columns:none!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+html.standalone body .store-app .info-hub-head{flex:0 0 auto!important}
+html.standalone body .store-app .info-hub-layout{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(140,180,200,.45) transparent;
+}
+html.standalone body .store-app .info-hub-layout::-webkit-scrollbar{width:7px}
+html.standalone body .store-app .info-hub-layout::-webkit-scrollbar-track{background:transparent}
+html.standalone body .store-app .info-hub-layout::-webkit-scrollbar-thumb{background:rgba(140,180,200,.4);border-radius:99px}
+html.standalone body .store-app .info-hub-layout::-webkit-scrollbar-thumb:hover{background:rgba(160,200,220,.6)}
+/* .info-hub-content itself no longer needs to clip its own content now that
+   the scroll happens one level up. */
+html.standalone body .store-app .info-hub-content{overflow:visible!important}
+
+/* Redes oficiales: a 2x2 grid of real cards (icon + name always visible,
+   generously sized) instead of small compact squares stranded in a mostly
+   empty flex:1 area — .social-card-grid no longer stretches to fill all of
+   .info-hub-content's height, it sizes to its own two rows and centers in
+   whatever room the row1 track gives it (that height is set by the nav
+   column, which this doesn't touch, per the "don't change the left nav"
+   instruction). Facebook, TikTok, YouTube, WhatsApp only. */
+html.standalone body .store-app .info-hub .social-card-grid.social-compact-row{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-auto-rows:1fr;
+  gap:14px!important;
+  flex:0 1 auto!important;
+  align-content:center;
+  align-self:center;
+  width:100%;
 }
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card{
-  flex:0 0 auto!important;
-  width:52px!important;
-  height:52px!important;
-  min-height:0!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:64px!important;
   display:flex!important;
   flex-direction:row!important;
-  justify-content:flex-start!important;
   align-items:center!important;
-  padding:0!important;
-  overflow:hidden!important;
-  border-radius:16px!important;
-  transition:width .48s cubic-bezier(.22,1,.36,1);
-  box-shadow:0 10px 24px rgba(0,0,0,.28)!important;
-  background:rgba(255,255,255,.05)!important;
+  justify-content:flex-start!important;
+  gap:14px!important;
+  padding:16px 18px!important;
+  overflow:visible!important;
+  border-radius:18px!important;
+  background:rgba(255,255,255,.045)!important;
+  box-shadow:0 10px 24px rgba(0,0,0,.24),inset 0 0 0 1px rgba(255,255,255,.07)!important;
+  transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s ease,background .28s ease;
 }
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card::after{display:none!important}
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card>.sc-text,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card>.sc-cta{display:none!important}
 
 .social-card-grid.social-compact-row .social-card>.fs-chip-logo{
-  flex:0 0 52px;
-  width:52px;
-  height:52px;
+  flex:0 0 46px;
+  width:46px;
+  height:46px;
   display:grid;
   place-items:center;
   margin:0;
-  border-radius:16px;
+  border-radius:14px;
+  background:rgba(255,255,255,.07);
+  transition:background .28s ease,transform .28s cubic-bezier(.22,1,.36,1);
 }
-.social-card-grid.social-compact-row .social-card>.fs-chip-logo .sc-logo-svg{width:62%;height:62%}
+.social-card-grid.social-compact-row .social-card>.fs-chip-logo .sc-logo-svg{width:60%;height:60%}
+
 /* .fs-chip-label is still a <span>, so the theme files' generic (tag-based,
    not class-based) ".social-card > span" logo-tile rule still matches it —
-   renaming only dodged the .sc-logo-specific rule. Reset every property
-   that generic rule sets, with the same html.standalone body .store-app
-   prefix so this reliably outranks it instead of losing at random. */
+   reset every property that generic rule sets, with the same
+   html.standalone body .store-app prefix so this reliably outranks it. */
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card>.fs-chip-label{
   grid-row:auto!important;
   display:block!important;
@@ -68,59 +102,74 @@ html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .
   border-radius:0!important;
   background:none!important;
   box-shadow:none!important;
-  color:#f2f8fb!important;
-  font-weight:800!important;
-  font-size:.82rem!important;
-  line-height:1!important;
-  white-space:nowrap;
-  opacity:0;
-  max-width:0;
-  overflow:hidden;
-  padding-left:0;
-  transition:opacity .3s ease .05s,max-width .45s cubic-bezier(.22,1,.36,1),padding-left .3s ease;
+  color:#d7e4ec!important;
+  font-weight:750!important;
+  font-size:.92rem!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  max-width:none!important;
+  opacity:1!important;
+  padding-left:0!important;
+  transition:color .28s ease;
 }
+
+/* Hover/focus/tap: a subtle lift + glow, not a size/width change, so
+   neighboring cells never shift. */
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card:hover,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card:focus-visible,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.tap-open{
-  width:180px!important;
+  transform:translateY(-2px)!important;
+  background:rgba(255,255,255,.08)!important;
 }
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card:hover>.fs-chip-label,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card:focus-visible>.fs-chip-label,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.tap-open>.fs-chip-label{
-  opacity:1!important;
-  max-width:130px!important;
-  padding-left:12px!important;
+  color:#fff!important;
+}
+html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card:hover>.fs-chip-logo,
+html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card:focus-visible>.fs-chip-logo,
+html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.tap-open>.fs-chip-logo{
+  transform:scale(1.08);
 }
 
-/* Brand accents on the compact tile itself (subtle, French Store stays the
-   dominant surface — background is a neutral dark tile, not a color wash). */
+/* Brand accents on the cell (subtle, French Store stays the dominant
+   surface — a glow, not a color wash). */
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.facebook:hover,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.facebook:focus-visible,
-html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.facebook.tap-open{background:rgba(40,110,220,.32)!important}
+html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.facebook.tap-open{box-shadow:0 10px 26px rgba(0,0,0,.28),0 0 0 1px rgba(80,150,255,.45),0 0 22px rgba(40,110,220,.28)!important}
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.tiktok:hover,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.tiktok:focus-visible,
-html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.tiktok.tap-open{background:rgba(255,255,255,.14)!important}
+html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.tiktok.tap-open{box-shadow:0 10px 26px rgba(0,0,0,.28),0 0 0 1px rgba(230,230,240,.4),0 0 22px rgba(255,255,255,.14)!important}
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.youtube:hover,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.youtube:focus-visible,
-html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.youtube.tap-open{background:rgba(220,50,60,.32)!important}
+html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.youtube.tap-open{box-shadow:0 10px 26px rgba(0,0,0,.28),0 0 0 1px rgba(255,110,110,.42),0 0 22px rgba(220,50,60,.26)!important}
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.whatsapp:hover,
 html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.whatsapp:focus-visible,
-html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.whatsapp.tap-open{background:rgba(30,170,110,.34)!important}
+html.standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card.whatsapp.tap-open{box-shadow:0 10px 26px rgba(0,0,0,.28),0 0 0 1px rgba(80,220,160,.42),0 0 22px rgba(30,170,110,.28)!important}
 
-/* Mobile/touch: keep the compact square, but the first tap only expands
-   (handled in JS); a coarse pointer never depends on :hover to reveal it. */
+/* Mobile/touch: same 2x2 grid, slightly tighter. A coarse pointer never
+   relies on :hover — the JS toggles .tap-open on tap for the glow, but the
+   name is already visible either way, so there's nothing hidden to miss. */
 html[data-device="mobile"] .social-card-grid.social-compact-row,
-html[data-device="mobile-landscape"] .social-card-grid.social-compact-row{gap:9px}
+html[data-device="mobile-landscape"] .social-card-grid.social-compact-row{gap:9px!important}
 html[data-device="mobile"].standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card,
-html[data-device="mobile-landscape"].standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card{width:46px!important;height:46px!important}
+html[data-device="mobile-landscape"].standalone body .store-app .info-hub .social-card-grid.social-compact-row .social-card{padding:11px 12px!important;min-height:52px!important;gap:10px!important}
 html[data-device="mobile"] .social-card-grid.social-compact-row .social-card>.fs-chip-logo,
-html[data-device="mobile-landscape"] .social-card-grid.social-compact-row .social-card>.fs-chip-logo{flex-basis:46px;width:46px;height:46px}
-html[data-device="mobile"] .social-card-grid.social-compact-row .social-card.tap-open,
-html[data-device="mobile-landscape"] .social-card-grid.social-compact-row .social-card.tap-open{width:150px!important}
+html[data-device="mobile-landscape"] .social-card-grid.social-compact-row .social-card>.fs-chip-logo{flex-basis:36px;width:36px;height:36px}
+html[data-device="mobile"] .social-card-grid.social-compact-row .social-card>.fs-chip-label,
+html[data-device="mobile-landscape"] .social-card-grid.social-compact-row .social-card>.fs-chip-label{font-size:.78rem!important}
+
+/* Wide desktop/laptop: enough room to lay all four out in one row instead
+   of forcing a 2x2 grid with leftover vertical room. */
+html[data-device="desktop"] .social-card-grid.social-compact-row,
+html[data-device="laptop"] .social-card-grid.social-compact-row{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
 
 html.motion-off .social-card-grid.social-compact-row .social-card,
-html.motion-off .social-card-grid.social-compact-row .social-card>.fs-chip-label{transition:none!important}
+html.motion-off .social-card-grid.social-compact-row .social-card>.fs-chip-logo{transition:none!important}
 @media (prefers-reduced-motion:reduce){
   .social-card-grid.social-compact-row .social-card,
-  .social-card-grid.social-compact-row .social-card>.fs-chip-label{transition-duration:.12s!important}
+  .social-card-grid.social-compact-row .social-card>.fs-chip-logo{transition-duration:.12s!important}
 }

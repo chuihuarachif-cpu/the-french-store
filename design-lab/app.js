@@ -1186,22 +1186,17 @@
     if (event.target.closest("[data-search-close]")) closeQuickSearch();
   });
 
-  // Compact social icons: a coarse pointer (touch) never relies on :hover.
-  // First tap expands to show the name; tapping the already-expanded icon
-  // (or any :hover/:focus-visible expansion on a real pointer) navigates.
+  // Social network cells show icon+name at all times now (no hidden label
+  // to reveal), so touch just navigates normally like any link. .tap-open
+  // only adds the same glow :hover gives a mouse, briefly, as touch feedback
+  // — it never blocks or delays the navigation itself.
   document.addEventListener("click", (event) => {
     const card = event.target.closest(".social-card-grid.social-compact-row .social-card");
     if (!card) return;
     const coarse = window.matchMedia?.("(hover: none), (pointer: coarse)")?.matches;
-    if (coarse && !card.classList.contains("tap-open")) {
-      event.preventDefault();
-      all(".social-card-grid.social-compact-row .social-card.tap-open").forEach(el => { if (el !== card) el.classList.remove("tap-open"); });
+    if (coarse) {
       card.classList.add("tap-open");
-    }
-  });
-  document.addEventListener("click", (event) => {
-    if (!event.target.closest(".social-card-grid.social-compact-row")) {
-      all(".social-card-grid.social-compact-row .social-card.tap-open").forEach(el => el.classList.remove("tap-open"));
+      setTimeout(() => card.classList.remove("tap-open"), 500);
     }
   });
 
@@ -1694,14 +1689,23 @@
   let loadingBrandTimer = 0;
   let mascotFrameInterval = 0;
 
-  // 4 unique flight frames (a 5th arrived as a byte-identical duplicate of
-  // frame 2 and was dropped). Cycled by swapping background-image rather
-  // than a sprite sheet, so replacing/adding frames later is a file swap.
+  // 7 unique flight frames on disk (mascot-flight-01..07.webp). Of the 8
+  // source files delivered across two batches, one (originally the 3rd) was
+  // a byte-identical duplicate of frame 02, so it was never saved as its
+  // own file. Rather than invent an 8th pose, that duplicate's original
+  // position in the upload order is kept as a short "hold" on frame 02 —
+  // the cycle below is 8 steps long but only 7 images. Cycled by swapping
+  // background-image rather than a sprite sheet, so replacing/adding frames
+  // later is a file swap.
   const MASCOT_FRAMES = [
     "./assets/mascot/mascot-flight-01.webp",
     "./assets/mascot/mascot-flight-02.webp",
+    "./assets/mascot/mascot-flight-02.webp", // hold: original upload slot 3 duplicated slot 2
     "./assets/mascot/mascot-flight-03.webp",
-    "./assets/mascot/mascot-flight-04.webp"
+    "./assets/mascot/mascot-flight-04.webp",
+    "./assets/mascot/mascot-flight-05.webp",
+    "./assets/mascot/mascot-flight-06.webp",
+    "./assets/mascot/mascot-flight-07.webp"
   ];
   let mascotFramesReady = false;
   function preloadMascotFrames(){
