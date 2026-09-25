@@ -1326,11 +1326,46 @@
   let loadingHideTimer = 0;
   let loadingProgressInterval = 0;
   let loadingBrandTimer = 0;
+  let mascotFrameInterval = 0;
+
+  // 4 unique flight frames (a 5th arrived as a byte-identical duplicate of
+  // frame 2 and was dropped). Cycled by swapping background-image rather
+  // than a sprite sheet, so replacing/adding frames later is a file swap.
+  const MASCOT_FRAMES = [
+    "./assets/mascot/mascot-flight-01.webp",
+    "./assets/mascot/mascot-flight-02.webp",
+    "./assets/mascot/mascot-flight-03.webp",
+    "./assets/mascot/mascot-flight-04.webp"
+  ];
+  let mascotFramesReady = false;
+  function preloadMascotFrames(){
+    if (mascotFramesReady) return;
+    mascotFramesReady = true;
+    MASCOT_FRAMES.forEach(src => { const img = new Image(); img.src = src; });
+  }
+
+  function startMascotFrameLoop(reduced){
+    const frameEl = $("#fsMascotFrame");
+    if (!frameEl) return;
+    clearInterval(mascotFrameInterval);
+    let i = 0;
+    frameEl.style.backgroundImage = "url('" + MASCOT_FRAMES[0] + "')";
+    if (reduced) return; // static pose only, no cycling
+    mascotFrameInterval = setInterval(() => {
+      i = (i + 1) % MASCOT_FRAMES.length;
+      frameEl.style.backgroundImage = "url('" + MASCOT_FRAMES[i] + "')";
+    }, 90); // ~11fps
+  }
+  function stopMascotFrameLoop(){
+    clearInterval(mascotFrameInterval);
+    mascotFrameInterval = 0;
+  }
 
   function stopLoadingTimers(){
     clearTimeout(loadingHideTimer);
     clearInterval(loadingProgressInterval);
     clearTimeout(loadingBrandTimer);
+    stopMascotFrameLoop();
     loadingHideTimer = 0;
     loadingProgressInterval = 0;
     loadingBrandTimer = 0;
@@ -1343,6 +1378,9 @@
       loadingHideTimer = setTimeout(() => {
         overlay.classList.remove("active","leaving","run-phase","brand-phase","loading-complete");
         overlay.setAttribute("aria-hidden","true");
+        $("#fsMascotTrack")?.classList.remove("mascot-dashing");
+        $("#fsMascotProgress")?.classList.remove("mascot-dash-out");
+        stopMascotFrameLoop();
         if (button) button.textContent = "▶ Probar carga";
         onDone?.();
       }, reduced ? 40 : 360);
@@ -1361,6 +1399,7 @@
     const button = $("#loadingDemoButton");
     if (!overlay || !fill || !percent || !message) { opts?.onDone?.(); return; }
 
+    preloadMascotFrames();
     stopLoadingTimers();
     overlay.classList.remove("leaving","loading-complete","run-phase");
     overlay.classList.add("active","brand-phase");
@@ -1375,6 +1414,18 @@
     const reduced = document.documentElement.classList.contains("motion-off") ||
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
+    const mascotTrack = $("#fsMascotTrack");
+    const mascotProgress = $("#fsMascotProgress");
+    // Measured once: the track doesn't resize during the ~2s loader, so this
+    // avoids a layout read on every tick.
+    const mascotMaxX = (mascotTrack && mascotProgress)
+      ? Math.max(0, mascotTrack.clientWidth - mascotProgress.offsetWidth)
+      : 0;
+    mascotProgress?.classList.remove("mascot-dash-out");
+    mascotTrack?.classList.remove("mascot-dashing");
+    mascotProgress?.style.setProperty("--mascot-x", "0px");
+    startMascotFrameLoop(reduced);
+
     const startRun = () => {
       overlay.classList.remove("brand-phase");
       overlay.classList.add("run-phase");
@@ -1388,6 +1439,13 @@
           fill.style.transform = "scaleX(1)";
           percent.textContent = "100%";
           message.textContent = "¡Todo listo! Entrando a French Store...";
+          mascotProgress?.style.setProperty("--mascot-x", mascotMaxX + "px");
+          // Brief pause, then tilt forward and dash off-screen while the
+          // speed lines flash; the loader's own edge clips it as it exits.
+          mascotTrack?.classList.add("mascot-dashing");
+          loadingHideTimer = setTimeout(() => {
+            mascotProgress?.classList.add("mascot-dash-out");
+          }, reduced ? 0 : 140);
           finishLoadingDemo(overlay, button, reduced, opts?.onDone);
           return;
         }
@@ -1395,6 +1453,7 @@
         const visible = Math.floor(progress);
         fill.style.transform = "scaleX(" + (progress / 100) + ")";
         percent.textContent = visible + "%";
+        mascotProgress?.style.setProperty("--mascot-x", (progress / 100 * mascotMaxX) + "px");
 
         message.textContent = visible < 70 ? "Preparando French Store..." : "Últimos detalles...";
       }, 55);
