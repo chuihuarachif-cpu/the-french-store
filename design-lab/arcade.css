@@ -1,0 +1,62 @@
+/* French Arcade · same universe as the store: petrol blue, stone, glass, champagne. */
+:root{--gold:#e6cf9a;--ink:#f3f6f8;--mute:#aab9c6;--mint:#7ed6c8;--edge:rgba(200,220,236,.18)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#0f2236;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.arcade{min-height:100vh;min-height:100dvh;position:relative;overflow-x:hidden;
+  background:
+    linear-gradient(112deg,transparent 0 6%,rgba(150,185,215,.12) 6.5% 28%,transparent 28.5%),
+    linear-gradient(180deg,#132b43 0,#1c3a56 30%,#27465f 62%,#3b566d 100%)}
+.arcade-bar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:16px;padding:14px clamp(14px,3vw,40px);
+  background:linear-gradient(180deg,rgba(19,43,67,.96),rgba(19,43,67,.84));border-bottom:1px solid var(--edge)}
+.arcade-back{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;min-height:44px;padding:4px 14px 4px 8px;border:1px solid var(--edge);border-radius:14px;background:rgba(10,26,42,.55)}
+.arcade-back svg{width:22px;height:22px;color:var(--gold)}
+.arcade-back-copy{display:grid;line-height:1.1}
+.arcade-back-copy small{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.arcade-back-copy b{font-size:.95rem}
+.arcade-back:hover,.arcade-back:focus-visible{border-color:rgba(230,207,154,.6)}
+.arcade-brand{display:flex;align-items:center;gap:10px;margin:0 auto}
+.arcade-brand svg{width:24px;height:24px;color:var(--mint)}
+.arcade-brand b{font-size:1.15rem;letter-spacing:-.01em}
+.arcade-points{display:flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid var(--edge);border-radius:14px;background:rgba(10,26,42,.55);min-height:44px}
+.arcade-points-icon{color:var(--gold);font-size:1.1rem}
+.arcade-points-copy{display:grid;line-height:1.15}
+.arcade-points-copy small{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.arcade-points-copy b{font-size:.8rem;font-weight:600}
+.arcade-main{max-width:1240px;margin:0 auto;padding:clamp(18px,3vw,40px) clamp(14px,3vw,40px) 64px}
+
+.arcade-hero{position:relative;border-radius:22px;overflow:hidden;border:2px solid rgba(232,222,196,.55);box-shadow:0 26px 48px rgba(3,10,20,.5);aspect-ratio:16/8;min-height:320px;background:#1a2f44}
+.arcade-hero-photo{margin:0;position:absolute;inset:0}
+.arcade-hero-photo img{width:100%;height:100%;object-fit:cover;object-position:60% 50%;display:block}
+.arcade-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,26,43,.82) 0,rgba(11,26,43,.55) 32%,transparent 58%);pointer-events:none}
+.arcade-hero-copy{position:absolute;z-index:2;left:clamp(20px,4vw,56px);top:50%;transform:translateY(-50%);max-width:min(440px,46%)}
+.arcade-eyebrow{font-size:.7rem;letter-spacing:.32em;color:var(--mint);font-weight:600}
+.arcade-hero h1{margin:10px 0 12px;font-size:clamp(2rem,4.6vw,3.6rem);line-height:1.02;letter-spacing:-.02em}
+.arcade-hero p{margin:0 0 8px;font-size:clamp(.95rem,1.5vw,1.2rem);font-weight:300;color:#e3ebf1}
+.arcade-hero .arcade-note{font-size:.85rem;color:var(--mute)}
+
+.arcade-games{margin-top:clamp(24px,4vw,44px)}
+.arcade-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--edge)}
+.arcade-section-head h2{margin:0;font-size:1.3rem}
+.arcade-section-head span{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.arcade-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.arcade-slot{display:grid;align-content:center;justify-items:start;gap:6px;min-height:150px;padding:20px 22px;border-radius:18px;border:1px dashed rgba(200,220,236,.28);background:linear-gradient(180deg,rgba(28,52,76,.55),rgba(15,33,52,.55));color:var(--mute)}
+.arcade-slot-index{font-size:.7rem;letter-spacing:.3em;color:var(--gold)}
+.arcade-slot b{font-size:1.05rem;color:var(--ink);font-weight:600}
+.arcade-slot small{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+.arcade-return{display:inline-flex;align-items:center;margin-top:28px;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid rgba(235,207,153,.7);background:linear-gradient(180deg,#f3dfb9,#dfbc76);color:#172637;font-weight:800;text-decoration:none}
+.arcade-return:focus-visible,.arcade-back:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+@media (max-width:820px){
+  .arcade-bar{flex-wrap:wrap;gap:10px}
+  .arcade-brand{order:-1;flex:1 0 100%;margin:0;justify-content:center}
+  .arcade-points{flex:1}
+  .arcade-hero{aspect-ratio:auto;min-height:0;display:flex;flex-direction:column}
+  .arcade-hero-photo{position:relative;aspect-ratio:16/10}
+  .arcade-hero::after{display:none}
+  .arcade-hero-copy{position:relative;left:auto;top:auto;transform:none;max-width:none;padding:20px 20px 24px;background:linear-gradient(180deg,#16304a,#10263b)}
+  .arcade-grid{grid-template-columns:1fr}
+  .arcade-slot{min-height:110px}
+}
+@media (max-width:820px) and (orientation:landscape){
+  .arcade-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}

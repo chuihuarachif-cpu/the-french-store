@@ -1,0 +1,99 @@
+/* French Store Lab · reference stage for phones (<1000px, standalone). Loaded after reference.css. */
+@media (max-width:999px){
+html.standalone{--gold:#e6cf9a}
+html.standalone body .store-app{overflow:hidden!important;background:
+  linear-gradient(180deg,#132b43 0,#1c3a56 34%,#27465f 60%,#5d768c 66%,#8698a9 82%,#6d8296 100%)!important}
+html.standalone body .store-app::before{content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;z-index:0!important;background:linear-gradient(112deg,transparent 0 6%,rgba(150,185,215,.14) 6.5% 30%,transparent 30.5%),linear-gradient(180deg,rgba(6,16,28,.4),transparent 22%,transparent 70%,rgba(8,20,34,.5))!important}
+html.standalone body .store-app .store-header.fs-command-header{position:absolute!important;left:10px!important;right:10px!important;top:calc(8px + env(safe-area-inset-top))!important;width:auto!important;height:54px!important;min-height:0!important;margin:0!important;display:flex!important;align-items:center!important;gap:6px!important;padding:0 8px 0 4px!important;border-radius:14px!important;background:linear-gradient(180deg,rgba(28,52,76,.95),rgba(15,33,52,.97))!important}
+html.standalone body .store-app .store-header.fs-command-header::before{display:none!important}
+html.standalone body .store-app .brand-button{flex:1 1 auto!important;padding:0 0 0 12px!important;min-width:0!important;border:0!important}
+html.standalone body .store-app .brand-button b{font-size:19px!important}
+html.standalone body .store-app .brand-button .ui-icon{width:20px!important;height:20px!important}
+html.standalone body .store-app .header-profile,html.standalone body .store-app .header-search{flex:0 0 42px!important;width:42px!important;height:42px!important;padding:0!important;margin:0!important;border-radius:12px!important;justify-content:center!important;display:grid!important;place-items:center!important}
+html.standalone body .store-app .header-profile-copy,html.standalone body .store-app .header-search-copy,html.standalone body .store-app .info-hub-button{display:none!important}
+html.standalone body .store-app .store-header.fs-command-header>.header-actions{flex:0 0 auto!important;display:flex!important;gap:6px!important;padding:0!important;margin:0!important}
+html.standalone body .store-app .header-actions>button{width:42px!important;height:42px!important;min-width:0!important;padding:0!important;border-radius:12px!important}
+html.standalone body .store-app .header-actions>.cart-button{width:auto!important;padding:0 8px!important;gap:4px!important}
+html.standalone body .store-app .store-view[data-view="inicio"]{position:absolute!important;inset:0!important;padding:0!important;display:block!important;background:none!important;z-index:1!important}
+html.standalone body .store-app .store-view[data-view="inicio"]::before{display:none!important}
+html.standalone body .store-app .home-intro{position:absolute!important;left:0!important;right:0!important;top:88px!important;width:100%!important;max-width:none!important;margin:0!important;padding:0 20px!important;text-align:center!important;z-index:2!important}
+html.standalone body .store-app .home-intro::before,html.standalone body .store-app .home-intro::after{display:none!important}
+html.standalone body .store-app .home-intro .eyebrow{font-size:9.5px!important;letter-spacing:.26em!important;margin:0 0 8px!important;color:#dfe8ef!important}
+html.standalone body .store-app .home-intro h1{font-size:30px!important;line-height:1.08!important;letter-spacing:-.015em!important;width:100%!important;max-width:none!important;margin:0!important;text-align:center!important}
+html.standalone body .store-app .home-intro p{font-size:14px!important;font-weight:300!important;margin:8px 0 0!important;max-width:none!important;width:100%!important;text-align:center!important;color:#dbe4eb!important}
+html.standalone body .store-app .category-arena-section,html.standalone body .store-app .category-arena,html.standalone body .store-app .category-arena-viewport,html.standalone body .store-app .category-arena-track{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important;overflow:visible!important;border:0!important;background:none!important}
+html.standalone body .store-app .category-arena-viewport{touch-action:pan-y!important}
+html.standalone body .store-app .category-arena-card{position:absolute!important;left:50%!important;top:230px!important;width:300px!important;height:400px!important;margin:0 0 0 -150px!important;opacity:1!important;filter:none!important;transition:transform .5s cubic-bezier(.2,.7,.2,1),opacity .35s!important;will-change:transform}
+html.standalone body .store-app .category-arena-card[data-roulette-slot="0"]{transform:none!important;z-index:6!important}
+html.standalone body .store-app .category-arena-card[data-roulette-slot="-1"]{transform:translate3d(-262px,8px,0) perspective(900px) rotateY(14deg) scale(.86)!important;z-index:4!important}
+html.standalone body .store-app .category-arena-card[data-roulette-slot="1"]{transform:translate3d(262px,8px,0) perspective(900px) rotateY(-14deg) scale(.86)!important;z-index:4!important}
+html.standalone body .store-app .category-arena-card:not([data-roulette-slot="0"]):not([data-roulette-slot="1"]):not([data-roulette-slot="-1"]){opacity:0!important;pointer-events:none!important}
+html.standalone body .store-app .category-arena-card:not(.active) .category-glass{filter:brightness(.75)!important}
+html.standalone body .store-app .category-glass{height:100%!important;min-height:0!important;border-radius:18px!important;border:2px solid rgba(232,222,196,.7)!important;background:linear-gradient(180deg,#1c3550,#11263b)!important;box-shadow:0 18px 30px rgba(3,10,20,.5)!important}
+html.standalone body .store-app .category-card-top{top:16px!important;left:18px!important;right:18px!important}
+html.standalone body .store-app .category-art{height:68%!important;top:0!important;background:linear-gradient(105deg,#647b8e 0,#425a6e 38%,#22394f 70%,#14283c 100%)!important}
+html.standalone body .store-app .category-art img{width:100%!important;height:100%!important;object-fit:cover!important;transform:scale(1.02)!important;-webkit-mask-image:none!important;mask-image:none!important}
+html.standalone body .store-app .category-console{height:32%!important;min-height:0!important;padding:0 14px 0 18px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;background:linear-gradient(180deg,#152f47,#0e2337)!important}
+html.standalone body .store-app .category-copy{flex:1 1 auto!important;min-width:0!important;white-space:nowrap!important}
+html.standalone body .store-app .category-copy b{font-size:17px!important}
+html.standalone body .store-app .category-copy small{font-size:13px!important}
+html.standalone body .store-app .category-enter{flex:0 0 auto!important;width:auto!important;min-width:0!important;height:42px!important;padding:0 14px!important;font-size:14px!important;border-radius:10px!important}
+html.standalone body .store-app .arena-nav{display:none!important}
+html.standalone body .store-app .xarena-dock{position:absolute!important;left:10px!important;right:10px!important;top:auto!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;transform:none!important;width:auto!important;height:64px!important;display:grid!important;grid-template-columns:1fr 1.9fr 1fr!important;align-items:end!important;gap:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;z-index:8!important}
+html.standalone body .store-app .xarena-dock .dock-contour{display:none!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]{height:56px!important;background:linear-gradient(180deg,#1a3550,#0f2438)!important;border:1px solid rgba(200,220,236,.16)!important;display:grid!important;place-items:center!important;align-content:center!important;gap:2px!important;margin:0!important;padding:0!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:nth-of-type(2){grid-column:1;grid-row:1;border-radius:16px 0 0 16px!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]:nth-of-type(3){grid-column:3;grid-row:1;border-radius:0 16px 16px 0!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view] .ui-icon{width:22px!important;height:22px!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view] small{font-size:11px!important}
+html.standalone body .store-app .xarena-dock .info-launcher{grid-column:2;grid-row:1;height:64px!important;margin:0!important;clip-path:polygon(5% 0,95% 0,100% 100%,0 100%)!important;border:0!important;border-radius:0!important;background:linear-gradient(180deg,#203c58,#122a40)!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;padding:8px 0 0!important;box-shadow:none!important}
+html.standalone body .store-app .info-launcher small{font-size:7.5px!important;letter-spacing:.14em!important}
+html.standalone body .store-app .info-launcher b{font-size:14px!important}
+html.standalone body .store-app .info-launcher>.ui-icon{width:24px!important;height:24px!important}
+html.standalone body .store-app .info-launcher>i{display:none!important}
+html.standalone body .store-app .whatsapp-float{position:absolute!important;left:auto!important;top:auto!important;right:12px!important;bottom:calc(88px + env(safe-area-inset-bottom))!important;width:52px!important;min-width:0!important;height:52px!important;padding:0!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:linear-gradient(180deg,#12b45e,#0a8a48)!important;border:1px solid rgba(60,220,140,.6)!important;z-index:9!important}
+html.standalone body .store-app .whatsapp-float>span{position:static!important;transform:none!important;width:auto!important;height:auto!important;background:none!important;border:0!important}
+html.standalone body .store-app .whatsapp-float>b,html.standalone body .store-app .whatsapp-float>small{display:none!important}
+html.standalone body .store-app .whatsapp-float::after{display:none!important}
+}
+
+@media (max-width:999px) and (orientation:landscape){
+html.standalone body .store-app .store-header.fs-command-header{top:6px!important;height:44px!important;left:8px!important;right:8px!important}
+html.standalone body .store-app .header-profile,html.standalone body .store-app .header-search,html.standalone body .store-app .header-actions>button{height:34px!important;width:34px!important}
+html.standalone body .store-app .header-actions>.cart-button{width:auto!important}
+html.standalone body .store-app .home-intro{top:54px!important}
+html.standalone body .store-app .home-intro .eyebrow,html.standalone body .store-app .home-intro p{display:none!important}
+html.standalone body .store-app .home-intro h1{font-size:22px!important}
+html.standalone body .store-app .category-arena-card{top:92px!important;width:400px!important;height:200px!important;margin-left:-200px!important}
+html.standalone body .store-app .category-arena-card[data-roulette-slot="-1"]{transform:translate3d(-372px,4px,0) perspective(900px) rotateY(14deg) scale(.86)!important}
+html.standalone body .store-app .category-arena-card[data-roulette-slot="1"]{transform:translate3d(372px,4px,0) perspective(900px) rotateY(-14deg) scale(.86)!important}
+html.standalone body .store-app .category-card-top{top:10px!important;left:14px!important;right:14px!important}
+html.standalone body .store-app .category-console{height:34%!important}
+html.standalone body .store-app .category-copy b{font-size:15px!important}
+html.standalone body .store-app .category-copy small{font-size:11px!important}
+html.standalone body .store-app .category-enter{height:34px!important;font-size:13px!important}
+html.standalone body .store-app .xarena-dock{left:50%!important;right:auto!important;width:420px!important;margin-left:-210px!important;height:50px!important;bottom:6px!important}
+html.standalone body .store-app .xarena-dock>button[data-nav-view]{height:44px!important}
+html.standalone body .store-app .xarena-dock .info-launcher{height:50px!important}
+html.standalone body .store-app .whatsapp-float{bottom:8px!important;right:12px!important;width:44px!important;height:44px!important}
+}
+
+@media (max-width:999px){html.standalone body .store-app .category-arena-card{background:none!important;box-shadow:none!important;border:0!important;outline:0!important}}
+
+@media (max-width:999px) and (orientation:landscape){html.standalone body .store-app .category-art img{object-fit:contain!important}}
+@media (prefers-reduced-motion:reduce){html.standalone body .store-app .category-arena-card{transition:none!important;will-change:auto!important}}
+
+html.standalone body .store-app .category-arena-card[data-distance="2"],html.standalone body .store-app .category-arena-card[data-distance="3"]{will-change:auto!important}
+
+@media (max-width:999px){
+html.standalone body .store-app .category-art img{object-fit:cover!important;object-position:var(--px,50%) 50%!important;transform:none!important;filter:none!important}
+}
+@media (max-width:999px) and (orientation:landscape){
+html.standalone body .store-app .category-art img{object-position:50% var(--py,50%)!important}
+html.standalone body .store-app .category-arena-card{height:210px!important}
+}
+
+html.standalone body .store-app .category-arena-card::before{display:none!important}
+html.standalone body .store-app .category-art::after{background:linear-gradient(180deg,rgba(9,22,36,.5),transparent 32%,transparent 75%,rgba(12,28,44,.3))!important}
+html.standalone body .store-app .category-card-top{z-index:3}
+html.standalone body .store-app .category-enter{white-space:nowrap!important}

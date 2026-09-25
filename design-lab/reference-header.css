@@ -1,0 +1,102 @@
+/* French Store Lab · header rebuild + depth pass. Loaded last.
+   Desktop order: [profile] | [plans] ... [logo, screen-centred] ... | [search] | [orders][cart]
+   All sizes use --k (== --u on desktop, 1px on phones). Static gradients/inset shadows only. */
+html.standalone body .store-app .store-header.fs-command-header>.header-profile{order:0!important}
+html.standalone body .store-app .store-header.fs-command-header>.header-plans{order:1!important}
+
+/* logo: one straight line, diamond - FRENCH STORE - diamond, both diamonds equal */
+html.standalone body .store-app .brand-button{flex-wrap:nowrap!important;white-space:nowrap!important;flex-direction:row!important}
+html.standalone body .store-app .brand-button b{
+  white-space:nowrap!important;font-weight:700!important;text-transform:uppercase;letter-spacing:.14em;line-height:1!important;
+  text-shadow:0 1px 0 rgba(0,0,0,.7),0 0 calc(10*var(--k)) rgba(236,240,238,.16);
+}
+html.standalone body .store-app .brand-button .ui-icon,
+html.standalone body .store-app .brand-button .ui-icon:last-of-type{flex:0 0 auto;stroke-width:1.4;filter:none!important}
+
+/* header: bevelled graphite slab (inset light on top edge, shade on the bottom lip) */
+html.standalone body .store-app .store-header.fs-command-header::after{
+  box-shadow:inset 0 calc(1.5*var(--k)) 0 rgba(243,238,229,.20),inset 0 calc(-3*var(--k)) calc(4*var(--k)) rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.03)!important;
+}
+
+@media (min-width:1000px){
+  html.standalone body .store-app .store-header.fs-command-header{gap:0!important;padding:0 calc(64*var(--k)) 0 calc(80*var(--k))!important}
+  /* drop the fixed-position joints; dividers now belong to the modules */
+  html.standalone body .store-app .store-header.fs-command-header::after{
+    background:linear-gradient(180deg,rgba(255,255,255,.07),transparent 32%),linear-gradient(180deg,var(--fs-panel-hi),var(--fs-panel-mid) 55%,var(--fs-panel-dark))!important;
+  }
+  html.standalone body .store-app .brand-button{gap:calc(20*var(--k))!important}
+  html.standalone body .store-app .brand-button b{font-size:calc(27*var(--k))!important}
+  html.standalone body .store-app .brand-button .ui-icon,
+  html.standalone body .store-app .brand-button .ui-icon:last-of-type{width:calc(28*var(--k))!important;height:calc(28*var(--k))!important}
+
+  html.standalone body .store-app .store-header.fs-command-header>.header-profile{padding:0 calc(22*var(--k)) 0 0!important}
+  html.standalone body .store-app .store-header.fs-command-header>.header-plans{margin:0 auto 0 calc(22*var(--k))!important}
+  html.standalone body .store-app .header-profile-copy b{font-size:calc(15*var(--k))!important;white-space:nowrap}
+  html.standalone body .store-app .header-profile-copy small{font-size:calc(11.5*var(--k))!important;white-space:nowrap}
+  html.standalone body .store-app .header-profile-avatar{width:calc(44*var(--k))!important;height:calc(44*var(--k))!important;min-width:0!important;display:grid;place-items:center}
+
+  /* right cluster: identical height + shared centre line */
+  html.standalone body .store-app .store-header.fs-command-header>.header-search{
+    order:3;flex:0 1 calc(230*var(--k))!important;height:calc(48*var(--k))!important;margin:0 calc(22*var(--k)) 0 calc(22*var(--k))!important;
+    display:flex!important;align-items:center!important;gap:calc(10*var(--k));
+  }
+  html.standalone body .store-app .header-search-copy{line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html.standalone body .store-app .store-header.fs-command-header>.header-actions{order:4;gap:calc(10*var(--k))!important;margin:0!important;align-items:center!important}
+  html.standalone body .store-app .store-header.fs-command-header .header-actions>button{
+    height:calc(48*var(--k))!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;line-height:1!important;margin:0!important;
+  }
+  html.standalone body .store-app .header-actions>.icon-button{width:calc(52*var(--k))!important}
+  html.standalone body .store-app .header-actions>.cart-button{min-width:calc(84*var(--k))!important;gap:calc(8*var(--k))!important}
+  html.standalone body .store-app .header-actions .ui-icon{display:block;width:calc(24*var(--k))!important;height:calc(24*var(--k))!important}
+
+  /* module dividers: dark groove + champagne hairline, 56% of header height */
+  html.standalone body .store-app .header-profile::before,
+  html.standalone body .store-app .header-search::before,
+  html.standalone body .store-app .header-actions::before{
+    content:"";position:absolute;top:22%;bottom:22%;width:calc(2*var(--k));pointer-events:none;
+    background:linear-gradient(90deg,rgba(0,0,0,.7) 0 50%,rgba(236,240,238,.30) 50% 100%);
+    -webkit-mask:linear-gradient(180deg,transparent,#000 22% 78%,transparent);mask:linear-gradient(180deg,transparent,#000 22% 78%,transparent);
+  }
+  html.standalone body .store-app .header-profile::before{right:0}
+  html.standalone body .store-app .header-search::before{left:calc(-22*var(--k));top:-10%;bottom:-10%}
+  html.standalone body .store-app .header-actions::before{display:none}
+}
+
+/* raised controls: brighter top edge + tighter contact shadow */
+html.standalone body .store-app .store-header.fs-command-header .header-actions>button{
+  box-shadow:0 0 0 1px rgba(236,240,238,.38),inset 0 1px 0 rgba(243,238,229,.2),inset 0 -2px 3px rgba(0,0,0,.4),0 calc(3*var(--k)) 0 calc(-1*var(--k)) rgba(0,0,0,.6),0 calc(5*var(--k)) calc(6*var(--k)) calc(-2*var(--k)) rgba(0,0,0,.45)!important;
+}
+
+/* dock: same slab construction as the header */
+html.standalone body .store-app .xarena-dock::after{
+  background:
+    radial-gradient(ellipse 34% 90% at 50% 45%,rgba(255,255,255,.035),transparent 72%),
+    linear-gradient(180deg,rgba(255,255,255,.07),transparent 30%),
+    linear-gradient(180deg,var(--fs-panel-hi),var(--fs-panel-mid) 55%,var(--fs-panel-dark))!important;
+  box-shadow:inset 0 calc(1.5*var(--k)) 0 rgba(243,238,229,.20),inset 0 calc(-3*var(--k)) calc(4*var(--k)) rgba(0,0,0,.55)!important;
+}
+
+/* card lower panel: satin graphite plate with a lit top edge, seated in the image */
+html.standalone body .store-app .category-console{
+  background:linear-gradient(180deg,var(--fs-panel-hi) 0,var(--fs-panel-mid) 38%,var(--fs-panel-dark) 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(243,238,229,.16),inset 0 calc(-2*var(--k)) calc(4*var(--k)) rgba(0,0,0,.45),0 calc(-6*var(--k)) calc(10*var(--k)) calc(-6*var(--k)) rgba(0,0,0,.5)!important;
+}
+/* CTA: thicker key with a visible base */
+html.standalone body .store-app .category-enter{
+  box-shadow:0 0 0 1px rgba(110,80,30,.7),inset 0 1px 0 rgba(255,255,255,.65),inset 0 calc(-3*var(--k)) 0 rgba(120,84,26,.32),0 calc(4*var(--k)) 0 rgba(84,60,20,.75),0 calc(8*var(--k)) calc(8*var(--k)) calc(-3*var(--k)) rgba(0,0,0,.55)!important;
+}
+html.standalone body .store-app .category-enter:active{translate:0 calc(3*var(--k));box-shadow:0 0 0 1px rgba(110,80,30,.7),inset 0 2px 4px rgba(90,60,15,.35),0 calc(1*var(--k)) 0 rgba(84,60,20,.75)!important}
+
+/* phones */
+@media (max-width:999px){
+  html.standalone body .store-app .brand-button{justify-content:center!important;padding:0!important;gap:8px!important}
+  html.standalone body .store-app .brand-button b{font-size:15px!important;letter-spacing:.1em}
+  html.standalone body .store-app .brand-button .ui-icon,
+  html.standalone body .store-app .brand-button .ui-icon:last-of-type{width:17px!important;height:17px!important}
+  html.standalone body .store-app .store-header.fs-command-header{gap:4px!important;padding:0 6px!important}
+}
+@media (max-width:389px){
+  html.standalone body .store-app .brand-button b{font-size:13px!important;letter-spacing:.06em}
+  html.standalone body .store-app .brand-button{gap:5px!important}
+  html.standalone body .store-app .brand-button .ui-icon,html.standalone body .store-app .brand-button .ui-icon:last-of-type{width:14px!important;height:14px!important}
+}

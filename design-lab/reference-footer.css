@@ -1,0 +1,95 @@
+/* French Store Lab · card footer panel (gold-lit glass console under each photo).
+   One footer component rendered from data.categories. Loaded after reference-materials.css. */
+html.standalone{--ft-navy:#0c2035;--ft-navy-2:#09182a;--ft-gold-a:#f7e2b4;--ft-gold-b:#e6c684;--ft-gold-c:#d3a862;--ft-text:#f5f7fa;--ft-muted:#8fa4bb}
+@media (min-width:1000px){html.standalone{--card-top:calc(296*var(--u));--card-h:calc(496*var(--u));--panel-h:calc(166*var(--u))}}
+@media (max-width:999px){html.standalone{--card-top:226px;--card-h:430px;--panel-h:200px}}
+@media (max-width:999px) and (orientation:landscape){html.standalone{--card-top:86px;--card-h:230px;--panel-h:92px}}
+
+/* stable geometry: every card has the same height, whatever the text */
+html.standalone body .store-app .category-arena-card{top:var(--card-top)!important;height:var(--card-h)!important}
+html.standalone body .store-app .category-art{height:calc(100% - var(--panel-h) + 1px)!important}
+html.standalone body .store-app .category-console{
+  position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;
+  height:var(--panel-h)!important;min-height:0!important;display:block!important;padding:0!important;margin:0!important;overflow:visible!important;z-index:2!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  background:linear-gradient(180deg,var(--ft-navy) 0,#0b1d31 60%,var(--ft-navy-2) 100%)!important;
+}
+html.standalone body .store-app .category-art{position:relative;z-index:1}
+
+/* wavy gold edge between photo and panel (SVG, stretched, non-scaling strokes) */
+html.standalone body .store-app .cat-wave{position:absolute;left:0;top:calc(-34*var(--k));width:100%;height:calc(40*var(--k));overflow:visible;pointer-events:none;z-index:3}
+html.standalone body .store-app .cat-wave path{vector-effect:non-scaling-stroke}
+html.standalone body .store-app .cat-wave-fill{fill:var(--ft-navy);stroke:none}
+html.standalone body .store-app .cat-wave-glow{fill:none;stroke:rgba(240,190,100,.20);stroke-width:6}
+html.standalone body .store-app .cat-wave-line{fill:none;stroke:url(#fsWaveGold);stroke-width:1.6}
+/* decoration: texture cropped from the generated art + soft gold/blue light + glowing bottom line */
+html.standalone body .store-app .cat-deco{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 24% 80% at 3% 15%,rgba(235,170,80,.14),transparent 70%),radial-gradient(ellipse 30% 90% at 97% 100%,rgba(30,100,180,.34),transparent 70%)}
+html.standalone body .store-app .cat-deco::before{content:"";position:absolute;inset:0;
+  background:url(./assets/panel/panel-lines.webp) 62% 55%/auto 135% no-repeat;
+  -webkit-mask-image:radial-gradient(ellipse 42% 85% at 62% 55%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse 42% 85% at 62% 55%,#000 25%,transparent 78%);opacity:.85}
+html.standalone body .store-app .cat-deco::after{content:"";position:absolute;left:2%;right:2%;bottom:0;height:calc(12*var(--k));
+  background:linear-gradient(90deg,transparent,rgba(255,214,150,.75) 30%,rgba(255,220,160,.9) 55%,transparent) bottom/100% 1px no-repeat,linear-gradient(0deg,rgba(240,190,100,.18),transparent)}
+
+/* content */
+html.standalone body .store-app .cat-mark{position:absolute;z-index:2;left:calc(28*var(--k));top:calc(22*var(--k));width:calc(64*var(--k));height:calc(64*var(--k));border-radius:calc(16*var(--k));display:grid;place-items:center;
+  background:linear-gradient(180deg,#1a3452,#0f2238);box-shadow:0 0 0 1px rgba(232,200,140,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 4px rgba(0,0,0,.35),0 calc(4*var(--k)) calc(6*var(--k)) calc(-2*var(--k)) rgba(0,0,0,.5)}
+html.standalone body .store-app .cat-mark-glyph{width:calc(36*var(--k));height:calc(36*var(--k))}
+html.standalone body .store-app .category-copy{position:absolute!important;z-index:2;left:calc(108*var(--k));top:calc(22*var(--k));right:calc(270*var(--k));display:block!important;min-width:0;white-space:nowrap!important;gap:0!important}
+html.standalone body .store-app .category-copy b{display:block;font-size:calc(30*var(--k))!important;line-height:1.12;font-weight:700;color:var(--ft-text)!important;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis}
+html.standalone body .store-app .category-copy small{display:block;margin-top:calc(4*var(--k));font-size:calc(19*var(--k))!important;line-height:1.2;color:var(--ft-muted)!important;overflow:hidden;text-overflow:ellipsis}
+html.standalone body .store-app .cat-tags{position:absolute;z-index:2;left:calc(28*var(--k));bottom:calc(22*var(--k));display:flex;gap:calc(14*var(--k))}
+html.standalone body .store-app .cat-tag{display:inline-flex;align-items:center;gap:calc(8*var(--k));height:calc(34*var(--k));padding:0 calc(16*var(--k)) 0 calc(12*var(--k));border-radius:999px;font-size:calc(15*var(--k));line-height:1;color:#e5ecf3;white-space:nowrap;
+  background:rgba(9,22,38,.66);box-shadow:0 0 0 1px rgba(232,200,140,.42),inset 0 1px 0 rgba(255,255,255,.08)}
+html.standalone body .store-app .cat-tag-glyph{width:calc(18*var(--k));height:calc(18*var(--k));flex:none}
+
+/* CTA: physical champagne button (real <button>, skew comes from the existing card system) */
+html.standalone body .store-app .category-enter{
+  position:absolute!important;z-index:3;right:calc(28*var(--k))!important;left:auto!important;top:calc(50% - 31*var(--k))!important;bottom:auto!important;margin:0!important;
+  width:calc(216*var(--k))!important;min-width:0!important;height:calc(62*var(--k))!important;min-height:44px!important;padding:0!important;
+  display:inline-flex!important;align-items:center;justify-content:center;gap:calc(12*var(--k));
+  border:0!important;border-radius:calc(18*var(--k))!important;
+  background:linear-gradient(180deg,var(--ft-gold-a),var(--ft-gold-b) 55%,var(--ft-gold-c))!important;color:#10233a!important;
+  font-size:calc(24*var(--k))!important;font-weight:700!important;font-style:italic!important;white-space:nowrap;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  box-shadow:0 0 0 1px rgba(150,108,44,.6),inset 0 1px 0 rgba(255,255,255,.65),inset 0 -2px 0 rgba(120,80,20,.25),0 0 calc(18*var(--k)) rgba(240,190,90,.26),0 calc(6*var(--k)) calc(10*var(--k)) calc(-4*var(--k)) rgba(3,10,20,.55)!important;
+  transition:transform .15s ease,box-shadow .15s ease!important;
+}
+html.standalone body .store-app .category-enter>i{font-style:normal;font-size:1.05em;line-height:1}
+@media (hover:hover){
+  html.standalone body .store-app .category-enter:hover{transform:skewX(-8deg) translateY(-1px)!important;box-shadow:0 0 0 1px rgba(150,108,44,.6),inset 0 1px 0 rgba(255,255,255,.75),inset 0 -2px 0 rgba(120,80,20,.25),0 0 calc(24*var(--k)) rgba(240,190,90,.4),0 calc(7*var(--k)) calc(11*var(--k)) calc(-4*var(--k)) rgba(3,10,20,.55)!important}
+}
+html.standalone body .store-app .category-enter:active{
+  transform:skewX(-8deg) translateY(2px) scale(.98)!important;
+  box-shadow:0 0 0 1px rgba(150,108,44,.6),inset 0 calc(3*var(--k)) calc(6*var(--k)) rgba(90,60,15,.35),0 0 calc(10*var(--k)) rgba(240,190,90,.16)!important;
+}
+html.standalone body .store-app .category-enter:focus-visible{outline:2px solid var(--fs-champagne);outline-offset:3px}
+/* side cards use the same champagne button (dimmed by the card overlay) */
+html.standalone body .store-app .category-arena-card:not(.active) .category-enter{
+  background:linear-gradient(180deg,var(--ft-gold-a),var(--ft-gold-b) 55%,var(--ft-gold-c))!important;color:#10233a!important;
+}
+
+/* phones, portrait: stacked panel (title row, tags row, full-width CTA) */
+@media (max-width:999px){
+  html.standalone body .store-app .cat-mark{left:18px;top:16px;width:44px;height:44px;border-radius:12px}
+  html.standalone body .store-app .cat-mark-glyph{width:26px;height:26px}
+  html.standalone body .store-app .category-copy{left:72px;top:16px;right:14px}
+  html.standalone body .store-app .category-copy b{font-size:17px!important}
+  html.standalone body .store-app .category-copy small{font-size:12.5px!important;margin-top:2px}
+  html.standalone body .store-app .cat-tags{left:18px;right:18px;top:74px;bottom:auto;gap:8px}
+  html.standalone body .store-app .cat-tag{height:28px;padding:0 11px 0 9px;gap:6px;font-size:11.5px}
+  html.standalone body .store-app .cat-tag-glyph{width:14px;height:14px}
+  html.standalone body .store-app .category-enter{left:18px!important;right:18px!important;top:auto!important;bottom:16px!important;width:auto!important;height:46px!important;font-size:18px!important;border-radius:14px!important;gap:10px}
+}
+/* phones, landscape: compact panel without tag pills */
+@media (max-width:999px) and (orientation:landscape){
+  html.standalone body .store-app .cat-mark{left:14px;top:16px;width:40px;height:40px}
+  html.standalone body .store-app .cat-mark-glyph{width:24px;height:24px}
+  html.standalone body .store-app .category-copy{left:62px;top:14px;right:170px}
+  html.standalone body .store-app .category-copy b{font-size:16px!important}
+  html.standalone body .store-app .category-copy small{font-size:12px!important}
+  html.standalone body .store-app .cat-tags{display:none}
+  html.standalone body .store-app .category-enter{left:auto!important;right:14px!important;top:calc(50% - 22px)!important;bottom:auto!important;width:140px!important;height:44px!important;font-size:15px!important}
+}
+@media (prefers-reduced-motion:reduce){html.standalone body .store-app .category-enter{transition:none!important}}
+
+html.standalone body .store-app .category-art{flex:0 0 auto!important;max-height:calc(100% - var(--panel-h) + 1px)!important}

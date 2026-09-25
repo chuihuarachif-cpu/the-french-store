@@ -1,0 +1,109 @@
+/* Loader mascot: 4-frame flight cycle riding the real loading progress.
+   Three independent transform layers so they never fight each other:
+   A) #fsMascotProgress — horizontal position, driven by JS from the same
+      progress value as the bar (--mascot-x, a px custom property).
+   B) .fs-mascot-float — continuous small vertical bob + tilt (CSS only).
+   C) .fs-mascot-frame — the 4-frame flight loop (JS swaps background-image).
+   Loaded last on purpose, like electric-cards.css, so it doesn't need to
+   fight the older theme layers' !important rules. */
+
+.fs-loader-mascot-track{
+  position:relative;
+  width:100%;
+  height:64px;
+  margin-bottom:2px;
+  overflow:visible;
+}
+
+.fs-mascot-progress{
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translate(var(--mascot-x,0px),-50%);
+  width:64px;
+  height:64px;
+}
+
+.fs-mascot-float{
+  width:100%;
+  height:100%;
+  animation:fsMascotBob 1.7s ease-in-out infinite;
+}
+
+.fs-mascot-frame{
+  width:100%;
+  height:100%;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,.45)) drop-shadow(0 0 14px rgba(90,170,255,.35));
+}
+
+@keyframes fsMascotBob{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-6px) rotate(-1.6deg)}
+}
+
+/* Speed streaks: 7 independent spans, different length/speed/opacity/lane so
+   they never read as one synchronized ring. Transform + opacity only. */
+.fs-speed-lines{
+  position:absolute;
+  inset:-6px 0;
+  pointer-events:none;
+  overflow:visible;
+}
+.fs-speed-lines span{
+  position:absolute;
+  right:0;
+  height:2px;
+  border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(120,210,255,.85));
+  opacity:0;
+  animation:fsSpeedLine 1.1s linear infinite;
+}
+.fs-speed-lines span:nth-child(1){top:8%;width:34px;animation-duration:.9s;animation-delay:0s}
+.fs-speed-lines span:nth-child(2){top:22%;width:52px;animation-duration:1.3s;animation-delay:.18s}
+.fs-speed-lines span:nth-child(3){top:38%;width:24px;animation-duration:.8s;animation-delay:.42s}
+.fs-speed-lines span:nth-child(4){top:52%;width:60px;animation-duration:1.4s;animation-delay:.05s}
+.fs-speed-lines span:nth-child(5){top:66%;width:30px;animation-duration:1s;animation-delay:.3s}
+.fs-speed-lines span:nth-child(6){top:80%;width:44px;animation-duration:1.2s;animation-delay:.55s}
+.fs-speed-lines span:nth-child(7){top:94%;width:26px;animation-duration:.85s;animation-delay:.24s}
+@keyframes fsSpeedLine{
+  0%{transform:translateX(0);opacity:0}
+  15%{opacity:.75}
+  80%{opacity:.2}
+  100%{transform:translateX(-70px);opacity:0}
+}
+
+/* Dash-out at 100%: pause, tilt forward, accelerate off the right edge. The
+   loader itself (.loading-demo{overflow:hidden}) clips it at the screen edge,
+   so this genuinely exits rather than fading in place. */
+.fs-mascot-progress.mascot-dash-out{
+  animation:fsMascotDashOut .5s cubic-bezier(.32,0,.67,0) forwards;
+}
+@keyframes fsMascotDashOut{
+  0%{transform:translate(var(--mascot-x,0px),-50%) rotate(0deg) scale(1);opacity:1}
+  25%{transform:translate(var(--mascot-x,0px),-50%) rotate(-10deg) scale(1.03);opacity:1}
+  100%{transform:translate(calc(var(--mascot-x,0px) + 360px),-50%) rotate(-14deg) scale(1.05);opacity:0}
+}
+.fs-loader-mascot-track.mascot-dashing .fs-speed-lines span{
+  animation-duration:.32s!important;
+  opacity:.9;
+}
+
+html.perf-lite .fs-mascot-float{animation:none!important}
+html.perf-lite .fs-speed-lines span:nth-child(n+5){display:none}
+html.motion-off .fs-mascot-float,
+html.motion-off .fs-speed-lines span{animation:none!important}
+html.motion-off .fs-mascot-progress{transition:none!important}
+@media (prefers-reduced-motion:reduce){
+  .fs-mascot-float{animation:none!important}
+  .fs-speed-lines{display:none!important}
+  .fs-mascot-progress.mascot-dash-out{animation:fsMascotDashOutReduced .3s ease forwards!important}
+}
+@keyframes fsMascotDashOutReduced{to{opacity:0}}
+
+html[data-device="mobile"] .fs-loader-mascot-track,
+html[data-device="mobile-landscape"] .fs-loader-mascot-track{height:50px}
+html[data-device="mobile"] .fs-mascot-progress,
+html[data-device="mobile-landscape"] .fs-mascot-progress{width:50px;height:50px}

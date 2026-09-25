@@ -1,0 +1,67 @@
+# French Store · Design Lab
+
+Laboratorio visual aislado para rediseñar la interfaz de French Store sin tocar la lógica comercial ni los servicios de producción.
+
+## Aislamiento
+
+Este directorio se ejecuta como una maqueta estática y deliberadamente no importa ningún archivo de `v2/`, Supabase, Workers, autenticación, pagos, QR real, Push/VAPID, Wallet, pedidos ni reglas de Rank Pass.
+
+Además:
+
+- `Content-Security-Policy` usa `connect-src 'none'`.
+- `fetch`, `XMLHttpRequest`, `WebSocket` y `EventSource` se bloquean también en JavaScript.
+- Los formularios y acciones sensibles son simulaciones.
+- El QR es solamente un elemento visual CSS.
+- Los productos, precios, usuarios y métricas provienen de `mock-data.js`.
+- La página usa `noindex,nofollow` para evitar indexación accidental.
+- No registra Service Worker y no usa el PWA de producción.
+
+## Flujo de trabajo
+
+1. Diseñar y probar libremente aquí.
+2. Revisar en móvil, tablet y PC mediante el selector del laboratorio.
+3. Simular estados de Visitante, Usuario, Reseller y Admin.
+4. Aprobar visualmente cada pantalla.
+5. Solo después, portar componentes aprobados a `v2/`.
+6. Al integrar en producción, conectar de nuevo los datos y reglas usando las fuentes de verdad ya documentadas en `v2/ARCHITECTURE.md`.
+
+## Regla crítica
+
+Nunca conectar este laboratorio directamente a secretos, credenciales, Supabase de producción, API de pagos, BISA/SIP, Cloudflare Worker de producción, VAPID privado ni APIs de proveedores.
+
+El laboratorio sirve para presentación e interacción visual. La lógica real permanece fuera hasta la etapa de integración.
+
+## Revisión cristal · septiembre 2026
+
+La vista `desktop.html` se adapta al tamaño real de la pantalla y carga `index.html?standalone=1`. `index.html` conserva los controles externos del laboratorio.
+
+- Fondo grafito liso y superficies de cristal en portada, catálogo, perfil, pases, ajustes, productos y carrito.
+- Seis ilustraciones SVG locales originales; sin dependencias ni peticiones de imágenes en la portada a terceros.
+- Acceso inferior al Centro de información, perfil superior, carrito compartido y acceso a WhatsApp.
+- Redes y páginas informativas enlazadas a los destinos ya publicados por la tienda. No se inventa una cuenta de Instagram.
+- El ticker permite pausa, se detiene al ocultar la página o abrir un panel y respeta movimiento reducido.
+- Las categorías y productos no muestran numeración ni cantidades de opciones. El carrito conserva su cantidad útil de artículos.
+- El selector de productos funciona en vertical en la vista limpia; el simulador conserva sus controles de dispositivo.
+- Carrito y favoritos usan exclusivamente almacenamiento local del Lab. CSP, bloqueo de fetch y ausencia de pagos reales se mantienen.
+
+### Archivos y comprobación
+
+`crystal.css` contiene la base visual, `hud.css` refina las superficies al estilo XArena, `atmosphere.css` añade iluminación ambiental y el panel inferior, y `cabinet.css` aporta la paleta mineral y el diseño compacto; `assets/*.svg` contiene el arte.
+
+La refinación HUD añade cristal angular, reflejos estáticos, mayor énfasis en la selección central y el botón Ingresar integrado en la consola. El Centro de información usa iconos SVG en su menú y un panel lateral de ayuda accionable. Instagram queda identificado como enlace por confirmar hasta recibir la cuenta oficial.
+
+La tarima es una sola plataforma central fija, independiente de los bloques y de su selección, inspirada en la referencia XArena. `assets/arena-platform.svg` contiene su volumen metálico, anillos luminosos y reflejo del suelo ya dibujados, sin filtros SVG ni animación. Los seis bloques usan luz cian, ámbar, violeta, rosa, menta y coral. El efecto de profundidad se extiende a cabecera, panel informativo, catálogo, perfil, pases, ajustes y carrito mediante biseles, luz lateral y sombras estáticas. Es una ilusión 2.5D con iluminación prediseñada; no utiliza ray tracing ni iluminación calculada en tiempo real. No hay seguimiento del puntero, WebGL, vídeo ni un bucle de renderizado. El modo ligero conserva colores y tarima y elimina bloom, desenfoques y sombras amplias.
+
+La escena incluye neblina suave en portada, vistas de tienda, selector y panel informativo. Su color y el reflejo del piso heredan la categoría activa mediante un solo cambio de atributo al seleccionar un bloque. Dos capas de gradientes se desplazan con transform/opacity; en modo ligero se usa una sola capa de altura limitada y se detienen los pulsos de luz. Las capas de superficies cerradas y las que quedan detrás de un diálogo se pausan; ocultar la pestaña pausa las animaciones y el modo sin movimiento las elimina. El carrusel deja espacio entre bloques y responde con un pequeño relieve al toque. «Más información» permanece en una pestaña inferior fija y despliega el panel hacia arriba; la pestaña del propio panel permite cerrarlo, al igual que Escape o el botón de cierre. La apertura sólo anima transform y opacity.
+
+Servir el repositorio por HTTP y abrir `design-lab/tests/crystal.html`. La regresión cubre 360, 390, 768, 1024 y 1440 px, seis categorías, ocho paneles informativos, navegación, controles accesibles, carrito y aislamiento de red. No ejecutar estas pruebas contra producción.
+
+Modo ligero: automático en móviles, equipos de hasta 4 núcleos o 4 GB reportados y conexiones con ahorro de datos. Elimina desenfoques, sombras amplias y capas decorativas, y acorta transiciones. Para comprobarlo en PC: `index.html?standalone=1&performance=lite`. No se afirma rendimiento medido en un teléfono físico de gama baja; las comprobaciones son de interfaz y de la política de efectos.
+
+### Pantalla compacta y paleta mineral
+
+La paleta de la referencia se traduce a un estudio cálido: grafito y carbón para la sala, marfil para texto y controles, champagne y cobre para los bordes, y madera oscura para la tarima. Los bloques conservan acentos suaves de jade, rosa y ámbar para que las categorías sigan diferenciándose. Reflejos, biseles, vetas lineales, sombras de contacto e iluminación del piso son capas prediseñadas que dan realismo 2.5D sin un renderer en tiempo real. En PC/laptop y móviles horizontales desde 600 px, la vista limpia ocupa 100dvh sin scroll exterior; se adapta a la proporción disponible en lugar de recortar a 16:9. Las tarjetas son rectangulares y el panel informativo se abre sobre la escena. Las vistas secundarias extensas conservan desplazamiento dentro de su panel.
+
+La rueda del ratón sobre la ruleta acumula los deltas y selecciona el juego final después de 220 ms sin desplazamiento. Durante ese intervalo se ocultan los precios anteriores y se bloquean sus acciones; no se renderizan paquetes intermedios. Selección por botones/teclado/tacto sigue siendo inmediata. Cerrar el selector cancela cualquier actualización pendiente. La lista de paquetes tiene scroll independiente, filas sin compresión y reinicia su posición al cambiar de juego; Comprar queda accesible fuera de esa lista.
+
+`tests/cabinet.html` cubre 1366×768, 1920×1080, 1024×600, 844×390, 667×375 y 390×844: encaje, proporciones, precios legibles, scroll independiente, bloqueo temporal de acciones y un solo render al detener la ruleta. Complementa la regresión de `tests/crystal.html`.

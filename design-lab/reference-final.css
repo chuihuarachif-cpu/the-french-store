@@ -1,0 +1,105 @@
+/* French Store Lab · typography system. ONE family for everything: Source Sans 3 (self-hosted variable woff2, latin, 28 KB).
+   Weights used: 400 body · 500-550 menus · 600 titles/names/numbers · 700 emphasis only. Numbers: lining + tabular everywhere. */
+@font-face{font-family:"Source Sans 3";font-style:normal;font-weight:200 900;font-display:swap;src:url(./assets/fonts/source-sans-3-latin-wght.woff2) format("woff2")}
+html.standalone{
+  --fs-font-ui:"Avenir Next","Segoe UI Variable","Segoe UI",system-ui,-apple-system,sans-serif;
+  --fs-font-display:"Avenir Next","Segoe UI Variable Display","Segoe UI Variable","Segoe UI",system-ui,-apple-system,sans-serif;
+  /* type scale (proportional to the stage unit --k, never below a readable floor) */
+  --font-xs:max(12px,calc(12.5*var(--k)));
+  --font-sm:max(13.5px,calc(14.5*var(--k)));
+  --font-md:max(15px,calc(16.5*var(--k)));
+  --font-lg:max(17px,calc(21*var(--k)));
+  --font-xl:max(20px,calc(26*var(--k)));
+  --font-display:clamp(28px,calc(44*var(--k)),46px);
+}
+html.standalone body,html.standalone body :where(button,input,select,textarea){font-family:var(--fs-font-ui);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-variant-numeric:lining-nums tabular-nums}
+html.standalone body :where(strong,b,.price,.x-package-price,.order-price,.product-price strong,.metric-grid strong,#cartCount,#headerWallet,#profileWallet,input,.order-main small,time){font-variant-numeric:lining-nums tabular-nums}
+/* display level */
+html.standalone body .store-app :is(.brand-button b,.home-intro h1,.page-head h1,#xShowcaseTitle,.category-copy b,.x-experience-title b,.profile-card h2,.pass-card strong,.info-hub-head h2,.info-hub-head h2 button,.x-cart-head b,.info-panel h3,.info-panel-head h3,.x-cart-empty b,.x-stage-gamehead h2){
+  font-family:var(--fs-font-display)!important;letter-spacing:-.005em}
+html.standalone body .store-app .brand-button b{font-weight:600!important;letter-spacing:.09em!important}
+html.standalone body .store-app :is(.home-intro h1,.page-head h1,#xShowcaseTitle,.profile-card h2,.info-hub-head h2 button){font-weight:600!important;letter-spacing:-.012em!important}
+html.standalone body .store-app :is(.category-copy b,.pass-card strong,.x-cart-head b,.info-panel h3,.x-experience-title b){font-weight:600!important}
+/* labels / eyebrows / micro-text */
+html.standalone body .store-app :is(.eyebrow,.hud-module-label,.category-tag,.pass-tag,.plan-card span,.header-wallet small,.x-cart-head span,.orders-tabs span,.product-price small,#xShowcaseType,.x-experience-title span){font-family:var(--fs-font-ui)!important;font-weight:600!important;letter-spacing:.06em!important;text-transform:uppercase}
+html.standalone body .store-app :is(button,.category-enter,.x-buy-button,.x-cart-checkout,.filter-row button){font-weight:600;letter-spacing:0}
+html.standalone body .store-app :is(.header-profile-copy small,.category-copy small,.x-dock-copy small,.order-main small){letter-spacing:.01em}
+
+/* ---------- membership tiers (the lit LED belongs to the account's real plan) ---------- */
+html.standalone[data-plan="base"] .plan-card[data-plan="base"]{box-shadow:0 0 0 1px rgba(246,245,240,.5),inset 0 1px 0 rgba(255,255,255,.28),inset 0 calc(-2*var(--k)) calc(3*var(--k)) rgba(0,0,0,.45),0 calc(3*var(--k)) 0 calc(-1*var(--k)) rgba(0,0,0,.6),0 calc(6*var(--k)) calc(7*var(--k)) calc(-3*var(--k)) rgba(0,0,0,.5)!important}
+html.standalone[data-plan="gold"] .plan-card[data-plan="gold"]{color:#EFE0B8!important;background:linear-gradient(180deg,#3a3830,#1a1b1c)!important;box-shadow:0 0 0 1px rgba(214,186,120,.6),inset 0 1px 0 rgba(255,236,190,.3),inset 0 calc(-2*var(--k)) calc(3*var(--k)) rgba(0,0,0,.45),0 calc(3*var(--k)) 0 calc(-1*var(--k)) rgba(0,0,0,.6),0 0 calc(14*var(--k)) rgba(214,186,120,.16)!important}
+html.standalone[data-plan="gold"] .plan-card[data-plan="gold"] .plan-led{background:#FBEFC8;box-shadow:0 0 4px rgba(255,236,180,.9),0 0 10px rgba(226,190,110,.5)}
+html.standalone[data-plan="gold"] .plan-card[data-plan="gold"]::after{opacity:1;height:calc(2*var(--k));background:linear-gradient(90deg,transparent,#E2C57C,transparent)}
+html.standalone[data-plan="diamond"] .plan-card[data-plan="diamond"]{color:#fff!important;background:linear-gradient(180deg,#33454f,#141f26)!important;box-shadow:0 0 0 1px rgba(214,236,255,.7),inset 0 1px 0 rgba(255,255,255,.4),inset 0 calc(-2*var(--k)) calc(3*var(--k)) rgba(0,0,0,.45),0 calc(3*var(--k)) 0 calc(-1*var(--k)) rgba(0,0,0,.6),0 0 calc(16*var(--k)) rgba(190,225,255,.22)!important}
+html.standalone[data-plan="diamond"] .plan-card[data-plan="diamond"] .plan-led{background:#fff;box-shadow:0 0 5px rgba(255,255,255,1),0 0 12px rgba(190,225,255,.7)}
+html.standalone body .store-app #headerRoleNote{transition:color .2s}
+html.standalone[data-plan="gold"] #headerRoleNote{color:#E2CF9F!important}
+html.standalone[data-plan="diamond"] #headerRoleNote{color:#CFE6F5!important}
+
+/* ---------- wallet chip (header, right cluster) ---------- */
+html.standalone body .store-app .header-wallet{display:none}
+@media (min-width:1000px){
+  html.standalone body .store-app .store-header.fs-command-header>.header-wallet{order:4;display:flex!important;align-items:center;gap:calc(10*var(--k));height:calc(48*var(--k));margin:0 calc(12*var(--k)) 0 0!important;padding:0 calc(16*var(--k)) 0 calc(12*var(--k))!important;
+    border:0!important;border-radius:calc(14*var(--k))!important;cursor:pointer;color:var(--fs-soft-white)!important;flex:0 0 auto;
+    background:linear-gradient(180deg,#2A3B44,#15222A)!important;
+    box-shadow:0 0 0 1px rgba(236,240,238,.34),inset 0 1px 0 rgba(255,255,255,.2),inset 0 calc(-2*var(--k)) calc(3*var(--k)) rgba(0,0,0,.4),0 calc(3*var(--k)) 0 calc(-1*var(--k)) rgba(0,0,0,.6),0 calc(5*var(--k)) calc(6*var(--k)) calc(-2*var(--k)) rgba(0,0,0,.45)!important;
+    transition:translate .14s,box-shadow .14s}
+  html.standalone body .store-app .header-wallet .ui-icon{width:calc(24*var(--k))!important;height:calc(24*var(--k))!important;color:var(--fs-soft-white)!important}
+  html.standalone body .store-app .header-wallet-copy{display:grid;gap:calc(2*var(--k));text-align:left}
+  html.standalone body .store-app .header-wallet small{font-size:calc(9*var(--k));line-height:1;color:var(--fs-silver)!important}
+  html.standalone body .store-app .header-wallet b{font-size:calc(16*var(--k));line-height:1;color:#fff}
+  html.standalone body .store-app .store-header.fs-command-header>.header-actions{order:5!important}
+  html.standalone body .store-app .store-header.fs-command-header>.header-search{flex:0 1 calc(184*var(--k))!important;margin-right:calc(12*var(--k))!important}
+  html.standalone body .store-app .header-search-copy{font-size:calc(14*var(--k))!important}
+}
+@media (hover:hover){html.standalone body .store-app .header-wallet:hover{translate:0 -1px}}
+html.standalone body .store-app .header-wallet:active{translate:0 1px}
+html.standalone body .store-app .header-wallet:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+/* phones: tier LED on the avatar (membership + wallet live in Perfil to keep the bar clean) */
+@media (max-width:999px){
+  html.standalone body .store-app .header-profile-avatar{position:relative}
+  html.standalone[data-plan="base"] .header-profile-avatar::after,html.standalone[data-plan="gold"] .header-profile-avatar::after,html.standalone[data-plan="diamond"] .header-profile-avatar::after{content:"";position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:#F7F7F2;box-shadow:0 0 0 2px #10191f,0 0 8px rgba(255,255,255,.7)}
+  html.standalone[data-plan="gold"] .header-profile-avatar::after{background:#FBEFC8;box-shadow:0 0 0 2px #10191f,0 0 8px rgba(226,190,110,.8)}
+  html.standalone[data-plan="diamond"] .header-profile-avatar::after{box-shadow:0 0 0 2px #10191f,0 0 10px rgba(190,225,255,.9)}
+}
+
+/* header spacing after the type change: keep plans clear of the logo */
+@media (min-width:1000px){
+  html.standalone body .store-app .plan-card{padding:0 calc(9*var(--k))!important;gap:calc(7*var(--k))!important}
+  html.standalone body .store-app .plan-card span{font-size:calc(10*var(--k))!important;letter-spacing:.12em!important}
+  html.standalone body .store-app .header-plans{gap:calc(6*var(--k))}
+  html.standalone body .store-app .store-header.fs-command-header>.header-profile{padding-right:calc(14*var(--k))!important}
+  html.standalone body .store-app .store-header.fs-command-header>.header-plans{margin-left:calc(14*var(--k))!important}
+  html.standalone body .store-app .header-profile-copy small{font-size:calc(11*var(--k))!important}
+}
+/* Ajustes: same physical cards as the other screens */
+html.standalone body .store-app .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(12*var(--k))}
+@media (max-width:640px){html.standalone body .store-app .settings-grid{grid-template-columns:1fr}}
+html.standalone body .store-app .settings-grid button{display:grid!important;grid-template-columns:auto 1fr auto;align-items:center;gap:calc(14*var(--k));min-height:calc(72*var(--k));padding:0 calc(16*var(--k))!important;border:0!important;border-radius:calc(16*var(--k))!important;cursor:pointer;text-align:left;color:#F7F7F2!important;
+  background:var(--sc-card)!important;box-shadow:var(--sc-edge),var(--sc-lift)!important;transition:translate .12s}
+html.standalone body .store-app .settings-grid button>span{display:grid;place-items:center;width:calc(44*var(--k));height:calc(44*var(--k));border-radius:calc(12*var(--k));color:#F7F7F2!important;background:linear-gradient(180deg,#2c3c46,#131f26)!important;box-shadow:0 0 0 1px rgba(255,255,250,.3),inset 0 1px 0 rgba(255,255,255,.22)}
+html.standalone body .store-app .settings-grid button b{color:#F7F7F2!important;font-size:calc(16*var(--k))}
+html.standalone body .store-app .settings-grid button small{color:#AEB9BC!important;font-size:calc(13*var(--k))}
+html.standalone body .store-app .settings-grid button>i{color:#DAE0E0!important;font-style:normal}
+html.standalone body .store-app .settings-grid button[aria-pressed="true"]{box-shadow:0 0 0 1px rgba(255,255,250,.75),0 0 12px rgba(255,255,255,.12),var(--sc-lift)!important}
+@media (hover:hover){html.standalone body .store-app .settings-grid button:hover{translate:0 -1px}}
+html.standalone body .store-app .settings-grid button:active{translate:0 1px}
+html.standalone body .store-app .settings-grid button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+/* ---------- inner rooms: the Home stage steps back completely (no ghost cards behind panels), panel clears the dock ---------- */
+html.standalone body .store-app .category-arena-section,html.standalone body .store-app .home-intro,html.standalone body .store-app .home-side-copy{transition:opacity .22s ease,visibility 0s}
+html.standalone:not([data-view="inicio"]) body .store-app .category-arena-section,
+html.standalone:not([data-view="inicio"]) body .store-app .home-intro,
+html.standalone:not([data-view="inicio"]) body .store-app .store-view[data-view="inicio"]::before,
+html.standalone:not([data-view="inicio"]) body .store-app .store-view[data-view="inicio"]::after{opacity:0!important;visibility:hidden!important;transition:opacity .22s ease,visibility 0s .22s}
+@media (min-width:1000px){html.standalone body .store-app .store-view:not([data-view="inicio"]){height:calc(680*var(--u))!important}}
+
+
+/* global header: legible micro-type (family/weights/tracking only; geometry untouched) */
+html.standalone body .store-app .header-profile-copy b{font-weight:600!important;font-size:max(15px,calc(16.5*var(--k)))!important}
+html.standalone body .store-app .header-profile-copy small{font-weight:400!important;font-size:var(--font-sm)!important;letter-spacing:0!important}
+html.standalone body .store-app .header-wallet small{font-weight:600!important;font-size:max(11px,calc(11.5*var(--k)))!important;letter-spacing:.06em!important}
+html.standalone body .store-app #headerWallet,html.standalone body .store-app #cartCount{font-weight:650!important;font-size:max(16px,calc(18*var(--k)))!important;letter-spacing:0!important}
+html.standalone body .store-app .plan-card span{font-weight:600!important;font-size:var(--font-xs)!important;letter-spacing:.05em!important}
+html.standalone body .store-app .header-search-copy{font-weight:450;font-size:var(--font-sm)}

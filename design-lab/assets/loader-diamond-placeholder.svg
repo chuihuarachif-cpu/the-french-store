@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+  <path d="M24 3 L44 18 L24 45 L4 18 Z" fill="url(#fsLoaderGem)" stroke="#eaf7ff" stroke-opacity=".6" stroke-width="1"/>
+  <path d="M24 3 L44 18 L24 24 Z" fill="#ffffff" fill-opacity=".28"/>
+  <path d="M4 18 L24 24 L24 3 Z" fill="#ffffff" fill-opacity=".12"/>
+  <defs>
+    <linearGradient id="fsLoaderGem" x1="4" y1="3" x2="44" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#bfe6ff"/>
+      <stop offset=".5" stop-color="#4d9fe0"/>
+      <stop offset="1" stop-color="#0b3a5c"/>
+    </linearGradient>
+  </defs>
+</svg>

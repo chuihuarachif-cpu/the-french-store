@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.log
+.DS_Store
+.wrangler/
+.dev.vars
+.claude/settings.local.json
+.claude/worktrees/
+.lab-dist/
+
+.dev.vars*
+!.dev.vars.example
+.playwright-mcp/

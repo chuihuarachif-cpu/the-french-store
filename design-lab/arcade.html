@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#0b1a2b">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'self';">
+  <title>French Arcade · French Store Lab</title>
+  <link rel="icon" type="image/png" href="./assets/brand/icon-192.png">
+  <link rel="stylesheet" href="./arcade.css">
+</head>
+<body>
+  <div class="arcade" id="arcade">
+    <header class="arcade-bar">
+      <a class="arcade-back" id="backToStore" href="./index.html" aria-label="Volver a French Store">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>
+        <span class="arcade-back-copy"><small>Volver a</small><b>French Store</b></span>
+      </a>
+      <div class="arcade-brand" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3-2 6 11 13L23 9l-4-6ZM1 9h22M8 3 6 9l6 13 6-13-3-6"/></svg>
+        <b>French Arcade</b>
+      </div>
+      <div class="arcade-points" id="pointsPill" data-state="visitor" role="status">
+        <span class="arcade-points-icon" aria-hidden="true">◇</span>
+        <span class="arcade-points-copy"><small>French Points</small><b>Conecta tu cuenta para verlos</b></span>
+      </div>
+    </header>
+
+    <main class="arcade-main">
+      <section class="arcade-hero" aria-labelledby="arcadeTitle">
+        <figure class="arcade-hero-photo">
+          <img src="./assets/categories/french-arcade-1100.webp" srcset="./assets/categories/french-arcade-640.webp 640w, ./assets/categories/french-arcade-1100.webp 1100w, ./assets/categories/french-arcade-1672.webp 1672w" sizes="(max-width:999px) 100vw, 64vw" width="1672" height="941" alt="Consola arcade de metal y cristal sobre una repisa de piedra clara" fetchpriority="high" decoding="async">
+        </figure>
+        <div class="arcade-hero-copy">
+          <span class="arcade-eyebrow">JUEGA · GANA · DISFRUTA</span>
+          <h1 id="arcadeTitle">French Arcade</h1>
+          <p>Juega. Consigue recompensas. Vuelve por más.</p>
+          <p class="arcade-note">Minijuegos y recompensas dentro del universo French Store.</p>
+        </div>
+      </section>
+
+      <section class="arcade-games" aria-labelledby="gamesTitle">
+        <div class="arcade-section-head">
+          <h2 id="gamesTitle">Minijuegos</h2>
+          <span>Próximamente</span>
+        </div>
+        <ul class="arcade-grid" id="gameGrid">
+          <li class="arcade-slot" data-game-slot="1"><span class="arcade-slot-index">01</span><b>Espacio reservado</b><small>Próximamente</small></li>
+          <li class="arcade-slot" data-game-slot="2"><span class="arcade-slot-index">02</span><b>Espacio reservado</b><small>Próximamente</small></li>
+          <li class="arcade-slot" data-game-slot="3"><span class="arcade-slot-index">03</span><b>Espacio reservado</b><small>Próximamente</small></li>
+        </ul>
+      </section>
+
+      <!-- Reserved for future rewarded moments (extra lives, x2 bonus). Intentionally empty: no ad SDK, no monetization logic yet. -->
+      <div class="arcade-reward-slot" data-arcade-slot="rewarded" hidden></div>
+
+      <a class="arcade-return" id="backToStoreBottom" href="./index.html">Volver a French Store</a>
+    </main>
+  </div>
+  <script src="./arcade.js"></script>
+</body>
+</html>

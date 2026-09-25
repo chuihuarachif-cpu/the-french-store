@@ -1,0 +1,182 @@
+/* ============================================================================
+   MÁS INFORMACIÓN — dedicated system (scoped to .info-hub; nothing here touches other screens).
+   Physical console: champagne-framed smoked glass, metal keys, light social cards, gold CTA.
+   Type scale + family come from reference-final.css (--font-*). Spacing uses the stage unit --k.
+   Art hooks for later replacement: .info-hub-head (banner photo), .info-hub-titlemark (diamond),
+   .social-card .sc-logo / --mark (logo + watermark), .info-hub-aside .aside-icon.
+   ============================================================================ */
+html.standalone body .store-app .info-hub{
+  --ih-gold:232,206,150;
+  --ih-key:linear-gradient(180deg,#26363f 0,#131f27 48%,#0b141a 100%);
+  --ih-key-lift:inset 0 1px 0 rgba(255,246,226,.26),inset 0 -2px 4px rgba(0,0,0,.55),0 6px 10px -6px rgba(0,0,0,.9);
+  --ih-glass:linear-gradient(180deg,rgba(24,40,52,.72),rgba(8,16,23,.82));
+  --ih-pad:calc(12*var(--k));
+  --ih-gap:calc(12*var(--k));
+  clip-path:none!important;
+  background:radial-gradient(90% 55% at 12% 0%,rgba(255,214,150,.14),transparent 62%),radial-gradient(70% 45% at 100% 100%,rgba(70,120,190,.12),transparent 65%),linear-gradient(160deg,rgba(20,36,48,.88),rgba(4,11,17,.95))!important;
+  border-radius:calc(30*var(--k))!important;
+  box-shadow:0 0 0 calc(1.5*var(--k)) rgba(var(--ih-gold),.85),0 0 0 calc(5*var(--k)) rgba(5,10,15,.92),0 0 0 calc(6.5*var(--k)) rgba(var(--ih-gold),.38),0 0 34px rgba(255,196,120,.26),inset 0 1px 0 rgba(255,246,226,.4),inset 0 -1px 0 rgba(255,236,204,.12),0 26px 60px rgba(0,0,0,.6)!important;
+  isolation:isolate}
+/* frame highlights: warm light catching the four corners + polished top reflection (static, no blur) */
+html.standalone body .store-app .info-hub::before,html.standalone body .store-app .info-hub::after{display:block!important;content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;z-index:0}
+html.standalone body .store-app .info-hub::before{background:radial-gradient(circle at 0 0,rgba(255,226,170,.5),transparent 9%),radial-gradient(circle at 100% 0,rgba(255,226,170,.42),transparent 9%),radial-gradient(circle at 0 100%,rgba(255,226,170,.3),transparent 8%),radial-gradient(circle at 100% 100%,rgba(255,226,170,.3),transparent 8%)}
+html.standalone body .store-app .info-hub::after{background:linear-gradient(180deg,rgba(255,255,255,.07),transparent 14%)}
+html.standalone body .store-app .info-hub>*{position:relative;z-index:1}
+html.standalone body .store-app .info-hub .info-sheet-handle:focus,html.standalone body .store-app .info-hub .info-sheet-handle:focus-visible{outline:none!important;box-shadow:none!important}
+html.standalone body .store-app .info-hub .shop-atmosphere{display:none!important}
+
+/* ---------- banner: one continuous piece (diamond → title → warm room photo) ---------- */
+html.standalone body .store-app .info-hub-head{box-sizing:border-box;display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;align-items:center;column-gap:calc(26*var(--k))!important;flex:0 0 auto;
+  margin:calc(10*var(--k)) calc(12*var(--k)) 0!important;padding:calc(8*var(--k)) calc(22*var(--k)) calc(8*var(--k)) calc(28*var(--k))!important;min-height:calc(80*var(--k));
+  border:0!important;border-radius:calc(22*var(--k))!important;overflow:hidden;
+  background:linear-gradient(90deg,rgba(7,15,21,.97) 0,rgba(8,17,24,.9) 30%,rgba(8,17,24,.42) 56%,rgba(8,17,24,.05) 85%),radial-gradient(ellipse 26% 90% at 84% 42%,rgba(255,226,170,.5),transparent 72%),url(./assets/scene/scene-lit-1916.webp) 66% 36%/150% auto no-repeat,#0b171e!important;
+  box-shadow:0 0 0 1px rgba(var(--ih-gold),.42),inset 0 1px 0 rgba(255,246,226,.45),inset 0 -16px 26px -14px rgba(0,0,0,.65)!important}
+html.standalone body .store-app .info-hub-head::before{display:block!important;content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.1),transparent 34%);pointer-events:none;border-radius:inherit}
+html.standalone body .store-app .info-hub-head::after{display:none!important}
+html.standalone body .store-app .info-hub-head .info-hub-titlemark{flex:0 0 auto;width:calc(68*var(--k));height:calc(68*var(--k));display:grid!important;place-items:center;background:radial-gradient(circle at 50% 46%,rgba(150,205,255,.34),transparent 62%)!important;border:0!important;box-shadow:none!important;color:#EAF4FF}
+html.standalone body .store-app .info-hub-head .info-hub-titlemark .ui-icon{width:calc(52*var(--k));height:calc(52*var(--k));stroke-width:1.3;filter:drop-shadow(0 6px 8px rgba(0,0,0,.65)) drop-shadow(0 0 8px rgba(150,205,255,.55))}
+html.standalone body .store-app .info-hub-head h2,html.standalone body .store-app .info-hub-head h2 button{margin:0!important;font-size:var(--font-display)!important;line-height:1.15;font-weight:600!important;letter-spacing:-.005em!important;color:#F8F5EE!important;text-shadow:0 3px 14px rgba(0,0,0,.7);background:none!important;border:0!important;padding:0!important;cursor:default}
+html.standalone body .store-app .info-hub-head p{margin:calc(6*var(--k)) 0 0!important;font-size:max(15px,calc(19*var(--k)))!important;font-weight:400;line-height:1.35;color:#D5DDE0!important;text-shadow:0 2px 8px rgba(0,0,0,.7)}
+html.standalone body .store-app .info-hub-head>button[data-info-close]{align-self:center;justify-self:end;flex:0 0 auto;width:calc(46*var(--k));height:calc(46*var(--k));min-width:36px;min-height:36px;display:grid;place-items:center;padding:0!important;line-height:0;border-radius:calc(12*var(--k))!important;border:0!important;background:var(--ih-key)!important;color:#F4F1EA!important;box-shadow:0 0 0 1px rgba(var(--ih-gold),.5),var(--ih-key-lift)!important;cursor:pointer}
+html.standalone body .store-app .info-hub-head>button[data-info-close] .ui-icon{width:calc(22*var(--k));height:calc(22*var(--k));min-width:18px;min-height:18px}
+html.standalone body .store-app .info-hub-head>button[data-info-close]:active{translate:0 2px;box-shadow:0 0 0 1px rgba(var(--ih-gold),.5),inset 0 2px 6px rgba(0,0,0,.65)!important}
+
+/* ---------- layout (desktop / tablet landscape): banner + grid share the panel with flex, nothing is squeezed by fixed maths ---------- */
+@media (min-width:1000px){
+  html.standalone body .store-app .info-hub{top:calc(110*var(--k))!important;bottom:auto!important;height:calc(692*var(--k))!important;max-height:none!important;display:flex!important;flex-direction:column;overflow:hidden!important}
+  html.standalone body .store-app .info-hub-layout{display:grid!important;flex:1 1 auto;min-height:0;height:auto!important;padding:var(--ih-pad)!important;box-sizing:border-box;gap:var(--ih-gap)!important;
+    grid-template-columns:19% 11% minmax(0,1fr);grid-template-rows:minmax(0,1fr) calc(178*var(--k))}
+  html.standalone body .store-app .info-hub-nav{grid-column:1;grid-row:1}
+  html.standalone body .store-app .info-hub-content{grid-column:2/4;grid-row:1;min-width:0}
+  html.standalone body .store-app .info-hub-aside{grid-column:1/3;grid-row:2}
+  html.standalone body .store-app .info-important{grid-column:3;grid-row:2}
+}
+/* short desktop windows (1366×768, 1280×720): the panel scrolls instead of shrinking type below its floor */
+@media (min-width:1000px) and (max-height:820px){
+  html.standalone body .store-app .info-hub{overflow-y:auto!important;overflow-x:hidden!important;display:block!important}
+  html.standalone body .store-app .info-hub-layout{min-height:calc(620*var(--k));height:auto!important}
+}
+
+/* ---------- sidebar keys ---------- */
+html.standalone body .store-app .info-hub-nav{display:flex!important;flex-direction:column;gap:calc(4*var(--k));padding:calc(10*var(--k))!important;border:0!important;border-radius:calc(20*var(--k));background:var(--ih-glass)!important;box-shadow:0 0 0 1px rgba(var(--ih-gold),.3),inset 0 1px 0 rgba(255,246,226,.2),inset 0 -8px 16px -10px rgba(0,0,0,.6)!important;overflow:hidden}
+html.standalone body .store-app .info-hub-nav>button{flex:1 1 0;min-height:calc(34*var(--k))!important;display:flex!important;align-items:center;gap:calc(14*var(--k));padding:0 calc(16*var(--k))!important;border:0!important;border-radius:calc(12*var(--k))!important;background:var(--ih-key)!important;box-shadow:0 0 0 1px rgba(255,255,255,.12),var(--ih-key-lift)!important;color:#E9E6DE;text-align:left;cursor:pointer;transition:translate .15s ease,box-shadow .2s ease,background .2s ease}
+html.standalone body .store-app .info-hub-nav>button>span{display:grid!important;place-items:center;flex:0 0 auto;width:calc(26*var(--k))!important;height:calc(26*var(--k))!important;min-width:20px;background:none!important;border:0!important;box-shadow:none!important;color:#E4E7E6!important}
+html.standalone body .store-app .info-hub-nav>button .ui-icon{width:calc(23*var(--k));height:calc(23*var(--k));min-width:18px;min-height:18px}
+html.standalone body .store-app .info-hub-nav>button b{flex:1;min-width:0;white-space:nowrap;font-size:var(--font-md)!important;font-weight:550;letter-spacing:0;line-height:1.2;color:#EEEBE3!important}
+html.standalone body .store-app .info-hub-nav>button i{display:none!important}
+html.standalone body .store-app .info-hub-nav>button:hover{translate:0 -1px}
+html.standalone body .store-app .info-hub-nav>button:active{translate:0 2px;box-shadow:0 0 0 1px rgba(255,255,255,.1),inset 0 3px 7px rgba(0,0,0,.7)!important}
+html.standalone body .store-app .info-hub-nav>button.active{background:linear-gradient(180deg,rgba(var(--ih-gold),.22),rgba(var(--ih-gold),.04) 40%),var(--ih-key)!important;box-shadow:0 0 0 calc(1.5*var(--k)) rgba(var(--ih-gold),.95),0 0 16px rgba(255,204,120,.42),var(--ih-key-lift)!important}
+html.standalone body .store-app .info-hub-nav>button.active b{color:#fff!important;font-weight:600}
+html.standalone body .store-app .info-hub-nav>button.active>span{color:#FFE7B4!important}
+
+/* ---------- content: section head + social cards ---------- */
+html.standalone body .store-app .info-hub-content{background:var(--ih-glass)!important;border:0!important;border-radius:calc(20*var(--k));box-shadow:0 0 0 1px rgba(var(--ih-gold),.3),inset 0 1px 0 rgba(255,246,226,.2)!important;padding:calc(18*var(--k)) calc(20*var(--k)) calc(20*var(--k))!important;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+html.standalone body .store-app .info-panel{color:#F4F1EA}
+html.standalone body .store-app .info-panel.active{display:flex;flex-direction:column;flex:1;min-height:0}
+html.standalone body .store-app .info-panel-head{margin:0 0 calc(12*var(--k))!important}
+html.standalone body .store-app .info-panel-head h3,html.standalone body .store-app .info-panel h3{font-size:var(--font-xl)!important;line-height:1.2;font-weight:600!important;margin:0!important;color:#F8F5EE!important}
+html.standalone body .store-app .info-panel-head p,html.standalone body .store-app .info-panel p{font-size:var(--font-md)!important;font-weight:400;line-height:1.45;color:#C4CDD0!important;margin:calc(6*var(--k)) 0 0!important}
+html.standalone body .store-app .info-panel:not([data-info-panel-view="social"]) .info-link,html.standalone body .store-app .info-panel:not([data-info-panel-view="social"])>button{font-size:var(--font-md)}
+html.standalone body .store-app .social-card-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:minmax(0,1fr);gap:var(--ih-gap)!important;flex:1;min-height:0}
+html.standalone body .store-app .info-hub .social-card{--br:98,231,255;position:relative;display:flex!important;flex-direction:column;grid-column:auto!important;grid-row:auto!important;min-height:0;align-items:stretch;text-align:left;padding:calc(16*var(--k))!important;border:0!important;border-radius:calc(22*var(--k))!important;overflow:hidden;text-decoration:none;color:#15202b;
+  background:radial-gradient(90% 70% at 90% 0%,rgba(var(--br),.2),transparent 65%),linear-gradient(180deg,#FCF9F5 0,#EFE8E0 100%)!important;
+  box-shadow:0 0 0 calc(2*var(--k)) rgba(var(--br),.92),0 0 calc(20*var(--k)) rgba(var(--br),.5),inset 0 2px 0 #fff,inset 0 -6px 12px rgba(120,100,90,.25),0 16px 22px -10px rgba(0,0,0,.85)!important;
+  transition:translate .15s ease,box-shadow .2s ease}
+html.standalone body .store-app .info-hub .social-card::after{content:"";position:absolute;right:calc(-14*var(--k));top:calc(34*var(--k));width:calc(130*var(--k));height:calc(130*var(--k));background:var(--mark) center/contain no-repeat;opacity:.15;rotate:12deg;pointer-events:none}
+html.standalone body .store-app .info-hub .social-card:hover{translate:0 -2px}
+html.standalone body .store-app .info-hub .social-card:active{translate:0 1px}
+html.standalone body .store-app .info-hub .social-card>.sc-logo{position:relative;z-index:1;flex:0 0 auto;display:grid;place-items:center;align-self:flex-start;width:calc(48*var(--k))!important;height:calc(48*var(--k))!important;min-width:40px;min-height:40px;border-radius:calc(13*var(--k))!important;background:var(--tile)!important;font-size:0!important;box-shadow:0 0 0 1px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 8px rgba(0,0,0,.35),0 8px 12px -4px rgba(0,0,0,.55)}
+html.standalone body .store-app .info-hub .social-card .sc-logo-svg{width:62%;height:62%;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+html.standalone body .store-app .info-hub .social-card>.sc-text{position:relative;z-index:1;display:block;flex:1 1 auto;margin:calc(10*var(--k)) 0 calc(10*var(--k));text-align:left}
+html.standalone body .store-app .info-hub .social-card .sc-text b{display:block;font-size:var(--font-lg);line-height:1.2;font-weight:600;color:#15202b!important;text-shadow:none}
+html.standalone body .store-app .info-hub .social-card .sc-text small{display:block;margin-top:calc(3*var(--k));font-size:var(--font-sm);line-height:1.3;font-weight:400;color:#55616b!important}
+html.standalone body .store-app .info-hub .social-card .sc-cta{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;height:calc(44*var(--k));min-height:40px;margin:0;padding:0 calc(16*var(--k));border-radius:calc(13*var(--k));font-style:normal;color:#fff!important;
+  background:linear-gradient(180deg,#1b2733 0,#0a121a 100%)!important;box-shadow:0 0 0 calc(1.5*var(--k)) rgba(var(--br),.95),0 0 calc(12*var(--k)) rgba(var(--br),.45),inset 0 1px 0 rgba(255,255,255,.22),inset 0 -3px 6px rgba(0,0,0,.6),0 8px 12px -6px rgba(0,0,0,.8)!important}
+html.standalone body .store-app .info-hub .social-card .sc-cta>span{font-size:var(--font-md)!important;font-weight:600!important;line-height:1;color:#fff!important}
+html.standalone body .store-app .info-hub .social-card .sc-arrow{flex:0 0 auto;width:calc(20*var(--k));height:calc(20*var(--k));min-width:16px;min-height:16px}
+html.standalone body .store-app .info-hub .social-card:active .sc-cta{translate:0 2px;box-shadow:0 0 0 calc(1.5*var(--k)) rgba(var(--br),.95),inset 0 3px 7px rgba(0,0,0,.75)!important}
+html.standalone body .store-app .info-hub .social-card.social-pending{cursor:default}
+html.standalone body .store-app .info-hub .social-card.social-pending .sc-cta{opacity:.72}
+html.standalone body .store-app .info-hub .social-card.social-pending:hover,html.standalone body .store-app .info-hub .social-card.social-pending:active{translate:0 0}
+
+/* ---------- help & contact ---------- */
+html.standalone body .store-app .info-hub-aside{display:grid!important;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:calc(20*var(--k));row-gap:calc(8*var(--k));align-content:center;min-height:0;padding:calc(12*var(--k)) calc(22*var(--k))!important;border:0!important;border-radius:calc(20*var(--k))!important;
+  background:radial-gradient(90% 90% at 0% 0%,rgba(255,214,150,.14),transparent 60%),var(--ih-glass)!important;box-shadow:0 0 0 1px rgba(var(--ih-gold),.34),inset 0 1px 0 rgba(255,246,226,.22),inset 0 -8px 16px -10px rgba(0,0,0,.6)!important;color:#F4F1EA}
+html.standalone body .store-app .info-hub-aside .aside-icon{grid-row:1/3;align-self:start;flex:0 0 auto;width:calc(54*var(--k));height:calc(54*var(--k));min-width:36px;color:#F1EEE6;stroke-width:1.5;filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))}
+html.standalone body .store-app .info-hub-aside .aside-copy{display:block!important}
+html.standalone body .store-app .info-hub-aside .aside-copy h3{font-size:var(--font-xl)!important;line-height:1.2;font-weight:600!important;margin:0!important;color:#F8F5EE!important}
+html.standalone body .store-app .info-hub-aside .aside-copy p{font-size:var(--font-sm)!important;line-height:1.5;font-weight:400;margin:calc(6*var(--k)) 0 0!important;color:#C4CDD0!important}
+html.standalone body .store-app .hud-support-primary{grid-column:2;justify-self:start;display:flex!important;align-items:center;gap:calc(14*var(--k));height:calc(48*var(--k));min-height:42px;min-width:calc(260*var(--k));padding:0 calc(22*var(--k))!important;border:0!important;border-radius:calc(14*var(--k))!important;cursor:pointer;color:#1b1509!important;font-size:var(--font-md)!important;font-weight:650;line-height:1;white-space:nowrap;
+  background:linear-gradient(180deg,#f7e4b0 0,#d8b468 55%,#b58d45 100%)!important;box-shadow:0 0 0 1px rgba(255,238,196,.95),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -3px 5px rgba(120,84,20,.5),0 10px 16px -8px rgba(0,0,0,.85),0 0 20px rgba(232,190,110,.32)!important;transition:translate .12s ease,box-shadow .15s ease}
+html.standalone body .store-app .hud-support-primary span{flex:1;text-align:left}
+html.standalone body .store-app .hud-support-primary .btn-wa,html.standalone body .store-app .hud-support-primary .btn-arrow{flex:0 0 auto;width:calc(23*var(--k));height:calc(23*var(--k));min-width:18px;min-height:18px;color:#1b1509!important}
+html.standalone body .store-app .hud-support-primary:hover{translate:0 -1px}
+html.standalone body .store-app .hud-support-primary:active{translate:0 2px;box-shadow:0 0 0 1px rgba(255,238,196,.9),inset 0 3px 7px rgba(90,60,10,.6)!important}
+
+/* ---------- important information ---------- */
+html.standalone body .store-app .info-important{display:flex;flex-direction:column;justify-content:center;gap:calc(8*var(--k));min-height:0;padding:calc(12*var(--k)) calc(20*var(--k))!important;border:0!important;border-radius:calc(20*var(--k))!important;background:var(--ih-glass)!important;box-shadow:0 0 0 1px rgba(var(--ih-gold),.34),inset 0 1px 0 rgba(255,246,226,.22),inset 0 -8px 16px -10px rgba(0,0,0,.6)!important}
+html.standalone body .store-app .info-important>h3{margin:0;font-size:var(--font-lg);line-height:1.2;font-weight:600;color:#F8F5EE}
+html.standalone body .store-app .ii-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ih-gap)}
+html.standalone body .store-app .ii-grid article{display:flex;align-items:flex-start;gap:calc(14*var(--k));padding:calc(12*var(--k)) calc(16*var(--k));border-radius:calc(14*var(--k));background:linear-gradient(180deg,rgba(18,32,44,.9),rgba(8,16,23,.95));box-shadow:0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,246,226,.14),inset 0 -6px 10px -6px rgba(0,0,0,.6)}
+html.standalone body .store-app .ii-grid article>div{display:block;min-width:0}
+html.standalone body .store-app .ii-grid .ii{flex:0 0 auto;display:grid;place-items:center;width:calc(46*var(--k));height:calc(46*var(--k));min-width:36px;min-height:36px;border-radius:calc(13*var(--k));color:#D7E8FF;background:linear-gradient(180deg,#31465a,#122030);box-shadow:0 0 0 1px rgba(var(--ih-gold),.36),inset 0 1px 0 rgba(255,246,226,.3),0 6px 8px -4px rgba(0,0,0,.7)}
+html.standalone body .store-app .ii-grid .ii .ui-icon{width:calc(25*var(--k));height:calc(25*var(--k));min-width:18px;min-height:18px}
+html.standalone body .store-app .ii-grid b{display:block;font-size:var(--font-md);line-height:1.25;font-weight:600;color:#F4F1EA!important}
+html.standalone body .store-app .ii-grid small{display:block;margin-top:calc(4*var(--k));font-size:var(--font-sm);line-height:1.45;font-weight:400;color:#B9C4C9!important;overflow-wrap:anywhere}
+
+/* ---------- phone / small landscape: same composition, comfortable type, scrolls inside the panel (header + dock stay put) ---------- */
+@media (max-width:999px){
+  html.standalone body .store-app .info-hub{--ih-pad:10px;--ih-gap:10px;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border-radius:18px!important;display:block!important}
+  html.standalone body .store-app .info-hub-head{min-height:0;margin:8px 8px 0!important;padding:10px 14px!important;column-gap:12px!important;border-radius:14px!important}
+  html.standalone body .store-app .info-hub-head .info-hub-titlemark{width:44px;height:44px}
+  html.standalone body .store-app .info-hub-head .info-hub-titlemark .ui-icon{width:34px;height:34px}
+  html.standalone body .store-app .info-hub-head h2,html.standalone body .store-app .info-hub-head h2 button{font-size:clamp(22px,4.6vw,30px)!important}
+  html.standalone body .store-app .info-hub-head p{font-size:14px!important;margin-top:2px!important}
+  html.standalone body .store-app .info-hub-head>button[data-info-close]{width:38px;height:38px}
+  html.standalone body .store-app .info-hub-layout{display:grid!important;grid-template-columns:minmax(150px,26%) minmax(0,1fr)!important;grid-template-rows:auto auto auto;height:auto!important;padding:var(--ih-pad)!important;gap:var(--ih-gap)!important}
+  html.standalone body .store-app .info-hub-nav{grid-column:1;grid-row:1/3;padding:8px!important;gap:6px;overflow:visible}
+  html.standalone body .store-app .info-hub-nav>button{flex:0 0 auto;min-height:44px!important;padding:0 10px!important;gap:10px}
+  html.standalone body .store-app .info-hub-nav>button>span{width:22px!important;height:22px!important}
+  html.standalone body .store-app .info-hub-nav>button .ui-icon{width:20px;height:20px}
+  html.standalone body .store-app .info-hub-nav>button b{font-size:14px!important;white-space:normal}
+  html.standalone body .store-app .info-hub-content{grid-column:2;grid-row:1;padding:14px!important;overflow:visible}
+  html.standalone body .store-app .info-panel-head{margin-bottom:12px!important}
+  html.standalone body .store-app .info-panel-head h3,html.standalone body .store-app .info-panel h3{font-size:20px!important}
+  html.standalone body .store-app .info-panel-head p,html.standalone body .store-app .info-panel p{font-size:14px!important}
+  html.standalone body .store-app .social-card-grid{grid-template-rows:none;gap:10px!important}
+  html.standalone body .store-app .info-hub .social-card{padding:12px!important;border-radius:14px!important}
+  html.standalone body .store-app .info-hub .social-card::after{width:80px;height:80px;top:26px;right:-8px}
+  html.standalone body .store-app .info-hub .social-card>.sc-logo{width:44px!important;height:44px!important;border-radius:12px!important}
+  html.standalone body .store-app .info-hub .social-card>.sc-text{margin:10px 0 10px}
+  html.standalone body .store-app .info-hub .social-card .sc-text b{font-size:16px}
+  html.standalone body .store-app .info-hub .social-card .sc-text small{font-size:12.5px}
+  html.standalone body .store-app .info-hub .social-card .sc-cta{height:40px;padding:0 12px;border-radius:11px}
+  html.standalone body .store-app .info-hub .social-card .sc-cta>span{font-size:14px!important}
+  html.standalone body .store-app .info-hub-aside{grid-column:2;grid-row:2;padding:14px!important;column-gap:12px}
+  html.standalone body .store-app .info-hub-aside .aside-icon{width:36px;height:36px}
+  html.standalone body .store-app .info-hub-aside .aside-copy h3{font-size:18px!important}
+  html.standalone body .store-app .info-hub-aside .aside-copy p{font-size:13.5px!important}
+  html.standalone body .store-app .hud-support-primary{min-width:0;height:44px;font-size:15px!important;padding:0 16px!important}
+  html.standalone body .store-app .info-important{grid-column:1/-1;grid-row:3;padding:14px!important}
+  html.standalone body .store-app .info-important>h3{font-size:17px}
+  html.standalone body .store-app .ii-grid{gap:10px}
+  html.standalone body .store-app .ii-grid article{padding:12px;gap:10px}
+  html.standalone body .store-app .ii-grid .ii{width:38px;height:38px;border-radius:11px}
+  html.standalone body .store-app .ii-grid b{font-size:14.5px}
+  html.standalone body .store-app .ii-grid small{font-size:13px}
+}
+
+/* per-network accent + logo tile + watermark (swap --mark / .sc-logo for final art) */
+html.standalone body .store-app .social-card.tiktok{--br:254,44,85;--tile:#0c0c0f;--mark:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 56 56%22 fill=%22%23FE2C55%22%3E%3Cpath d=%22M33 6c1 6 5 10 11 11v7c-4 0-8-1-11-4v15a13 13 0 1 1-13-13v7a6 6 0 1 0 6 6V6z%22/%3E%3C/svg%3E")}
+html.standalone body .store-app .social-card.facebook{--br:40,120,255;--tile:linear-gradient(180deg,#2a86ff,#1364e0);--mark:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 56 56%22 fill=%22%231877F2%22%3E%3Cpath d=%22M31 54V33h7l1-9h-8v-5c0-2 1-4 4-4h4V7h-6c-7 0-10 4-10 10v7h-6v9h6v21z%22/%3E%3C/svg%3E")}
+html.standalone body .store-app .social-card.youtube{--br:255,32,32;--tile:linear-gradient(180deg,#ff3b3b,#d40000);--mark:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 56 56%22 fill=%22%23FF1A1A%22%3E%3Crect x=%223%22 y=%2212%22 width=%2250%22 height=%2232%22 rx=%2210%22/%3E%3Cpath d=%22M23 21l15 7-15 7z%22 fill=%22%23fff%22/%3E%3C/svg%3E")}
+html.standalone body .store-app .social-card.instagram{--br:214,36,159;--tile:linear-gradient(45deg,#f9a13b 0,#ee2a7b 45%,#6228d7 100%);--mark:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 56 56%22 fill=%22%23D6249F%22%3E%3Crect x=%227%22 y=%227%22 width=%2242%22 height=%2242%22 rx=%2213%22 fill=%22none%22 stroke=%22%23D6249F%22 stroke-width=%225%22/%3E%3Ccircle cx=%2228%22 cy=%2228%22 r=%2210%22 fill=%22none%22 stroke=%22%23D6249F%22 stroke-width=%225%22/%3E%3Ccircle cx=%2241%22 cy=%2215%22 r=%223%22 fill=%22%23D6249F%22/%3E%3C/svg%3E")}
+
+html.standalone body .store-app .info-hub-head>div:nth-child(2){display:flex!important;flex-direction:column;justify-content:center;gap:0;min-width:0}
+html.standalone body .store-app .info-hub-head h2{line-height:1.1}
+@media (max-width:999px){
+  html.standalone body .store-app .info-hub .social-card .sc-cta{gap:6px;padding:0 10px}
+  html.standalone body .store-app .info-hub .social-card .sc-cta>span{font-size:13.5px!important;white-space:nowrap}
+  html.standalone body .store-app .info-hub-layout{grid-template-columns:minmax(170px,29%) minmax(0,1fr)!important}
+}
