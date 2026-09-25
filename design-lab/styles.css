@@ -156,9 +156,9 @@ html[data-device="mobile"] .admin-demo-table>div strong{grid-column:1/-1}
   box-shadow:inset 0 0 24px rgba(98,231,255,.035)
 }
 .loading-demo{
-  position:absolute;
+  position:absolute!important;
   inset:0;
-  z-index:60;
+  z-index:60!important;
   min-height:var(--device-height,900px);
   overflow:hidden;
   display:grid;
@@ -186,14 +186,25 @@ html[data-device="mobile"] .admin-demo-table>div strong{grid-column:1/-1}
   position:absolute;
   inset:-18px;
   z-index:0;
-  background:
-    radial-gradient(circle at 50% 24%,rgba(18,146,255,.18),transparent 28%),
-    linear-gradient(180deg,rgba(1,6,14,.28),rgba(1,7,16,.56) 52%,rgba(1,5,12,.74));
-  -webkit-backdrop-filter:blur(11px) saturate(.82) brightness(.58);
-  backdrop-filter:blur(11px) saturate(.82) brightness(.58);
   transform:scale(1.035);
   pointer-events:none
 }
+/* Fully opaque so ETAPA 1 reads as a real black screen, whatever theme sits
+   behind it (skeuomorphism.css repaints .loading-demo-backdrop light for the
+   ivory glass theme elsewhere) — id+class beats that later same-specificity
+   !important rule without touching the shared theme file. Also cheaper than
+   the old backdrop-filter blur it replaces. */
+#loadingDemo .loading-demo-backdrop{
+  background:
+    radial-gradient(circle at 50% 24%,rgba(18,80,140,.22),transparent 32%),
+    linear-gradient(180deg,#05070b,#03050a 52%,#020308)!important;
+}
+/* skeuomorphism.css re-tints these dark for its ivory theme, which assumed a
+   light loader backdrop; keep them legible against the forced-black screen above. */
+#loadingDemo .loading-center-brand{color:#fff!important;text-shadow:0 0 22px rgba(44,194,255,.32)!important}
+#loadingDemo .loading-status-copy strong,
+#loadingDemo .loading-percent-end{color:#74ecff!important}
+#loadingDemo .loading-status-copy span{color:#a3bdc9!important}
 .loading-demo:before{
   content:"";
   position:absolute;
@@ -380,7 +391,10 @@ html.motion-off .loading-demo,
 .category-arena-dots{display:flex;justify-content:center;gap:6px}.category-arena-dots button{width:18px;height:4px;padding:0;border:0;border-radius:999px;background:#203846;cursor:pointer;transition:.35s ease}.category-arena-dots button.active{width:34px;background:#67e7ff;box-shadow:0 0 12px rgba(72,220,255,.55)}.category-arena-swipe{white-space:nowrap;letter-spacing:.06em}
 
 .loading-demo-content{grid-template-rows:1fr;place-items:stretch;padding:clamp(22px,3.5cqw,46px) clamp(18px,4cqw,58px)}
-.loading-brand-intro{position:relative;z-index:5;display:grid;place-content:center;justify-items:center;gap:4px;opacity:0;transform:scale(.92) translateY(8px);filter:blur(3px);pointer-events:none}.loading-demo.brand-phase .loading-brand-intro{opacity:1;transform:scale(1) translateY(0);filter:none}.loading-demo.run-phase .loading-brand-intro{opacity:0;transform:scale(1.045) translateY(-8px);filter:blur(4px)}
+.loading-brand-intro{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:4px;opacity:0;transform:scale(.86) translateY(8px);filter:blur(6px);pointer-events:none;transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1),filter .5s ease}.loading-demo.brand-phase .loading-brand-intro{opacity:1;transform:scale(1) translateY(0);filter:none}.loading-demo.run-phase .loading-brand-intro{opacity:0;transform:scale(1.045) translateY(-8px);filter:blur(4px)}
+.loading-brand-gem{filter:drop-shadow(0 0 8px rgba(206,239,255,.75)) drop-shadow(0 0 22px rgba(120,196,255,.4))}
+html.motion-off .loading-brand-intro,html.perf-lite .loading-brand-intro{transition:opacity .28s ease!important;filter:none!important}
+@media (prefers-reduced-motion:reduce){.loading-brand-intro{transition:opacity .2s ease!important;transform:none!important;filter:none!important}}
 
 .loading-brand-lockup{display:grid;grid-template-columns:auto auto auto;align-items:center;gap:clamp(10px,1.8cqw,20px);filter:drop-shadow(0 12px 20px rgba(0,0,0,.65))}.loading-brand-copy{display:grid;justify-items:center;line-height:.77}.loading-brand-copy strong{font-family:Georgia,"Times New Roman",serif;color:#fff;font-size:clamp(2.2rem,6.7cqw,5rem);font-weight:900;letter-spacing:-.06em;-webkit-text-stroke:1px rgba(207,242,255,.5);text-shadow:0 2px 0 #13283a,0 5px 0 #07111d,0 0 22px rgba(44,194,255,.2)}.loading-brand-gem{color:#76ecff;font-size:clamp(1.35rem,3.1cqw,2.35rem);transform:rotate(45deg);text-shadow:0 0 10px #24d8ff,0 0 28px #0b7fff}
 .loading-run-phase{position:relative;z-index:4;display:grid;grid-template-rows:minmax(270px,1fr) auto auto;align-items:center;gap:clamp(10px,1.8cqw,18px);opacity:0;transform:translateY(16px) scale(.99);pointer-events:none}.loading-demo.run-phase .loading-run-phase{opacity:1;transform:none;pointer-events:auto}.loading-demo.brand-phase .loading-run-phase{opacity:0;transform:translateY(16px) scale(.99)}
@@ -1004,6 +1018,7 @@ html[data-device="mobile"] html[data-device="mobile-landscape"] /* r239 · Frenc
   overflow:hidden
 }
 .loading-progress-fill-bottom{
+  position:relative;
   width:0%;
   height:100%;
   border-radius:inherit;
@@ -1011,6 +1026,36 @@ html[data-device="mobile"] html[data-device="mobile-landscape"] /* r239 · Frenc
   box-shadow:0 0 18px rgba(0,229,255,.62);
   transition:width .1s linear
 }
+.loading-progress-fill-bottom:after{
+  content:"";
+  position:absolute;
+  right:-2px;
+  top:50%;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#fff;
+  transform:translateY(-50%);
+  box-shadow:0 0 10px 2px rgba(255,255,255,.85),0 0 18px rgba(0,229,255,.8);
+  opacity:0;
+  transition:opacity .2s ease
+}
+.loading-demo.run-phase .loading-progress-fill-bottom:after{opacity:1}
+.fs-loader-character{
+  position:relative;
+  z-index:2;
+  width:38px;
+  height:38px;
+  margin:0 auto 4px;
+  display:block;
+  filter:drop-shadow(0 0 10px rgba(120,196,255,.55));
+  animation:fsLoaderCharacterFloat 1.6s ease-in-out infinite
+}
+@keyframes fsLoaderCharacterFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.loading-demo.loading-complete .fs-loader-character{animation:fsLoaderCharacterDash .38s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fsLoaderCharacterDash{0%{transform:translateY(-2px) scale(1);opacity:1}100%{transform:translateY(-2px) scale(1.1) translateX(40px);opacity:0}}
+html.motion-off .fs-loader-character,html.perf-lite .fs-loader-character{animation:none!important}
+@media (prefers-reduced-motion:reduce){.fs-loader-character{animation:none!important}.loading-progress-fill-bottom:after{display:none}}
 .loading-percent-end{
   min-width:56px;
   text-align:right;

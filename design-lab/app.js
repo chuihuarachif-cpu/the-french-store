@@ -21,7 +21,17 @@
   // Navigation inside the app never touches it; this only finishes the running timeline.
   const introRoot = document.documentElement;
   if (introRoot.dataset.intro === "playing") {
+    // Real, one-time entrance: the splash/loader (below) plays first, opaque,
+    // while the staged reveal keyframes (header/lamps/blocks/dock/WhatsApp)
+    // run underneath already gated by html.fs-intro. When the loader clears,
+    // whatever remains of that reveal keeps playing into view. intro-gate.js
+    // guarantees this whole branch never runs twice in a session.
     setTimeout(() => { introRoot.classList.remove("fs-intro"); introRoot.dataset.intro = "complete"; }, 4700);
+    // app.js is loaded at the end of <body>, so the DOM (including #loadingDemo)
+    // is already parsed here. Deferred with setTimeout(0) only so this runs
+    // after runLoadingDemo's own state (declared later in this file) is
+    // initialized — not to wait for anything else; still fires immediately.
+    setTimeout(() => runLoadingDemo({ auto: true }), 0);
   }
 
   // Optional intro sound: synthesized (no asset), off by default, only after the user has interacted with the page.
@@ -261,6 +271,7 @@
     const art = './assets/categories/' + item.id;
     return '<article class="category-card category-arena-card" data-category-index="' + index + '" data-category="' + item.id + '" style="--accent-rgb:' + accent + '" aria-label="' + escapeHtml(item.name) + '" role="group">'+
       '<div class="category-glass"><span class="hud-module-edge" aria-hidden="true"></span>'+
+      '<span class="cat-electric" aria-hidden="true"><i class="cat-electric-ring cat-electric-ring-1"></i><i class="cat-electric-ring cat-electric-ring-2"></i></span>'+
       '<span class="category-card-grid" aria-hidden="true"></span>'+
       '<span class="category-card-top"><span class="hud-module-label">' + escapeHtml(item.eyebrow || "FRENCH STORE") + '</span><span class="category-tag">' + escapeHtml(item.tag || "FRENCH") + '</span></span>'+
       '<span class="category-art" aria-hidden="true"><img src="' + art + '-1100.webp" srcset="' + art + '-640.webp 640w, ' + art + '-1100.webp 1100w, ' + art + '-1672.webp 1672w" sizes="(max-width:999px) 320px, 55vw" width="1672" height="941" alt="" decoding="async" loading="' + (index === 0 ? 'eager' : 'lazy') + '"' + (index === 0 ? ' fetchpriority="high"' : '') + '></span>'+
@@ -1291,37 +1302,45 @@
 
   let loadingHideTimer = 0;
   let loadingProgressInterval = 0;
+  let loadingBrandTimer = 0;
 
   function stopLoadingTimers(){
     clearTimeout(loadingHideTimer);
     clearInterval(loadingProgressInterval);
+    clearTimeout(loadingBrandTimer);
     loadingHideTimer = 0;
     loadingProgressInterval = 0;
+    loadingBrandTimer = 0;
   }
 
-  function finishLoadingDemo(overlay, button, reduced){
+  function finishLoadingDemo(overlay, button, reduced, onDone){
     overlay.classList.add("loading-complete");
     loadingHideTimer = setTimeout(() => {
       overlay.classList.add("leaving");
       loadingHideTimer = setTimeout(() => {
-        overlay.classList.remove("active","leaving","run-phase","loading-complete");
+        overlay.classList.remove("active","leaving","run-phase","brand-phase","loading-complete");
         overlay.setAttribute("aria-hidden","true");
         if (button) button.textContent = "▶ Probar carga";
+        onDone?.();
       }, reduced ? 40 : 360);
     }, reduced ? 150 : 360);
   }
 
-  function runLoadingDemo(){
+  // Two stages: ETAPA 1 brand-phase (diamond + wordmark power-on), then the
+  // speed loader with a real progress bar. Shared by the lab's manual replay
+  // button and the one-time real intro so there is only ever one loader system.
+  function runLoadingDemo(opts){
+    const auto = !!opts?.auto;
     const overlay = $("#loadingDemo");
     const fill = $("#loadingProgressBar");
     const percent = $("#loadingPercent");
     const message = $("#loadingMessage");
     const button = $("#loadingDemoButton");
-    if (!overlay || !fill || !percent || !message) return;
+    if (!overlay || !fill || !percent || !message) { opts?.onDone?.(); return; }
 
     stopLoadingTimers();
-    overlay.classList.remove("leaving","loading-complete");
-    overlay.classList.add("active","run-phase");
+    overlay.classList.remove("leaving","loading-complete","run-phase");
+    overlay.classList.add("active","brand-phase");
     overlay.setAttribute("aria-hidden","false");
 
     let progress = 0;
@@ -1333,29 +1352,37 @@
     const reduced = document.documentElement.classList.contains("motion-off") ||
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
-    loadingProgressInterval = setInterval(() => {
-      progress += reduced ? 12 : (1.8 + Math.random() * 2.4);
+    const startRun = () => {
+      overlay.classList.remove("brand-phase");
+      overlay.classList.add("run-phase");
+      loadingProgressInterval = setInterval(() => {
+        progress += reduced ? 20 : (3.4 + Math.random() * 3.6);
 
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(loadingProgressInterval);
-        loadingProgressInterval = 0;
-        fill.style.transform = "scaleX(1)";
-        percent.textContent = "100%";
-        message.textContent = "¡Todo listo! Entrando a French Store...";
-        finishLoadingDemo(overlay, button, reduced);
-        return;
-      }
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(loadingProgressInterval);
+          loadingProgressInterval = 0;
+          fill.style.transform = "scaleX(1)";
+          percent.textContent = "100%";
+          message.textContent = "¡Todo listo! Entrando a French Store...";
+          finishLoadingDemo(overlay, button, reduced, opts?.onDone);
+          return;
+        }
 
-      const visible = Math.floor(progress);
-      fill.style.transform = "scaleX(" + (progress / 100) + ")";
-      percent.textContent = visible + "%";
+        const visible = Math.floor(progress);
+        fill.style.transform = "scaleX(" + (progress / 100) + ")";
+        percent.textContent = visible + "%";
 
-      message.textContent = visible < 70 ? "Preparando French Store..." : "Últimos detalles...";
-    }, 65);
+        message.textContent = visible < 70 ? "Preparando French Store..." : "Últimos detalles...";
+      }, 55);
+    };
+
+    // Real intro: never block on the brand card — cap it so a slow device
+    // still reaches the store quickly. Manual lab replay keeps a fixed beat.
+    loadingBrandTimer = setTimeout(startRun, reduced ? 80 : (auto ? 950 : 1050));
   }
 
-  $("#loadingDemoButton")?.addEventListener("click", runLoadingDemo);
+  $("#loadingDemoButton")?.addEventListener("click", () => runLoadingDemo());
   $("#settingsMotionShortcut")?.addEventListener("click", () => $("#motionToggle")?.click());
 
   document.addEventListener("visibilitychange", () => {
@@ -1377,7 +1404,8 @@
   const initial = location.hash.replace("#", "");
   setView(titleMap[initial] ? initial : "inicio");
   // The intro stays available in the lab; it must not delay the review or navigation.
-  if (new URLSearchParams(location.search).has('intro')) runLoadingDemo();
+  // Manual lab replay only; skip it when the real one-time intro already triggered the same overlay.
+  if (new URLSearchParams(location.search).has('intro') && introRoot.dataset.intro !== "playing") runLoadingDemo();
   document.addEventListener('keydown', event => {
     const cartOpen=$('#xCartDrawer')?.classList.contains('open');
     const infoOpen=$('#infoHub')?.classList.contains('open');

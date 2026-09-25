@@ -1,0 +1,74 @@
+/* Electric perimeter effect for the home category blocks (Recargas por ID,
+   Recargas por Cuenta, Streaming, Gift Cards, Venta de Cuentas, Páginas Web,
+   French Arcade). Perimeter-only, no image/layout changes. Loaded last so it
+   doesn't need to fight the older theme layers' !important rules.
+   Two masked, rotating conic-gradient rings per card (transform-only, so the
+   browser can composite them without repainting); only the active card and
+   its immediate neighbors actually animate, everything else is paused. */
+.cat-electric{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  overflow:hidden;
+  border-radius:inherit;
+  pointer-events:none;
+  contain:strict;
+}
+.cat-electric-ring{
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  padding:2.4px;
+  background:conic-gradient(from 0deg,
+    transparent 0%,
+    rgba(var(--accent-rgb),.08) 28%,
+    rgba(var(--accent-rgb),1) 46%,
+    #fff 50%,
+    rgba(var(--accent-rgb),1) 54%,
+    rgba(var(--accent-rgb),.08) 72%,
+    transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:0;
+  animation:catElectricSpin 6s linear infinite paused;
+  animation-play-state:paused;
+  transition:opacity .5s ease;
+}
+.cat-electric-ring-2{
+  padding:1px;
+  filter:blur(3px);
+  animation-name:catElectricSpin,catElectricPulse;
+  animation-duration:7.4s,3.6s;
+  animation-timing-function:linear,ease-in-out;
+  animation-iteration-count:infinite,infinite;
+  animation-direction:reverse,normal;
+}
+@keyframes catElectricSpin{to{transform:rotate(360deg)}}
+@keyframes catElectricPulse{0%,100%{opacity:.32}50%{opacity:.62}}
+
+/* Desynchronize cards without per-index math. */
+.category-arena-card:nth-of-type(3n+1) .cat-electric-ring-1{animation-duration:5.1s}
+.category-arena-card:nth-of-type(3n+2) .cat-electric-ring-1{animation-duration:6.3s}
+.category-arena-card:nth-of-type(3n) .cat-electric-ring-1{animation-duration:7.2s}
+.category-arena-card:nth-of-type(2n) .cat-electric-ring-2{animation-duration:8.6s,4.4s}
+.category-arena-card:nth-of-type(3n) .cat-electric-ring-2{animation-duration:6.9s,2.9s}
+
+.category-arena-card.active .cat-electric-ring-1{opacity:.9}
+.category-arena-card.active .cat-electric-ring-2{opacity:.55}
+.category-arena-card[data-distance="1"] .cat-electric-ring-1{opacity:.4}
+.category-arena-card[data-distance="1"] .cat-electric-ring-2{opacity:.22}
+
+.category-arena-card.active .cat-electric-ring,
+.category-arena-card[data-distance="1"] .cat-electric-ring{
+  animation-play-state:running;
+}
+
+html.perf-lite .cat-electric-ring-2{display:none}
+html.perf-lite .cat-electric-ring-1{animation:none!important;filter:none!important}
+html.motion-off .cat-electric-ring{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){
+  /* Static lit border instead of the moving current. */
+  .cat-electric-ring{animation:none!important;transition:none!important}
+  .cat-electric-ring-2{display:none!important}
+}
