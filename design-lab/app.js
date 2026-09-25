@@ -1186,6 +1186,25 @@
     if (event.target.closest("[data-search-close]")) closeQuickSearch();
   });
 
+  // Compact social icons: a coarse pointer (touch) never relies on :hover.
+  // First tap expands to show the name; tapping the already-expanded icon
+  // (or any :hover/:focus-visible expansion on a real pointer) navigates.
+  document.addEventListener("click", (event) => {
+    const card = event.target.closest(".social-card-grid.social-compact-row .social-card");
+    if (!card) return;
+    const coarse = window.matchMedia?.("(hover: none), (pointer: coarse)")?.matches;
+    if (coarse && !card.classList.contains("tap-open")) {
+      event.preventDefault();
+      all(".social-card-grid.social-compact-row .social-card.tap-open").forEach(el => { if (el !== card) el.classList.remove("tap-open"); });
+      card.classList.add("tap-open");
+    }
+  });
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".social-card-grid.social-compact-row")) {
+      all(".social-card-grid.social-compact-row .social-card.tap-open").forEach(el => el.classList.remove("tap-open"));
+    }
+  });
+
   // Orders: built only from data the lab already holds (checkout items); no status or date is invented.
   function renderOrders(){
     const panel = $("#ordersPanel");
