@@ -13,12 +13,13 @@ const OWNER = 'chuihuarachif@gmail.com';
 const ownerUser = {id: 'owner-id', email: OWNER, email_confirmed_at: '2026-01-01T00:00:00Z'};
 const session = (user, token = 'token-1') => ({access_token: token, user});
 
-function harness({getUser, mount, classic = false} = {}) {
+function harness({getUser, mount, classic = false, getSession = null, preloaded = true} = {}) {
   const timers = [];
   const calls = {getUser: 0, mount: 0, unmount: 0};
   let authListener = null;
   let currentSession = null;
   const elements = [];
+  const appended = [];
   const root = {dataset: {}};
   const storage = new Map(classic ? [['fs_owner_lab_classic', '1']] : []);
   const element = () => {
@@ -33,18 +34,19 @@ function harness({getUser, mount, classic = false} = {}) {
     setTimeout: (fn, ms = 0) => { timers.push({fn, ms}); return timers.length; },
     clearTimeout: () => {},
     sessionStorage: {getItem: (k) => storage.get(k) ?? null, setItem: (k, v) => storage.set(k, v), removeItem: (k) => storage.delete(k)},
-    document: {documentElement: root, baseURI: 'https://frenchstorebo.com/v2/', body: {appendChild() {}}, head: {appendChild() {}}, createElement: element},
+    document: {documentElement: root, baseURI: 'https://frenchstorebo.com/v2/', body: {appendChild() {}}, head: {appendChild: (el) => appended.push(el)}, createElement: element},
     sb: {auth: {
-      getSession: () => Promise.resolve({data: {session: currentSession}}),
+      getSession: () => (getSession ? getSession(currentSession) : Promise.resolve({data: {session: currentSession}})),
       getUser: (token) => { calls.getUser++; return getUser ? getUser(token, currentSession) : Promise.resolve({data: {user: ownerUser}, error: null}); },
       onAuthStateChange: (fn) => { authListener = fn; return {data: {subscription: {unsubscribe() {}}}}; }
     }}
   };
   context.window = context;
-  context.FSOwnerLab = {
+  const lab = {
     mount: (options) => { calls.mount++; calls.options = options; return mount ? mount() : Promise.resolve(); },
     unmount: () => { calls.unmount++; }
   };
+  if (preloaded) context.FSOwnerLab = lab;
   vm.createContext(context);
   const settle = async (includeTimeouts = false) => {
     for (let round = 0; round < 20; round++) {
@@ -58,7 +60,7 @@ function harness({getUser, mount, classic = false} = {}) {
     }
   };
   return {
-    context, calls, root, elements, storage, settle,
+    context, calls, root, elements, appended, lab, storage, settle,
     start(initial) { currentSession = initial; vm.runInContext(source, context); },
     emit(event, next) { currentSession = next; authListener?.(event, next); }
   };
@@ -120,10 +122,16 @@ for (const [label, getUser] of [
   assert.equal(h.calls.mount, 1);
   assert.equal(h.root.dataset.fsLab, 'on');
   assert.equal(h.calls.options.base, 'https://frenchstorebo.com/v2/lab/');
-  // Token refresh for the same account keeps the lab without new requests.
+  // A refreshed token is verified again while the lab stays mounted.
   h.emit('TOKEN_REFRESHED', session(ownerUser, 'token-2'));
   await h.settle();
   assert.equal(h.calls.mount, 1);
+  assert.equal(h.calls.getUser, 2);
+  assert.equal(h.root.dataset.fsLab, 'on');
+  // The same token again needs no request.
+  h.emit('SIGNED_IN', session(ownerUser, 'token-2'));
+  await h.settle();
+  assert.equal(h.calls.getUser, 2);
   // Sign-out removes it immediately.
   h.emit('SIGNED_OUT', null);
   await h.settle();
@@ -165,6 +173,53 @@ for (const [label, getUser] of [
   await h.settle();
   assert.equal(h.root.dataset.fsLab, 'on', 'An outdated answer cannot change the current state');
   assert.equal(h.calls.unmount, 0);
+}
+
+// 6c. A refreshed token that Supabase Auth rejects removes a mounted lab; so does a missing token.
+for (const next of [session(ownerUser, 'token-bad'), session(ownerUser, '')]) {
+  const h = harness({getUser: (token) => Promise.resolve(token === 'token-1' ? {data: {user: ownerUser}, error: null} : {data: {user: null}, error: {message: 'invalid JWT'}})});
+  h.start(session(ownerUser));
+  await h.settle();
+  assert.equal(h.root.dataset.fsLab, 'on');
+  h.emit('TOKEN_REFRESHED', next);
+  await h.settle();
+  assert.equal(h.root.dataset.fsLab, undefined);
+  assert.ok(h.calls.unmount >= 1);
+}
+
+// 6d. A late initial getSession() answer (arriving after SIGNED_OUT) is ignored.
+{
+  let resolveSession;
+  const h = harness({getSession: () => new Promise((resolve) => { resolveSession = resolve; })});
+  h.start(session(ownerUser));
+  h.emit('SIGNED_OUT', null);
+  await h.settle();
+  resolveSession({data: {session: session(ownerUser)}});
+  await h.settle();
+  assert.equal(h.calls.getUser, 0);
+  assert.equal(h.calls.mount, 0);
+  assert.equal(h.root.dataset.fsLab, undefined);
+}
+
+// 6e. A second verification while lab.js is still downloading reuses that download.
+{
+  const pending = [];
+  const h = harness({preloaded: false, getUser: (token) => new Promise((resolve) => pending.push({token, resolve}))});
+  h.start(session(ownerUser, 'token-1'));
+  await h.settle();
+  pending.shift().resolve({data: {user: ownerUser}, error: null});
+  await h.settle();
+  h.emit('TOKEN_REFRESHED', session(ownerUser, 'token-2'));
+  await h.settle();
+  pending.shift().resolve({data: {user: ownerUser}, error: null});
+  await h.settle();
+  const scripts = h.appended.filter((el) => el.id === 'fs-owner-lab-js');
+  assert.equal(scripts.length, 1, 'One lab.js request');
+  h.context.FSOwnerLab = h.lab;
+  scripts[0].listeners.load();
+  await h.settle();
+  assert.equal(h.calls.mount, 1);
+  assert.equal(h.root.dataset.fsLab, 'on');
 }
 
 // 7. Lab failing to load leaves the classic storefront.

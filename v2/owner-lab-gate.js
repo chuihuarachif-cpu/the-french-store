@@ -18,7 +18,10 @@
 
   let sequence = 0;
   let mountedUserId = '';
+  let mountedToken = '';
   let returnButton = null;
+  let scriptPromise = null;
+  let authEventSeen = false;
 
   const emailOf = (user) => String(user?.email || '').trim().toLowerCase();
   const labBase = () => new URL('./lab/', document.baseURI).href;
@@ -57,17 +60,20 @@
     return pendingCheck.promise;
   }
 
+  // One download at a time: concurrent syncs share it, so the module is defined once.
   function loadScript(src) {
     if (window.FSOwnerLab) return Promise.resolve();
-    return new Promise((resolve, reject) => {
+    if (scriptPromise) return scriptPromise;
+    scriptPromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.id = 'fs-owner-lab-js';
       script.src = src;
       script.async = true;
       script.addEventListener('load', resolve, { once: true });
-      script.addEventListener('error', () => { script.remove(); reject(new Error('OWNER_LAB_SCRIPT_FAILED')); }, { once: true });
+      script.addEventListener('error', () => { script.remove(); scriptPromise = null; reject(new Error('OWNER_LAB_SCRIPT_FAILED')); }, { once: true });
       document.head.appendChild(script);
     });
+    return scriptPromise;
   }
 
   function removeReturnButton() {
@@ -96,6 +102,7 @@
     delete root.dataset.fsLab;
     delete root.dataset.fsLabPanel;
     mountedUserId = '';
+    mountedToken = '';
     try { window.FSOwnerLab?.unmount(); } catch {}
   }
 
@@ -109,17 +116,21 @@
   async function sync(currentSession) {
     const run = ++sequence;
     const userId = currentSession?.user?.id || '';
+    const token = String(currentSession?.access_token || '');
     if (!userId || emailOf(currentSession.user) !== OWNER_EMAIL) {
       removeReturnButton();
       unmount();
       return;
     }
-    if (mountedUserId && mountedUserId === userId) return;
+    if (mountedUserId === userId && mountedToken === token) return;
 
+    // Every new token is verified; a mounted lab stays up while the check runs and is
+    // removed if it fails.
     let owner = false;
     try { owner = await verifiedOwner(currentSession); } catch { owner = false; }
     if (run !== sequence) return;
     if (!owner) { removeReturnButton(); unmount(); return; }
+    if (mountedUserId === userId) { mountedToken = token; return; }
     if (classicRequested()) { unmount(); showReturnButton(); return; }
 
     try {
@@ -128,6 +139,7 @@
       await window.FSOwnerLab.mount({ base: labBase(), revision: REVISION, onClassic: useClassic });
       if (run !== sequence) { window.FSOwnerLab.unmount(); return; }
       mountedUserId = userId;
+      mountedToken = token;
       removeReturnButton();
       root.dataset.fsLab = 'on';
     } catch (error) {
@@ -138,8 +150,13 @@
 
   function start() {
     if (typeof sb === 'undefined' || !sb?.auth) return;
-    sb.auth.getSession().then(({ data }) => sync(data?.session || null)).catch(() => unmount());
+    // An auth event always carries a fresher session than the initial read, so a late
+    // getSession() answer (e.g. after SIGNED_OUT) is ignored.
+    sb.auth.getSession()
+      .then(({ data }) => { if (!authEventSeen) return sync(data?.session || null); })
+      .catch(() => unmount());
     sb.auth.onAuthStateChange((_event, currentSession) => {
+      authEventSeen = true;
       setTimeout(() => sync(currentSession).catch(() => unmount()), 0);
     });
   }

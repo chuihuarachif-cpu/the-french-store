@@ -9,6 +9,7 @@
    - accounts for sale: FSCuentasVenta (cuentas_en_venta) */
 (() => {
   'use strict';
+  if (window.FSOwnerLab) return;
 
   const VERSION = 'owner-lab-r236-20260926';
   const HOST_ID = 'fsOwnerLab';
@@ -158,11 +159,33 @@
     teardown();
   }
 
-  function createApp({ host, shadow, base, onClassic }) {
-    const controller = new AbortController();
-    const { signal } = controller;
-    const timers = new Set();
-    const observers = [];
+  // Lifecycle owner: whatever buildApp registers is released by destroy(), including
+  // when initialisation throws half-way, so the classic storefront always comes back.
+  function createApp(context) {
+    const life = { controller: new AbortController(), timers: new Set(), observers: [], hiddenChrome: [] };
+    const destroy = () => {
+      life.controller.abort();
+      life.observers.forEach((observer) => observer.disconnect());
+      life.timers.forEach((timer) => clearTimeout(timer));
+      life.timers.clear();
+      document.getElementById('fsLabPanelBar')?.remove();
+      const root = document.documentElement;
+      if (root.dataset.fsLabPanel) {
+        delete root.dataset.fsLabPanel;
+        const active = document.querySelector('.view.active[id^="view-"]')?.id;
+        if (active && active !== 'view-inicio' && typeof window.navigate === 'function') window.navigate('inicio');
+      }
+      life.hiddenChrome.splice(0).forEach(([el, [value, priority]]) => {
+        if (value) el.style.setProperty('display', value, priority); else el.style.removeProperty('display');
+      });
+    };
+    try { buildApp(context, life); } catch (error) { destroy(); throw error; }
+    return { destroy };
+  }
+
+  function buildApp({ host, shadow, base, onClassic }, life) {
+    const { signal } = life.controller;
+    const { timers, observers } = life;
     const $ = (selector) => shadow.querySelector(selector);
     const all = (selector) => [...shadow.querySelectorAll(selector)];
     const htmlEl = $('.lab-html');
@@ -231,14 +254,6 @@
     applyMotion();
 
     on(document, 'visibilitychange', () => htmlEl.classList.toggle('page-hidden', document.hidden));
-
-    // The classic header, bottom bar and floating WhatsApp are pinned visible by a
-    // layered !important rule; only an inline !important hides them. Restored on destroy.
-    const hiddenChrome = [...document.querySelectorAll('body > .topbar, body > .bottom-nav, #floatingWhatsapp')].map((el) => {
-      const saved = [el.style.getPropertyValue('display'), el.style.getPropertyPriority('display')];
-      el.style.setProperty('display', 'none', 'important');
-      return [el, saved];
-    });
 
     all('[data-lab-src]').forEach((img) => { img.src = asset(img.dataset.labSrc); });
     const whatsappUrl = store.whatsapp() ? `https://wa.me/${store.whatsapp()}` : '';
@@ -1294,26 +1309,13 @@
     refreshWallet();
     syncOverlayInert();
 
-    return {
-      destroy() {
-        controller.abort();
-        observers.forEach((observer) => observer.disconnect());
-        timers.forEach((timer) => clearTimeout(timer));
-        timers.clear();
-        if (resizeFrame) cancelAnimationFrame(resizeFrame);
-        clearDrag();
-        if (panel) {
-          panel = null;
-          delete document.documentElement.dataset.fsLabPanel;
-          if (activeStorefrontView() !== 'inicio' && typeof window.navigate === 'function') window.navigate('inicio');
-        }
-        panelBar?.remove();
-        layers.length = 0;
-        hiddenChrome.forEach(([el, [value, priority]]) => {
-          if (value) el.style.setProperty('display', value, priority); else el.style.removeProperty('display');
-        });
-      }
-    };
+    // Last step: the classic header, bottom bar and floating WhatsApp are pinned visible
+    // by a layered !important rule, so only an inline !important hides them; destroy()
+    // restores the previous inline value.
+    for (const el of document.querySelectorAll('body > .topbar, body > .bottom-nav, #floatingWhatsapp')) {
+      life.hiddenChrome.push([el, [el.style.getPropertyValue('display'), el.style.getPropertyPriority('display')]]);
+      el.style.setProperty('display', 'none', 'important');
+    }
   }
 
   window.FSOwnerLab = Object.freeze({ version: VERSION, mount, unmount });
