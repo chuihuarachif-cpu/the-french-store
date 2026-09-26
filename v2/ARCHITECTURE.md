@@ -43,6 +43,7 @@
 | Game/catalog motion | `r8.js` + `r8.css` |
 | Official/fallback icon presentation | `r8-icons.js` + `r8-icons.css` |
 | Account confirmation/legal acceptance | `auth-ease.js`, `auth-confirm.js`, `legal-account.js` |
+| Owner-only lab interface (presentation) | `owner-lab-gate.js` + `lab/` (see `lab/README.md`) |
 
 ## Runtime loading order
 
@@ -79,6 +80,7 @@
 - **Account growth**: reseller/referral UI loads only for Profile; authoritative reseller economics and referral qualification remain server-side.
 - **Cart recovery**: loaded during browser idle time; persists only product IDs and quantities already used by the core cart, never fulfillment credentials.
 - **Motion**: R8 CSS/JS only when catalog/detail content exists.
+- **Owner lab**: `owner-lab-gate.js` is loaded after the core without blocking it. Only a Supabase-verified owner session downloads `lab/` (shadow-root UI over the same core modules); every other visitor keeps the classic storefront, and any failure falls back to it.
 
 ## Common edit map
 

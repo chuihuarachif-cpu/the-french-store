@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'r235-adsterra-worker-origin-20260922';
+  const VERSION = 'r236-owner-lab-20260926';
   const scriptPromises = new Map();
   const stylePromises = new Map();
   const featurePromises = new Map();
@@ -311,6 +311,9 @@
       captureReferralParam();
       await loadCore();
       await loadScript('./adsterra-owner-test.js', 'fs-adsterra-owner-test-js', '20260922-r235');
+      // Owner-only lab interface. Never awaited: a failure here can only leave
+      // the classic storefront in place, it never blocks the store.
+      loadScript('./owner-lab-gate.js', 'fs-owner-lab-gate-js', '20260926-r236').catch(() => {});
       installLazyTriggers();
       installLoyaltyAuthGate();
 
