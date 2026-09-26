@@ -185,13 +185,14 @@
       // resto de la tienda sigue igual. Nunca bloquea catálogo ni checkout.
       grid.innerHTML = '';
       if (vacio) vacio.hidden = false;
-      return;
+      return null;
     }
 
     if (!filas.length) {
+      cuentas = [];
       grid.innerHTML = '';
       if (vacio) vacio.hidden = false;
-      return;
+      return [];
     }
 
     // Las disponibles primero; las vendidas al final como prueba social.
@@ -205,6 +206,12 @@
     grid.querySelectorAll('.cv-card').forEach((card) => {
       card.addEventListener('click', () => abrirFicha(card.dataset.cuenta));
     });
+    return cuentas.slice();
+  }
+
+  function estadoDe(cuenta) {
+    const estado = ESTADOS[text(cuenta?.estado).toUpperCase()] || ESTADOS.DISPONIBLE;
+    return { clase: estado.clase, texto: estado.texto, disponible: estado === ESTADOS.DISPONIBLE };
   }
 
   function install() {
@@ -216,7 +223,14 @@
     });
   }
 
-  window.FSCuentasVenta = Object.freeze({ version: VERSION, recargar: cargar });
+  // recargar() resolves with the listings (null when they could not be read).
+  window.FSCuentasVenta = Object.freeze({
+    version: VERSION,
+    recargar: cargar,
+    fotos: listaFotos,
+    enlace: enlaceWhatsapp,
+    estado: estadoDe
+  });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });
   else install();

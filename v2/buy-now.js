@@ -87,9 +87,11 @@
   }
 
   async function buyNow(button, productId) {
-    const old = button.textContent;
-    button.disabled = true;
-    button.textContent = 'Preparando…';
+    const old = button?.textContent;
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Preparando…';
+    }
     try {
       await ensureCheckoutFeature();
       if (typeof currentProduct !== 'function' || !currentProduct(productId)) return;
@@ -115,7 +117,7 @@
         showNotice(result,'No se pudo preparar la compra segura. Recarga la página e inténtalo nuevamente.','error');
       }
     } finally {
-      if (button.isConnected) {
+      if (button?.isConnected) {
         button.disabled = false;
         button.textContent = old;
       }
@@ -206,7 +208,13 @@
     schedule();
   }
 
-  window.FSBuyNow = Object.freeze({ version: VERSION, refresh: schedule, setQuickMode });
+  window.FSBuyNow = Object.freeze({
+    version: VERSION,
+    refresh: schedule,
+    setQuickMode,
+    // Same secure path as the "Comprar ahora" button, for callers that render their own control.
+    buyNow: (productId) => buyNow(null, Number(productId))
+  });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
 })();

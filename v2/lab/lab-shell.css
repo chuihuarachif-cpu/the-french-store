@@ -1,0 +1,37 @@
+/* FRENCH STORE — owner lab shell (light DOM). Loaded only after the owner session
+   is verified; every rule is keyed on html[data-fs-lab="on"] or the lab host, so it
+   cannot change the classic storefront. The lab itself is styled inside its
+   shadow root (lab.css, lab-app.css). */
+html[data-fs-lab="on"]{--fs-lab-font:"Avenir Next","Segoe UI Variable","Segoe UI",system-ui,-apple-system,sans-serif}
+#fsOwnerLab{display:none}
+html[data-fs-lab="on"] #fsOwnerLab{display:block;position:fixed;inset:0;z-index:100;contain:strict;background:#0b1216;animation:fsLabIn .22s ease-out both}
+@keyframes fsLabIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){html[data-fs-lab="on"] #fsOwnerLab{animation:none}}
+
+/* The classic chrome stays in the DOM (its modules keep running) but is not laid out or
+   painted. The header, bottom bar and WhatsApp button are pinned by a layered
+   !important skin, so lab.js hides those three with inline styles it restores. */
+html[data-fs-lab="on"],html[data-fs-lab="on"] body{overflow:hidden!important;overscroll-behavior:none}
+html[data-fs-lab="on"] body{padding-bottom:0!important}
+html[data-fs-lab="on"] :is(#mainContent,body>.site-legal-footer){display:none!important}
+
+/* Real storefront views (Wallet, orders, Rank Pass) presented as a sheet above the lab. */
+html[data-fs-lab="on"][data-fs-lab-panel] #mainContent{display:block!important;position:fixed;inset:0;z-index:110;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:calc(76px + env(safe-area-inset-top)) 0 calc(24px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#10181c,#0b1114)}
+html[data-fs-lab="on"][data-fs-lab-panel] #mainContent>.view{width:min(1100px,calc(100% - 24px));margin-inline:auto}
+#fsLabPanelBar{position:fixed;inset:0 0 auto;z-index:111;display:flex;align-items:center;gap:12px;min-height:56px;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;background:rgba(14,20,23,.96);border-bottom:1px solid rgba(214,196,150,.28);color:#f3ecdc;font:600 15px/1.2 var(--fs-lab-font)}
+#fsLabPanelBar button{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid rgba(214,196,150,.45);background:#1b2327;color:#f3ecdc;font:700 14px/1 var(--fs-lab-font);cursor:pointer}
+#fsLabPanelBar button:focus-visible{outline:2px solid #e2cf9d;outline-offset:2px}
+#fsLabPanelBar b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.02em}
+html:not([data-fs-lab-panel]) #fsLabPanelBar{display:none}
+
+/* Checkout, QR, Wallet top-up and account modals are the production ones; only their
+   surface is tuned to the lab palette. Their logic and fail-closed states are untouched. */
+html[data-fs-lab="on"] .modal{background:rgba(5,8,10,.72)}
+html[data-fs-lab="on"] .modal .modal-card{background:linear-gradient(180deg,#172024,#10171a);border:1px solid rgba(214,196,150,.32);border-radius:22px;box-shadow:0 26px 70px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);color:#eef1f0;font-family:var(--fs-lab-font)}
+html[data-fs-lab="on"] .modal .modal-card h2{font-family:var(--fs-lab-font);font-weight:800;letter-spacing:.01em;color:#f6f1e4}
+html[data-fs-lab="on"] .modal .eyebrow{color:#d6c496}
+html[data-fs-lab="on"] .modal .modal-close{background:#1d272b;border-color:rgba(214,196,150,.35)}
+html[data-fs-lab="on"] .modal .primary-btn{background:linear-gradient(180deg,#f4efe2,#d9cfb8);color:#161a1c;border-color:#fff6df}
+html[data-fs-lab="on"] .modal .secondary-btn{background:#1b2428;color:#eef1f0;border-color:rgba(214,196,150,.38)}
+html[data-fs-lab="on"] .modal .cart-total{background:#1a2327}
+html[data-fs-lab="on"] .modal .cart-total strong{color:#e8d7a6}

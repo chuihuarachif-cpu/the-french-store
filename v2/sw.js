@@ -3,7 +3,7 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r235-adsterra-worker-origin-20260922';
+const CACHE='fs-store-r236-owner-lab-20260926';
 const SHELL=[
   '/v2/',
   '/v2/index.html',
