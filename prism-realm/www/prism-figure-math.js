@@ -4,6 +4,13 @@
  * la capa exterior sigue el contorno; las interiores siguen la figura encogida.
  */
 import { TEMPLATES, PALETTES } from './prism-figure-primitives.js';
+import { buildPenguinLevel } from './prism-toy-penguin.js';
+
+// Niveles con figura por piezas (pingüino de la foto de referencia). El resto usa el generador de placas.
+const TOY_LEVELS = new Set([1, 5]);
+const TOY_ARCHETYPE = { id: 'penguin_toy', name: 'Pingüino Polar Navideño', shapeMode: 'penguin_toy' };
+// Totales fijos: nivel 1 = 60 (referencia), nivel 5 = 81 (foto).
+const FIXED_SCREWS = { 1: 60, 5: 81 };
 
 const TAU = Math.PI * 2;
 const GAP = 0.3;           // separación entre capas (encogimiento de la figura)
@@ -48,9 +55,14 @@ export function createPRNG(seed) {
 }
 
 // Tornillos del nivel L: 60 en el nivel 1, 1500 en el 500. Nunca baja al subir de nivel (puede repetirse).
-function screwsForLevel(L) {
+function baseScrews(L) {
   const t = (L - 1) / 499;
   return Math.round((60 + 1440 * Math.pow(t, 1.18)) / 3) * 3;
+}
+function screwsForLevel(L) {
+  let T = 0;
+  for (let k = 1; k <= L; k++) T = Math.max(T, FIXED_SCREWS[k] ?? baseScrews(k));
+  return T;
 }
 
 function targetScrewsPerPiece(L) {
@@ -61,9 +73,9 @@ function targetScrewsPerPiece(L) {
 // Placas del nivel L. Nunca baja respecto al nivel anterior y permite 2–4 tornillos por placa
 // (cota inferior ceil(T/4) para que ninguna placa lleve más de 4).
 function piecesForLevel(L) {
-  let P = 0;
+  let P = 0, T = 0;
   for (let k = 1; k <= L; k++) {
-    const T = screwsForLevel(k);
+    T = Math.max(T, FIXED_SCREWS[k] ?? baseScrews(k));
     P = Math.max(P, Math.round(T / targetScrewsPerPiece(k)), Math.ceil(T / 4));
   }
   return Math.max(12, Math.min(400, P));
@@ -76,7 +88,7 @@ export function getLevelSpec(levelNumber) {
   const numColors = Math.min(10, 3 + Math.floor(7 * Math.pow(t, 0.75)));
   const numLayers = Math.min(6, 2 + Math.floor(4 * Math.pow(t, 0.8)));
   const numPieces = piecesForLevel(L);
-  const archetype = FIGURE_ARCHETYPES[(L - 1) % FIGURE_ARCHETYPES.length];
+  const archetype = TOY_LEVELS.has(L) ? TOY_ARCHETYPE : FIGURE_ARCHETYPES[(L - 1) % FIGURE_ARCHETYPES.length];
   return {
     levelId: L,
     seed: L * 1664525 + 1013904223,
@@ -317,6 +329,7 @@ function pickSurfacePoints(fig, grow, need, rnd) {
 /* ---------- Nivel completo ---------- */
 export function generateFigureLevel(spec, makeVec) {
   const rnd = createPRNG(spec.seed);
+  if (spec.archetype.shapeMode === 'penguin_toy') return buildPenguinLevel(spec, makeVec, rnd);
   const fig = buildFigure(spec.archetype.shapeMode, rnd);
   const { totalScrews, numPieces, numLayers, numColors } = spec;
 

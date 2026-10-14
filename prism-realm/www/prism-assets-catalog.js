@@ -5,6 +5,7 @@
  * ============================================================================
  */
 import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 export const SCREW_COLORS = [
   { id: 0, name: 'Rojo',     hex: '#ef4444', rim: '#fca5a5', int: 0xef4444 },
@@ -327,6 +328,22 @@ export function buildFigureCoreGroup(figure, grow, bumpTexture) {
 }
 
 // Placa cuadrada redondeada, grosor 0.34, centrada en su plano (eje Z = normal).
+// Geometría de una pieza del pingüino (ver prism-toy-penguin.js). Escala y arcos ya horneados.
+export function buildPartGeometry(part) {
+  if (part.kind === 'ell') {
+    const g = new THREE.SphereGeometry(1, 40, 28, part.ph[0], part.ph[1] - part.ph[0], part.th[0], part.th[1] - part.th[0]);
+    g.scale(part.r[0], part.r[1], part.r[2]);
+    return g;
+  }
+  if (part.kind === 'torus') {
+    const g = new THREE.TorusGeometry(1, part.tube, 16, 72, part.arc[1]);
+    g.rotateZ(part.arc[0]);
+    g.scale(part.R[0], part.R[1], 1);
+    return g;
+  }
+  return new RoundedBoxGeometry(2 * part.h[0], 2 * part.h[1], 2 * part.h[2], 4, part.rad);
+}
+
 export function createTileGeometry(w, h) {
   const hw = w / 2, hh = h / 2, r = Math.min(0.14, hw * 0.3, hh * 0.3);
   const s = new THREE.Shape();

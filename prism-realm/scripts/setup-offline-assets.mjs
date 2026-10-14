@@ -11,6 +11,8 @@ const ICONS_DIR = path.join(ROOT, 'www/icons');
 fs.mkdirSync(VENDOR_BUILD, { recursive: true });
 fs.mkdirSync(VENDOR_CONTROLS, { recursive: true });
 fs.mkdirSync(VENDOR_ENV, { recursive: true });
+const VENDOR_GEOM = path.join(ROOT, 'www/vendor/three/examples/jsm/geometries');
+fs.mkdirSync(VENDOR_GEOM, { recursive: true });
 fs.mkdirSync(ICONS_DIR, { recursive: true });
 
 // 1. Copiar Three.js, OrbitControls y RoomEnvironment para reflejos PBR 100% offline
@@ -26,6 +28,10 @@ const filesToCopy = [
   {
     src: path.join(ROOT, 'node_modules/three/examples/jsm/environments/RoomEnvironment.js'),
     dest: path.join(VENDOR_ENV, 'RoomEnvironment.js')
+  },
+  {
+    src: path.join(ROOT, 'node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js'),
+    dest: path.join(VENDOR_GEOM, 'RoundedBoxGeometry.js')
   }
 ];
 

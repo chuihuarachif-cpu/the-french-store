@@ -604,7 +604,8 @@
       SoundFX,
       createRealisticTextures,
       buildFigureCoreGroup,
-      createTileGeometry
+      createTileGeometry,
+      buildPartGeometry
     } from './prism-assets-catalog.js';
     import { getLevelSpec, generateFigureLevel, buildAll500LevelsManifest } from './prism-figure-math.js';
 
@@ -815,11 +816,12 @@
       renderer.shadowMap.enabled = !heavyLevel;
       dirLight.castShadow = !heavyLevel;
       for (const p of pieces) {
-        const geo = createTileGeometry(p.tileW, p.tileH);
+        const geo = p.part ? buildPartGeometry(p.part) : createTileGeometry(p.tileW, p.tileH);
         // Un solo material por color (compartido entre placas) en vez de uno por placa
         if (!tileMaterialCache.has(p.colorHex)) {
           tileMaterialCache.set(p.colorHex, new THREE.MeshPhysicalMaterial({
             color: p.colorHex,
+            side: THREE.DoubleSide,
             roughness: 0.24,
             metalness: 0.04,
             clearcoat: 0.75,
@@ -831,7 +833,8 @@
         const mat = tileMaterialCache.get(p.colorHex);
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.copy(p.pos);
-        mesh.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(p.basisX, p.basisY, p.normal));
+        if (p.rot) mesh.rotation.set(p.rot[0], p.rot[1], p.rot[2]);
+        else mesh.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(p.basisX, p.basisY, p.normal));
         mesh.castShadow = !heavyLevel;
         mesh.receiveShadow = !heavyLevel;
         p.mesh = mesh;
