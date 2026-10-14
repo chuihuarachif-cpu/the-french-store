@@ -171,17 +171,18 @@ export function buildPenguinLevel5Scene() {
   // =========================================================================
   const bellyScale = new THREE.Vector3(0.95, 1.15, 0.88);
   // Mitad Izquierda (Con tornillo Naranja arriba y Azul abajo como en la foto)
-  const bellyLeftMesh = createSculptedShellPart(1.18, Math.PI * 0.51, Math.PI * 0.44, 0.42, Math.PI * 0.48, bellyScale, PENGUIN_COLORS.bellyWhite);
+  // Franja central más estrecha (como la foto): la mitad izquierda del modelo es el lado +X.
+  const bellyLeftMesh = createSculptedShellPart(1.18, Math.PI * 0.50, Math.PI * 0.25, 0.42, Math.PI * 0.48, bellyScale, PENGUIN_COLORS.bellyWhite);
   registerPiece('belly_left', 'Panza Blanca Izquierda', bellyLeftMesh, [-0.02, -0.25, 0.14], [0, 0, 0], [], [
-    { color: 'orange', pos: [-0.42, -0.05, 1.16], normal: [-0.32, 0.05, 0.94] },
-    { color: 'blue',   pos: [-0.48, -0.62, 1.05], normal: [-0.38, -0.35, 0.85] }
+    { color: 'orange', pos: [0.42, -0.05, 1.16], normal: [0.32, 0.05, 0.94] },
+    { color: 'blue',   pos: [0.48, -0.62, 1.05], normal: [0.38, -0.35, 0.85] }
   ]);
 
-  // Mitad Derecha (Con tornillo Morado arriba y Naranja abajo como en la foto)
-  const bellyRightMesh = createSculptedShellPart(1.18, Math.PI * 0.05, Math.PI * 0.44, 0.42, Math.PI * 0.48, bellyScale, PENGUIN_COLORS.bellyWhite);
+  // Mitad Derecha (lado -X)
+  const bellyRightMesh = createSculptedShellPart(1.18, Math.PI * 0.25, Math.PI * 0.25, 0.42, Math.PI * 0.48, bellyScale, PENGUIN_COLORS.bellyWhite);
   registerPiece('belly_right', 'Panza Blanca Derecha', bellyRightMesh, [0.02, -0.25, 0.14], [0, 0, 0], [], [
-    { color: 'purple', pos: [0.42, -0.05, 1.16], normal: [0.32, 0.05, 0.94] },
-    { color: 'orange', pos: [0.48, -0.62, 1.05], normal: [0.38, -0.35, 0.85] }
+    { color: 'purple', pos: [-0.42, -0.05, 1.16], normal: [-0.32, 0.05, 0.94] },
+    { color: 'orange', pos: [-0.48, -0.62, 1.05], normal: [-0.38, -0.35, 0.85] }
   ]);
 
   // =========================================================================
@@ -367,20 +368,21 @@ export function buildPenguinLevel5Scene() {
   // =========================================================================
   // 7. DORSO, CABEZA Y CAPAS TRASERAS / INTERNAS (Completan los 81 tornillos exactos)
   // =========================================================================
-  const backTorsoLeft = createSculptedShellPart(1.16, Math.PI * 0.98, Math.PI * 0.50, 0.35, Math.PI * 0.55, bellyScale, PENGUIN_COLORS.bodyNavy);
+  // Dorso: cubre todo el lado +X (0.75π–1.5π) y el lado -X (1.5π–2.25π) sin solaparse con la panza.
+  const backTorsoLeft = createSculptedShellPart(1.16, Math.PI * 0.75, Math.PI * 0.75, 0.35, Math.PI * 0.75, bellyScale, PENGUIN_COLORS.bodyNavy);
   registerPiece('back_torso_left', 'Dorso Marino Izq', backTorsoLeft, [-0.02, -0.25, -0.05], [0, 0, 0], ['wing_left', 'belly_left'], [
-    { color: 'orange', pos: [-0.55, -0.10, -1.05], normal: [-0.45, 0, -0.89] },
-    { color: 'purple', pos: [-0.48, -0.65, -0.95], normal: [-0.42, -0.3, -0.85] },
-    { color: 'green',  pos: [-0.85, -0.35, -0.75], normal: [-0.75, -0.1, -0.65] },
-    { color: 'yellow', pos: [-0.25,  0.22, -1.02], normal: [-0.25, 0.2, -0.95] }
+    { color: 'orange', pos: [0.55, -0.10, -1.05], normal: [0.45, 0, -0.89] },
+    { color: 'purple', pos: [0.48, -0.65, -0.95], normal: [0.42, -0.3, -0.85] },
+    { color: 'green',  pos: [0.85, -0.35, -0.75], normal: [0.75, -0.1, -0.65] },
+    { color: 'yellow', pos: [0.25,  0.22, -1.02], normal: [0.25, 0.2, -0.95] }
   ]);
 
-  const backTorsoRight = createSculptedShellPart(1.16, Math.PI * 1.50, Math.PI * 0.50, 0.35, Math.PI * 0.55, bellyScale, PENGUIN_COLORS.bodyNavy);
+  const backTorsoRight = createSculptedShellPart(1.16, Math.PI * 1.50, Math.PI * 0.75, 0.35, Math.PI * 0.75, bellyScale, PENGUIN_COLORS.bodyNavy);
   registerPiece('back_torso_right', 'Dorso Marino Der', backTorsoRight, [0.02, -0.25, -0.05], [0, 0, 0], ['wing_right', 'belly_right'], [
-    { color: 'blue',   pos: [0.55, -0.10, -1.05], normal: [0.45, 0, -0.89] },
-    { color: 'brown',  pos: [0.48, -0.65, -0.95], normal: [0.42, -0.3, -0.85] },
-    { color: 'pink',   pos: [0.85, -0.35, -0.75], normal: [0.75, -0.1, -0.65] },
-    { color: 'white',  pos: [0.25,  0.22, -1.02], normal: [0.25, 0.2, -0.95] }
+    { color: 'blue',   pos: [-0.55, -0.10, -1.05], normal: [-0.45, 0, -0.89] },
+    { color: 'brown',  pos: [-0.48, -0.65, -0.95], normal: [-0.42, -0.3, -0.85] },
+    { color: 'pink',   pos: [-0.85, -0.35, -0.75], normal: [-0.75, -0.1, -0.65] },
+    { color: 'white',  pos: [-0.25,  0.22, -1.02], normal: [-0.25, 0.2, -0.95] }
   ]);
 
   const headHood = createSculptedShellPart(1.06, Math.PI * 0.85, Math.PI * 1.3, 0.22, Math.PI * 0.45, new THREE.Vector3(0.96, 0.85, 0.92), PENGUIN_COLORS.bodyNavy);
