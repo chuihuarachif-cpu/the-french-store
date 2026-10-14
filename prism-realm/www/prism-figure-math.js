@@ -47,15 +47,35 @@ export function createPRNG(seed) {
   };
 }
 
+// Tornillos del nivel L: 60 en el nivel 1, 1500 en el 500. Nunca baja al subir de nivel (puede repetirse).
+function screwsForLevel(L) {
+  const t = (L - 1) / 499;
+  return Math.round((60 + 1440 * Math.pow(t, 1.18)) / 3) * 3;
+}
+
+function targetScrewsPerPiece(L) {
+  const t = (L - 1) / 499;
+  return L <= 5 ? 1 : L <= 40 ? 2 : Math.min(4, 3 + Math.floor(t * 2));
+}
+
+// Placas del nivel L. Nunca baja respecto al nivel anterior y permite 2–4 tornillos por placa
+// (cota inferior ceil(T/4) para que ninguna placa lleve más de 4).
+function piecesForLevel(L) {
+  let P = 0;
+  for (let k = 1; k <= L; k++) {
+    const T = screwsForLevel(k);
+    P = Math.max(P, Math.round(T / targetScrewsPerPiece(k)), Math.ceil(T / 4));
+  }
+  return Math.max(12, Math.min(400, P));
+}
+
 export function getLevelSpec(levelNumber) {
   const L = Math.max(1, Math.min(500, Math.floor(levelNumber)));
   const t = (L - 1) / 499;
-  const rawScrews = 60 + 1440 * Math.pow(t, 1.18);
-  const totalScrews = Math.round(rawScrews / 3) * 3;
+  const totalScrews = screwsForLevel(L);
   const numColors = Math.min(10, 3 + Math.floor(7 * Math.pow(t, 0.75)));
   const numLayers = Math.min(6, 2 + Math.floor(4 * Math.pow(t, 0.8)));
-  const targetScrewsPerPiece = L <= 5 ? 1 : L <= 40 ? 2 : Math.min(4, 3 + Math.floor(t * 2));
-  const numPieces = Math.max(12, Math.min(400, Math.round(totalScrews / targetScrewsPerPiece)));
+  const numPieces = piecesForLevel(L);
   const archetype = FIGURE_ARCHETYPES[(L - 1) % FIGURE_ARCHETYPES.length];
   return {
     levelId: L,
