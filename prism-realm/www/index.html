@@ -1332,8 +1332,17 @@
 
       raycaster.setFromCamera(mouse, camera);
       if (!screwInstMesh) return;
-      const hits = raycaster.intersectObject(screwInstMesh);
-      if (hits.length > 0 && hits[0].instanceId !== undefined) {
+
+      // Tornillos y placas compiten juntos: si lo primero que toca el rayo es una placa,
+      // el toque se cancela y nunca atraviesa la figura hacia tornillos ocultos por detrás.
+      const plateMeshes = [];
+      if (state.levelData) {
+        for (const p of state.levelData.pieces) {
+          if (p.mesh && p.mesh.visible && !p.removed) plateMeshes.push(p.mesh);
+        }
+      }
+      const hits = raycaster.intersectObjects([screwInstMesh, ...plateMeshes], false);
+      if (hits.length > 0 && hits[0].object === screwInstMesh && hits[0].instanceId !== undefined) {
         extractScrew(hits[0].instanceId);
       }
     });
