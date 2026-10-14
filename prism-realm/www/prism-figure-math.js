@@ -7,10 +7,11 @@ import { TEMPLATES, PALETTES } from './prism-figure-primitives.js';
 import { buildPenguinLevel } from './prism-toy-penguin.js';
 
 // Niveles con figura por piezas (pingüino de la foto de referencia). El resto usa el generador de placas.
-const TOY_LEVELS = new Set([1, 5]);
+// El nivel 1 lo construye index.html con penguin-level5-model.js (81 tornillos); aquí solo se fija su total.
+const TOY_LEVELS = new Set([5]);
 const TOY_ARCHETYPE = { id: 'penguin_toy', name: 'Pingüino Polar Navideño', shapeMode: 'penguin_toy' };
-// Totales fijos: nivel 1 = 60 (referencia), nivel 5 = 81 (foto).
-const FIXED_SCREWS = { 1: 60, 5: 81 };
+// Totales fijos: nivel 1 = 81 (modelo de Gemini), nivel 5 = 81 (foto).
+const FIXED_SCREWS = { 1: 81, 5: 81 };
 
 const TAU = Math.PI * 2;
 const GAP = 0.3;           // separación entre capas (encogimiento de la figura)

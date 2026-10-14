@@ -608,6 +608,7 @@
       buildPartGeometry
     } from './prism-assets-catalog.js';
     import { getLevelSpec, generateFigureLevel, buildAll500LevelsManifest } from './prism-figure-math.js';
+    import { buildPenguinLevel5Scene, penguinModelToLevel } from './penguin-level5-model.js';
 
     // Inyectar SVGs detallados
     document.getElementById('screw-svg-holder').innerHTML = UI_SVGS.screwIcon;
@@ -790,12 +791,17 @@
       while (coreGroup.children.length > 0) coreGroup.remove(coreGroup.children[0]);
       while (piecesGroup.children.length > 0) {
         const m = piecesGroup.children[0];
-        m.geometry.dispose();
+        m.traverse(o => { if (o.geometry) o.geometry.dispose(); });
         piecesGroup.remove(m);
       }
       if (screwInstMesh) rootGroup.remove(screwInstMesh, crossMeshA, crossMeshB, holeInstMesh);
 
-      state.levelData = generateFigureLevel(getLevelSpec(lvlNum), (x, y, z) => new THREE.Vector3(x, y, z));
+      // Nivel 1: pingüino esculpido por piezas (penguin-level5-model.js). El resto: generador.
+      const lvlSpec = getLevelSpec(lvlNum);
+      const vec3 = (x, y, z) => new THREE.Vector3(x, y, z);
+      state.levelData = lvlNum === 1
+        ? penguinModelToLevel(buildPenguinLevel5Scene(), lvlSpec, vec3)
+        : generateFigureLevel(lvlSpec, vec3);
       state.activeBoxes = [];
       state.maxBoxes = 2;
       state.reserveSlots = [];
@@ -816,6 +822,12 @@
       renderer.shadowMap.enabled = !heavyLevel;
       dirLight.castShadow = !heavyLevel;
       for (const p of pieces) {
+        // Pieza con malla propia (modelo esculpido): se usa tal cual, con sus materiales
+        if (p.prebuilt) {
+          p.mesh.traverse(o => { if (o.isMesh) { o.castShadow = !heavyLevel; o.receiveShadow = !heavyLevel; } });
+          piecesGroup.add(p.mesh);
+          continue;
+        }
         const geo = p.part ? buildPartGeometry(p.part) : createTileGeometry(p.tileW, p.tileH);
         // Un solo material por color (compartido entre placas) en vez de uno por placa
         if (!tileMaterialCache.has(p.colorHex)) {
@@ -926,7 +938,7 @@
       blockOrigin.copy(screw.pos).addScaledVector(screw.normal, 0.15);
       blockRaycaster.set(blockOrigin, screw.normal);
       blockRaycaster.far = 2.8;
-      return blockRaycaster.intersectObjects(candidates, false).length > 0;
+      return blockRaycaster.intersectObjects(candidates, true).length > 0;
     }
 
     /* ========================================================================
@@ -1204,7 +1216,7 @@
           if (p.mesh && p.mesh.visible && !p.removed) plateMeshes.push(p.mesh);
         }
       }
-      const hits = raycaster.intersectObjects([screwInstMesh, ...plateMeshes], false);
+      const hits = raycaster.intersectObjects([screwInstMesh, ...plateMeshes], true);
       if (hits.length > 0 && hits[0].object === screwInstMesh && hits[0].instanceId !== undefined) {
         extractScrew(hits[0].instanceId);
       }
