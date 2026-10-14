@@ -625,7 +625,7 @@
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.08;
     renderer.shadowMap.enabled = true;
@@ -737,6 +737,7 @@
     }
 
     let screwInstMesh = null, crossMeshA = null, crossMeshB = null, holeInstMesh = null;
+    const tileMaterialCache = new Map();
 
     // LÍMITE ESTRICTO SOLICITADO: MÁXIMO 2 TORNILLOS DESENROSCÁNDOSE A LA VEZ
     const MAX_CONCURRENT_UNSCREW = 2;
@@ -789,7 +790,6 @@
       while (piecesGroup.children.length > 0) {
         const m = piecesGroup.children[0];
         m.geometry.dispose();
-        m.material.dispose();
         piecesGroup.remove(m);
       }
       if (screwInstMesh) rootGroup.remove(screwInstMesh, crossMeshA, crossMeshB, holeInstMesh);
@@ -810,22 +810,30 @@
       coreGroup.add(coreModel);
 
       // 2. Construir las cáscaras curvas encajadas alrededor de la escultura
+      // Sombras solo en niveles chicos: en niveles grandes el celular no da abasto
+      const heavyLevel = spec.totalScrews > 200;
+      renderer.shadowMap.enabled = !heavyLevel;
+      dirLight.castShadow = !heavyLevel;
       for (const p of pieces) {
         const geo = createTileGeometry(p.tileW, p.tileH);
-        const mat = new THREE.MeshPhysicalMaterial({
-          color: p.colorHex,
-          roughness: 0.24,
-          metalness: 0.04,
-          clearcoat: 0.75,
-          clearcoatRoughness: 0.16,
-          bumpMap: plasticBump,
-          bumpScale: 0.015
-        });
+        // Un solo material por color (compartido entre placas) en vez de uno por placa
+        if (!tileMaterialCache.has(p.colorHex)) {
+          tileMaterialCache.set(p.colorHex, new THREE.MeshPhysicalMaterial({
+            color: p.colorHex,
+            roughness: 0.24,
+            metalness: 0.04,
+            clearcoat: 0.75,
+            clearcoatRoughness: 0.16,
+            bumpMap: plasticBump,
+            bumpScale: 0.015
+          }));
+        }
+        const mat = tileMaterialCache.get(p.colorHex);
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.copy(p.pos);
         mesh.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(p.basisX, p.basisY, p.normal));
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
+        mesh.castShadow = !heavyLevel;
+        mesh.receiveShadow = !heavyLevel;
         p.mesh = mesh;
         piecesGroup.add(mesh);
       }

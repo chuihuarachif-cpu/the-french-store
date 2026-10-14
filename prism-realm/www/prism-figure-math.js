@@ -54,8 +54,8 @@ export function getLevelSpec(levelNumber) {
   const totalScrews = Math.round(rawScrews / 3) * 3;
   const numColors = Math.min(10, 3 + Math.floor(7 * Math.pow(t, 0.75)));
   const numLayers = Math.min(6, 2 + Math.floor(4 * Math.pow(t, 0.8)));
-  const targetScrewsPerPiece = L <= 5 ? 1 : L <= 40 ? 2 : Math.min(6, 3 + Math.floor(t * 7));
-  const numPieces = Math.max(12, Math.min(300, Math.round(totalScrews / targetScrewsPerPiece)));
+  const targetScrewsPerPiece = L <= 5 ? 1 : L <= 40 ? 2 : Math.min(4, 3 + Math.floor(t * 2));
+  const numPieces = Math.max(12, Math.min(400, Math.round(totalScrews / targetScrewsPerPiece)));
   const archetype = FIGURE_ARCHETYPES[(L - 1) % FIGURE_ARCHETYPES.length];
   return {
     levelId: L,
@@ -340,9 +340,9 @@ export function generateFigureLevel(spec, makeVec) {
   for (const pc of pieces) {
     for (let i = 0; i < pc.remainingScrews; i++) {
       const [sx, sy] = pc.remainingScrews === 1 ? [0, 0] : SLOTS[i % SLOTS.length];
-      const ox = pc.x[0] * sx * pc.side + pc.y[0] * sy * pc.side + pc.n[0] * 0.21;
-      const oy = pc.x[1] * sx * pc.side + pc.y[1] * sy * pc.side + pc.n[1] * 0.21;
-      const oz = pc.x[2] * sx * pc.side + pc.y[2] * sy * pc.side + pc.n[2] * 0.21;
+      const ox = pc.x[0] * sx * pc.side + pc.y[0] * sy * pc.side + pc.n[0] * 0.3;
+      const oy = pc.x[1] * sx * pc.side + pc.y[1] * sy * pc.side + pc.n[1] * 0.3;
+      const oz = pc.x[2] * sx * pc.side + pc.y[2] * sy * pc.side + pc.n[2] * 0.3;
       screws.push({
         id: screws.length,
         pieceId: pc.id,

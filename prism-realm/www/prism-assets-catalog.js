@@ -7,16 +7,16 @@
 import * as THREE from 'three';
 
 export const SCREW_COLORS = [
-  { id: 0, name: 'Rosa Rubí',     hex: '#f43f5e', rim: '#fda4af', int: 0xf43f5e },
-  { id: 1, name: 'Azul Cobalto',  hex: '#0ea5e9', rim: '#7dd3fc', int: 0x0ea5e9 },
-  { id: 2, name: ' Amatista',     hex: '#8b5cf6', rim: '#c4b5fd', int: 0x8b5cf6 },
-  { id: 3, name: 'Bronce Cobre',  hex: '#92400e', rim: '#d97706', int: 0xb45309 },
-  { id: 4, name: 'Esmeralda',     hex: '#10b981', rim: '#6ee7b7', int: 0x10b981 },
-  { id: 5, name: 'Ámbar Dorado',  hex: '#f59e0b', rim: '#fde047', int: 0xf59e0b },
-  { id: 6, name: 'Titanio Negro', hex: '#334155', rim: '#94a3b8', int: 0x334155 },
-  { id: 7, name: 'Turquesa',      hex: '#06b6d4', rim: '#67e8f9', int: 0x06b6d4 },
-  { id: 8, name: 'Coral Vivo',    hex: '#fb7185', rim: '#fecdd3', int: 0xfb7185 },
-  { id: 9, name: 'Oro Imperial',  hex: '#eab308', rim: '#fef08a', int: 0xeab308 }
+  { id: 0, name: 'Rojo',     hex: '#ef4444', rim: '#fca5a5', int: 0xef4444 },
+  { id: 1, name: 'Azul',     hex: '#2563eb', rim: '#93c5fd', int: 0x2563eb },
+  { id: 2, name: 'Morado',   hex: '#9333ea', rim: '#d8b4fe', int: 0x9333ea },
+  { id: 3, name: 'Naranja',  hex: '#ff8a00', rim: '#fed7aa', int: 0xff8a00 },
+  { id: 4, name: 'Verde',    hex: '#22c55e', rim: '#bbf7d0', int: 0x22c55e },
+  { id: 5, name: 'Amarillo', hex: '#facc15', rim: '#fef9c3', int: 0xfacc15 },
+  { id: 6, name: 'Café',     hex: '#8d4e2a', rim: '#d6b38f', int: 0x8d4e2a },
+  { id: 7, name: 'Rosa',     hex: '#ff4fa3', rim: '#fbcfe8', int: 0xff4fa3 },
+  { id: 8, name: 'Turquesa', hex: '#06b6d4', rim: '#a5f3fc', int: 0x06b6d4 },
+  { id: 9, name: 'Blanco',   hex: '#f1f5f9', rim: '#ffffff', int: 0xf1f5f9 }
 ];
 
 /* ============================================================================
@@ -348,5 +348,16 @@ export function createTileGeometry(w, h) {
     bevelSegments: 3
   });
   geo.center();
+  // Cara frontal inflada (tipo juguete): la placa se abomba hacia afuera y los bordes quedan redondeados
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+    if (z <= 0) continue;
+    const u = Math.min(1, Math.abs(x) / Math.max(hw, 1e-3));
+    const v = Math.min(1, Math.abs(y) / Math.max(hh, 1e-3));
+    pos.setZ(i, z + 0.16 * (1 - u * u) * (1 - v * v));
+  }
+  pos.needsUpdate = true;
+  geo.computeVertexNormals();
   return geo;
 }
