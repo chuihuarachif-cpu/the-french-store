@@ -573,8 +573,9 @@ export function getLevelSpec(levelNumber) {
 
   // Capas compactas y piezas anchas bien ensambladas (evita que en Nivel 158 o 500 se pulvericen en 400 micro-cubos)
   const numLayers = Math.min(6, 2 + Math.floor(4 * Math.pow(t, 0.8)));
-  const targetScrewsPerPiece = L <= 5 ? 3 : Math.min(10, 3 + Math.floor(t * 7));
-  const numPieces = Math.max(12, Math.min(150, Math.round(totalScrews / targetScrewsPerPiece)));
+  // Máximo 6 tornillos por placa (colocados en esquinas/bordes). Por eso sube el tope de placas a 300.
+  const targetScrewsPerPiece = L <= 5 ? 3 : Math.min(6, 3 + Math.floor(t * 7));
+  const numPieces = Math.max(12, Math.min(300, Math.round(totalScrews / targetScrewsPerPiece)));
 
   let archetype = SCULPTURE_ARCHETYPES[(L - 1) % SCULPTURE_ARCHETYPES.length];
   if (L === 1) archetype = SCULPTURE_ARCHETYPES[0]; // Nivel 1 empieza con el Pingüino Navideño completo

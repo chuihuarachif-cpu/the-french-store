@@ -753,29 +753,34 @@
         }
       }
 
-      // Distribuir tornillos ordenadamente sobre cada placa curva
+      // Distribución estructural: tornillos en esquinas y bordes de cada placa (máx. 6-7)
+      // Los pétalos de la flor (capa 0) conservan el anillo circular porque no son rectangulares.
+      const STRUCTURAL_SLOTS = [
+        [-0.3, -0.3], [0.3, 0.3], [0.3, -0.3], [-0.3, 0.3], // esquinas (fracción de ancho/alto)
+        [0, 0.32], [0, -0.32],                               // bordes superior e inferior
+        [0, 0]                                               // centro
+      ];
       let sId = 0;
       for (const piece of pieces) {
-        const up = Math.abs(piece.normal.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
-        const tangent = new THREE.Vector3().crossVectors(up, piece.normal).normalize();
-        const bitangent = new THREE.Vector3().crossVectors(piece.normal, tangent).normalize();
-
         const count = piece.remainingScrews;
-        const spread = count === 1 ? 0 : Math.min(0.46, 0.24 + count * 0.03);
+        const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), piece.normal);
+        const localX = new THREE.Vector3(1, 0, 0).applyQuaternion(q); // mismos ejes que la malla de la placa
+        const localY = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
+        const plate = getPlateDimensions(piece.totalRows, piece.totalCols, piece.radius);
+        const isPetal = archetype.shapeMode === 'flower_ring' && piece.layer === 0;
+        const ringSpread = count === 1 ? 0 : Math.min(0.46, 0.24 + count * 0.03);
 
         for (let i = 0; i < count; i++) {
-          const a = (i / count) * Math.PI * 2 + piece.id * 0.25;
-          const pos = piece.pos.clone()
-            .addScaledVector(tangent, Math.cos(a) * spread)
-            .addScaledVector(bitangent, Math.sin(a) * spread)
-            .addScaledVector(piece.normal, 0.21);
-
-          const occludedBy = [];
-          for (const other of pieces) {
-            if (other.layer > piece.layer && piece.normal.dot(other.normal) > 0.87 && occludedBy.length < 2) {
-              occludedBy.push(other.id);
-            }
+          const pos = piece.pos.clone();
+          if (isPetal) {
+            const a = (i / count) * Math.PI * 2 + piece.id * 0.25;
+            pos.addScaledVector(localX, Math.cos(a) * ringSpread).addScaledVector(localY, Math.sin(a) * ringSpread);
+          } else {
+            // Un solo tornillo queda al centro; si hay varios, se reparten en esquinas y bordes
+            const [sx, sy] = count === 1 ? STRUCTURAL_SLOTS[6] : STRUCTURAL_SLOTS[i % STRUCTURAL_SLOTS.length];
+            pos.addScaledVector(localX, sx * plate.width).addScaledVector(localY, sy * plate.height);
           }
+          pos.addScaledVector(piece.normal, 0.21);
 
           screws.push({
             id: sId++,
@@ -784,7 +789,6 @@
             pos,
             normal: piece.normal.clone(),
             colorId: 0,
-            occludedBy,
             removed: false,
             animating: false
           });
@@ -1045,12 +1049,21 @@
       verifyVictory();
     }
 
+    // Bloqueo por raycast: desde el tornillo hacia afuera (su normal, hasta 2.8 unidades).
+    // Está bloqueado si el rayo toca una placa viva que no sea la suya.
+    const blockRaycaster = new THREE.Raycaster();
+    const blockOrigin = new THREE.Vector3();
     function isBlocked(screw) {
-      for (const pid of screw.occludedBy) {
-        const p = state.levelData.pieces[pid];
-        if (p && !p.falling && !p.removed) return true;
+      if (!state.levelData) return false;
+      const own = state.levelData.pieces[screw.pieceId];
+      const candidates = [];
+      for (const p of state.levelData.pieces) {
+        if (p !== own && p.mesh && p.mesh.visible && !p.falling && !p.removed) candidates.push(p.mesh);
       }
-      return false;
+      blockOrigin.copy(screw.pos).addScaledVector(screw.normal, 0.15);
+      blockRaycaster.set(blockOrigin, screw.normal);
+      blockRaycaster.far = 2.8;
+      return blockRaycaster.intersectObjects(candidates, false).length > 0;
     }
 
     /* ========================================================================
@@ -1089,7 +1102,7 @@
       flyingGroup.add(threadedScrew);
 
       const startPos = screw.pos.clone();
-      const unscrewedPos = screw.pos.clone().addScaledVector(screw.normal, 1.05);
+      const unscrewedPos = screw.pos.clone().addScaledVector(screw.normal, 1.35); // tirón de salida más largo
       const trayTargetPos = new THREE.Vector3((Math.random() - 0.5) * 1.8, 5.2, 3.2);
 
       let progress = 0;
@@ -1119,6 +1132,24 @@
       animateUnscrewStep();
     }
 
+    // Sag: con 1 tornillo restante la placa gira sobre ese tornillo (pivote) hacia abajo.
+    // El tornillo no se mueve, así que sigue encajado en su agujero mientras la placa cede.
+    function startSag(piece) {
+      if (!piece.mesh || piece.sag) return;
+      const last = state.levelData.screws.find(s => s.pieceId === piece.id && !s.removed && !s.animating);
+      if (!last) return;
+      const pivot = last.pos.clone();
+      const d = piece.pos.clone().sub(pivot);                       // pivote → centro de la placa
+      const sign = piece.normal.clone().cross(d).y > 0 ? -1 : 1;    // sentido que baja el borde libre
+      piece.sag = {
+        t: 0,
+        pivot,
+        sign,
+        basePos: piece.pos.clone(),
+        baseQuat: piece.mesh.quaternion.clone()
+      };
+    }
+
     function finalizeScrew(screw) {
       if (state.isGameOver) return;
       screw.removed = true;
@@ -1132,6 +1163,7 @@
       const piece = state.levelData.pieces[screw.pieceId];
       if (piece && !piece.falling) {
         piece.remainingScrews--;
+        if (piece.remainingScrews === 1) startSag(piece);
         if (piece.remainingScrews <= 0) {
           SoundFX.playPieceDrop();
           piece.falling = true;
@@ -1408,6 +1440,15 @@
 
       if (state.levelData) {
         for (const p of state.levelData.pieces) {
+          if (p.sag && !p.falling && !p.removed && p.mesh) {
+            // Sag: la placa gira sobre su último tornillo (pivote) con suavizado
+            const sg = p.sag;
+            sg.t = Math.min(1, sg.t + dt * 1.8);
+            const e = sg.t * sg.t * (3 - 2 * sg.t);
+            const rot = new THREE.Quaternion().setFromAxisAngle(p.normal, sg.sign * e * 0.28);
+            p.mesh.quaternion.copy(rot).multiply(sg.baseQuat);
+            p.mesh.position.copy(sg.basePos).sub(sg.pivot).applyQuaternion(rot).add(sg.pivot);
+          }
           if (p.falling && !p.removed && p.mesh) {
             p.vel.y -= 26.0 * dt;
             p.mesh.position.addScaledVector(p.vel, dt);
