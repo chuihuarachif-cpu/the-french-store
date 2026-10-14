@@ -396,6 +396,79 @@ export function buildSculptureCoreGroup(shapeMode, bumpTexture) {
     windowRim.position.set(0, 0.5, 1.18);
     group.add(hull, cone, windowRim);
 
+  } else if (shapeMode === 'flower_ring') {
+    // Corona/Flor: disco central rosa, anillo dorado y gemas azules sobre el anillo
+    const center = new THREE.Mesh(new THREE.SphereGeometry(0.95, 28, 22), matBody(0xf43f5e));
+    center.scale.set(1, 1, 0.55);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.45, 0.3, 18, 40), matBody(0xfacc15));
+    group.add(center, ring);
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 0), matBody(0x38bdf8));
+      gem.position.set(Math.cos(a) * 1.45, Math.sin(a) * 1.45, 0.18);
+      group.add(gem);
+    }
+
+  } else if (shapeMode === 'unicorn') {
+    // Pegaso / Unicornio: cuerpo, cuello, cabeza, cuerno dorado, alas, patas y cola
+    const white = 0xf8fafc;
+    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.85, 1.9, 12, 20), matBody(white));
+    body.rotation.x = Math.PI / 2;
+    body.position.set(0, -0.2, 0);
+    const neck = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.9, 10, 16), matBody(white));
+    neck.position.set(0, 0.85, 1.05);
+    neck.rotation.x = -0.6;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.62, 22, 18), matBody(white));
+    head.scale.set(0.8, 0.9, 1.25);
+    head.position.set(0, 1.35, 1.6);
+    const horn = new THREE.Mesh(new THREE.ConeGeometry(0.16, 1.0, 14), matBody(0xfacc15));
+    horn.rotation.x = Math.PI / 2 - 0.3;
+    horn.position.set(0, 2.0, 2.78);
+    group.add(body, neck, head, horn);
+
+    // Alas planas en el plano de la escultura (se ven de frente)
+    [-1, 1].forEach(side => {
+      const wing = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14), matBody(0xc4b5fd));
+      wing.scale.set(1.25, 0.7, 0.12);
+      wing.position.set(side * 1.25, 0.9, 0);
+      wing.rotation.z = side * -0.45;
+      group.add(wing);
+    });
+
+    // Patas y cola
+    [[-0.5, 1.0], [0.5, 1.0], [-0.5, -1.0], [0.5, -1.0]].forEach(([x, z]) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 1.2, 10), matBody(white));
+      leg.position.set(x, -1.65, z);
+      group.add(leg);
+    });
+    const tail = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 14), matBody(0xc4b5fd));
+    tail.scale.set(0.6, 1.2, 0.5);
+    tail.position.set(0, 0.5, -2.0);
+    group.add(tail);
+
+  } else if (shapeMode === 'turbine') {
+    // Turbina / reactor: cubo central, morro, carcasa anular y 8 álabes inclinados
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 1.6, 28), matBody(0x64748b));
+    hub.rotation.x = Math.PI / 2;
+    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.75, 1.2, 28), matBody(0xe2e8f0));
+    nose.rotation.x = Math.PI / 2;
+    nose.position.set(0, 0, 1.4);
+    const casing = new THREE.Mesh(new THREE.TorusGeometry(1.95, 0.22, 16, 48), matBody(0x94a3b8));
+    group.add(hub, nose, casing);
+
+    for (let i = 0; i < 8; i++) {
+      const arm = new THREE.Group();
+      arm.rotation.z = (i / 8) * Math.PI * 2;
+      const blade = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 1.9, 0.12),
+        matBody(i % 2 === 0 ? 0xa855f7 : 0x38bdf8)
+      );
+      blade.position.set(0, 1.25, 0);
+      blade.rotation.y = 0.6; // paso del álabe
+      arm.add(blade);
+      group.add(arm);
+    }
+
   } else {
     // Núcleo de Cristal/Corona facetado brillante
     const core = new THREE.Mesh(new THREE.OctahedronGeometry(1.35, 2), matBody(0xf43f5e));
@@ -410,6 +483,16 @@ export function buildSculptureCoreGroup(shapeMode, bumpTexture) {
  * Crea gajos de cáscara esférica/cilíndrica/pétalo que se tocan borde con borde
  * formando una figura continua sin verse como ladrillos sueltos.
  * ============================================================================ */
+// Dimensiones de una placa curva (ancho en el arco, alto). Única fuente de verdad:
+// la usan la geometría de la placa y la colocación de tornillos en index.html.
+export function getPlateDimensions(totalRows, totalCols, radius) {
+  const arcSpan = (Math.PI * 2) / totalCols;
+  const heightSpan = Math.min(2.1, 4.4 / totalRows);
+  const width = Math.max(0.95, Math.min(2.3, 2 * radius * Math.sin(arcSpan * 0.46)));
+  const height = Math.max(0.9, heightSpan * 0.92);
+  return { width, height };
+}
+
 export function createFittedShellPieceGeometry(shapeMode, layerIdx, rowIdx, totalRows, colIdx, totalCols, radius) {
   const thickness = 0.34;
 
@@ -434,10 +517,7 @@ export function createFittedShellPieceGeometry(shapeMode, layerIdx, rowIdx, tota
   }
 
   // Para el resto de esculturas: Gajo curvo sólido con bisel suave que envuelve al modelo central
-  const arcSpan = (Math.PI * 2) / totalCols;
-  const heightSpan = Math.min(2.1, 4.4 / totalRows);
-  const chordWidth = Math.max(0.95, Math.min(2.3, 2 * radius * Math.sin(arcSpan * 0.46)));
-  const plateHeight = Math.max(0.9, heightSpan * 0.92);
+  const { width: chordWidth, height: plateHeight } = getPlateDimensions(totalRows, totalCols, radius);
 
   const shape = new THREE.Shape();
   const hw = chordWidth / 2;
