@@ -263,487 +263,90 @@ class ProceduralSoundEngine {
 
 export const SoundFX = new ProceduralSoundEngine();
 
-/* ============================================================================
- * 4. CATÁLOGO DE 25 ESCULTURAS SÓLIDAS RECONOCIBLES
- * ============================================================================ */
-export const SCULPTURE_ARCHETYPES = [
-  { id: 'penguin_santa',   name: 'Pingüino Polar Navideño',  shapeMode: 'penguin'     },
-  { id: 'crown_ring',      name: 'Corona Imperial de Flor',  shapeMode: 'flower_ring' },
-  { id: 'biplane_sky',     name: 'Aeroplano Turbo Hélice',   shapeMode: 'airplane'    },
-  { id: 'royal_duck',      name: 'Pato Imperial Dorado',     shapeMode: 'duck'        },
-  { id: 'orbital_rocket',  name: 'Cohete Interplanetario',   shapeMode: 'rocket'      },
-  { id: 'mecha_robot',     name: 'Guardián Mecha 3D',        shapeMode: 'robot'       },
-  { id: 'deep_submarine',  name: 'Submarino Nautilus',       shapeMode: 'submarine'   },
-  { id: 'crystal_unicorn', name: 'Unicornio Prisma',         shapeMode: 'unicorn'     },
-  { id: 'emerald_turtle',  name: 'Tortuga Galápagos',        shapeMode: 'turtle'      },
-  { id: 'steampunk_owl',   name: 'Búho Relojero',            shapeMode: 'owl'         },
-  { id: 'Magic_Mushroom',  name: 'Seta Luminosa Fantasía',   shapeMode: 'mushroom'    },
-  { id: 'cyber_car',       name: 'Bólido GT Turbo',          shapeMode: 'car'         },
-  { id: 'viking_ship',     name: 'Navío Drakkar',            shapeMode: 'ship'        },
-  { id: 'king_crab',       name: 'Cangrejo Emperador',       shapeMode: 'crab'        },
-  { id: 'polar_bear',      name: 'Oso Glaciar Ártico',       shapeMode: 'penguin'     },
-  { id: 'lotus_mandala',   name: 'Loto Imperial',            shapeMode: 'flower_ring' },
-  { id: 'jet_fighter',     name: 'Caza Supersónico',         shapeMode: 'airplane'    },
-  { id: 'golden_phoenix',  name: 'Ave Fénix Solar',          shapeMode: 'duck'        },
-  { id: 'astro_lander',    name: 'Módulo Lunar Apollo',      shapeMode: 'rocket'      },
-  { id: 'mecha_titan',     name: 'Coloso Blindado',          shapeMode: 'robot'       },
-  { id: 'bathyscaphe',     name: 'Batiscafo Abisal',         shapeMode: 'submarine'   },
-  { id: 'star_pegasus',    name: 'Pegaso Celestial',         shapeMode: 'unicorn'     },
-  { id: 'armored_beetle',  name: 'Escarabajo de Oro',        shapeMode: 'turtle'      },
-  { id: 'clockwork_hawk',  name: 'Halcón Mecánico',          shapeMode: 'owl'         },
-  { id: 'omega_turbine',   name: 'Reactor Industrial Omega', shapeMode: 'turbine'     }
-];
 
 /* ============================================================================
- * 5. CONSTRUCTOR DE NÚCLEOS ESCULTÓRICOS INTERNOS + CÁSCARAS CONTINUAS
- * A diferencia de poner fichas sueltas en el aire, este constructor crea:
- *  A) Un Modelo Escultórico Central Sólido (con ojos, picos, alas, hélices, etc.)
- *  B) Gajos/Placas curvas gruesas que se abrazan unas a otras formando la figura
+ * 4. CONSTRUCTORES THREE.JS DE LA FIGURA (núcleo sólido y placas)
+ * La figura se define en prism-figure-math.js; aquí solo se construyen las mallas.
  * ============================================================================ */
-export function buildSculptureCoreGroup(shapeMode, bumpTexture) {
-  const group = new THREE.Group();
-  const matBody = (hex) => new THREE.MeshPhysicalMaterial({
-    color: hex,
-    roughness: 0.24,
-    metalness: 0.05,
-    clearcoat: 0.8,
-    clearcoatRoughness: 0.15,
-    bumpMap: bumpTexture,
-    bumpScale: 0.015
-  });
+const coreMatBody = (hex, bumpTexture) => new THREE.MeshPhysicalMaterial({
+  color: hex,
+  roughness: 0.24,
+  metalness: 0.05,
+  clearcoat: 0.8,
+  clearcoatRoughness: 0.15,
+  bumpMap: bumpTexture,
+  bumpScale: 0.015
+});
 
-  if (shapeMode === 'penguin') {
-    // Cuerpo central sólido del pingüino (Panza, cabeza, ojos, pico, gorro navideño y base de hielo)
-    const torso = new THREE.Mesh(new THREE.SphereGeometry(1.75, 28, 24), matBody(0x1e293b));
-    torso.scale.set(1.0, 1.25, 0.92);
-    torso.position.y = -0.2;
-    group.add(torso);
-
-    const belly = new THREE.Mesh(new THREE.SphereGeometry(1.48, 24, 20), matBody(0xf8fafc));
-    belly.scale.set(0.88, 1.05, 0.75);
-    belly.position.set(0, -0.35, 0.55);
-    group.add(belly);
-
-    // Ojos expresivos y pico
-    [-0.55, 0.55].forEach(x => {
-      const eyeW = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 16), matBody(0xffffff));
-      eyeW.position.set(x, 0.78, 1.52);
-      const iris = new THREE.Mesh(new THREE.SphereGeometry(0.19, 14, 14), matBody(0x0284c7));
-      iris.position.set(x, 0.78, 1.72);
-      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 10), matBody(0x0f172a));
-      pupil.position.set(x, 0.78, 1.83);
-      group.add(eyeW, iris, pupil);
-    });
-
-    const beak = new THREE.Mesh(new THREE.ConeGeometry(0.36, 0.65, 18), matBody(0xf97316));
-    beak.rotation.x = Math.PI / 2;
-    beak.position.set(0, 0.38, 1.85);
-    group.add(beak);
-
-    // Gorro rojo navideño con borde blanco y pompón
-    const hatRim = new THREE.Mesh(new THREE.TorusGeometry(1.22, 0.28, 14, 28), matBody(0xf8fafc));
-    hatRim.rotation.x = Math.PI / 2 - 0.15;
-    hatRim.position.set(0, 1.55, 0.05);
-    const hatCone = new THREE.Mesh(new THREE.ConeGeometry(1.18, 1.6, 24), matBody(0xef4444));
-    hatCone.position.set(-0.2, 2.25, 0);
-    hatCone.rotation.z = 0.25;
-    const pom = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 16), matBody(0xffffff));
-    pom.position.set(-0.65, 2.95, 0);
-    group.add(hatRim, hatCone, pom);
-
-    // Plataforma de hielo ártico inferior
-    const iceBase = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.8, 0.65, 10), matBody(0x38bdf8));
-    iceBase.position.y = -2.35;
-    group.add(iceBase);
-
-  } else if (shapeMode === 'airplane' || shapeMode === 'submarine') {
-    // Fuselaje aerodinámico + Cabina + Hélice giratoria frontal
-    const fuselage = new THREE.Mesh(new THREE.CapsuleGeometry(1.15, 2.2, 16, 24), matBody(0x60a5fa));
-    fuselage.rotation.x = Math.PI / 2;
-    group.add(fuselage);
-
-    const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.85, 20, 16), matBody(0xe0f2fe));
-    cockpit.scale.set(0.85, 0.75, 1.35);
-    cockpit.position.set(0, 0.75, 0.2);
-    group.add(cockpit);
-
-    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.8, 20), matBody(0xef4444));
-    nose.rotation.x = Math.PI / 2;
-    nose.position.set(0, 0, 2.35);
-    group.add(nose);
-
-    const blade1 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.28, 0.08), matBody(0xfacc15));
-    blade1.position.set(0, 0, 2.55);
-    const blade2 = blade1.clone();
-    blade2.rotation.z = Math.PI / 2;
-    group.add(blade1, blade2);
-
-  } else if (shapeMode === 'duck' || shapeMode === 'owl') {
-    const body = new THREE.Mesh(new THREE.SphereGeometry(1.6, 24, 20), matBody(0xfacc15));
-    body.scale.set(1.0, 0.9, 1.25);
-    body.position.y = -0.6;
-    const head = new THREE.Mesh(new THREE.SphereGeometry(1.15, 24, 20), matBody(0xfacc15));
-    head.position.set(0, 1.05, 0.45);
-    const bill = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.32, 0.75), matBody(0xf97316));
-    bill.position.set(0, 0.95, 1.55);
-    group.add(body, head, bill);
-
-  } else if (shapeMode === 'rocket') {
-    const hull = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.35, 3.2, 24), matBody(0xf8fafc));
-    const cone = new THREE.Mesh(new THREE.ConeGeometry(1.15, 1.5, 24), matBody(0xef4444));
-    cone.position.y = 2.35;
-    const windowRim = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.12, 12, 24), matBody(0xfacc15));
-    windowRim.position.set(0, 0.5, 1.18);
-    group.add(hull, cone, windowRim);
-
-  } else if (shapeMode === 'flower_ring') {
-    // Corona/Flor: disco central rosa, anillo dorado y gemas azules sobre el anillo
-    const center = new THREE.Mesh(new THREE.SphereGeometry(0.95, 28, 22), matBody(0xf43f5e));
-    center.scale.set(1, 1, 0.55);
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.45, 0.3, 18, 40), matBody(0xfacc15));
-    group.add(center, ring);
-    for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * Math.PI * 2;
-      const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 0), matBody(0x38bdf8));
-      gem.position.set(Math.cos(a) * 1.45, Math.sin(a) * 1.45, 0.18);
-      group.add(gem);
+// Núcleo interior: las mismas partes de la figura, encogidas por `grow`.
+export function buildFigureCoreGroup(figure, grow, bumpTexture) {
+  const root = new THREE.Group();
+  for (const P of figure.parts) {
+    const holder = new THREE.Group();
+    holder.position.set(P.p[0], P.p[1], P.p[2]);
+    holder.rotation.set(P.rot[0], P.rot[1], P.rot[2]); // orden XYZ, igual que la matriz del generador
+    const mat = coreMatBody(P.col, bumpTexture);
+    let mesh = null;
+    switch (P.k) {
+      case 'e': {
+        mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 18), mat);
+        mesh.scale.set(Math.max(P.s[0] - grow, 0.04), Math.max(P.s[1] - grow, 0.04), Math.max(P.s[2] - grow, 0.04));
+        break;
+      }
+      case 'b': {
+        const h = P.s.map((v) => Math.max(v - grow, 0.04));
+        mesh = new THREE.Mesh(new THREE.BoxGeometry(2 * h[0], 2 * h[1], 2 * h[2]), mat);
+        break;
+      }
+      case 'c': {
+        const r = Math.max(P.s[0] - grow, 0.04);
+        const a = new THREE.Vector3(...P.a), b = new THREE.Vector3(...P.b);
+        const dir = b.clone().sub(a);
+        const len = Math.max(dir.length(), 0.01);
+        mesh = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 6, 14), mat);
+        mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+        break;
+      }
+      case 't':
+        mesh = new THREE.Mesh(new THREE.TorusGeometry(P.s[0], Math.max(P.s[1] - grow, 0.04), 12, 36), mat);
+        break;
+      case 'y':
+        mesh = new THREE.Mesh(
+          new THREE.CylinderGeometry(Math.max(P.s[0] - grow, 0.04), Math.max(P.s[0] - grow, 0.04), 2 * Math.max(P.s[1] - grow, 0.04), 24),
+          mat
+        );
+        break;
     }
-
-  } else if (shapeMode === 'unicorn') {
-    // Pegaso / Unicornio: cuerpo, cuello, cabeza, cuerno dorado, alas, patas y cola
-    const white = 0xf8fafc;
-    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.85, 1.9, 12, 20), matBody(white));
-    body.rotation.x = Math.PI / 2;
-    body.position.set(0, -0.2, 0);
-    const neck = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.9, 10, 16), matBody(white));
-    neck.position.set(0, 0.85, 1.05);
-    neck.rotation.x = -0.6;
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.62, 22, 18), matBody(white));
-    head.scale.set(0.8, 0.9, 1.25);
-    head.position.set(0, 1.35, 1.6);
-    const horn = new THREE.Mesh(new THREE.ConeGeometry(0.16, 1.0, 14), matBody(0xfacc15));
-    horn.rotation.x = Math.PI / 2 - 0.3;
-    horn.position.set(0, 2.0, 2.78);
-    group.add(body, neck, head, horn);
-
-    // Alas planas en el plano de la escultura (se ven de frente)
-    [-1, 1].forEach(side => {
-      const wing = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14), matBody(0xc4b5fd));
-      wing.scale.set(1.25, 0.7, 0.12);
-      wing.position.set(side * 1.25, 0.9, 0);
-      wing.rotation.z = side * -0.45;
-      group.add(wing);
-    });
-
-    // Patas y cola
-    [[-0.5, 1.0], [0.5, 1.0], [-0.5, -1.0], [0.5, -1.0]].forEach(([x, z]) => {
-      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 1.2, 10), matBody(white));
-      leg.position.set(x, -1.65, z);
-      group.add(leg);
-    });
-    const tail = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 14), matBody(0xc4b5fd));
-    tail.scale.set(0.6, 1.2, 0.5);
-    tail.position.set(0, 0.5, -2.0);
-    group.add(tail);
-
-  } else if (shapeMode === 'turbine') {
-    // Turbina / reactor: cubo central, morro, carcasa anular y 8 álabes inclinados
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 1.6, 28), matBody(0x64748b));
-    hub.rotation.x = Math.PI / 2;
-    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.75, 1.2, 28), matBody(0xe2e8f0));
-    nose.rotation.x = Math.PI / 2;
-    nose.position.set(0, 0, 1.4);
-    const casing = new THREE.Mesh(new THREE.TorusGeometry(1.95, 0.22, 16, 48), matBody(0x94a3b8));
-    group.add(hub, nose, casing);
-
-    for (let i = 0; i < 8; i++) {
-      const arm = new THREE.Group();
-      arm.rotation.z = (i / 8) * Math.PI * 2;
-      const blade = new THREE.Mesh(
-        new THREE.BoxGeometry(0.5, 1.9, 0.12),
-        matBody(i % 2 === 0 ? 0xa855f7 : 0x38bdf8)
-      );
-      blade.position.set(0, 1.25, 0);
-      blade.rotation.y = 0.6; // paso del álabe
-      arm.add(blade);
-      group.add(arm);
-    }
-
-  } else if (shapeMode === 'robot') {
-    // Mecha: torso acorazado, cabeza con visor azul, núcleo rojo y antena
-    const steel = 0x64748b, dark = 0x475569;
-    const torso = new THREE.Mesh(new THREE.BoxGeometry(1.9, 2.0, 1.2), matBody(steel));
-    const head = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.1, 1.1), matBody(0x94a3b8));
-    head.position.set(0, 1.9, 0);
-    const visor = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.3, 0.1), matBody(0x38bdf8));
-    visor.position.set(0, 1.9, 0.6);
-    const core = new THREE.Mesh(new THREE.SphereGeometry(0.35, 18, 14), matBody(0xf43f5e));
-    core.position.set(0, 0.2, 0.65);
-    const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.6, 8), matBody(dark));
-    antenna.position.set(0, 2.75, 0);
-    const antennaTip = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), matBody(0xfacc15));
-    antennaTip.position.set(0, 3.1, 0);
-    group.add(torso, head, visor, core, antenna, antennaTip);
-    [-1, 1].forEach(s => {
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.6, 0.6), matBody(dark));
-      arm.position.set(s * 1.25, 0.1, 0);
-      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.4, 0.7), matBody(dark));
-      leg.position.set(s * 0.5, -1.7, 0);
-      const foot = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.3, 1.0), matBody(steel));
-      foot.position.set(s * 0.5, -2.5, 0.1);
-      group.add(arm, leg, foot);
-    });
-
-  } else if (shapeMode === 'turtle') {
-    // Tortuga: caparazón abovedado con gemas, cabeza, cuatro patas y cola
-    const green = 0x10b981, skin = 0x84cc16;
-    const shell = new THREE.Mesh(new THREE.SphereGeometry(1.7, 28, 20), matBody(green));
-    shell.scale.set(1.25, 0.75, 1.45);
-    shell.position.y = 0.2;
-    group.add(shell);
-    [[0, 1.45, 0], [0.75, 1.38, 0.7], [-0.75, 1.38, 0.7], [0.75, 1.38, -0.7], [-0.75, 1.38, -0.7]].forEach(([x, y, z]) => {
-      const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.3, 0), matBody(0xfacc15));
-      gem.position.set(x, y, z);
-      group.add(gem);
-    });
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 20, 16), matBody(skin));
-    head.scale.set(1, 0.9, 1.2);
-    head.position.set(0, -0.1, 2.0);
-    group.add(head);
-    [-0.22, 0.22].forEach(x => {
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), matBody(0x0f172a));
-      eye.position.set(x, 0.12, 2.5);
-      group.add(eye);
-    });
-    [[-1.1, -1.1], [1.1, -1.1], [-1.1, 1.1], [1.1, 1.1]].forEach(([x, z]) => {
-      const leg = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 12), matBody(skin));
-      leg.scale.set(1, 0.5, 1);
-      leg.position.set(x, -0.8, z);
-      group.add(leg);
-    });
-    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.6, 12), matBody(skin));
-    tail.rotation.x = -Math.PI / 2;
-    tail.position.set(0, -0.3, -2.0);
-    group.add(tail);
-
-  } else if (shapeMode === 'mushroom') {
-    // Seta luminosa: tallo blanco, sombrero violeta con lunares
-    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.8, 2.2, 24), matBody(0xf8fafc));
-    stem.position.y = -0.9;
-    const cap = new THREE.Mesh(
-      new THREE.SphereGeometry(1.9, 28, 18, 0, Math.PI * 2, 0, Math.PI / 2),
-      matBody(0xa855f7)
-    );
-    cap.scale.set(1, 0.6, 1);
-    cap.position.y = 0.4;
-    group.add(stem, cap);
-    [[0, 1.62, 0], [1.0, 1.34, 0.4], [-1.0, 1.34, 0.4], [0.3, 1.35, -1.0]].forEach(([x, y, z]) => {
-      const spot = new THREE.Mesh(new THREE.SphereGeometry(0.28, 14, 12), matBody(0xf8fafc));
-      spot.position.set(x, y, z);
-      group.add(spot);
-    });
-
-  } else if (shapeMode === 'car') {
-    // Bólido GT: carrocería roja, cabina oscura, alerón amarillo y ruedas de frente
-    const bodyMesh = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.9, 1.5), matBody(0xef4444));
-    bodyMesh.position.y = -0.2;
-    const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.8, 1.2), matBody(0x1e293b));
-    cabin.position.set(-0.2, 0.6, 0);
-    const spoiler = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.12, 1.7), matBody(0xfacc15));
-    spoiler.position.set(-1.6, 0.6, 0);
-    group.add(bodyMesh, cabin, spoiler);
-    [-1.15, 1.15].forEach(x => [-0.8, 0.8].forEach(z => {
-      const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.4, 24), matBody(0x0f172a));
-      wheel.rotation.x = Math.PI / 2; // disco mirando al frente
-      wheel.position.set(x, -0.75, z);
-      group.add(wheel);
-    }));
-
-  } else if (shapeMode === 'ship') {
-    // Drakkar vikingo: casco de madera, proa en espiral, mástil, vela roja y escudos
-    const hull = new THREE.Mesh(
-      new THREE.SphereGeometry(1.8, 28, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2),
-      matBody(0x92400e)
-    );
-    hull.scale.set(1.4, 0.7, 0.9);
-    hull.position.y = 0.2;
-    const prow = new THREE.Mesh(new THREE.ConeGeometry(0.25, 1.6, 12), matBody(0x78350f));
-    prow.position.set(2.3, 1.0, 0);
-    prow.rotation.z = -0.7;
-    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.0, 10), matBody(0x78350f));
-    mast.position.set(0, 1.4, 0);
-    const sail = new THREE.Mesh(new THREE.BoxGeometry(1.9, 1.6, 0.06), matBody(0xef4444));
-    sail.position.set(0, 1.7, 0);
-    group.add(hull, prow, mast, sail);
-    for (let i = -2; i <= 2; i++) {
-      const shield = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 16), matBody(0xfacc15));
-      shield.rotation.x = Math.PI / 2;
-      shield.position.set(i * 0.6, 0.2, 0.75);
-      group.add(shield);
-    }
-
-  } else if (shapeMode === 'crab') {
-    // Cangrejo emperador: caparazón ancho, ojos en tallos, pinzas y 6 patas
-    const orange = 0xf97316;
-    const shell = new THREE.Mesh(new THREE.SphereGeometry(1.4, 28, 20), matBody(orange));
-    shell.scale.set(1.3, 0.7, 1.0);
-    shell.position.y = -0.2;
-    group.add(shell);
-    [-0.45, 0.45].forEach(x => {
-      const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.6, 10), matBody(orange));
-      stalk.position.set(x, 0.75, 0.9);
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 14), matBody(0xffffff));
-      eye.position.set(x, 1.15, 0.95);
-      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 10), matBody(0x0f172a));
-      pupil.position.set(x, 1.15, 1.15);
-      group.add(stalk, eye, pupil);
-    });
-    [-1, 1].forEach(s => {
-      const claw = new THREE.Mesh(new THREE.SphereGeometry(0.55, 18, 14), matBody(orange));
-      claw.scale.set(1.2, 0.8, 0.9);
-      claw.position.set(s * 2.0, 0.1, 0.8);
-      const pincer = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.7, 12), matBody(orange));
-      pincer.rotation.z = -s * Math.PI / 2; // apunta hacia afuera
-      pincer.position.set(s * 2.75, 0.1, 0.8);
-      group.add(claw, pincer);
-    });
-    for (let i = 0; i < 3; i++) {
-      [-1, 1].forEach(s => {
-        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 10), matBody(orange));
-        leg.rotation.z = s * Math.PI / 2; // tumbada a lo largo de X
-        leg.position.set(s * 1.25, -0.95, -0.5 + i * 0.5);
-        group.add(leg);
-      });
-    }
-
-  } else {
-    // Núcleo de Cristal/Corona facetado brillante
-    const core = new THREE.Mesh(new THREE.OctahedronGeometry(1.35, 2), matBody(0xf43f5e));
-    group.add(core);
+    if (!mesh) continue;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    holder.add(mesh);
+    root.add(holder);
   }
-
-  return group;
+  return root;
 }
 
-/* ============================================================================
- * 6. GENERADOR DE PLACAS CURVAS ENCAJADAS (SHELL SEGMENTS 3D)
- * Crea gajos de cáscara esférica/cilíndrica/pétalo que se tocan borde con borde
- * formando una figura continua sin verse como ladrillos sueltos.
- * ============================================================================ */
-// Dimensiones de una placa curva (ancho en el arco, alto). Única fuente de verdad:
-// la usan la geometría de la placa y la colocación de tornillos en index.html.
-export function getPlateDimensions(totalRows, totalCols, radius) {
-  const arcSpan = (Math.PI * 2) / totalCols;
-  const heightSpan = Math.min(2.1, 4.4 / totalRows);
-  const width = Math.max(0.95, Math.min(2.3, 2 * radius * Math.sin(arcSpan * 0.46)));
-  const height = Math.max(0.9, heightSpan * 0.92);
-  return { width, height };
-}
-
-export function createFittedShellPieceGeometry(shapeMode, layerIdx, rowIdx, totalRows, colIdx, totalCols, radius) {
-  const thickness = 0.34;
-
-  // En el modo Corona/Flor (Nivel 4), la capa interna son 4 grandes pétalos triangulares y la externa es la herradura amarilla
-  if (shapeMode === 'flower_ring' && layerIdx === 0) {
-    const s = new THREE.Shape();
-    const w = 1.45;
-    s.moveTo(0, 0);
-    s.lineTo(w, 0.25);
-    s.quadraticCurveTo(w * 1.15, w * 0.65, w * 0.55, w * 1.15);
-    s.lineTo(0.15, w * 0.9);
-    s.closePath();
-    const geo = new THREE.ExtrudeGeometry(s, {
-      depth: thickness,
-      bevelEnabled: true,
-      bevelThickness: 0.09,
-      bevelSize: 0.08,
-      bevelSegments: 3
-    });
-    geo.center();
-    return geo;
-  }
-
-  // Para el resto de esculturas: Gajo curvo sólido con bisel suave que envuelve al modelo central
-  const { width: chordWidth, height: plateHeight } = getPlateDimensions(totalRows, totalCols, radius);
-
-  const shape = new THREE.Shape();
-  const hw = chordWidth / 2;
-  const hh = plateHeight / 2;
-  const r = Math.min(0.28, hw * 0.35, hh * 0.35);
-
-  shape.moveTo(-hw + r, -hh);
-  shape.lineTo(hw - r, -hh);
-  shape.quadraticCurveTo(hw, -hh, hw, -hh + r);
-  shape.lineTo(hw, hh - r);
-  shape.quadraticCurveTo(hw, hh, hw - r, hh);
-  shape.lineTo(-hw + r, hh);
-  shape.quadraticCurveTo(-hw, hh, -hw, hh - r);
-  shape.lineTo(-hw, -hh + r);
-  shape.quadraticCurveTo(-hw, -hh, -hw + r, -hh);
-
-  const geo = new THREE.ExtrudeGeometry(shape, {
+// Placa cuadrada redondeada, grosor 0.34, centrada en su plano (eje Z = normal).
+export function createTileGeometry(w, h) {
+  const hw = w / 2, hh = h / 2, r = Math.min(0.14, hw * 0.3, hh * 0.3);
+  const s = new THREE.Shape();
+  s.moveTo(-hw + r, -hh);
+  s.lineTo(hw - r, -hh);
+  s.quadraticCurveTo(hw, -hh, hw, -hh + r);
+  s.lineTo(hw, hh - r);
+  s.quadraticCurveTo(hw, hh, hw - r, hh);
+  s.lineTo(-hw + r, hh);
+  s.quadraticCurveTo(-hw, hh, -hw, hh - r);
+  s.lineTo(-hw, -hh + r);
+  s.quadraticCurveTo(-hw, -hh, -hw + r, -hh);
+  const geo = new THREE.ExtrudeGeometry(s, {
     steps: 1,
-    depth: thickness,
+    depth: 0.34,
     bevelEnabled: true,
-    bevelThickness: 0.1,
-    bevelSize: 0.09,
-    bevelSegments: 4
+    bevelThickness: 0.08,
+    bevelSize: 0.07,
+    bevelSegments: 3
   });
   geo.center();
-
-  // Curvar suavemente los vértices del gajo para que abracen cilíndricamente/esféricamente el radio de su capa
-  const posAttr = geo.attributes.position;
-  for (let i = 0; i < posAttr.count; i++) {
-    const vx = posAttr.getX(i);
-    const vy = posAttr.getY(i);
-    const vz = posAttr.getZ(i);
-    const bendAngle = vx / Math.max(1.8, radius);
-    const newX = Math.sin(bendAngle) * (radius + vz) ;
-    const newZ = (Math.cos(bendAngle) - 1.0) * radius + vz;
-    posAttr.setXYZ(i, newX, vy, newZ);
-  }
-  geo.computeVertexNormals();
   return geo;
-}
-
-/* ============================================================================
- * 7. ESPECIFICACIÓN DE LOS 500 NIVELES (SOLVER INVERSO GARANTIZADO)
- * ============================================================================ */
-export function getLevelSpec(levelNumber) {
-  const L = Math.max(1, Math.min(500, Math.floor(levelNumber)));
-  const t = (L - 1) / 499;
-
-  // Nivel 1 = 60 tornillos exactos | Nivel 500 = 1,500 tornillos exactos (siempre múltiplo de 3)
-  const rawScrews = 60 + 1440 * Math.pow(t, 1.18);
-  const totalScrews = Math.round(rawScrews / 3) * 3;
-  const numColors = Math.min(10, 3 + Math.floor(7 * Math.pow(t, 0.75)));
-
-  // Capas compactas y piezas anchas bien ensambladas (evita que en Nivel 158 o 500 se pulvericen en 400 micro-cubos)
-  const numLayers = Math.min(6, 2 + Math.floor(4 * Math.pow(t, 0.8)));
-  // Máximo 6 tornillos por placa (colocados en esquinas/bordes). Por eso sube el tope de placas a 300.
-  const targetScrewsPerPiece = L <= 5 ? 3 : Math.min(6, 3 + Math.floor(t * 7));
-  const numPieces = Math.max(12, Math.min(300, Math.round(totalScrews / targetScrewsPerPiece)));
-
-  let archetype = SCULPTURE_ARCHETYPES[(L - 1) % SCULPTURE_ARCHETYPES.length];
-  if (L === 1) archetype = SCULPTURE_ARCHETYPES[0]; // Nivel 1 empieza con el Pingüino Navideño completo
-  if (L === 4) archetype = SCULPTURE_ARCHETYPES[1]; // Nivel 4 Corona/Flor del video
-  if (L === 5) archetype = SCULPTURE_ARCHETYPES[0]; // Nivel 5 Pingüino Polar del video
-  if (L === 500) archetype = SCULPTURE_ARCHETYPES[24];
-
-  return {
-    levelId: L,
-    seed: L * 1664525 + 1013904223,
-    totalScrews,
-    totalBoxes: totalScrews / 3,
-    numColors,
-    numLayers,
-    numPieces,
-    archetype
-  };
-}
-
-export function buildAll500LevelsManifest() {
-  const list = [];
-  for (let l = 1; l <= 500; l++) list.push(getLevelSpec(l));
-  return list;
 }

@@ -603,12 +603,10 @@
       UI_SVGS,
       SoundFX,
       createRealisticTextures,
-      buildSculptureCoreGroup,
-      createFittedShellPieceGeometry,
-      getPlateDimensions,
-      getLevelSpec,
-      buildAll500LevelsManifest
+      buildFigureCoreGroup,
+      createTileGeometry
     } from './prism-assets-catalog.js';
+    import { getLevelSpec, generateFigureLevel, buildAll500LevelsManifest } from './prism-figure-math.js';
 
     // Inyectar SVGs detallados
     document.getElementById('screw-svg-holder').innerHTML = UI_SVGS.screwIcon;
@@ -677,144 +675,6 @@
       };
     }
 
-    function assignPieceColorByAnatomy(shapeMode, yNorm, angle, layerIdx) {
-      if (shapeMode === 'penguin') {
-        if (yNorm < -0.58) return 0x38bdf8; // Hielo celeste inferior
-        if (yNorm > 0.45) return 0xef4444;  // Gorro navideño rojo
-        if (Math.cos(angle) > 0.25 && Math.abs(yNorm) < 0.42) return 0xf8fafc; // Panza blanca
-        return layerIdx % 2 === 0 ? 0x1e293b : 0x334155; // Plumas negras/pizarra
-      }
-      if (shapeMode === 'flower_ring') {
-        return layerIdx === 0 ? 0xf43f5e : 0xfacc15; // Centro rosa + Anillo amarillo
-      }
-      const palette = [0xfacc15, 0xf43f5e, 0x38bdf8, 0xa855f7, 0x10b981, 0xf97316, 0xf8fafc];
-      return palette[(layerIdx * 3 + Math.floor((angle / (Math.PI * 2)) * 6)) % palette.length];
-    }
-
-    function generateCompactSculptureLevel(levelNumber) {
-      const spec = getLevelSpec(levelNumber);
-      const rand = createPRNG(spec.seed);
-      const { totalScrews, numPieces, numLayers, numColors, archetype } = spec;
-
-      const pieces = [];
-      const screws = [];
-
-      const baseScrewsPerPiece = Math.floor(totalScrews / numPieces);
-      let extraScrews = totalScrews - baseScrewsPerPiece * numPieces;
-
-      let pId = 0;
-      for (let l = 0; l < numLayers; l++) {
-        const piecesInLayer = l === numLayers - 1
-          ? (numPieces - pId)
-          : Math.max(4, Math.round(numPieces / numLayers));
-
-        const rows = Math.max(2, Math.round(Math.sqrt(piecesInLayer * 0.65)));
-        const cols = Math.max(3, Math.ceil(piecesInLayer / rows));
-        const layerRadius = 1.95 + l * 0.46; // Capas pegadas al núcleo escultórico (no dispersas)
-
-        for (let r = 0; r < rows && pId < numPieces; r++) {
-          const yNorm = rows === 1 ? 0 : (r / (rows - 1)) * 1.5 - 0.75; // [-0.75, 0.75]
-          const profileScale = archetype.shapeMode === 'penguin'
-            ? Math.sqrt(Math.max(0.38, 1 - yNorm * yNorm * 0.65))
-            : (1 - Math.abs(yNorm) * 0.22);
-
-          for (let c = 0; c < cols && pId < numPieces; c++) {
-            const angle = (c / cols) * Math.PI * 2 + l * 0.35;
-            const rad = layerRadius * profileScale;
-
-            const px = Math.sin(angle) * rad;
-            const py = yNorm * 2.35;
-            const pz = Math.cos(angle) * rad;
-
-            const normal = new THREE.Vector3(Math.sin(angle), yNorm * 0.22, Math.cos(angle)).normalize();
-            const colorHex = assignPieceColorByAnatomy(archetype.shapeMode, yNorm, angle, l);
-            const quota = baseScrewsPerPiece + (extraScrews > 0 ? 1 : 0);
-            if (extraScrews > 0) extraScrews--;
-
-            pieces.push({
-              id: pId++,
-              layer: l,
-              rowIdx: r,
-              totalRows: rows,
-              colIdx: c,
-              totalCols: cols,
-              radius: rad,
-              pos: new THREE.Vector3(px, py, pz),
-              normal,
-              colorHex,
-              remainingScrews: quota,
-              falling: false,
-              removed: false,
-              vel: new THREE.Vector3(),
-              angVel: new THREE.Vector3(),
-              mesh: null
-            });
-          }
-        }
-      }
-
-      // Distribución estructural: tornillos en esquinas y bordes de cada placa (máx. 6-7)
-      // Los pétalos de la flor (capa 0) conservan el anillo circular porque no son rectangulares.
-      const STRUCTURAL_SLOTS = [
-        [-0.3, -0.3], [0.3, 0.3], [0.3, -0.3], [-0.3, 0.3], // esquinas (fracción de ancho/alto)
-        [0, 0.32], [0, -0.32],                               // bordes superior e inferior
-        [0, 0]                                               // centro
-      ];
-      let sId = 0;
-      for (const piece of pieces) {
-        const count = piece.remainingScrews;
-        const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), piece.normal);
-        const localX = new THREE.Vector3(1, 0, 0).applyQuaternion(q); // mismos ejes que la malla de la placa
-        const localY = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
-        const plate = getPlateDimensions(piece.totalRows, piece.totalCols, piece.radius);
-        const isPetal = archetype.shapeMode === 'flower_ring' && piece.layer === 0;
-        const ringSpread = count === 1 ? 0 : Math.min(0.46, 0.24 + count * 0.03);
-
-        for (let i = 0; i < count; i++) {
-          const pos = piece.pos.clone();
-          if (isPetal) {
-            const a = (i / count) * Math.PI * 2 + piece.id * 0.25;
-            pos.addScaledVector(localX, Math.cos(a) * ringSpread).addScaledVector(localY, Math.sin(a) * ringSpread);
-          } else {
-            // Un solo tornillo queda al centro; si hay varios, se reparten en esquinas y bordes
-            const [sx, sy] = count === 1 ? STRUCTURAL_SLOTS[6] : STRUCTURAL_SLOTS[i % STRUCTURAL_SLOTS.length];
-            pos.addScaledVector(localX, sx * plate.width).addScaledVector(localY, sy * plate.height);
-          }
-          pos.addScaledVector(piece.normal, 0.21);
-
-          screws.push({
-            id: sId++,
-            pieceId: piece.id,
-            layer: piece.layer,
-            pos,
-            normal: piece.normal.clone(),
-            colorId: 0,
-            removed: false,
-            animating: false
-          });
-        }
-      }
-
-      // Solver Inverso: Asignar tríos desde la capa exterior hacia adentro
-      const sorted = [...screws].sort((a, b) => b.layer - a.layer || a.id - b.id);
-      const boxQueue = [];
-      const triplets = totalScrews / 3;
-      for (let tIdx = 0; tIdx < triplets; tIdx++) {
-        const cId = Math.floor(rand() * numColors);
-        boxQueue.push(cId);
-        for (let k = 0; k < 3; k++) sorted[tIdx * 3 + k].colorId = cId;
-      }
-
-      for (let i = 0; i < sorted.length - 6; i += 6) {
-        if (sorted[i].layer === sorted[i + 4].layer) {
-          const tmp = sorted[i + 1].colorId;
-          sorted[i + 1].colorId = sorted[i + 3].colorId;
-          sorted[i + 3].colorId = tmp;
-        }
-      }
-
-      return { spec, pieces, screws, boxQueue };
-    }
 
     /* ========================================================================
      * 3. GEOMETRÍA REALISTA DEL TORNILLO (CABEZA + CRUZ + VÁSTAGO ROSCADO)
@@ -934,7 +794,7 @@
       }
       if (screwInstMesh) rootGroup.remove(screwInstMesh, crossMeshA, crossMeshB, holeInstMesh);
 
-      state.levelData = generateCompactSculptureLevel(lvlNum);
+      state.levelData = generateFigureLevel(getLevelSpec(lvlNum), (x, y, z) => new THREE.Vector3(x, y, z));
       state.activeBoxes = [];
       state.maxBoxes = 2;
       state.reserveSlots = [];
@@ -946,20 +806,12 @@
       const { spec, pieces, screws } = state.levelData;
 
       // 1. Añadir el núcleo escultórico 3D central reconocible
-      const coreModel = buildSculptureCoreGroup(spec.archetype.shapeMode, plasticBump);
+      const coreModel = buildFigureCoreGroup(state.levelData.figure, state.levelData.coreGrow, plasticBump);
       coreGroup.add(coreModel);
 
       // 2. Construir las cáscaras curvas encajadas alrededor de la escultura
       for (const p of pieces) {
-        const geo = createFittedShellPieceGeometry(
-          spec.archetype.shapeMode,
-          p.layer,
-          p.rowIdx,
-          p.totalRows,
-          p.colIdx,
-          p.totalCols,
-          p.radius
-        );
+        const geo = createTileGeometry(p.tileW, p.tileH);
         const mat = new THREE.MeshPhysicalMaterial({
           color: p.colorHex,
           roughness: 0.24,
@@ -971,7 +823,7 @@
         });
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.copy(p.pos);
-        mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), p.normal);
+        mesh.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(p.basisX, p.basisY, p.normal));
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         p.mesh = mesh;
@@ -1055,10 +907,10 @@
     const blockOrigin = new THREE.Vector3();
     function isBlocked(screw) {
       if (!state.levelData) return false;
-      const own = state.levelData.pieces[screw.pieceId];
+      // Solo bloquean las placas de capas superiores (más exteriores) que todavía existan
       const candidates = [];
       for (const p of state.levelData.pieces) {
-        if (p !== own && p.mesh && p.mesh.visible && !p.falling && !p.removed) candidates.push(p.mesh);
+        if (p.layer > screw.layer && p.mesh && p.mesh.visible && !p.falling && !p.removed) candidates.push(p.mesh);
       }
       blockOrigin.copy(screw.pos).addScaledVector(screw.normal, 0.15);
       blockRaycaster.set(blockOrigin, screw.normal);
