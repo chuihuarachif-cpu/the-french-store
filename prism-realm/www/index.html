@@ -2,15 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PRISM REALM: Unscrew 3D — THE FRENCH STORE (500 Niveles)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <title>Prism Realm 3D — THE FRENCH STORE</title>
   <style>
     :root {
-      --sky-top: #bddbfa;
-      --sky-mid: #d8ecff;
-      --sky-bot: #eef7ff;
-      --primary-blue: #3b82f6;
-      --deep-blue: #1d4ed8;
+      --sky-top: #b8dcff;
+      --sky-mid: #d9eeff;
+      --sky-bot: #f0f8ff;
     }
 
     * {
@@ -26,7 +28,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-bot) 100%);
+      background: radial-gradient(circle at 50% 42%, #ffffff 0%, var(--sky-mid) 48%, var(--sky-top) 100%);
       touch-action: none;
     }
 
@@ -36,7 +38,6 @@
       z-index: 1;
     }
 
-    /* CAPA DE INTERFAZ INSPIRADA FIELMENTE EN EL VIDEO DE REFERENCIA */
     #hud-layer {
       position: absolute;
       inset: 0;
@@ -47,16 +48,17 @@
       justify-content: space-between;
       max-width: 520px;
       margin: 0 auto;
-      padding: 10px 14px 16px;
+      padding: env(safe-area-inset-top, 10px) 12px env(safe-area-inset-bottom, 14px);
     }
 
     .interactive { pointer-events: auto; }
 
-    /* CABECERA SUPERIOR */
+    /* CABECERA */
     .header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-top: 4px;
     }
 
     .btn-round {
@@ -65,7 +67,7 @@
       border-radius: 50%;
       border: 3px solid #ffffff;
       background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
-      box-shadow: 0 4px 0 #1e40af, 0 6px 12px rgba(0,0,0,0.18);
+      box-shadow: 0 4px 0 #1e40af, 0 6px 12px rgba(0,0,0,0.2);
       color: #fff;
       font-size: 18px;
       font-weight: 900;
@@ -75,61 +77,39 @@
       justify-content: center;
       transition: transform 0.1s;
     }
-    .btn-round:active { transform: translateY(3px); }
+    .btn-round:active { transform: translateY(2px); }
 
     .title-block {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
-    }
-
-    .level-heading {
-      font-size: 23px;
-      font-weight: 900;
-      color: #ffffff;
-      text-shadow: 0 2px 0 #1e3a8a, -1.5px -1.5px 0 #1e3a8a, 1.5px -1.5px 0 #1e3a8a, -1.5px 1.5px 0 #1e3a8a, 1.5px 1.5px 0 #1e3a8a;
+      gap: 2px;
       cursor: pointer;
     }
 
-    /* Tira de hitos (Checkmarks y Corona como en el video) */
-    .milestones-strip {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .milestone-dot {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 2px solid #93c5fd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
+    .level-heading {
+      font-size: 24px;
       font-weight: 900;
-      color: #22c55e;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: #ffffff;
+      text-shadow: 0 2px 0 #1e3a8a, -1.5px -1.5px 0 #1e3a8a, 1.5px -1.5px 0 #1e3a8a, -1.5px 1.5px 0 #1e3a8a, 1.5px 1.5px 0 #1e3a8a;
     }
 
-    .milestone-crown {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #e0f2fe;
-      border: 2px solid #7dd3fc;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .sculpture-subtitle {
+      font-size: 11px;
+      font-weight: 800;
+      color: #1e3a8a;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 1.5px solid #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
 
     .coins-pill {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       border: 2.5px solid #ffffff;
       border-radius: 999px;
       padding: 4px 10px 4px 5px;
@@ -152,20 +132,7 @@
       color: #854d0e;
     }
 
-    .plus-green {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #22c55e;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 900;
-    }
-
-    /* CAJAS DE COLORES Y BANDEJA DE 5 AGUJEROS */
+    /* CAJAS ACTIVAS Y BANDEJA DE 5 RANURAS */
     .boxes-section {
       display: flex;
       flex-direction: column;
@@ -183,24 +150,24 @@
     }
 
     .toy-box {
-      width: 82px;
-      height: 72px;
+      width: 84px;
+      height: 74px;
       border-radius: 18px;
-      background: #f8fafc;
+      background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
       border: 4px solid #cbd5e1;
-      box-shadow: 0 6px 0 rgba(15, 23, 42, 0.16), inset 0 -4px 0 rgba(0,0,0,0.06);
+      box-shadow: 0 6px 0 rgba(15, 23, 42, 0.18), inset 0 -3px 0 rgba(0,0,0,0.06);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
       padding: 6px;
       position: relative;
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .toy-box-lid {
-      width: 88%;
-      height: 13px;
+      width: 90%;
+      height: 14px;
       border-radius: 6px;
       box-shadow: inset 0 2px 2px rgba(255,255,255,0.45);
     }
@@ -208,15 +175,15 @@
     .toy-box-holes {
       display: flex;
       gap: 5px;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     .hole-socket {
-      width: 20px;
-      height: 20px;
+      width: 21px;
+      height: 21px;
       border-radius: 50%;
-      background: #475569;
-      box-shadow: inset 0 3px 4px rgba(0,0,0,0.65);
+      background: #334155;
+      box-shadow: inset 0 3px 5px rgba(0,0,0,0.75);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -224,44 +191,69 @@
 
     .toy-box.locked-slot {
       background: rgba(148, 163, 184, 0.45);
-      border-color: rgba(255, 255, 255, 0.8);
+      border-color: rgba(255, 255, 255, 0.85);
       justify-content: center;
       cursor: pointer;
     }
 
-    /* BANDEJA DE RESERVA (5 ORIFICIOS) */
+    .plus-green {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #4ade80, #16a34a);
+      border: 2px solid #fff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
     .reserve-tray {
       display: flex;
       align-items: center;
       gap: 9px;
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(6px);
-      padding: 6px 16px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(8px);
+      padding: 7px 18px;
       border-radius: 999px;
-      border: 2px solid #ffffff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 5px 14px rgba(0,0,0,0.1);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .reserve-tray.danger {
+      border-color: #ef4444;
+      background: #fef2f2;
+      animation: pulseDanger 0.6s infinite alternate;
+    }
+
+    @keyframes pulseDanger {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
     }
 
     .reserve-hole {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: #475569;
+      background: #334155;
       border: 2px solid #cbd5e1;
-      box-shadow: inset 0 3px 5px rgba(0,0,0,0.7);
+      box-shadow: inset 0 3px 5px rgba(0,0,0,0.8);
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .screw-head-ui {
-      width: 18px;
-      height: 18px;
+      width: 19px;
+      height: 19px;
       border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.85);
-      box-shadow: 0 2px 3px rgba(0,0,0,0.35);
+      border: 2px solid rgba(255,255,255,0.9);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
       position: relative;
-      animation: screwPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: popInScrew 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
     .screw-head-ui::after {
       content: '+';
@@ -275,64 +267,65 @@
       font-size: 12px;
     }
 
-    @keyframes screwPop {
-      from { transform: scale(0) rotate(-120deg); }
-      to { transform: scale(1) rotate(0deg); }
+    @keyframes popInScrew {
+      0% { transform: scale(0) rotate(-140deg); }
+      100% { transform: scale(1) rotate(0deg); }
     }
 
-    /* CONTADOR DE TORNILLOS Y ACCIONES RÁPIDAS */
+    /* INFO STRIP */
     .info-strip {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .screw-badge {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(15, 23, 42, 0.78);
       color: #fff;
-      padding: 5px 12px;
+      padding: 5px 13px;
       border-radius: 999px;
       font-weight: 900;
       font-size: 13px;
+      border: 1.5px solid rgba(255,255,255,0.4);
     }
 
     .quick-actions {
       display: flex;
-      gap: 5px;
+      gap: 4px;
     }
 
     .chip-btn {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       border: 2px solid #fff;
       border-radius: 999px;
-      padding: 4px 10px;
+      padding: 4px 9px;
       font-size: 11px;
       font-weight: 900;
       color: #1e3a8a;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .chip-btn.highlight { background: #fef08a; color: #854d0e; }
     .chip-btn.solver { background: #bbf7d0; color: #166534; }
 
-    /* SLIDER DE ZOOM IZQUIERDO COMO EN EL VIDEO */
+    /* ZOOM DOCK */
     .zoom-dock {
       position: absolute;
-      left: 16px;
-      bottom: 105px;
+      left: 14px;
+      bottom: 108px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      background: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.82);
       padding: 10px 6px;
       border-radius: 999px;
       border: 2px solid #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
 
     .zoom-dock input[type="range"] {
@@ -340,30 +333,30 @@
       -webkit-appearance: slider-vertical;
       width: 6px;
       height: 85px;
-      accent-color: #3b82f6;
+      accent-color: #2563eb;
     }
 
-    /* BARRA INFERIOR DE BOOSTERS (TALADRO, ESCOBA, ETC.) */
+    /* BARRA INFERIOR DE BOOSTERS REALISTAS */
     .boosters-dock {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 12px;
-      background: rgba(147, 197, 253, 0.55);
-      backdrop-filter: blur(8px);
-      border: 2.5px solid rgba(255,255,255,0.85);
+      background: rgba(147, 197, 253, 0.65);
+      backdrop-filter: blur(10px);
+      border: 2.5px solid #ffffff;
       padding: 8px 16px;
-      border-radius: 26px;
-      box-shadow: 0 8px 20px rgba(30, 58, 138, 0.15);
+      border-radius: 28px;
+      box-shadow: 0 10px 24px rgba(30, 58, 138, 0.18);
     }
 
     .booster-card {
-      width: 68px;
-      height: 62px;
-      border-radius: 18px;
-      background: linear-gradient(180deg, #bfdbfe 0%, #60a5fa 100%);
+      width: 74px;
+      height: 68px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #eff6ff 0%, #93c5fd 100%);
       border: 2.5px solid #ffffff;
-      box-shadow: 0 4px 0 #2563eb;
+      box-shadow: 0 5px 0 #2563eb, 0 6px 12px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -374,28 +367,36 @@
     }
     .booster-card:active { transform: translateY(3px); }
 
+    .booster-name {
+      font-size: 10px;
+      font-weight: 900;
+      color: #1e3a8a;
+      margin-top: 1px;
+    }
+
     .booster-card .plus-badge {
       position: absolute;
-      bottom: -4px;
-      right: -4px;
-      width: 22px;
-      height: 22px;
+      bottom: -5px;
+      right: -5px;
+      width: 23px;
+      height: 23px;
       border-radius: 50%;
-      background: #22c55e;
+      background: linear-gradient(180deg, #4ade80, #16a34a);
       border: 2px solid #fff;
       color: #fff;
       font-weight: 900;
-      font-size: 14px;
+      font-size: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
     }
 
-    /* MODAL DE CATÁLOGO DE 500 NIVELES Y VICTORIA */
+    /* MODALES (SELECTOR 500 NIVELES, VICTORIA Y DERROTA) */
     .modal-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(15, 23, 42, 0.78);
+      background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(6px);
       z-index: 100;
       display: none;
@@ -412,12 +413,12 @@
       padding: 22px;
       width: 100%;
       max-width: 440px;
-      max-height: 82vh;
+      max-height: 84vh;
       display: flex;
       flex-direction: column;
       gap: 12px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      box-shadow: 0 22px 50px rgba(0,0,0,0.45);
     }
 
     .levels-scroll {
@@ -426,7 +427,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       padding: 8px;
-      max-height: 50vh;
+      max-height: 48vh;
       background: #f1f5f9;
       border-radius: 16px;
     }
@@ -435,19 +436,14 @@
       background: #fff;
       border: 2px solid #cbd5e1;
       border-radius: 12px;
-      padding: 8px 4px;
+      padding: 7px 4px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: transform 0.1s, border-color 0.1s;
     }
-    .lvl-cell:hover {
-      border-color: #2563eb;
-      transform: scale(1.04);
-    }
-    .lvl-cell strong { font-size: 14px; color: #1e293b; }
-    .lvl-cell span { font-size: 10px; color: #64748b; font-weight: 700; }
+    .lvl-cell strong { font-size: 13px; color: #0f172a; }
+    .lvl-cell span { font-size: 10px; color: #475569; font-weight: 700; }
 
     .btn-cta {
       padding: 13px;
@@ -460,29 +456,35 @@
       font-size: 16px;
       cursor: pointer;
     }
+    .btn-cta.danger {
+      background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%);
+      box-shadow: 0 4px 0 #9f1239;
+    }
 
     #toast-banner {
       position: absolute;
       top: 215px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       color: #fff;
-      padding: 6px 16px;
+      padding: 7px 16px;
       border-radius: 999px;
       font-size: 12px;
       font-weight: 800;
       opacity: 0;
-      transition: opacity 0.25s;
+      transition: opacity 0.22s;
       pointer-events: none;
+      white-space: nowrap;
     }
   </style>
 
+  <!-- IMPORTMAP 100% LOCAL APUNTANDO A www/vendor/three/ -->
   <script type="importmap">
     {
       "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        "three": "./vendor/three/build/three.module.js",
+        "three/addons/": "./vendor/three/examples/jsm/"
       }
     }
   </script>
@@ -491,48 +493,35 @@
 
   <div id="webgl-viewport"></div>
 
-  <!-- INTERFAZ DE USUARIO -->
   <div id="hud-layer">
     <div>
-      <!-- Fila Superior -->
       <div class="header-row interactive">
-        <button class="btn-round" id="btn-pause" title="Selector de 500 Niveles">☰</button>
-
+        <button class="btn-round" id="btn-pause" title="Ver los 500 Niveles">☰</button>
         <div class="title-block" id="btn-open-levels">
-          <div class="level-heading" id="txt-level-title">Nivel 5</div>
-          <div class="milestones-strip">
-            <div class="milestone-dot">✓</div>
-            <div class="milestone-dot">✓</div>
-            <div class="milestone-dot">✓</div>
-            <div class="milestone-crown" id="crown-holder"></div>
-          </div>
+          <div class="level-heading" id="txt-level-title">Nivel 1</div>
+          <div class="sculpture-subtitle" id="txt-sculpture-name">Pingüino Polar Navideño</div>
         </div>
-
         <div class="coins-pill">
           <div class="gold-coin">★</div>
           <span id="txt-coins">150</span>
-          <div class="plus-green">+</div>
         </div>
       </div>
 
-      <!-- Cajas y Bandeja de 5 Orificios -->
       <div class="boxes-section interactive">
         <div class="boxes-grid" id="boxes-container"></div>
         <div class="reserve-tray" id="reserve-container"></div>
       </div>
 
-      <!-- Contador de Tornillos y Accesos Rápidos -->
       <div class="info-strip interactive">
         <div class="screw-badge">
           <span id="screw-svg-holder"></span>
-          <span id="txt-screw-progress">0/81</span>
+          <span id="txt-screw-progress">0/60</span>
         </div>
-
         <div class="quick-actions">
-          <button class="chip-btn" id="btn-jump-1">Nv.1 (60)</button>
+          <button class="chip-btn" id="btn-jump-1">Nv.1</button>
           <button class="chip-btn" id="btn-jump-4">Nv.4 (Flor)</button>
           <button class="chip-btn" id="btn-jump-5">Nv.5 (Pingüino)</button>
-          <button class="chip-btn highlight" id="btn-jump-500">Nv.500 (1500)</button>
+          <button class="chip-btn highlight" id="btn-jump-500">Nv.500</button>
           <button class="chip-btn solver" id="btn-solver">⚡ Auto</button>
         </div>
       </div>
@@ -540,223 +529,139 @@
 
     <div id="toast-banner"></div>
 
-    <!-- Control Lateral de Cámara y Zoom -->
     <div class="zoom-dock interactive">
       <button class="chip-btn" id="btn-reset-cam" style="padding:4px 6px;">🎯</button>
-      <input type="range" id="slider-zoom" min="9" max="30" step="0.5" value="15.5" />
+      <input type="range" id="slider-zoom" min="8.5" max="26" step="0.5" value="13.5" />
     </div>
 
-    <!-- Barra Inferior de Boosters -->
     <div class="boosters-dock interactive">
-      <div class="booster-card" id="btn-booster-drill" title="Taladro: Añade 1 agujero extra">
+      <div class="booster-card" id="btn-booster-drill" title="Taladro: Añade 1 agujero libre extra">
         <div id="icon-drill"></div>
-        <div class="plus-badge">+</div>
+        <span class="booster-name">Taladro</span>
+        <div class="plus-badge" id="badge-drill">3</div>
       </div>
-      <div class="booster-card" id="btn-booster-broom" title="Escoba: Limpia los tornillos de la reserva">
+      <div class="booster-card" id="btn-booster-broom" title="Cepillo: Limpia todos los tornillos de la bandeja">
         <div id="icon-broom"></div>
-        <div class="plus-badge">+</div>
+        <span class="booster-name">Limpiar</span>
+        <div class="plus-badge" id="badge-broom">3</div>
       </div>
       <div class="booster-card" id="btn-booster-box" title="Desbloquea otra Caja Activa">
         <div id="icon-box"></div>
-        <div class="plus-badge">+</div>
+        <span class="booster-name">+1 Caja</span>
+        <div class="plus-badge" id="badge-box">2</div>
       </div>
-      <div class="booster-card" id="btn-catalog-modal" title="Ver Catálogo de 500 Niveles y Exportar JSON">
-        <span style="font-size:22px;">🗂️</span>
-        <span style="font-size:10px;font-weight:900;color:#1e3a8a;">500 Nv.</span>
+      <div class="booster-card" id="btn-catalog-modal" title="Seleccionar cualquiera de los 500 Niveles">
+        <span style="font-size:24px;line-height:1;">🗂️</span>
+        <span class="booster-name">500 Nv.</span>
       </div>
     </div>
   </div>
 
-  <!-- MODAL SELECTOR DE LOS 500 NIVELES Y EXPORTADOR JSON -->
+  <!-- MODAL DE CAMPAÑA DE 500 NIVELES -->
   <div class="modal-overlay interactive" id="modal-levels">
     <div class="modal-box">
       <h2 style="font-weight:900;color:#1e293b;">Campaña de 500 Niveles</h2>
-      <p style="font-size:12px;color:#475569;font-weight:700;">
-        Selecciona cualquier nivel del 1 al 500 o descarga el archivo JSON validado.
-      </p>
       <div class="levels-scroll" id="levels-grid"></div>
       <div style="display:flex;gap:8px;">
         <button class="btn-cta" style="flex:1;background:linear-gradient(180deg,#38bdf8,#0284c7);" id="btn-export-json">
           ⬇ Descargar 500 Niveles (.JSON)
         </button>
-        <button class="btn-cta" style="background:#64748b;box-shadow:none;" id="btn-close-modal">
-          Cerrar
-        </button>
+        <button class="btn-cta" style="background:#64748b;box-shadow:none;" id="btn-close-modal">Cerrar</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL DE FIN DE NIVEL (NICE WORK!) -->
+  <!-- MODAL DE VICTORIA -->
   <div class="modal-overlay interactive" id="modal-victory">
     <div class="modal-box">
-      <div style="font-size:13px;font-weight:900;color:#ec4899;">💎 THE FRENCH STORE</div>
-      <h1 style="font-size:34px;font-weight:900;color:#eab308;text-shadow:0 2px 0 #854d0e;" id="victory-heading">
-        ¡NICE WORK!
-      </h1>
-      <p style="font-size:14px;color:#334155;font-weight:700;" id="victory-subtitle">
-        Figura 3D desensamblada por completo.
+      <div style="font-size:12px;font-weight:900;color:#ec4899;">💎 THE FRENCH STORE ARCADE</div>
+      <h1 style="font-size:32px;font-weight:900;color:#eab308;text-shadow:0 2px 0 #854d0e;">¡NICE WORK!</h1>
+      <p style="font-size:14px;color:#334155;font-weight:700;">Has desensamblado toda la escultura 3D.</p>
+      <button class="btn-cta" id="btn-next-level">Recibir 🪙 +15 y Siguiente Nivel</button>
+    </div>
+  </div>
+
+  <!-- MODAL DE DERROTA (CUANDO SE LLENA LA BANDEJA DE 5 ESPACIOS) -->
+  <div class="modal-overlay interactive" id="modal-gameover">
+    <div class="modal-box" style="border-color:#f43f5e;">
+      <div style="font-size:12px;font-weight:900;color:#e11d48;">⚠️ ¡BANDEJA DE RESERVA SATURADA!</div>
+      <h1 style="font-size:28px;font-weight:900;color:#0f172a;">¡SIN ESPACIOS LIBRES!</h1>
+      <p style="font-size:13px;color:#475569;font-weight:700;">
+        Se han llenado todos los agujeros de reserva sin completar una caja activa.
       </p>
-      <button class="btn-cta" id="btn-next-level">Recibir 🪙 +10 y Siguiente Nivel</button>
+      <button class="btn-cta" id="btn-revive-broom">🧹 Vaciar Bandeja y Continuar</button>
+      <button class="btn-cta danger" id="btn-retry-level">↻ Reintentar Nivel desde Cero</button>
     </div>
   </div>
 
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     import {
       SCREW_COLORS,
       UI_SVGS,
       SoundFX,
-      evaluateSculpturePoint,
+      createRealisticTextures,
+      buildSculptureCoreGroup,
+      createFittedShellPieceGeometry,
       getLevelSpec,
       buildAll500LevelsManifest
     } from './prism-assets-catalog.js';
 
-    // Inyectar SVGs en la interfaz
-    document.getElementById('crown-holder').innerHTML = UI_SVGS.crown;
+    // Inyectar SVGs detallados
     document.getElementById('screw-svg-holder').innerHTML = UI_SVGS.screwIcon;
     document.getElementById('icon-drill').innerHTML = UI_SVGS.drill;
     document.getElementById('icon-broom').innerHTML = UI_SVGS.broom;
     document.getElementById('icon-box').innerHTML = UI_SVGS.extraBox;
 
     /* ========================================================================
-     * 1. CONFIGURACIÓN THREE.JS CON ACABADO TOY-PLASTIC SATINADO
+     * 1. MOTOR 3D CON ILUMINACIÓN REALISTA PBR (ROOM ENVIRONMENT + SOMBRAS)
      * ======================================================================== */
     const viewport = document.getElementById('webgl-viewport');
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 150);
-    camera.position.set(0, 3.5, 15.5);
+    camera.position.set(0, 3.2, 13.5);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.12;
+    renderer.toneMappingExposure = 1.08;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     viewport.appendChild(renderer.domElement);
+
+    // Entorno PBR de reflejos realistas para metales y plásticos brillantes
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const { plasticBump, metalMap } = createRealisticTextures();
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
+    controls.dampingFactor = 0.065;
     controls.minDistance = 8.5;
-    controls.maxDistance = 30;
+    controls.maxDistance = 26;
 
-    // Iluminación suave de estudio tipo juguete 3D (Hemisphere + Key + Rim)
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x93c5fd, 1.25);
-    scene.add(hemiLight);
-
-    const mainLight = new THREE.DirectionalLight(0xffffff, 1.35);
-    mainLight.position.set(9, 16, 14);
-    scene.add(mainLight);
-
-    const fillLight = new THREE.DirectionalLight(0xfde047, 0.45);
-    fillLight.position.set(-12, 5, -10);
-    scene.add(fillLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.15);
+    dirLight.position.set(8, 15, 12);
+    dirLight.castShadow = true;
+    scene.add(dirLight);
 
     const rootGroup = new THREE.Group();
     scene.add(rootGroup);
 
-    const piecesGroup = new THREE.Group();
-    rootGroup.add(piecesGroup);
-
-    const propsGroup = new THREE.Group(); // Ojos, picos, hélices decorativas
-    rootGroup.add(propsGroup);
-
-    const flyingGroup = new THREE.Group();
+    const coreGroup = new THREE.Group();   // Escultura central sólida
+    const piecesGroup = new THREE.Group(); // Placas curvas exteriores desmontables
+    const holesGroup = new THREE.Group();  // Orificios oscuros bajo cada tornillo
+    const flyingGroup = new THREE.Group(); // Tornillos desenroscándose en tiempo real
+    rootGroup.add(coreGroup, piecesGroup, holesGroup);
     scene.add(flyingGroup);
 
     /* ========================================================================
-     * 2. CONSTRUCCIÓN DE PIEZAS CURVAS Y RASGOS FACIALES (COMO EN EL VIDEO)
-     * ======================================================================== */
-    function createToyPieceGeometry(partType, scale) {
-      const s = new THREE.Shape();
-
-      if (partType === 'petal_wedge') {
-        // Gajo triangular con bordes redondeados (como los pétalos rosas del Nivel 4)
-        const r = 1.05 * scale;
-        s.moveTo(0, 0);
-        s.lineTo(r * 0.9, r * 0.22);
-        s.quadraticCurveTo(r * 1.05, r * 0.55, r * 0.55, r * 1.02);
-        s.lineTo(r * 0.15, r * 0.85);
-        s.closePath();
-      } else if (partType === 'ring_arc') {
-        // Segmento curvo de anillo amarillo (Nivel 4)
-        const w = 1.35 * scale;
-        const h = 0.72 * scale;
-        s.moveTo(-w / 2, -h / 2);
-        s.quadraticCurveTo(0, -h * 0.85, w / 2, -h / 2);
-        s.lineTo(w / 2, h / 2);
-        s.quadraticCurveTo(0, h * 0.25, -w / 2, h / 2);
-        s.closePath();
-      } else {
-        // Placa redondeada orgánica tipo cápsula (Pingüino Nivel 5 / Avión)
-        const w = 1.28 * scale;
-        const h = 1.15 * scale;
-        const rad = 0.34 * scale;
-        s.moveTo(-w / 2 + rad, -h / 2);
-        s.lineTo(w / 2 - rad, -h / 2);
-        s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + rad);
-        s.lineTo(w / 2, h / 2 - rad);
-        s.quadraticCurveTo(w / 2, h / 2, w / 2 - rad, h / 2);
-        s.lineTo(-w / 2 + rad, h / 2);
-        s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - rad);
-        s.lineTo(-w / 2, -h / 2 + rad);
-        s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + rad, -h / 2);
-      }
-
-      const geo = new THREE.ExtrudeGeometry(s, {
-        depth: 0.32 * scale,
-        bevelEnabled: true,
-        bevelThickness: 0.11 * scale,
-        bevelSize: 0.09 * scale,
-        bevelSegments: 4
-      });
-      geo.center();
-      return geo;
-    }
-
-    function addCharacterDecorations(shapeMode) {
-      while (propsGroup.children.length > 0) {
-        const c = propsGroup.children[0];
-        propsGroup.remove(c);
-      }
-
-      if (shapeMode === 'penguin') {
-        // Ojos tiernos estilo juguete + pico naranja + pompón blanco del gorro (como en Nivel 5 del video)
-        const eyeGeo = new THREE.SphereGeometry(0.32, 16, 16);
-        const pupilGeo = new THREE.SphereGeometry(0.18, 12, 12);
-        const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
-        const blueMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.2 });
-        const blackMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1 });
-
-        [-0.65, 0.65].forEach(xOff => {
-          const eye = new THREE.Mesh(eyeGeo, whiteMat);
-          eye.position.set(xOff, 0.95, 2.35);
-          const iris = new THREE.Mesh(pupilGeo, blueMat);
-          iris.position.set(xOff, 0.95, 2.55);
-          const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 10), blackMat);
-          pupil.position.set(xOff, 0.95, 2.66);
-          propsGroup.add(eye, iris, pupil);
-        });
-
-        // Pico amarillo/naranja
-        const beakGeo = new THREE.ConeGeometry(0.36, 0.65, 16);
-        beakGeo.rotateX(Math.PI / 2);
-        const beakMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.3 });
-        const beak = new THREE.Mesh(beakGeo, beakMat);
-        beak.position.set(0, 0.55, 2.65);
-        propsGroup.add(beak);
-
-        // Pompón blanco navideño
-        const pomGeo = new THREE.SphereGeometry(0.52, 16, 16);
-        const pom = new THREE.Mesh(pomGeo, whiteMat);
-        pom.position.set(-1.6, 2.9, 0.4);
-        propsGroup.add(pom);
-      }
-    }
-
-    /* ========================================================================
-     * 3. GENERACIÓN DEL NIVEL Y SOLVER INVERSO (SIN BLOQUEOS)
+     * 2. CONSTRUCCIÓN DE ESCULTURAS SÓLIDAS COMPACTAS + GRAFO DE TORNILLOS
      * ======================================================================== */
     function createPRNG(seed) {
       let a = seed >>> 0;
@@ -768,70 +673,102 @@
       };
     }
 
-    function buildPlayableLevel(levelNumber) {
+    function assignPieceColorByAnatomy(shapeMode, yNorm, angle, layerIdx) {
+      if (shapeMode === 'penguin') {
+        if (yNorm < -0.58) return 0x38bdf8; // Hielo celeste inferior
+        if (yNorm > 0.45) return 0xef4444;  // Gorro navideño rojo
+        if (Math.cos(angle) > 0.25 && Math.abs(yNorm) < 0.42) return 0xf8fafc; // Panza blanca
+        return layerIdx % 2 === 0 ? 0x1e293b : 0x334155; // Plumas negras/pizarra
+      }
+      if (shapeMode === 'flower_ring') {
+        return layerIdx === 0 ? 0xf43f5e : 0xfacc15; // Centro rosa + Anillo amarillo
+      }
+      const palette = [0xfacc15, 0xf43f5e, 0x38bdf8, 0xa855f7, 0x10b981, 0xf97316, 0xf8fafc];
+      return palette[(layerIdx * 3 + Math.floor((angle / (Math.PI * 2)) * 6)) % palette.length];
+    }
+
+    function generateCompactSculptureLevel(levelNumber) {
       const spec = getLevelSpec(levelNumber);
       const rand = createPRNG(spec.seed);
+      const { totalScrews, numPieces, numLayers, numColors, archetype } = spec;
 
       const pieces = [];
       const screws = [];
 
-      const { totalScrews, numPieces, numLayers, numColors, archetype } = spec;
-      const basePerPiece = Math.floor(totalScrews / numPieces);
-      let extra = totalScrews - basePerPiece * numPieces;
+      const baseScrewsPerPiece = Math.floor(totalScrews / numPieces);
+      let extraScrews = totalScrews - baseScrewsPerPiece * numPieces;
 
-      // Distribución por capas concéntricas
       let pId = 0;
       for (let l = 0; l < numLayers; l++) {
-        const layerNorm = numLayers > 1 ? l / (numLayers - 1) : 1;
-        const countInLayer = l === numLayers - 1
+        const piecesInLayer = l === numLayers - 1
           ? (numPieces - pId)
-          : Math.max(3, Math.round(numPieces / numLayers));
+          : Math.max(4, Math.round(numPieces / numLayers));
 
-        for (let k = 0; k < countInLayer && pId < numPieces; k++) {
-          const u = ((k + 0.5) / countInLayer + l * 0.19) % 1;
-          const v = Math.min(0.92, Math.max(0.08, (k + 0.5) / countInLayer + (rand() - 0.5) * 0.08));
-          const surf = evaluateSculpturePoint(archetype.shapeMode, u, v, layerNorm);
+        const rows = Math.max(2, Math.round(Math.sqrt(piecesInLayer * 0.65)));
+        const cols = Math.max(3, Math.ceil(piecesInLayer / rows));
+        const layerRadius = 1.95 + l * 0.46; // Capas pegadas al núcleo escultórico (no dispersas)
 
-          const screwQuota = basePerPiece + (extra > 0 ? 1 : 0);
-          if (extra > 0) extra--;
+        for (let r = 0; r < rows && pId < numPieces; r++) {
+          const yNorm = rows === 1 ? 0 : (r / (rows - 1)) * 1.5 - 0.75; // [-0.75, 0.75]
+          const profileScale = archetype.shapeMode === 'penguin'
+            ? Math.sqrt(Math.max(0.38, 1 - yNorm * yNorm * 0.65))
+            : (1 - Math.abs(yNorm) * 0.22);
 
-          pieces.push({
-            id: pId,
-            layer: l,
-            pos: new THREE.Vector3(surf.pos.x, surf.pos.y, surf.pos.z),
-            normal: new THREE.Vector3(surf.normal.x, surf.normal.y, surf.normal.z),
-            colorHex: surf.colorHex,
-            partType: surf.partType,
-            remainingScrews: screwQuota,
-            falling: false,
-            removed: false,
-            vel: new THREE.Vector3(),
-            angVel: new THREE.Vector3(),
-            mesh: null
-          });
-          pId++;
+          for (let c = 0; c < cols && pId < numPieces; c++) {
+            const angle = (c / cols) * Math.PI * 2 + l * 0.35;
+            const rad = layerRadius * profileScale;
+
+            const px = Math.sin(angle) * rad;
+            const py = yNorm * 2.35;
+            const pz = Math.cos(angle) * rad;
+
+            const normal = new THREE.Vector3(Math.sin(angle), yNorm * 0.22, Math.cos(angle)).normalize();
+            const colorHex = assignPieceColorByAnatomy(archetype.shapeMode, yNorm, angle, l);
+            const quota = baseScrewsPerPiece + (extraScrews > 0 ? 1 : 0);
+            if (extraScrews > 0) extraScrews--;
+
+            pieces.push({
+              id: pId++,
+              layer: l,
+              rowIdx: r,
+              totalRows: rows,
+              colIdx: c,
+              totalCols: cols,
+              radius: rad,
+              pos: new THREE.Vector3(px, py, pz),
+              normal,
+              colorHex,
+              remainingScrews: quota,
+              falling: false,
+              removed: false,
+              vel: new THREE.Vector3(),
+              angVel: new THREE.Vector3(),
+              mesh: null
+            });
+          }
         }
       }
 
-      // Colocar tornillos en los orificios de cada pieza
+      // Distribuir tornillos ordenadamente sobre cada placa curva
       let sId = 0;
       for (const piece of pieces) {
         const up = Math.abs(piece.normal.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
         const tangent = new THREE.Vector3().crossVectors(up, piece.normal).normalize();
         const bitangent = new THREE.Vector3().crossVectors(piece.normal, tangent).normalize();
-        const rad = piece.remainingScrews === 1 ? 0 : 0.38;
 
-        for (let i = 0; i < piece.remainingScrews; i++) {
-          const ang = (i / piece.remainingScrews) * Math.PI * 2 + piece.id * 0.4;
+        const count = piece.remainingScrews;
+        const spread = count === 1 ? 0 : Math.min(0.46, 0.24 + count * 0.03);
+
+        for (let i = 0; i < count; i++) {
+          const a = (i / count) * Math.PI * 2 + piece.id * 0.25;
           const pos = piece.pos.clone()
-            .addScaledVector(tangent, Math.cos(ang) * rad)
-            .addScaledVector(bitangent, Math.sin(ang) * rad)
-            .addScaledVector(piece.normal, 0.22);
+            .addScaledVector(tangent, Math.cos(a) * spread)
+            .addScaledVector(bitangent, Math.sin(a) * spread)
+            .addScaledVector(piece.normal, 0.21);
 
-          // Dependencias de capa exterior
           const occludedBy = [];
           for (const other of pieces) {
-            if (other.layer > piece.layer && piece.normal.dot(other.normal) > 0.86 && occludedBy.length < 2) {
+            if (other.layer > piece.layer && piece.normal.dot(other.normal) > 0.87 && occludedBy.length < 2) {
               occludedBy.push(other.id);
             }
           }
@@ -850,20 +787,16 @@
         }
       }
 
-      // Solver Inverso: Asignar tríos de colores desde el exterior al interior
+      // Solver Inverso: Asignar tríos desde la capa exterior hacia adentro
       const sorted = [...screws].sort((a, b) => b.layer - a.layer || a.id - b.id);
       const boxQueue = [];
       const triplets = totalScrews / 3;
-
       for (let tIdx = 0; tIdx < triplets; tIdx++) {
         const cId = Math.floor(rand() * numColors);
         boxQueue.push(cId);
-        for (let k = 0; k < 3; k++) {
-          sorted[tIdx * 3 + k].colorId = cId;
-        }
+        for (let k = 0; k < 3; k++) sorted[tIdx * 3 + k].colorId = cId;
       }
 
-      // Permutación local segura (ventana <= 3 tornillos, jamás satura los 5 agujeros)
       for (let i = 0; i < sorted.length - 6; i += 6) {
         if (sorted[i].layer === sorted[i + 4].layer) {
           const tmp = sorted[i + 1].colorId;
@@ -876,18 +809,69 @@
     }
 
     /* ========================================================================
-     * 4. INSTANCEDMESH PARA TORNILLOS Y GESTIÓN DE PARTIDA
+     * 3. GEOMETRÍA REALISTA DEL TORNILLO (CABEZA + CRUZ + VÁSTAGO ROSCADO)
      * ======================================================================== */
-    const screwCylGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.18, 20);
-    screwCylGeo.rotateX(Math.PI / 2);
-    const crossSlotGeo = new THREE.BoxGeometry(0.25, 0.065, 0.05);
+    const screwHeadGeo = new THREE.CylinderGeometry(0.24, 0.22, 0.16, 22);
+    screwHeadGeo.rotateX(Math.PI / 2);
 
-    const screwMat = new THREE.MeshStandardMaterial({ roughness: 0.22, metalness: 0.1 });
+    const holeSocketGeo = new THREE.CylinderGeometry(0.16, 0.16, 0.08, 16);
+    holeSocketGeo.rotateX(Math.PI / 2);
+
+    const crossSlotGeo = new THREE.BoxGeometry(0.25, 0.06, 0.05);
+
+    const screwInstanceMat = new THREE.MeshStandardMaterial({
+      map: metalMap,
+      roughness: 0.22,
+      metalness: 0.35
+    });
+    const holeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
     const crossMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-    let screwInstMesh = null;
-    let crossMeshA = null;
-    let crossMeshB = null;
+    // Malla compuesta con rosca helicoidal para los tornillos que se están desenroscando
+    function createAnimatedThreadedScrewMesh(colorInt) {
+      const grp = new THREE.Group();
+      const headMat = new THREE.MeshStandardMaterial({
+        color: colorInt,
+        map: metalMap,
+        roughness: 0.2,
+        metalness: 0.4
+      });
+      const shaftMat = new THREE.MeshStandardMaterial({
+        color: 0xcbd5e1,
+        roughness: 0.25,
+        metalness: 0.85
+      });
+
+      const head = new THREE.Mesh(screwHeadGeo, headMat);
+      grp.add(head);
+
+      // Cruz blanca en la cabeza para ver claramente cómo gira al desenroscarse
+      const c1 = new THREE.Mesh(crossSlotGeo, crossMat);
+      c1.position.z = 0.09;
+      const c2 = c1.clone();
+      c2.rotation.z = Math.PI / 2;
+      grp.add(c1, c2);
+
+      // Vástago metálico + 4 anillos de rosca
+      const shaftGeo = new THREE.CylinderGeometry(0.11, 0.09, 0.62, 16);
+      shaftGeo.rotateX(Math.PI / 2);
+      const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+      shaft.position.z = -0.32;
+      grp.add(shaft);
+
+      for (let r = 0; r < 4; r++) {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.125, 0.025, 8, 16), shaftMat);
+        ring.position.z = -0.14 - r * 0.12;
+        grp.add(ring);
+      }
+
+      return grp;
+    }
+
+    let screwInstMesh = null, crossMeshA = null, crossMeshB = null, holeInstMesh = null;
+
+    // LÍMITE ESTRICTO SOLICITADO: MÁXIMO 2 TORNILLOS DESENROSCÁNDOSE A LA VEZ
+    const MAX_CONCURRENT_UNSCREW = 2;
 
     let state = {
       levelData: null,
@@ -896,7 +880,10 @@
       reserveSlots: [],
       maxReserve: 5,
       removedCount: 0,
+      activeUnscrewAnimations: 0,
+      isGameOver: false,
       coins: 150,
+      boosters: { drill: 3, broom: 3, box: 2 },
       autoTimer: null
     };
 
@@ -916,7 +903,7 @@
       dummy.updateMatrix();
       screwInstMesh.setMatrixAt(s.id, dummy.matrix);
 
-      dummy.position.copy(s.pos).addScaledVector(s.normal, 0.1);
+      dummy.position.copy(s.pos).addScaledVector(s.normal, 0.09);
       dummy.updateMatrix();
       crossMeshA.setMatrixAt(s.id, dummy.matrix);
 
@@ -926,71 +913,95 @@
     }
 
     function startLevel(lvlNum) {
-      if (state.autoTimer) {
-        clearInterval(state.autoTimer);
-        state.autoTimer = null;
-      }
+      if (state.autoTimer) { clearInterval(state.autoTimer); state.autoTimer = null; }
+      document.getElementById('modal-victory').classList.remove('open');
+      document.getElementById('modal-gameover').classList.remove('open');
 
+      while (coreGroup.children.length > 0) coreGroup.remove(coreGroup.children[0]);
       while (piecesGroup.children.length > 0) {
         const m = piecesGroup.children[0];
         m.geometry.dispose();
         m.material.dispose();
         piecesGroup.remove(m);
       }
-      if (screwInstMesh) {
-        rootGroup.remove(screwInstMesh, crossMeshA, crossMeshB);
-      }
+      if (screwInstMesh) rootGroup.remove(screwInstMesh, crossMeshA, crossMeshB, holeInstMesh);
 
-      state.levelData = buildPlayableLevel(lvlNum);
+      state.levelData = generateCompactSculptureLevel(lvlNum);
       state.activeBoxes = [];
       state.maxBoxes = 2;
       state.reserveSlots = [];
       state.maxReserve = 5;
       state.removedCount = 0;
+      state.activeUnscrewAnimations = 0;
+      state.isGameOver = false;
 
       const { spec, pieces, screws } = state.levelData;
-      addCharacterDecorations(spec.archetype.shapeMode);
 
-      const scaleFactor = Math.max(0.42, Math.min(1.15, 5.2 / Math.sqrt(pieces.length)));
+      // 1. Añadir el núcleo escultórico 3D central reconocible
+      const coreModel = buildSculptureCoreGroup(spec.archetype.shapeMode, plasticBump);
+      coreGroup.add(coreModel);
 
+      // 2. Construir las cáscaras curvas encajadas alrededor de la escultura
       for (const p of pieces) {
-        const geo = createToyPieceGeometry(p.partType, scaleFactor);
+        const geo = createFittedShellPieceGeometry(
+          spec.archetype.shapeMode,
+          p.layer,
+          p.rowIdx,
+          p.totalRows,
+          p.colIdx,
+          p.totalCols,
+          p.radius
+        );
         const mat = new THREE.MeshPhysicalMaterial({
           color: p.colorHex,
-          roughness: 0.25,
-          metalness: 0.02,
-          clearcoat: 0.65,
-          clearcoatRoughness: 0.2
+          roughness: 0.24,
+          metalness: 0.04,
+          clearcoat: 0.75,
+          clearcoatRoughness: 0.16,
+          bumpMap: plasticBump,
+          bumpScale: 0.015
         });
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.copy(p.pos);
         mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), p.normal);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
         p.mesh = mesh;
         piecesGroup.add(mesh);
       }
 
-      screwInstMesh = new THREE.InstancedMesh(screwCylGeo, screwMat, screws.length);
+      // 3. Instanciar tornillos y sus orificios oscuros inferiores
+      screwInstMesh = new THREE.InstancedMesh(screwHeadGeo, screwInstanceMat, screws.length);
       crossMeshA = new THREE.InstancedMesh(crossSlotGeo, crossMat, screws.length);
       crossMeshB = new THREE.InstancedMesh(crossSlotGeo, crossMat, screws.length);
+      holeInstMesh = new THREE.InstancedMesh(holeSocketGeo, holeMat, screws.length);
 
       const c = new THREE.Color();
       for (const s of screws) {
         syncScrewMatrix(s);
         c.setHex(SCREW_COLORS[s.colorId].int);
         screwInstMesh.setColorAt(s.id, c);
+
+        dummy.position.copy(s.pos).addScaledVector(s.normal, -0.06);
+        dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), s.normal);
+        dummy.scale.set(1, 1, 1);
+        dummy.updateMatrix();
+        holeInstMesh.setMatrixAt(s.id, dummy.matrix);
       }
+
       screwInstMesh.instanceMatrix.needsUpdate = true;
       if (screwInstMesh.instanceColor) screwInstMesh.instanceColor.needsUpdate = true;
       crossMeshA.instanceMatrix.needsUpdate = true;
       crossMeshB.instanceMatrix.needsUpdate = true;
+      holeInstMesh.instanceMatrix.needsUpdate = true;
 
-      rootGroup.add(screwInstMesh, crossMeshA, crossMeshB);
+      rootGroup.add(screwInstMesh, crossMeshA, crossMeshB, holeInstMesh);
 
       for (let i = 0; i < state.maxBoxes; i++) pullNextBox();
 
       document.getElementById('txt-level-title').textContent = `Nivel ${spec.levelId}`;
+      document.getElementById('txt-sculpture-name').textContent = `${spec.archetype.name} • ${spec.totalScrews} 🔩`;
       renderUI();
-      toast(`Nivel ${spec.levelId}: ${spec.archetype.name} (${spec.totalScrews} tornillos)`);
     }
 
     function pullNextBox() {
@@ -1038,17 +1049,28 @@
       return false;
     }
 
+    /* ========================================================================
+     * 4. EXTRACCIÓN DE TORNILLOS (MÁX. 2 A LA VEZ + ANIMACIÓN DE DESENROSCADO)
+     * ======================================================================== */
     function extractScrew(sId) {
-      if (!state.levelData) return;
+      if (!state.levelData || state.isGameOver) return;
+
+      // Regla estricta: máximo 2 tornillos desenroscándose simultáneamente
+      if (state.activeUnscrewAnimations >= MAX_CONCURRENT_UNSCREW) {
+        toast('✋ Máximo 2 tornillos a la vez');
+        return;
+      }
+
       const screw = state.levelData.screws[sId];
       if (!screw || screw.removed || screw.animating) return;
 
       if (isBlocked(screw)) {
         SoundFX.playBlocked();
-        toast('🔒 Bloqueado por una capa superior');
+        toast('🔒 Tornillo bloqueado por una pieza superior');
         return;
       }
 
+      state.activeUnscrewAnimations++;
       SoundFX.playUnscrew();
       screw.animating = true;
       syncScrewMatrix(screw);
@@ -1056,44 +1078,52 @@
       crossMeshA.instanceMatrix.needsUpdate = true;
       crossMeshB.instanceMatrix.needsUpdate = true;
 
-      const temp = new THREE.Mesh(
-        screwCylGeo,
-        new THREE.MeshStandardMaterial({ color: SCREW_COLORS[screw.colorId].int, roughness: 0.2 })
-      );
-      temp.position.copy(screw.pos);
-      temp.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), screw.normal);
-      flyingGroup.add(temp);
+      // Crear el tornillo 3D con rosca helicoidal para la animación de desenroscado
+      const threadedScrew = createAnimatedThreadedScrewMesh(SCREW_COLORS[screw.colorId].int);
+      threadedScrew.position.copy(screw.pos);
+      threadedScrew.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), screw.normal);
+      flyingGroup.add(threadedScrew);
 
-      const p0 = screw.pos.clone();
-      const p1 = screw.pos.clone().addScaledVector(screw.normal, 1.3);
-      const p2 = new THREE.Vector3(0, 5.8, 3.5);
-      let t = 0;
+      const startPos = screw.pos.clone();
+      const unscrewedPos = screw.pos.clone().addScaledVector(screw.normal, 1.05);
+      const trayTargetPos = new THREE.Vector3((Math.random() - 0.5) * 1.8, 5.2, 3.2);
 
-      function stepAnim() {
-        t += 0.085;
-        if (t < 0.45) {
-          temp.position.lerpVectors(p0, p1, t / 0.45);
-          temp.rotateZ(0.55);
-          requestAnimationFrame(stepAnim);
-        } else if (t < 1.0) {
-          const k = (t - 0.45) / 0.55;
-          temp.position.lerpVectors(p1, p2, k);
-          temp.position.y += Math.sin(k * Math.PI) * 1.5;
-          temp.scale.setScalar(1 - k * 0.45);
-          requestAnimationFrame(stepAnim);
+      let progress = 0;
+      function animateUnscrewStep() {
+        progress += 0.045; // Velocidad calibrada para apreciar el giro de la rosca al salir
+        if (progress < 0.55) {
+          // Fase 1: Desenroscado mecánico girando 720° sobre su eje Z local mientras sale del agujero
+          const u = progress / 0.55;
+          const easeOut = 1 - Math.pow(1 - u, 2);
+          threadedScrew.position.lerpVectors(startPos, unscrewedPos, easeOut);
+          threadedScrew.rotateZ(0.42);
+          requestAnimationFrame(animateUnscrewStep);
+        } else if (progress < 1.0) {
+          // Fase 2: Vuelo parabólico ágil hacia la caja / bandeja superior
+          const v = (progress - 0.55) / 0.45;
+          threadedScrew.position.lerpVectors(unscrewedPos, trayTargetPos, v);
+          threadedScrew.position.y += Math.sin(v * Math.PI) * 1.4;
+          threadedScrew.rotateX(0.25);
+          threadedScrew.scale.setScalar(1 - v * 0.45);
+          requestAnimationFrame(animateUnscrewStep);
         } else {
-          flyingGroup.remove(temp);
-          temp.material.dispose();
+          flyingGroup.remove(threadedScrew);
+          state.activeUnscrewAnimations = Math.max(0, state.activeUnscrewAnimations - 1);
           finalizeScrew(screw);
         }
       }
-      stepAnim();
+      animateUnscrewStep();
     }
 
     function finalizeScrew(screw) {
+      if (state.isGameOver) return;
       screw.removed = true;
       screw.animating = false;
       state.removedCount++;
+
+      // Ocultar también el agujero cuando la pieza se queda sin tornillos
+      holeInstMesh.setMatrixAt(screw.id, zeroMat);
+      holeInstMesh.instanceMatrix.needsUpdate = true;
 
       const piece = state.levelData.pieces[screw.pieceId];
       if (piece && !piece.falling) {
@@ -1101,58 +1131,67 @@
         if (piece.remainingScrews <= 0) {
           SoundFX.playPieceDrop();
           piece.falling = true;
-          piece.vel.copy(piece.normal).multiplyScalar(2.0).add(new THREE.Vector3(0, 1.2, 0));
+          piece.vel.copy(piece.normal).multiplyScalar(2.4).add(new THREE.Vector3(0, 1.5, 0));
           piece.angVel.set((Math.random() - 0.5) * 6, (Math.random() - 0.5) * 6, (Math.random() - 0.5) * 6);
         }
       }
 
+      // Verificar si entra en una caja activa o va a la bandeja de reserva
       const bIdx = state.activeBoxes.findIndex(b => b.colorId === screw.colorId && b.filled < b.capacity);
       if (bIdx !== -1) {
         putScrewInBox(bIdx);
       } else {
         state.reserveSlots.push(screw.colorId);
         renderUI();
+
+        // CONDICIÓN DE DERROTA REAL: Si la bandeja de reserva alcanza su límite máximo
         if (state.reserveSlots.length >= state.maxReserve) {
-          toast('⚠️ Bandeja llena: Usa la Escoba o el Taladro');
+          state.isGameOver = true;
+          if (state.autoTimer) { clearInterval(state.autoTimer); state.autoTimer = null; }
+          SoundFX.playGameOver();
+          setTimeout(() => {
+            document.getElementById('modal-gameover').classList.add('open');
+          }, 220);
+          return;
         }
       }
       verifyVictory();
     }
 
     function verifyVictory() {
-      if (!state.levelData) return;
+      if (!state.levelData || state.isGameOver) return;
       if (state.removedCount >= state.levelData.spec.totalScrews) {
-        if (state.autoTimer) {
-          clearInterval(state.autoTimer);
-          state.autoTimer = null;
-        }
+        state.isGameOver = true;
+        if (state.autoTimer) { clearInterval(state.autoTimer); state.autoTimer = null; }
         SoundFX.playBoxClose();
-        document.getElementById('modal-victory').classList.add('open');
+        setTimeout(() => {
+          document.getElementById('modal-victory').classList.add('open');
+        }, 250);
       }
     }
 
     /* ========================================================================
-     * 5. RENDERIZADO DEL HUD FIEL AL VIDEO DE REFERENCIA
+     * 5. RENDERIZADO DEL HUD Y CONTROLES
      * ======================================================================== */
     function renderUI() {
       const { spec } = state.levelData;
       document.getElementById('txt-screw-progress').textContent = `${state.removedCount}/${spec.totalScrews}`;
       document.getElementById('txt-coins').textContent = state.coins;
+      document.getElementById('badge-drill').textContent = state.boosters.drill;
+      document.getElementById('badge-broom').textContent = state.boosters.broom;
+      document.getElementById('badge-box').textContent = state.boosters.box;
 
       const boxesEl = document.getElementById('boxes-container');
       boxesEl.innerHTML = '';
-
       state.activeBoxes.forEach(b => {
         const col = SCREW_COLORS[b.colorId];
         const card = document.createElement('div');
         card.className = 'toy-box';
         card.style.borderColor = col.hex;
-
         const lid = document.createElement('div');
         lid.className = 'toy-box-lid';
         lid.style.background = col.hex;
         card.appendChild(lid);
-
         const holes = document.createElement('div');
         holes.className = 'toy-box-holes';
         for (let i = 0; i < b.capacity; i++) {
@@ -1174,19 +1213,14 @@
         if (i >= state.maxBoxes) {
           const locked = document.createElement('div');
           locked.className = 'toy-box locked-slot';
-          locked.innerHTML = `<div class="plus-green" style="width:28px;height:28px;font-size:18px;">+</div>`;
-          locked.onclick = () => {
-            if (state.maxBoxes < 4) {
-              state.maxBoxes++;
-              pullNextBox();
-              renderUI();
-            }
-          };
+          locked.innerHTML = `<div class="plus-green">+</div>`;
+          locked.onclick = () => useExtraBoxBooster();
           boxesEl.appendChild(locked);
         }
       }
 
       const resEl = document.getElementById('reserve-container');
+      resEl.classList.toggle('danger', state.reserveSlots.length >= state.maxReserve - 1);
       resEl.innerHTML = '';
       for (let i = 0; i < state.maxReserve; i++) {
         const h = document.createElement('div');
@@ -1210,23 +1244,56 @@
       t._tm = setTimeout(() => (t.style.opacity = '0'), 1800);
     }
 
-    /* ========================================================================
-     * 6. INTERACCIÓN 3D, MODAL DE 500 NIVELES Y EXPORTACIÓN JSON
-     * ======================================================================== */
+    function useDrillBooster() {
+      if (state.maxReserve >= 8) { toast('Máximo de agujeros alcanzado'); return; }
+      if (state.boosters.drill <= 0) { toast('Sin cargas de Taladro'); return; }
+      state.boosters.drill--;
+      state.maxReserve++;
+      SoundFX.playUnscrew();
+      renderUI();
+      toast('🪛 ¡Taladro usado! +1 agujero libre en la bandeja');
+    }
+
+    function useBroomBooster() {
+      if (state.reserveSlots.length === 0) { toast('La bandeja ya está vacía'); return; }
+      if (state.boosters.broom <= 0) { toast('Sin cargas de Limpieza'); return; }
+      state.boosters.broom--;
+      state.reserveSlots = [];
+      state.isGameOver = false;
+      SoundFX.playBoxClose();
+      renderUI();
+      toast('🧹 ¡Bandeja limpiada por completo!');
+    }
+
+    function useExtraBoxBooster() {
+      if (state.maxBoxes >= 4) { toast('Máximo de 4 cajas activas'); return; }
+      if (state.boosters.box <= 0) { toast('Sin cargas de +1 Caja'); return; }
+      state.boosters.box--;
+      state.maxBoxes++;
+      pullNextBox();
+      SoundFX.playBoxClose();
+      renderUI();
+      toast('📦 ¡Nueva caja activa añadida!');
+    }
+
+    // Raycasting 3D con soporte multitouch (hasta 2 toques simultáneos)
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    let downPt = { x: 0, y: 0 };
+    const downMap = new Map();
 
     renderer.domElement.addEventListener('pointerdown', e => {
-      downPt.x = e.clientX;
-      downPt.y = e.clientY;
+      downMap.set(e.pointerId, { x: e.clientX, y: e.clientY });
     });
 
     renderer.domElement.addEventListener('pointerup', e => {
-      if (Math.hypot(e.clientX - downPt.x, e.clientY - downPt.y) > 9) return;
+      const start = downMap.get(e.pointerId);
+      downMap.delete(e.pointerId);
+      if (!start || Math.hypot(e.clientX - start.x, e.clientY - start.y) > 10) return;
+
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
       raycaster.setFromCamera(mouse, camera);
       if (!screwInstMesh) return;
       const hits = raycaster.intersectObject(screwInstMesh);
@@ -1235,7 +1302,7 @@
       }
     });
 
-    // Construir cuadrícula de los 500 niveles en el modal
+    // Modal de 500 niveles
     const all500 = buildAll500LevelsManifest();
     const gridEl = document.getElementById('levels-grid');
     all500.forEach(item => {
@@ -1249,7 +1316,6 @@
       gridEl.appendChild(cell);
     });
 
-    // Exportar los 500 niveles como JSON descargable
     document.getElementById('btn-export-json').onclick = () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(all500, null, 2));
       const a = document.createElement('a');
@@ -1271,37 +1337,35 @@
     document.getElementById('btn-jump-5').onclick = () => startLevel(5);
     document.getElementById('btn-jump-500').onclick = () => startLevel(500);
 
-    document.getElementById('btn-booster-drill').onclick = () => {
-      if (state.maxReserve < 8) {
-        state.maxReserve++;
-        renderUI();
-        toast('🪛 +1 Agujero extra desbloqueado');
-      }
-    };
-    document.getElementById('btn-booster-broom').onclick = () => {
+    document.getElementById('btn-booster-drill').onclick = useDrillBooster;
+    document.getElementById('btn-booster-broom').onclick = useBroomBooster;
+    document.getElementById('btn-booster-box').onclick = useExtraBoxBooster;
+
+    // Botones del Modal de Derrota
+    document.getElementById('btn-revive-broom').onclick = () => {
+      document.getElementById('modal-gameover').classList.remove('open');
       state.reserveSlots = [];
+      state.isGameOver = false;
+      SoundFX.playBoxClose();
       renderUI();
-      toast('🧹 Bandeja de reserva despejada');
+      toast('🧹 ¡Has revivido con la bandeja limpia!');
     };
-    document.getElementById('btn-booster-box').onclick = () => {
-      if (state.maxBoxes < 4) {
-        state.maxBoxes++;
-        pullNextBox();
-        renderUI();
-        toast('📦 +1 Caja activa añadida');
-      }
+    document.getElementById('btn-retry-level').onclick = () => {
+      document.getElementById('modal-gameover').classList.remove('open');
+      startLevel(state.levelData.spec.levelId);
+    };
+
+    document.getElementById('btn-next-level').onclick = () => {
+      document.getElementById('modal-victory').classList.remove('open');
+      state.coins += 15;
+      startLevel(Math.min(500, state.levelData.spec.levelId + 1));
     };
 
     document.getElementById('btn-solver').onclick = () => {
-      if (state.autoTimer) {
-        clearInterval(state.autoTimer);
-        state.autoTimer = null;
-        toast('Auto-Solver detenido');
-        return;
-      }
-      toast('⚡ Resolviendo nivel automáticamente...');
+      if (state.autoTimer) { clearInterval(state.autoTimer); state.autoTimer = null; toast('Auto-Solver pausado'); return; }
+      toast('⚡ Auto-Solver activo (máx. 2 tornillos a la vez)...');
       state.autoTimer = setInterval(() => {
-        if (!state.levelData) return;
+        if (!state.levelData || state.isGameOver || state.activeUnscrewAnimations >= MAX_CONCURRENT_UNSCREW) return;
         const activeColors = new Set(state.activeBoxes.map(b => b.colorId));
         let target = state.levelData.screws.find(
           s => !s.removed && !s.animating && !isBlocked(s) && activeColors.has(s.colorId)
@@ -1310,19 +1374,12 @@
           target = state.levelData.screws.find(s => !s.removed && !s.animating && !isBlocked(s));
         }
         if (target) extractScrew(target.id);
-      }, 90);
-    };
-
-    document.getElementById('btn-next-level').onclick = () => {
-      document.getElementById('modal-victory').classList.remove('open');
-      state.coins += 10;
-      const nextLvl = Math.min(500, state.levelData.spec.levelId + 1);
-      startLevel(nextLvl);
+      }, 140);
     };
 
     document.getElementById('btn-reset-cam').onclick = () => {
       controls.reset();
-      camera.position.set(0, 3.5, 15.5);
+      camera.position.set(0, 3.2, 13.5);
     };
 
     document.getElementById('slider-zoom').addEventListener('input', e => {
@@ -1337,19 +1394,18 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Bucle de Física y Renderizado a 60 FPS
+    // Bucle de Física a 60 FPS
     let lastT = performance.now();
     function tick(now) {
       requestAnimationFrame(tick);
       const dt = Math.min(0.05, (now - lastT) / 1000);
       lastT = now;
-
       controls.update();
 
       if (state.levelData) {
         for (const p of state.levelData.pieces) {
           if (p.falling && !p.removed && p.mesh) {
-            p.vel.y -= 25.0 * dt;
+            p.vel.y -= 26.0 * dt;
             p.mesh.position.addScaledVector(p.vel, dt);
             p.mesh.rotation.x += p.angVel.x * dt;
             p.mesh.rotation.y += p.angVel.y * dt;
@@ -1361,12 +1417,11 @@
           }
         }
       }
-
       renderer.render(scene, camera);
     }
 
-    // Iniciamos en el Nivel 5 (Pingüino Polar como en el video) o salta al Nivel 1 / 4 / 500 con un clic
-    startLevel(5);
+    // Iniciamos en el Nivel 1 con el Pingüino Navideño completo
+    startLevel(1);
     requestAnimationFrame(tick);
   </script>
 </body>

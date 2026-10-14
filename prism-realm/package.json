@@ -1,8 +1,11 @@
 {
   "name": "prism-realm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Prism Realm: Unscrew 3D — empaquetado Capacitor para Android",
+  "scripts": {
+    "prepare:assets": "node scripts/setup-offline-assets.mjs"
+  },
   "dependencies": {
     "@capacitor/android": "^6.1.2",
     "@capacitor/cli": "^6.1.2",

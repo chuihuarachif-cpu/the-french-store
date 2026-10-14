@@ -25,16 +25,17 @@ jobs:
 
       - name: Install dependencies
         working-directory: prism-realm
-        run: npm install
+        run: npm install --no-audit --no-fund
 
-      - name: Bundle Three.js locally (sin CDN)
+      - name: Prepare offline assets (Three.js + iconos)
         working-directory: prism-realm
         run: |
-          mkdir -p www/vendor/jsm
-          cp node_modules/three/build/three.module.js www/vendor/
-          cp -r node_modules/three/examples/jsm/. www/vendor/jsm/
-          sed -i 's#https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js#./vendor/three.module.js#; s#https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/#./vendor/jsm/#' www/index.html
-          grep -q './vendor/three.module.js' www/index.html
+          npm run prepare:assets
+          test -f www/vendor/three/build/three.module.js
+          test -f www/vendor/three/examples/jsm/controls/OrbitControls.js
+          test -f www/vendor/three/examples/jsm/environments/RoomEnvironment.js
+          test -f www/icons/icon-192.png
+          test -f www/icons/icon-512.png
 
       - name: Generate Android project
         working-directory: prism-realm
