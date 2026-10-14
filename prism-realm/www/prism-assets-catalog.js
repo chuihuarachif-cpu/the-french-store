@@ -469,6 +469,153 @@ export function buildSculptureCoreGroup(shapeMode, bumpTexture) {
       group.add(arm);
     }
 
+  } else if (shapeMode === 'robot') {
+    // Mecha: torso acorazado, cabeza con visor azul, núcleo rojo y antena
+    const steel = 0x64748b, dark = 0x475569;
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(1.9, 2.0, 1.2), matBody(steel));
+    const head = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.1, 1.1), matBody(0x94a3b8));
+    head.position.set(0, 1.9, 0);
+    const visor = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.3, 0.1), matBody(0x38bdf8));
+    visor.position.set(0, 1.9, 0.6);
+    const core = new THREE.Mesh(new THREE.SphereGeometry(0.35, 18, 14), matBody(0xf43f5e));
+    core.position.set(0, 0.2, 0.65);
+    const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.6, 8), matBody(dark));
+    antenna.position.set(0, 2.75, 0);
+    const antennaTip = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), matBody(0xfacc15));
+    antennaTip.position.set(0, 3.1, 0);
+    group.add(torso, head, visor, core, antenna, antennaTip);
+    [-1, 1].forEach(s => {
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.6, 0.6), matBody(dark));
+      arm.position.set(s * 1.25, 0.1, 0);
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.4, 0.7), matBody(dark));
+      leg.position.set(s * 0.5, -1.7, 0);
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.3, 1.0), matBody(steel));
+      foot.position.set(s * 0.5, -2.5, 0.1);
+      group.add(arm, leg, foot);
+    });
+
+  } else if (shapeMode === 'turtle') {
+    // Tortuga: caparazón abovedado con gemas, cabeza, cuatro patas y cola
+    const green = 0x10b981, skin = 0x84cc16;
+    const shell = new THREE.Mesh(new THREE.SphereGeometry(1.7, 28, 20), matBody(green));
+    shell.scale.set(1.25, 0.75, 1.45);
+    shell.position.y = 0.2;
+    group.add(shell);
+    [[0, 1.45, 0], [0.75, 1.38, 0.7], [-0.75, 1.38, 0.7], [0.75, 1.38, -0.7], [-0.75, 1.38, -0.7]].forEach(([x, y, z]) => {
+      const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.3, 0), matBody(0xfacc15));
+      gem.position.set(x, y, z);
+      group.add(gem);
+    });
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 20, 16), matBody(skin));
+    head.scale.set(1, 0.9, 1.2);
+    head.position.set(0, -0.1, 2.0);
+    group.add(head);
+    [-0.22, 0.22].forEach(x => {
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), matBody(0x0f172a));
+      eye.position.set(x, 0.12, 2.5);
+      group.add(eye);
+    });
+    [[-1.1, -1.1], [1.1, -1.1], [-1.1, 1.1], [1.1, 1.1]].forEach(([x, z]) => {
+      const leg = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 12), matBody(skin));
+      leg.scale.set(1, 0.5, 1);
+      leg.position.set(x, -0.8, z);
+      group.add(leg);
+    });
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.6, 12), matBody(skin));
+    tail.rotation.x = -Math.PI / 2;
+    tail.position.set(0, -0.3, -2.0);
+    group.add(tail);
+
+  } else if (shapeMode === 'mushroom') {
+    // Seta luminosa: tallo blanco, sombrero violeta con lunares
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.8, 2.2, 24), matBody(0xf8fafc));
+    stem.position.y = -0.9;
+    const cap = new THREE.Mesh(
+      new THREE.SphereGeometry(1.9, 28, 18, 0, Math.PI * 2, 0, Math.PI / 2),
+      matBody(0xa855f7)
+    );
+    cap.scale.set(1, 0.6, 1);
+    cap.position.y = 0.4;
+    group.add(stem, cap);
+    [[0, 1.62, 0], [1.0, 1.34, 0.4], [-1.0, 1.34, 0.4], [0.3, 1.35, -1.0]].forEach(([x, y, z]) => {
+      const spot = new THREE.Mesh(new THREE.SphereGeometry(0.28, 14, 12), matBody(0xf8fafc));
+      spot.position.set(x, y, z);
+      group.add(spot);
+    });
+
+  } else if (shapeMode === 'car') {
+    // Bólido GT: carrocería roja, cabina oscura, alerón amarillo y ruedas de frente
+    const bodyMesh = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.9, 1.5), matBody(0xef4444));
+    bodyMesh.position.y = -0.2;
+    const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.8, 1.2), matBody(0x1e293b));
+    cabin.position.set(-0.2, 0.6, 0);
+    const spoiler = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.12, 1.7), matBody(0xfacc15));
+    spoiler.position.set(-1.6, 0.6, 0);
+    group.add(bodyMesh, cabin, spoiler);
+    [-1.15, 1.15].forEach(x => [-0.8, 0.8].forEach(z => {
+      const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.4, 24), matBody(0x0f172a));
+      wheel.rotation.x = Math.PI / 2; // disco mirando al frente
+      wheel.position.set(x, -0.75, z);
+      group.add(wheel);
+    }));
+
+  } else if (shapeMode === 'ship') {
+    // Drakkar vikingo: casco de madera, proa en espiral, mástil, vela roja y escudos
+    const hull = new THREE.Mesh(
+      new THREE.SphereGeometry(1.8, 28, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2),
+      matBody(0x92400e)
+    );
+    hull.scale.set(1.4, 0.7, 0.9);
+    hull.position.y = 0.2;
+    const prow = new THREE.Mesh(new THREE.ConeGeometry(0.25, 1.6, 12), matBody(0x78350f));
+    prow.position.set(2.3, 1.0, 0);
+    prow.rotation.z = -0.7;
+    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.0, 10), matBody(0x78350f));
+    mast.position.set(0, 1.4, 0);
+    const sail = new THREE.Mesh(new THREE.BoxGeometry(1.9, 1.6, 0.06), matBody(0xef4444));
+    sail.position.set(0, 1.7, 0);
+    group.add(hull, prow, mast, sail);
+    for (let i = -2; i <= 2; i++) {
+      const shield = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 16), matBody(0xfacc15));
+      shield.rotation.x = Math.PI / 2;
+      shield.position.set(i * 0.6, 0.2, 0.75);
+      group.add(shield);
+    }
+
+  } else if (shapeMode === 'crab') {
+    // Cangrejo emperador: caparazón ancho, ojos en tallos, pinzas y 6 patas
+    const orange = 0xf97316;
+    const shell = new THREE.Mesh(new THREE.SphereGeometry(1.4, 28, 20), matBody(orange));
+    shell.scale.set(1.3, 0.7, 1.0);
+    shell.position.y = -0.2;
+    group.add(shell);
+    [-0.45, 0.45].forEach(x => {
+      const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.6, 10), matBody(orange));
+      stalk.position.set(x, 0.75, 0.9);
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 14), matBody(0xffffff));
+      eye.position.set(x, 1.15, 0.95);
+      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 10), matBody(0x0f172a));
+      pupil.position.set(x, 1.15, 1.15);
+      group.add(stalk, eye, pupil);
+    });
+    [-1, 1].forEach(s => {
+      const claw = new THREE.Mesh(new THREE.SphereGeometry(0.55, 18, 14), matBody(orange));
+      claw.scale.set(1.2, 0.8, 0.9);
+      claw.position.set(s * 2.0, 0.1, 0.8);
+      const pincer = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.7, 12), matBody(orange));
+      pincer.rotation.z = -s * Math.PI / 2; // apunta hacia afuera
+      pincer.position.set(s * 2.75, 0.1, 0.8);
+      group.add(claw, pincer);
+    });
+    for (let i = 0; i < 3; i++) {
+      [-1, 1].forEach(s => {
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 10), matBody(orange));
+        leg.rotation.z = s * Math.PI / 2; // tumbada a lo largo de X
+        leg.position.set(s * 1.25, -0.95, -0.5 + i * 0.5);
+        group.add(leg);
+      });
+    }
+
   } else {
     // Núcleo de Cristal/Corona facetado brillante
     const core = new THREE.Mesh(new THREE.OctahedronGeometry(1.35, 2), matBody(0xf43f5e));
