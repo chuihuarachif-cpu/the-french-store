@@ -74,7 +74,7 @@ function createPenguinFlipperMesh(sideSign, colorHex) {
   for (let i = 0; i < pos.count; i++) {
     v.fromBufferAttribute(pos, i);
     v.y *= 2.35;
-    const t = (v.y + 0.75) / 1.5; // 0 punta, 1 hombro
+    const t = Math.min(1, Math.max(0, (v.y + 0.75) / 1.5)); // 0 punta, 1 hombro
     const widthFactor = 0.55 + 0.45 * Math.sin(t * Math.PI * 0.85);
     v.z *= 0.85 * widthFactor;
     v.x *= 0.42;
