@@ -1,0 +1,81 @@
+name: Build Prism Realm APK
+
+on:
+  push:
+    branches: [prism-realm-godot]
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.3"
+
+jobs:
+  export-android:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare Godot (templates, SDK paths, debug keystore)
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates ~/.config/godot build
+          if [ -d /root/.local/share/godot/templates/${GODOT_VERSION}.stable ]; then
+            mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          fi
+          ls ~/.local/share/godot/export_templates/
+
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/lib/android-sdk}}"
+          JAVA_HOME_DETECT="$(dirname "$(dirname "$(readlink -f "$(which javac)")")")"
+          echo "Android SDK: $SDK | Java: $JAVA_HOME_DETECT"
+
+          for f in editor_settings-4.tres editor_settings-4.3.tres; do
+            cat > ~/.config/godot/$f <<EOF
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "$SDK"
+          export/android/java_sdk_path = "$JAVA_HOME_DETECT"
+          EOF
+          done
+
+          keytool -genkeypair -v -keystore /root/debug.keystore -storepass android -alias androiddebugkey \
+            -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Import project
+        run: godot --headless --verbose --import || true
+
+      - name: Export APK (debug)
+        env:
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: /root/debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
+        run: |
+          godot --headless --verbose --export-debug "Android" build/prism-realm.apk
+          ls -la build/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prism-realm-apk
+          path: build/prism-realm.apk
+          if-no-files-found: error
+
+  release:
+    needs: export-android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: prism-realm-apk
+          path: dist
+
+      - name: Publish release with APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: prism-realm-v${{ github.run_number }}
+          name: Prism Realm Nivel 1 (build ${{ github.run_number }})
+          body: |
+            APK de depuración de Prism Realm (Godot 4.3, arm64-v8a). Instálalo en Android permitiendo "instalar apps de orígenes desconocidos".
+          files: dist/prism-realm.apk
+          make_latest: false
