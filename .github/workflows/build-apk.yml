@@ -21,10 +21,13 @@ jobs:
         run: |
           set -x
           mkdir -p ~/.local/share/godot/export_templates ~/.config/godot build
-          if [ -d /root/.local/share/godot/templates/${GODOT_VERSION}.stable ]; then
-            mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          fi
-          ls ~/.local/share/godot/export_templates/
+          for src in /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable /root/.local/share/godot/templates/${GODOT_VERSION}.stable; do
+            if [ -d "$src" ]; then
+              cp -r "$src" ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+              break
+            fi
+          done
+          ls ~/.local/share/godot/export_templates/ ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
           SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/lib/android-sdk}}"
           JAVAC_BIN="$(command -v javac || command -v java || true)"
