@@ -57,9 +57,15 @@ jobs:
           GODOT_ANDROID_KEYSTORE_DEBUG_PATH: /root/prism-debug.keystore
           GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
           GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
+        shell: bash
         run: |
-          godot --headless --verbose --export-debug "Android" build/prism-realm.apk
-          ls -la build/
+          godot --headless --export-debug "Android" build/prism-realm.apk > export.log 2>&1 || true
+          ls -la build/ || true
+          if [ ! -s build/prism-realm.apk ]; then
+            DIAG="env: ANDROID_HOME=${ANDROID_HOME:-} ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-} | templates: $(ls ~/.local/share/godot/export_templates/ 2>&1 | tr '\n' ' ') | sdk: $(ls ${ANDROID_HOME:-/usr/lib/android-sdk} 2>&1 | tr '\n' ' ') | log: $(grep -v -E '^\s*$' export.log | tail -25 | tr '\n' '~' | cut -c1-2500)"
+            echo "::error title=Export failed::${DIAG}"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
