@@ -1,7 +1,7 @@
 // prism-toy-catalog.js — Catálogo oficial de 500 niveles + figuras esculpidas por piezas (Nv. 2, 3 y 4).
 // Nivel 1 (pingüino) vive en prism-level1-penguin.js; el nivel 5 usa el pingüino del modelo anterior.
 import * as THREE from 'three';
-import { createFlushToyScrew, snapScrewsToSurface, L1_SCREW_RADIUS } from './prism-level1-penguin.js';
+import { buildLevel1PenguinScene, PENGUIN_L1_LAYERS, snapScrewsToSurface, L1_SCREW_RADIUS } from './prism-level1-penguin.js';
 
 export const LEVEL_NAMES_500 = [
   "Pingüino Polar", // Nivel 1
@@ -121,83 +121,589 @@ export function getLevelOfficialTitle(levelNumber) {
   return LEVEL_NAMES_500[(levelNumber - 1) % LEVEL_NAMES_500.length] || `Reliquia Prismática #${levelNumber}`;
 }
 
+
+// ====================================================================== ======
+// 2. PRIMITIVAS SÓLIDAS TOY 3D (CACHÉ DE ALTO RENDIMIENTO)
+// ====================================================================== ======
 const matCache = new Map();
 
-export function getToyMaterial(hex, roughness = 0.46, metalness = 0.03) {
-  const key = `${hex}_${roughness}_${metalness}`;
-  if (!matCache.has(key)) {
-    matCache.set(key, new THREE.MeshStandardMaterial({
-      color: hex,
-      roughness: roughness,
-      metalness: metalness
-    }));
-  }
-  return matCache.get(key);
+export function getToyMaterial(hex, roughness = 0.45, metalness = 0.04) {
+   const key = `${hex}_${roughness}_${metalness}`;
+   if (!matCache.has(key)) {
+matCache.set(key, new THREE.MeshStandardMaterial({ color: hex, roughness, metalness }));
+   }
+   return matCache.get(key);
 }
 
 export function createBeveledBlock(pts, depth, hex, bevel = 0.08) {
-  const shape = new THREE.Shape();
-  shape.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) {
-    shape.lineTo(pts[i][0], pts[i][1]);
-  }
-  shape.closePath();
-  const geom = new THREE.ExtrudeGeometry(shape, {
-    depth: depth,
-    bevelEnabled: true,
-    bevelSegments: 5,
-    steps: 1,
-    bevelSize: bevel,
-    bevelThickness: bevel
-  });
-  geom.center();
-  geom.computeVertexNormals();
-  return new THREE.Mesh(geom, getToyMaterial(hex));
+   const shape = new THREE.Shape();
+   shape.moveTo(pts[0][0], pts[0][1]);
+for (let i = 1; i < pts.length; i++) shape.lineTo(pts[i][0], pts[i][1]);
+   shape.closePath();
+   const geom = new THREE.ExtrudeGeometry(shape, {
+depth, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: bevel, bevelThickness: bevel
+   });
+   geom.center();
+   geom.computeVertexNormals();
+   return new THREE.Mesh(geom, getToyMaterial(hex));
 }
 
 export function createSolidHalfOvoid(rx, ry, rz, sideSign, frontSign, hex) {
-  const geom = new THREE.SphereGeometry(1, 26, 20);
-  const pos = geom.attributes.position;
-  const v = new THREE.Vector3();
-  for (let i = 0; i < pos.count; i++) {
-    v.fromBufferAttribute(pos, i);
-    if (sideSign !== 0) {
-      if (Math.sign(v.x) !== sideSign) v.x *= 0.06;
-      else v.x = sideSign * (0.02 + Math.abs(v.x) * 0.98);
-    }
-    if (frontSign !== 0) {
-      if (Math.sign(v.z) !== frontSign) v.z *= 0.08;
-      else v.z = frontSign * (0.02 + Math.abs(v.z) * 0.98);
-    }
-    v.set(v.x * rx, v.y * ry, v.z * rz);
-    pos.setXYZ(i, v.x, v.y, v.z);
-  }
-  geom.computeVertexNormals();
-  return new THREE.Mesh(geom, getToyMaterial(hex));
+   const geom = new THREE.SphereGeometry(1, 26, 20);
+   const pos = geom.attributes.position;
+   const v = new THREE.Vector3();
+   for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i);
+      if (sideSign !== 0) {
+         if (Math.sign(v.x) !== sideSign) v.x *= 0.05;
+         else v.x = sideSign * (0.02 + Math.abs(v.x) * 0.98);
+      }
+      if (frontSign !== 0) {
+         if (Math.sign(v.z) !== frontSign) v.z *= 0.06;
+         else v.z = frontSign * (0.02 + Math.abs(v.z) * 0.98);
+      }
+      v.set(v.x * rx, v.y * ry, v.z * rz);
+      pos.setXYZ(i, v.x, v.y, v.z);
+   }
+   geom.computeVertexNormals();
+   return new THREE.Mesh(geom, getToyMaterial(hex));
 }
 
 export function createCuteEyesGroup(eyeDistX, yOff, zOff, irisHex = 0x0284c7) {
-  const g = new THREE.Group();
-  [-eyeDistX, eyeDistX].forEach(xPos => {
-    const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.18, 18, 14), getToyMaterial(0xffffff, 0.2));
-    sclera.scale.set(0.95, 1.12, 0.42);
-    sclera.position.set(xPos, yOff, zOff);
-
-    const iris = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), getToyMaterial(irisHex, 0.2));
-    iris.scale.set(1, 1.08, 0.42);
-    iris.position.set(xPos * 0.94, yOff - 0.01, zOff + 0.05);
-
-    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 10), getToyMaterial(0x0f172a, 0.1));
-    pupil.scale.set(1, 1.08, 0.42);
-    pupil.position.set(xPos * 0.94, yOff - 0.01, zOff + 0.08);
-
-    const shine = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    shine.position.set(xPos * 0.94 - 0.03, yOff + 0.04, zOff + 0.11);
-
-    g.add(sclera, iris, pupil, shine);
-  });
-  return g;
+   const g = new THREE.Group();
+   [-eyeDistX, eyeDistX].forEach(xPos => {
+const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), getToyMaterial(0xffffff, 0.2));
+sclera.scale.set(0.95, 1.1, 0.45); sclera.position.set(xPos, yOff, zOff);
+const iris = new THREE.Mesh(new THREE.SphereGeometry(0.105, 14, 10), getToyMaterial(irisHex, 0.2));
+iris.scale.set(1, 1.05, 0.45); iris.position.set(xPos * 0.95, yOff, zOff + 0.045);
+const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.065, 12, 10), getToyMaterial(0x0f172a, 0.1));
+pupil.scale.set(1, 1.05, 0.45); pupil.position.set(xPos * 0.95, yOff, zOff + 0.07);
+const shine = new THREE.Mesh(new THREE.SphereGeometry(0.024, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+shine.position.set(xPos * 0.95 - 0.025, yOff + 0.035, zOff + 0.095);
+      g.add(sclera, iris, pupil, shine);
+   });
+   return g;
 }
+
+const rectPts = (w, h) => [[-w, -h], [w, -h], [w, h], [-w, h]];
+const hexPts = (r) => Array.from({ length: 6 }, (_, i) => [Math.cos(i * Math.PI / 3) * r, Math.sin(i * Math.PI / 3) * r]);
+
+// ====================================================================== ======
+// 3. PALETAS TEMÁTICAS INTELIGENTES SEGÚN EL NOMBRE DEL NIVEL
+// ====================================================================== ======
+function getThemeColorsForName(name, levelNumber) {
+   const n = name.toLowerCase();
+   if (n.includes('unicornio') || n.includes('pegaso')) {
+return { primary: 0xffffff, secondary: 0xf472b6, accent: 0xfacc15, dark: 0x9333ea, base: 0x7dd3fc, eye: 0x9333ea };
+   }
+if (n.includes('zorro') || n.includes('tigre') || n.includes('león') || n.includes('fénix')) {
+return { primary: 0xf97316, secondary: 0xfef8f0, accent: 0xfacc15, dark: 0x1e293b, base: 0x4ade80, eye: 0xd97706 };
+   }
+if (n.includes('tortuga') || n.includes('camaleón') || n.includes('rana') || n.includes('colibrí') || n.includes('mantis') || n.includes('dragón')) {
+return { primary: 0x10b981, secondary: 0xf59e0b, accent: 0x2dd4bf, dark: 0x065f46, base: 0x38bdf8, eye: 0x0284c7 };
+   }
+if (n.includes('elefante') || n.includes('rinoceronte') || n.includes('lobo') || n.includes('koala') || n.includes('tiburón') || n.includes('gorila')) {
+return { primary: 0x64748b, secondary: 0xe2e8f0, accent: 0x38bdf8, dark: 0x334155, base: 0x94a3b8, eye: 0x0284c7 };
+   }
+if (n.includes('pulpo') || n.includes('medusa') || n.includes('kraken')) {
+return { primary: 0xa855f7, secondary: 0xf43f5e, accent: 0x38bdf8, dark: 0x581c87, base: 0x2dd4bf, eye: 0xfacc15 };
+   }
+if (n.includes('oro') || n.includes('dorad') || n.includes('reloj') || n.includes('latón') || n.includes('trompeta') || n.includes('saxofón')) {
+return { primary: 0xf59e0b, secondary: 0xfef08a, accent: 0xb45309, dark: 0x451a03, base: 0x78350f, eye: 0x38bdf8 };
+   }
+if (n.includes('cyber') || n.includes('androide') || n.includes('mecha') || n.includes('robot') || n.includes('dron') || n.includes('láser')) {
+return { primary: 0x0ea5e9, secondary: 0x1e293b, accent: 0xf43f5e, dark: 0x0f172a, base: 0x334155, eye: 0x22c55e };
+   }
+   const hue = ((levelNumber * 47) % 360) / 360;
+   const c1 = new THREE.Color().setHSL(hue, 0.82, 0.54).getHex();
+const c2 = new THREE.Color().setHSL((hue + 0.12) % 1, 0.78, 0.88).getHex();
+const c3 = new THREE.Color().setHSL((hue + 0.5) % 1, 0.88, 0.55).getHex();
+return { primary: c1, secondary: c2, accent: c3, dark: 0x1e293b, base: 0x38bdf8, eye: 0x0284c7 };
+}
+
+// ====================================================================== ======
+// 4. FAMILIA A: CUADRÚPEDOS TOY 3D (Unicornio, Zorro, Lobo, Ciervo, León, Elefante...)
+// Postura en 4 patas reales, torso horizontal dividido, cuello, cabeza, cola y base
+// ====================================================================== ======
+export function buildQuadrupedToyBlueprint(name, levelNumber) {
+   const pal = getThemeColorsForName(name, levelNumber);
+   const n = name.toLowerCase();
+const hasHorn = n.includes('unicornio') || n.includes('rinoceronte') || n.includes('narval') || n.includes('ciervo');
+const hasWings = n.includes('pegaso') || n.includes('unicornio') || n.includes('grifo') || n.includes('dragón');
+
+   return [
+      // 1. Hocico / Trompa prominente hacia adelante (+Z)
+      {
+         id: 'quad_snout', name: 'Hocico Frontal', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.30, 0.24), 0.38, pal.secondary, 0.08),
+         pos: [0, 0.58, 1.42], rot: [0.15, 0, 0],
+         mounts: [
+           { pos: [-0.18, 0.62, 1.68], normal: [-0.2, 0.2, 0.96] },
+           { pos: [0.18, 0.62, 1.68], normal: [0.2, 0.2, 0.96] },
+        { pos: [0, 0.84, 1.50],      normal: [0, 0.9, 0.42] }
+       ]
+    },
+    // 2. Cuerno Mágico o Cresta Frontal
+    {
+id: 'quad_horn', name: hasHorn ? 'Cuerno Roscado' : 'Tufo Frontal', blockedBy: [],
+       buildMesh: () => hasHorn
+? new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.82, 18), getToyMaterial(pal.accent, 0.25, 0.2))
+: createBeveledBlock(rectPts(0.24, 0.18), 0.28, pal.accent, 0.07),
+       pos: [0, 1.42, 0.98], rot: [0.45, 0, 0],
+       mounts: [
+          { pos: [0, 1.56, 1.15],     normal: [0, 0.5, 0.86] },
+          { pos: [-0.20, 1.32, 0.96], normal: [-0.9, 0.2, 0.3] },
+          { pos: [0.20, 1.32, 0.96], normal: [0.9, 0.2, 0.3] }
+       ]
+    },
+    // 3. Orejas Laterales
+    {
+       id: 'quad_ear_l', name: 'Oreja Izquierda', blockedBy: [],
+buildMesh: () => createBeveledBlock([[-0.20, -0.24], [0.20, -0.24], [0, 0.32]], 0.18, pal.primary, 0.05),
+       pos: [-0.46, 1.28, 0.68], rot: [0, 0, 0.22],
+       mounts: [
+          { pos: [-0.46, 1.32, 0.82], normal: [0, 0.1, 0.99] },
+          { pos: [-0.66, 1.28, 0.68], normal: [-0.95, 0.3, 0] }
+       ]
+    },
+    {
+       id: 'quad_ear_r', name: 'Oreja Derecha', blockedBy: [],
+buildMesh: () => createBeveledBlock([[-0.20, -0.24], [0.20, -0.24], [0, 0.32]], 0.18, pal.primary, 0.05),
+       pos: [0.46, 1.28, 0.68], rot: [0, 0, -0.22],
+       mounts: [
+          { pos: [0.46, 1.32, 0.82], normal: [0, 0.1, 0.99] },
+          { pos: [0.66, 1.28, 0.68], normal: [0.95, 0.3, 0] }
+       ]
+    },
+    // 4. Cabeza y Cuello con Ojos Expresivos
+    {
+id: 'quad_head', name: 'Cabeza Principal', blockedBy: ['quad_snout', 'quad_horn', 'quad_ear_l', 'quad_ear_r'],
+       buildMesh: () => {
+          const g = new THREE.Group();
+g.add(createSolidHalfOvoid(0.68, 0.64, 0.72, 0, 0, pal.primary));
+          g.add(createCuteEyesGroup(0.28, 0.08, 0.62, pal.eye));
+          return g;
+       },
+       pos: [0, 0.76, 0.78], rot: [0, 0, 0],
+       mounts: [
+          { pos: [-0.62, 0.82, 0.85], normal: [-0.9, 0.2, 0.4] },
+          { pos: [0.62, 0.82, 0.85], normal: [0.9, 0.2, 0.4] },
+          { pos: [0, 1.18, 0.55],     normal: [0, 0.85, -0.5] }
+       ]
+    },
+    // 5. Crin o Lomo Superior
+    {
+       id: 'quad_mane', name: 'Crin Dorsal', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.22, 0.48), 0.32, pal.secondary, 0.08),
+       pos: [0, 0.58, -0.05], rot: [Math.PI / 2 - 0.15, 0, 0],
+       mounts: [
+          { pos: [0, 0.82, 0.22], normal: [0, 0.98, 0.15] },
+          { pos: [0, 0.76, -0.28], normal: [0, 0.98, 0.15] },
+          { pos: [-0.28, 0.58, 0], normal: [-1, 0, 0] }
+       ]
+    },
+// 6. Torso Horizontal Izquierdo y Derecho (En 4 patas, NO vertical)
+    {
+id: 'quad_torso_l', name: 'Costillar Izquierdo', blockedBy: ['quad_mane'],
+buildMesh: () => createSolidHalfOvoid(0.76, 0.68, 1.18, -1, 0, pal.primary),
+       pos: [-0.02, -0.08, -0.05], rot: [0, 0, 0],
+       mounts: [
+          { pos: [-0.72, 0.05, 0.42], normal: [-0.92, 0.15, 0.35] },
+          { pos: [-0.72, 0.05, -0.48], normal: [-0.92, 0.15, -0.35] },
+          { pos: [-0.48, -0.35, 0.02], normal: [-0.85, -0.5, 0] }
+       ]
+    },
+    {
+id: 'quad_torso_r', name: 'Costillar Derecho', blockedBy: ['quad_mane'],
+buildMesh: () => createSolidHalfOvoid(0.76, 0.68, 1.18, 1, 0, pal.primary),
+       pos: [0.02, -0.08, -0.05], rot: [0, 0, 0],
+       mounts: [
+          { pos: [0.72, 0.05, 0.42], normal: [0.92, 0.15, 0.35] },
+          { pos: [0.72, 0.05, -0.48], normal: [0.92, 0.15, -0.35] },
+          { pos: [0.48, -0.35, 0.02], normal: [0.85, -0.5, 0] }
+       ]
+    },
+    // 7. Alas o Escudos de Flanco
+    {
+id: 'quad_flank_l', name: hasWings ? 'Ala Izquierda' : 'Flanco Izquierdo', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.16, 0.42), 0.48, pal.secondary, 0.07),
+       pos: [-0.88, 0.18, -0.08], rot: [0.25, 0, 0.35],
+       mounts: [
+          { pos: [-1.06, 0.32, 0.12], normal: [-0.9, 0.4, 0.1] },
+          { pos: [-1.06, 0.05, -0.25], normal: [-0.9, 0.3, -0.2] }
+       ]
+    },
+    {
+id: 'quad_flank_r', name: hasWings ? 'Ala Derecha' : 'Flanco Derecho', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.16, 0.42), 0.48, pal.secondary, 0.07),
+       pos: [0.88, 0.18, -0.08], rot: [0.25, 0, -0.35],
+       mounts: [
+          { pos: [1.06, 0.32, 0.12], normal: [0.9, 0.4, 0.1] },
+          { pos: [1.06, 0.05, -0.25], normal: [0.9, 0.3, -0.2] }
+       ]
+    },
+    // 8. Cola Trasera Esponjosa
+    {
+       id: 'quad_tail', name: 'Cola Trasera', blockedBy: [],
+buildMesh: () => new THREE.Mesh(new THREE.CapsuleGeometry(0.26, 0.62, 14, 18), getToyMaterial(pal.secondary)),
+       pos: [0, 0.08, -1.32], rot: [-0.65, 0, 0],
+       mounts: [
+          { pos: [0, 0.28, -1.62],     normal: [0, 0.5, -0.86] },
+          { pos: [-0.26, 0.02, -1.45], normal: [-0.85, 0, -0.5] },
+          { pos: [0.26, 0.02, -1.45], normal: [0.85, 0, -0.5] }
+       ]
+    },
+    // 9. Las 4 Patas Verticales Apoyadas Firme sobre la Base
+    ...[
+{ id: 'leg_fl', name: 'Pata Delantera Izq', x: -0.45, z: 0.62, blk: 'quad_torso_l' },
+{ id: 'leg_fr', name: 'Pata Delantera Der', x: 0.45, z: 0.62, blk: 'quad_torso_r' },
+{ id: 'leg_bl', name: 'Pata Trasera Izq',    x: -0.45, z: -0.65, blk: 'quad_torso_l' },
+{ id: 'leg_br', name: 'Pata Trasera Der',    x: 0.45, z: -0.65, blk: 'quad_torso_r' }
+    ].map(lg => ({
+       id: lg.id, name: lg.name, blockedBy: [lg.blk],
+buildMesh: () => new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.25, 0.78, 18), getToyMaterial(pal.accent)),
+       pos: [lg.x, -0.88, lg.z], rot: [0, 0, 0],
+       mounts: [
+{ pos: [lg.x + Math.sign(lg.x) * 0.25, -0.88, lg.z], normal: [Math.sign(lg.x), 0, 0] },
+{ pos: [lg.x, -0.88, lg.z + Math.sign(lg.z) * 0.25], normal: [0, 0, Math.sign(lg.z)] },
+{ pos: [lg.x, -1.15, lg.z + Math.sign(lg.z) * 0.22], normal: [0, -0.3, Math.sign(lg.z) * 0.95] }
+       ]
+     })),
+// 10. Plataforma de Terreno Horizontal (Plana bajo las 4 patas, NUNCA colgando)
+     ...Array.from({ length: 6 }, (_, idx) => {
+       const col = (idx % 3) - 1;
+       const row = Math.floor(idx / 3) === 0 ? 0.72 : -0.72;
+       const x = col * 0.92;
+       const z = row;
+       return {
+          id: `quad_base_${idx}`, name: `Pedestal ${idx + 1}`,
+blockedBy: col === 0 ? ['leg_fl', 'leg_fr', 'leg_bl', 'leg_br'] : [],
+buildMesh: () => createBeveledBlock(rectPts(0.42, 0.42), 0.30, idx % 2 === 0 ? pal.base : pal.secondary, 0.08),
+          pos: [x, -1.42, z], rot: [Math.PI / 2, 0, 0],
+          mounts: [
+             { pos: [x - 0.18, -1.20, z], normal: [0, 1, 0] },
+             { pos: [x + 0.18, -1.20, z], normal: [0, 1, 0] },
+{ pos: [x, -1.42, z + Math.sign(z) * 0.46], normal: [0, 0, Math.sign(z)] }
+          ]
+       };
+     })
+   ];
+}
+
+// ====================================================================== ======
+// 5. FAMILIA B: CRIATURAS MARINAS (Tortuga, Mantarraya, Tiburón, Pulpo, Ballena...)
+// Arrecife horizontal plano abajo y aletas extendidas a los costados
+// ====================================================================== ======
+export function buildMarineToyBlueprint(name, levelNumber) {
+   const pal = getThemeColorsForName(name, levelNumber);
+   return [
+    {
+        id: 'mar_head', name: 'Cabeza Marina', blockedBy: [],
+        buildMesh: () => {
+           const g = new THREE.Group();
+g.add(createSolidHalfOvoid(0.58, 0.48, 0.65, 0, 0, pal.accent));
+           g.add(createCuteEyesGroup(0.26, 0.08, 0.55, pal.eye));
+           return g;
+        },
+        pos: [0, 0.08, 1.32], rot: [0, 0, 0],
+        mounts: [
+           { pos: [0, 0.48, 1.48],     normal: [0, 0.75, 0.65] },
+           { pos: [-0.48, 0.12, 1.42], normal: [-0.85, 0.1, 0.5] },
+           { pos: [0.48, 0.12, 1.42], normal: [0.85, 0.1, 0.5] }
+        ]
+     },
+     {
+id: 'mar_crest_top', name: 'Escudo Central Superior', blockedBy: [],
+buildMesh: () => createBeveledBlock(hexPts(0.58), 0.30, pal.secondary, 0.08),
+        pos: [0, 0.62, 0], rot: [Math.PI / 2, 0, 0],
+        mounts: [
+           { pos: [0, 0.85, 0.26],       normal: [0, 1, 0] },
+           { pos: [-0.28, 0.85, -0.20], normal: [0, 1, 0] },
+           { pos: [0.28, 0.85, -0.20], normal: [0, 1, 0] }
+        ]
+     },
+     ...[
+{ id: 'shell_fl', name: 'Caparazón Frontal Izq', sx: -1, sz: 1 },
+{ id: 'shell_fr', name: 'Caparazón Frontal Der', sx: 1, sz: 1 },
+{ id: 'shell_bl', name: 'Caparazón Trasero Izq', sx: -1, sz: -1 },
+{ id: 'shell_br', name: 'Caparazón Trasero Der', sx: 1, sz: -1 }
+     ].map(sh => ({
+        id: sh.id, name: sh.name, blockedBy: ['mar_crest_top'],
+buildMesh: () => createSolidHalfOvoid(1.08, 0.65, 1.12, sh.sx, sh.sz, pal.primary),
+        pos: [sh.sx * 0.02, 0.12, sh.sz * 0.02], rot: [0, 0, 0],
+        mounts: [
+{ pos: [sh.sx * 0.65, 0.42, sh.sz * 0.65], normal: [sh.sx * 0.6, 0.5, sh.sz * 0.6] },
+{ pos: [sh.sx * 0.92, 0.18, sh.sz * 0.32], normal: [sh.sx * 0.9, 0.2, sh.sz * 0.35] },
+{ pos: [sh.sx * 0.35, 0.32, sh.sz * 0.95], normal: [sh.sx * 0.35, 0.3, sh.sz * 0.88] }
+      ]
+    })),
+    // 4 Aletas Laterales Horizontales
+    ...[-1, 1].map(side => ({
+id: `flipper_f_${side}`, name: side < 0 ? 'Aleta Delantera Izq' : 'Aleta Delantera Der', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.52, 0.24), 0.18, pal.accent, 0.06),
+pos: [side * 1.28, -0.05, 0.48], rot: [Math.PI / 2, 0, side * -0.25],
+      mounts: [
+         { pos: [side * 1.45, 0.12, 0.48], normal: [0, 1, 0] },
+         { pos: [side * 1.05, 0.12, 0.48], normal: [0, 1, 0] },
+         { pos: [side * 1.28, -0.05, 0.78], normal: [0, 0, 1] }
+      ]
+    })),
+    ...[-1, 1].map(side => ({
+id: `flipper_b_${side}`, name: side < 0 ? 'Aleta Trasera Izq' : 'Aleta Trasera Der', blockedBy: [side < 0 ? 'shell_bl' : 'shell_br'],
+buildMesh: () => createBeveledBlock(rectPts(0.38, 0.22), 0.18, pal.accent, 0.06),
+pos: [side * 0.96, -0.12, -0.82], rot: [Math.PI / 2, 0, side * 0.25],
+      mounts: [
+         { pos: [side * 1.12, 0.05, -0.82], normal: [0, 1, 0] },
+         { pos: [side * 0.80, 0.05, -0.82], normal: [0, 1, 0] },
+         { pos: [side * 0.96, -0.12, -1.10], normal: [0, 0, -1] }
+      ]
+    })),
+// Plastrón Inferior + Plataforma de Arrecife PLANA (rotada Math.PI/2 en X)
+    ...Array.from({ length: 11 }, (_, idx) => {
+      const isCore = idx >= 9;
+      const ang = (idx / 9) * Math.PI * 2;
+      const r = isCore ? 0.35 : 1.12;
+const x = isCore ? (idx === 9 ? -0.38 : 0.38) : Math.cos(ang) * r;
+      const z = isCore ? 0 : Math.sin(ang) * r;
+      return {
+         id: `reef_flat_${idx}`, name: `Bloque de Arrecife ${idx + 1}`,
+blockedBy: isCore ? ['shell_fl', 'shell_fr', 'shell_bl', 'shell_br'] : [],
+buildMesh: () => createBeveledBlock(rectPts(0.40, 0.36), 0.30, idx % 2 === 0 ? pal.base : 0xf472b6, 0.08),
+pos: [x, -0.68 - (isCore ? 0.15 : 0), z], rot: [Math.PI / 2, 0, 0],
+         mounts: [
+{ pos: [x - 0.16, -0.46 - (isCore ? 0.15 : 0), z], normal: [0, 1, 0] },
+{ pos: [x + 0.16, -0.46 - (isCore ? 0.15 : 0), z], normal: [0, 1, 0] },
+{ pos: [x + Math.cos(ang) * 0.42, -0.68, z + Math.sin(ang) * 0.42], normal: [Math.cos(ang), 0.2, Math.sin(ang)] }
+          ]
+       };
+     })
+   ];
+}
+
+// ====================================================================== ======
+// 6. FAMILIA C: VEHÍCULOS, MECHAS, TURBINAS, RELOJERÍA Y RELIQUIAS (Zonas 2 a 10)
+// ====================================================================== ======
+export function buildTechAndRelicToyBlueprint(name, levelNumber) {
+   const pal = getThemeColorsForName(name, levelNumber);
+   const zone = Math.floor((levelNumber - 1) / 50) + 1;
+const isVehicle = zone === 4 || name.toLowerCase().includes('auto') || name.toLowerCase().includes('camión') || name.toLowerCase().includes('tren');
+const isMecha     = zone === 8 || zone === 5 || name.toLowerCase().includes('mecha') || name.toLowerCase().includes('golem') || name.toLowerCase().includes('androide');
+
+   if (isVehicle) {
+// Vehículo Toy 3D con Cabina, Capó, Alerón, Chasis y 4 Ruedas Reales
+     return [
+       {
+          id: 'veh_cabin', name: 'Cabina Panorámica', blockedBy: [],
+buildMesh: () => createSolidHalfOvoid(0.72, 0.55, 0.85, 0, 0, 0x38bdf8),
+          pos: [0, 0.55, -0.05], rot: [0, 0, 0],
+          mounts: [
+             { pos: [0, 1.05, 0.15],     normal: [0, 0.9, 0.4] },
+             { pos: [-0.66, 0.58, 0],    normal: [-1, 0.2, 0] },
+             { pos: [0.66, 0.58, 0],     normal: [1, 0.2, 0] }
+          ]
+       },
+       {
+          id: 'veh_hood_l', name: 'Capó Frontal Izq', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.42, 0.55), 0.34, pal.primary, 0.08),
+         pos: [-0.44, 0.05, 0.85], rot: [Math.PI / 2, 0, 0],
+         mounts: [
+            { pos: [-0.44, 0.30, 0.72], normal: [0, 1, 0] },
+            { pos: [-0.44, 0.30, 1.08], normal: [0, 1, 0] },
+            { pos: [-0.44, 0.05, 1.44], normal: [0, 0, 1] }
+         ]
+      },
+      {
+         id: 'veh_hood_r', name: 'Capó Frontal Der', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.42, 0.55), 0.34, pal.primary, 0.08),
+         pos: [0.44, 0.05, 0.85], rot: [Math.PI / 2, 0, 0],
+         mounts: [
+            { pos: [0.44, 0.30, 0.72], normal: [0, 1, 0] },
+            { pos: [0.44, 0.30, 1.08], normal: [0, 1, 0] },
+            { pos: [0.44, 0.05, 1.44], normal: [0, 0, 1] }
+         ]
+      },
+      {
+         id: 'veh_spoiler', name: 'Alerón Trasero', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.95, 0.26), 0.18, pal.accent, 0.06),
+         pos: [0, 0.58, -1.15], rot: [Math.PI / 2 - 0.2, 0, 0],
+         mounts: [
+            { pos: [-0.58, 0.72, -1.15], normal: [0, 1, 0.2] },
+            { pos: [0, 0.72, -1.15],     normal: [0, 1, 0.2] },
+            { pos: [0.58, 0.72, -1.15], normal: [0, 1, 0.2] }
+         ]
+      },
+      ...[
+{ id: 'whl_fl', name: 'Rueda Delantera Izq', x: -1.02, z: 0.75 },
+{ id: 'whl_fr', name: 'Rueda Delantera Der', x: 1.02, z: 0.75 },
+{ id: 'whl_bl', name: 'Rueda Trasera Izq',    x: -1.02, z: -0.75 },
+{ id: 'whl_br', name: 'Rueda Trasera Der',    x: 1.02, z: -0.75 }
+      ].map(w => ({
+         id: w.id, name: w.name, blockedBy: [],
+         buildMesh: () => {
+            const g = new THREE.CylinderGeometry(0.45, 0.45, 0.32, 24);
+            g.rotateZ(Math.PI / 2);
+            return new THREE.Mesh(g, getToyMaterial(0x1e293b));
+         },
+         pos: [w.x, -0.25, w.z], rot: [0, 0, 0],
+          mounts: [
+{ pos: [w.x + Math.sign(w.x) * 0.22, -0.05, w.z], normal: [Math.sign(w.x), 0, 0] },
+{ pos: [w.x + Math.sign(w.x) * 0.22, -0.45, w.z + 0.18], normal: [Math.sign(w.x), 0, 0] },
+{ pos: [w.x + Math.sign(w.x) * 0.22, -0.45, w.z - 0.18], normal: [Math.sign(w.x), 0, 0] }
+          ]
+       })),
+       ...Array.from({ length: 12 }, (_, idx) => {
+          const col = (idx % 3) - 1;
+          const row = Math.floor(idx / 3) - 1.5;
+          const x = col * 0.85;
+          const z = row * 0.78;
+          return {
+             id: `veh_chassis_${idx}`, name: `Chasis y Pista ${idx + 1}`,
+blockedBy: idx < 4 ? ['veh_cabin', 'veh_hood_l', 'veh_hood_r'] : ['whl_fl', 'whl_fr'],
+buildMesh: () => createBeveledBlock(rectPts(0.38, 0.35), 0.32, idx < 4 ? pal.secondary : pal.base, 0.07),
+pos: [x, idx < 4 ? -0.15 : -0.95, z], rot: [Math.PI / 2, 0, 0],
+             mounts: [
+{ pos: [x - 0.16, (idx < 4 ? 0.08 : -0.72), z], normal: [0, 1, 0] },
+{ pos: [x + 0.16, (idx < 4 ? 0.08 : -0.72), z], normal: [0, 1, 0] },
+{ pos: [x, (idx < 4 ? -0.15 : -0.95), z + (row >= 0 ? 0.42 : -0.42)], normal: [0, 0, row >= 0 ? 1 : -1] }
+             ]
+          };
+       })
+     ];
+  }
+
+  if (isMecha) {
+// Robot Mecha / Guardián Articulado (Con Casco, Visor, Hombreras, Brazos, Pecho y Piernas)
+     return [
+       {
+          id: 'mech_visor', name: 'Visor Cibernético', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.52, 0.18), 0.22, pal.accent, 0.06),
+          pos: [0, 1.18, 0.72], rot: [0, 0, 0],
+          mounts: [
+             { pos: [-0.32, 1.18, 0.88], normal: [0, 0, 1] },
+             { pos: [0, 1.18, 0.88],      normal: [0, 0, 1] },
+             { pos: [0.32, 1.18, 0.88], normal: [0, 0, 1] }
+         ]
+      },
+      {
+id: 'mech_helm', name: 'Casco Mecha', blockedBy: ['mech_visor'],
+buildMesh: () => createSolidHalfOvoid(0.75, 0.68, 0.75, 0, 0, pal.primary),
+         pos: [0, 1.18, 0.05], rot: [0, 0, 0],
+         mounts: [
+            { pos: [-0.42, 1.68, 0.25], normal: [-0.4, 0.85, 0.3] },
+            { pos: [0.42, 1.68, 0.25], normal: [0.4, 0.85, 0.3] },
+            { pos: [0, 1.35, -0.68],    normal: [0, 0.3, -0.95] }
+         ]
+      },
+      ...[-1, 1].map(side => ({
+id: `mech_shoulder_${side}`, name: side < 0 ? 'Hombrera Blindada Izq' : 'Hombrera Blindada Der', blockedBy: [],
+buildMesh: () => createBeveledBlock(rectPts(0.38, 0.36), 0.48, pal.accent, 0.08),
+         pos: [side * 1.18, 0.48, 0.05], rot: [0, 0, side * -0.25],
+         mounts: [
+{ pos: [side * 1.48, 0.55, 0.18], normal: [side, 0.25, 0] },
+{ pos: [side * 1.48, 0.55, -0.18], normal: [side, 0.25, 0] },
+            { pos: [side * 1.18, 0.82, 0.05], normal: [0, 1, 0] }
+         ]
+      })),
+      ...[-1, 1].map(side => ({
+id: `mech_chest_${side}`, name: side < 0 ? 'Coraza Pectoral Izq' : 'Coraza Pectoral Der', blockedBy: [`mech_shoulder_${side}`],
+buildMesh: () => createBeveledBlock(rectPts(0.46, 0.58), 0.42, pal.primary, 0.08),
+         pos: [side * 0.48, 0.08, 0.42], rot: [0, 0, 0],
+         mounts: [
+            { pos: [side * 0.48, 0.38, 0.70], normal: [0, 0, 1] },
+            { pos: [side * 0.48, -0.22, 0.70], normal: [0, 0, 1] },
+            { pos: [side * 0.88, 0.08, 0.42], normal: [side, 0, 0] }
+         ]
+      })),
+      ...[-1, 1].map(side => ({
+id: `mech_leg_${side}`, name: side < 0 ? 'Pierna Propulsora Izq' : 'Pierna Propulsora Der', blockedBy: [`mech_chest_${side}`],
+buildMesh: () => createBeveledBlock(rectPts(0.36, 0.58), 0.48, pal.secondary, 0.08),
+         pos: [side * 0.55, -1.02, 0.08], rot: [0, 0, 0],
+         mounts: [
+            { pos: [side * 0.55, -0.82, 0.40], normal: [0, 0, 1] },
+            { pos: [side * 0.55, -1.25, 0.40], normal: [0, 0, 1] },
+            { pos: [side * 0.92, -1.02, 0.08], normal: [side, 0, 0] }
+          ]
+        })),
+        ...Array.from({ length: 12 }, (_, idx) => {
+          const ang = (idx / 12) * Math.PI * 2;
+          const r = 1.18;
+          const x = Math.cos(ang) * r;
+          const z = Math.sin(ang) * r;
+          return {
+id: `mech_dock_${idx}`, name: `Plataforma Hangar ${idx + 1}`,
+             blockedBy: idx < 4 ? ['mech_leg_-1', 'mech_leg_1'] : [],
+buildMesh: () => createBeveledBlock(rectPts(0.38, 0.36), 0.30, idx % 2 === 0 ? pal.base : pal.primary, 0.07),
+             pos: [x, -1.68, z], rot: [Math.PI / 2, -ang, 0],
+             mounts: [
+                { pos: [x - 0.16, -1.46, z], normal: [0, 1, 0] },
+                { pos: [x + 0.16, -1.46, z], normal: [0, 1, 0] },
+{ pos: [x + Math.cos(ang) * 0.40, -1.68, z + Math.sin(ang) * 0.40], normal: [Math.cos(ang), 0, Math.sin(ang)] }
+             ]
+           };
+        })
+     ];
+  }
+
+// Turbina / Engranaje Planetario / Relojería / Reliquia Cósmica (Anillos, Álabes Radiales y Núcleo)
+  return [
+     {
+id: 'relic_cap_front', name: 'Núcleo Central Frontal', blockedBy: [],
+buildMesh: () => createBeveledBlock(hexPts(0.62), 0.36, pal.accent, 0.09),
+        pos: [0, 0, 0.72], rot: [0, 0, 0],
+        mounts: [
+           { pos: [0, 0.35, 0.98],       normal: [0, 0, 1] },
+           { pos: [-0.32, -0.22, 0.98], normal: [0, 0, 1] },
+           { pos: [0.32, -0.22, 0.98], normal: [0, 0, 1] }
+        ]
+     },
+     {
+id: 'relic_cap_back', name: 'Núcleo Central Trasero', blockedBy: [],
+buildMesh: () => createBeveledBlock(hexPts(0.62), 0.36, pal.accent, 0.09),
+        pos: [0, 0, -0.72], rot: [0, 0, 0],
+       mounts: [
+          { pos: [0, 0.35, -0.98],       normal: [0, 0, -1] },
+          { pos: [-0.32, -0.22, -0.98], normal: [0, 0, -1] },
+          { pos: [0.32, -0.22, -0.98], normal: [0, 0, -1] }
+       ]
+     },
+     // 8 Álabes de Turbina / Pétalos / Dientes de Engranaje Radiales
+     ...Array.from({ length: 8 }, (_, idx) => {
+       const ang = (idx / 8) * Math.PI * 2;
+       const r = 1.15;
+       const x = Math.cos(ang) * r;
+       const y = Math.sin(ang) * r;
+       return {
+          id: `relic_blade_${idx}`, name: `Álabe Radial ${idx + 1}`,
+          blockedBy: idx % 2 === 0 ? ['relic_cap_front'] : [],
+buildMesh: () => createBeveledBlock(rectPts(0.36, 0.42), 0.36, idx % 2 === 0 ? pal.primary : pal.secondary, 0.08),
+          pos: [x, y, 0], rot: [0, 0, ang],
+          mounts: [
+             { pos: [x, y, 0.26], normal: [0, 0, 1] },
+             { pos: [x, y, -0.26], normal: [0, 0, -1] },
+{ pos: [x + Math.cos(ang) * 0.44, y + Math.sin(ang) * 0.44, 0], normal: [Math.cos(ang), Math.sin(ang), 0] }
+          ]
+       };
+     }),
+     // 10 Segmentos del Anillo Exterior y Pedestal Inferior
+     ...Array.from({ length: 10 }, (_, idx) => {
+       const ang = (idx / 10) * Math.PI * 2;
+       const x = Math.cos(ang) * 1.25;
+       const z = Math.sin(ang) * 1.25;
+       return {
+id: `relic_pedestal_${idx}`, name: `Anillo de Soporte ${idx + 1}`,
+          blockedBy: [`relic_blade_${idx % 8}`],
+buildMesh: () => createBeveledBlock(rectPts(0.38, 0.36), 0.32, pal.base, 0.08),
+          pos: [x, -1.62, z], rot: [Math.PI / 2, -ang, 0],
+          mounts: [
+             { pos: [x - 0.16, -1.38, z], normal: [0, 1, 0] },
+             { pos: [x + 0.16, -1.38, z], normal: [0, 1, 0] },
+{ pos: [x + Math.cos(ang) * 0.40, -1.62, z + Math.sin(ang) * 0.40], normal: [Math.cos(ang), 0, Math.sin(ang)] }
+          ]
+       };
+     })
+   ];
+}
+
 
 // ============================================================================
 // NIVEL 2: UNICORNIO PRISMÁTICO (63 Tornillos / 21 Piezas Macizas)
@@ -668,27 +1174,153 @@ export function getSeaTurtleBlueprint() {
   ];
 }
 
-// ============================================================================
-// NIVELES CON FIGURA ESCULPIDA (2 = Unicornio, 3 = Zorro, 4 = Tortuga)
-// ============================================================================
-export const BLUEPRINT_LEVELS = { 2: getUnicornToyBlueprint, 3: getFoxOrigamiBlueprint, 4: getSeaTurtleBlueprint };
-export const BLUEPRINT_SCREWS = { 2: 63, 3: 66, 4: 69 };
 
-/** Plano del nivel (solo 2–4); null = el nivel usa otro generador. */
-export function getBlueprintForLevel(levelNumber) {
-  const fn = BLUEPRINT_LEVELS[levelNumber];
-  return fn ? fn() : null;
+// ============================================================================
+// ENRUTADOR DE LOS 500 NIVELES (clasificación por nombre oficial)
+// Niveles 2–4 usan las figuras específicas (Unicornio, Zorro, Tortuga) cuando USE_SPECIFIC_FIGURES es true.
+// ============================================================================
+const USE_SPECIFIC_FIGURES = true;
+const SPECIFIC_FIGURES = { 2: getUnicornToyBlueprint, 3: getFoxOrigamiBlueprint, 4: getSeaTurtleBlueprint };
+
+export function getBlueprintForLevel(levelNumber, penguinFallbackFn) {
+  if (levelNumber === 1) return penguinFallbackFn();
+  if (USE_SPECIFIC_FIGURES && SPECIFIC_FIGURES[levelNumber]) return SPECIFIC_FIGURES[levelNumber]();
+
+  const title = getLevelOfficialTitle(levelNumber);
+  const n = title.toLowerCase();
+
+  if (n.includes('pingüino') || n.includes('búho') || n.includes('tucán') || n.includes('halcón') || n.includes('colibrí') || n.includes('fénix')) {
+    return penguinFallbackFn();
+  }
+  if (n.includes('tortuga') || n.includes('mantarraya') || n.includes('tiburón') || n.includes('ballena') || n.includes('pulpo') || n.includes('medusa') || n.includes('cangrejo')) {
+    return buildMarineToyBlueprint(title, levelNumber);
+  }
+  if (levelNumber <= 50 || (levelNumber >= 201 && levelNumber <= 250 && !n.includes('golem'))) {
+    return buildQuadrupedToyBlueprint(title, levelNumber);
+  }
+  return buildTechAndRelicToyBlueprint(title, levelNumber);
 }
 
+// ============================================================================
+// ADAPTADOR AL JUEGO: plano → modelo { pieces, screws, layers, innerCore, screwScale }
+// Ajusta SIEMPRE al total de tornillos del nivel (múltiplo de 3):
+//  - si el plano trae de más, quita piezas de relleno y recorta;
+//  - si trae de menos, agrega baldosas satélite en cuadrícula FUERA de la figura (nunca se encima un tornillo).
+// ============================================================================
+const PENGUIN_FALLBACK = Object.freeze({ penguinFallback: true });
 const BP_TARGET_EXTENT = 4.6;
 const BP_CENTER_Y = -0.2;
+const SAT_PITCH = 1.04;
+
+const countMounts = list => list.reduce((a, b) => a + (b.mounts ? b.mounts.length : 0), 0);
+
+function trimBlueprint(blueprint, target) {
+  let list = blueprint.slice();
+  if (countMounts(list) <= target) return list;
+  for (let i = list.length - 1; i >= 0 && countMounts(list) > target; i--) {
+    const p = list[i];
+    const referenced = list.some(q => q !== p && (q.blockedBy || []).includes(p.id));
+    if (!referenced && countMounts(list) - p.mounts.length >= target) list.splice(i, 1);
+  }
+  let extra = countMounts(list) - target;
+  for (let i = list.length - 1; i >= 0 && extra > 0; i--) {
+    const m = list[i].mounts;
+    const take = Math.min(extra, m.length - 1);
+    if (take > 0) {
+      list[i] = { ...list[i], mounts: m.slice(0, m.length - take) };
+      extra -= take;
+    }
+  }
+  return list;
+}
+
+function makeScrewNode(colorId, pos, normal, screwId, pieceObj) {
+  const node = new THREE.Object3D();
+  node.position.fromArray(pos);
+  node.userData = { isScrew: true, colorId, normal: new THREE.Vector3(...normal).normalize(), screwId, parentPiece: pieceObj };
+  return node;
+}
+
+function extentOf(model) {
+  const box = new THREE.Box3();
+  model.rootGroup.updateMatrixWorld(true);
+  for (const p of model.pieces) box.expandByObject(p.mesh);
+  return { box, size: box.getSize(new THREE.Vector3()), center: box.getCenter(new THREE.Vector3()) };
+}
+
+/** Escala todo el modelo (piezas, tornillos y relleno interior) alrededor de su centro. */
+function rescaleModel(model, k, centerY) {
+  const { center } = extentOf(model);
+  const fix = v => { v.x *= k; v.z *= k; v.y = (v.y - center.y) * k + centerY; };
+  for (const p of model.pieces) { fix(p.mesh.position); p.mesh.scale.multiplyScalar(k); }
+  for (const s of model.screws) fix(s.position);
+  if (model.innerCore) {
+    model.innerCore.position.y = (model.innerCore.position.y - center.y) * k + centerY;
+    model.innerCore.position.x *= k; model.innerCore.position.z *= k;
+    model.innerCore.scale.multiplyScalar(k);
+  }
+  model.scale *= k;
+  model.screwScale *= k;
+}
+
+const extentTargetFor = T => (T <= 120 ? BP_TARGET_EXTENT : Math.min(12, BP_TARGET_EXTENT + 2.2 * Math.log2(T / 120)));
+
+function padModelToTarget(model, target, layers, colors) {
+  const need = target - model.screws.length;
+  if (need > 0) {
+    const { box } = extentOf(model);
+    const half = Math.max(box.max.x, -box.min.x, box.max.z, -box.min.z);
+    const R0 = half + 0.62;
+    const nTiles = Math.ceil(need / 3);
+    const G = Math.ceil((R0 + SAT_PITCH * Math.sqrt(nTiles) * 1.3) / SAT_PITCH) + 2;
+    const cand = [];
+    for (let gx = -G; gx <= G; gx++) {
+      for (let gz = -G; gz <= G; gz++) {
+        const x = gx * SAT_PITCH, z = gz * SAT_PITCH, r = Math.hypot(x, z);
+        if (r >= R0) cand.push({ x, z, r, par: (gx + gz) & 1 });
+      }
+    }
+    cand.sort((a, b) => a.r - b.r || a.x - b.x || a.z - b.z);
+    const tileGeom = createBeveledBlock(rectPts(0.46, 0.46), 0.30, 0xffffff, 0.08).geometry;
+    const cy = box.min.y + 0.23;
+    let remaining = need;
+    for (let i = 0; i < nTiles && i < cand.length; i++) {
+      const c = cand[i];
+      const mesh = new THREE.Mesh(tileGeom, getToyMaterial(c.par ? colors.secondary : colors.base));
+      mesh.position.set(c.x, cy, c.z);
+      mesh.rotation.x = Math.PI / 2;
+      const id = `sat_${i}`;
+      const pieceObj = { id, name: `Baldosa ${i + 1}`, mesh, blockedBy: [], remainingScrews: [], isFalling: false };
+      mesh.userData = { isPiece: true, pieceId: id, pieceRef: pieceObj };
+      model.rootGroup.add(mesh);
+      const top = cy + 0.23 + 0.01;
+      const spots = [[-0.2, -0.14], [0.2, -0.14], [0, 0.2]].slice(0, Math.min(3, remaining));
+      spots.forEach((o, k) => {
+        const s = makeScrewNode('orange', [c.x + o[0], top, c.z + o[1]], [0, 1, 0], `${id}_s_${k}`, pieceObj);
+        pieceObj.remainingScrews.push(s);
+        model.screws.push(s);
+        model.rootGroup.add(s);
+      });
+      remaining -= spots.length;
+      model.pieces.push(pieceObj);
+      layers[id] = -1;
+    }
+    if (remaining > 0) throw new Error(`no caben ${remaining} tornillos satélite`);
+  }
+  const { size } = extentOf(model);
+  const ext = Math.max(size.x, size.z, size.y * 0.9);
+  const tgt = extentTargetFor(target);
+  if (ext > tgt) rescaleModel(model, tgt / ext, BP_CENTER_Y);
+  return model;
+}
 
 /**
- * Convierte un plano (piezas + puntos de montaje) al modelo que consume penguinModelToLevel:
- * { pieces, screws, innerCore, screwScale, layers }. Capas = profundidad de bloqueo: las piezas que
- * tapan a otras (blockedBy) quedan en capas superiores, así que siempre hay un tornillo libre y el nivel se resuelve.
+ * Convierte un plano (piezas + puntos de montaje) al modelo que consume penguinModelToLevel.
+ * Capas = profundidad de bloqueo (blockedBy): las piezas que tapan a otras quedan en capas superiores,
+ * así siempre hay un tornillo libre y el nivel se resuelve.
  */
-export function buildBlueprintScene(blueprint) {
+export function buildBlueprintScene(blueprintIn, target = Infinity) {
+  const blueprint = trimBlueprint(blueprintIn, target);
   const rootGroup = new THREE.Group();
   const byId = new Map(blueprint.map(b => [b.id, b]));
 
@@ -713,7 +1345,7 @@ export function buildBlueprintScene(blueprint) {
     const mesh = b.buildMesh();
     mesh.position.fromArray(b.pos);
     if (b.rot) mesh.rotation.fromArray(b.rot);
-    const pieceObj = { id: b.id, name: b.name, mesh, blockedBy: b.blockedBy || [], remainingScrews: [], isFalling: false };
+    const pieceObj = { id: b.id, name: b.name, mesh, blockedBy: (b.blockedBy || []).filter(q => byId.has(q)), remainingScrews: [], isFalling: false };
     mesh.userData = { isPiece: true, pieceId: b.id, pieceRef: pieceObj };
     rootGroup.add(mesh);
     pieces.push(pieceObj);
@@ -735,10 +1367,8 @@ export function buildBlueprintScene(blueprint) {
   blueprint.forEach((b, bi) => {
     const pieceObj = pieces[bi];
     (b.mounts || []).forEach((m, i) => {
-      const s = createFlushToyScrew('orange', m.pos, m.normal);
+      const s = makeScrewNode('orange', m.pos, m.normal, `${b.id}_s_${i}`, pieceObj);
       place(s.position);
-      s.userData.screwId = `${b.id}_s_${i}`;
-      s.userData.parentPiece = pieceObj;
       pieceObj.remainingScrews.push(s);
       screws.push(s);
       rootGroup.add(s);
@@ -753,4 +1383,24 @@ export function buildBlueprintScene(blueprint) {
     scale,
     screwScale: (L1_SCREW_RADIUS * scale * 1.1) / 0.24
   };
+}
+
+/**
+ * Punto de entrada del juego: modelo completo del nivel (2–500) con EXACTAMENTE `totalScrews` tornillos.
+ * Devuelve { model, layers, title }.
+ */
+export function buildToyLevelModel(levelNumber, totalScrews) {
+  const title = getLevelOfficialTitle(levelNumber);
+  const colors = getThemeColorsForName(title, levelNumber);
+  const bp = getBlueprintForLevel(levelNumber, () => PENGUIN_FALLBACK);
+  let model, layers;
+  if (bp === PENGUIN_FALLBACK) {
+    model = buildLevel1PenguinScene();
+    layers = { ...PENGUIN_L1_LAYERS };
+  } else {
+    model = buildBlueprintScene(bp, totalScrews);
+    layers = { ...model.layers };
+  }
+  padModelToTarget(model, totalScrews, layers, colors);
+  return { model, layers, title };
 }

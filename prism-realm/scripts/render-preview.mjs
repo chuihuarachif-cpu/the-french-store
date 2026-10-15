@@ -65,16 +65,17 @@ for (const t of [3, 6, 10, 14]) {
 }
 
 // Niveles con figura esculpida (2 unicornio, 3 zorro, 4 tortuga): frente, lado y espalda
-for (const L of [2, 3, 4]) {
+// Figuras toy de distintas familias (2–4 específicas; 5 cuadrúpedo; 6 ave; 12 cuadrúpedo; 60 reliquia; 160 vehículo; 360 mecha; 500 reliquia grande)
+const LEVELS = [2, 3, 4, 5, 6, 12, 60, 160, 360, 500];
+for (const L of LEVELS) {
   // Recarga la página para ver cada figura con la cámara inicial (frente, zoom por defecto)
   await page.goto(url);
   await page.waitForSelector('canvas', { timeout: 30000 });
-  await page.waitForTimeout(3000);
-  await page.evaluate(n => { document.getElementById(`btn-jump-${n}`).click(); window.scrollTo(0, 0); }, L);
+  await page.waitForTimeout(2500);
+  await page.evaluate(n => { window.__prism.startLevel(n); window.scrollTo(0, 0); }, L);
   await page.waitForTimeout(3500);
   await shot(`10-nivel${L}-frente`);
-  await drag(230, 0); await shot(`10-nivel${L}-lado`);
-  await drag(230, 0); await shot(`10-nivel${L}-espalda`);
+  if (L === 5 || L === 160 || L === 360) { await drag(230, 0); await shot(`10-nivel${L}-lado`); }
 }
 
 fs.writeFileSync(path.join(OUT, 'console.txt'), log.join('\n') || '(sin mensajes de consola)');

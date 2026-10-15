@@ -572,7 +572,7 @@
           <button class="chip-btn" id="btn-jump-2">Nv.2 (Unicornio)</button>
           <button class="chip-btn" id="btn-jump-3">Nv.3 (Zorro)</button>
           <button class="chip-btn" id="btn-jump-4">Nv.4 (Tortuga)</button>
-          <button class="chip-btn" id="btn-jump-5">Nv.5 (Pingüino)</button>
+          <button class="chip-btn" id="btn-jump-5">Nv.5 (Camaleón)</button>
           <button class="chip-btn highlight" id="btn-jump-500">Nv.500</button>
           <button class="chip-btn solver" id="btn-solver">⚡ Auto</button>
         </div>
@@ -648,7 +648,7 @@
 
   <script type="module">
     import * as THREE from 'three';
-    import { getLevelOfficialTitle, getBlueprintForLevel, buildBlueprintScene } from './prism-toy-catalog.js';
+    import { getLevelOfficialTitle, buildToyLevelModel } from './prism-toy-catalog.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     import {
@@ -864,15 +864,27 @@
       // Nivel 1: pingüino esculpido por piezas (penguin-level5-model.js). El resto: generador.
       const lvlSpec = getLevelSpec(lvlNum);
       const vec3 = (x, y, z) => new THREE.Vector3(x, y, z);
-      const blueprint = getBlueprintForLevel(lvlNum); // niveles 2–4: figuras esculpidas por piezas
-      if (lvlNum === 1) {
-        state.levelData = penguinModelToLevel(buildLevel1PenguinScene(), lvlSpec, vec3, PENGUIN_L1_LAYERS, toyBoxColor(1));
-      } else if (blueprint) {
-        const model = buildBlueprintScene(blueprint);
-        state.levelData = penguinModelToLevel(model, lvlSpec, vec3, model.layers, toyBoxColor(lvlNum));
-      } else {
-        state.levelData = generateFigureLevel(lvlSpec, vec3);
+      // Nivel 1 = pingüino; niveles 2–500 = figuras toy esculpidas por piezas (prism-toy-catalog.js).
+      // Si algo falla o el total de tornillos no cuadra, se usa el generador anterior para no bloquear el juego.
+      const colorFn = toyBoxColor(lvlNum, lvlSpec.numColors);
+      state.levelData = null;
+      try {
+        if (lvlNum === 1) {
+          state.levelData = penguinModelToLevel(buildLevel1PenguinScene(), lvlSpec, vec3, PENGUIN_L1_LAYERS, colorFn);
+        } else {
+          const built = buildToyLevelModel(lvlNum, lvlSpec.totalScrews);
+          if (built.model.screws.length === lvlSpec.totalScrews) {
+            state.levelData = penguinModelToLevel(built.model, lvlSpec, vec3, built.layers, colorFn);
+          } else {
+            console.error(`Nivel ${lvlNum}: ${built.model.screws.length} tornillos, se esperaban ${lvlSpec.totalScrews}`);
+          }
+        }
+        if (state.levelData) lvlSpec.displayName = getLevelOfficialTitle(lvlNum);
+      } catch (err) {
+        console.error(`Nivel ${lvlNum}: fallo al armar la figura`, err);
+        state.levelData = null;
       }
+      if (!state.levelData) state.levelData = generateFigureLevel(lvlSpec, vec3);
       state.activeBoxes = [];
       state.maxBoxes = 2;
       state.reserveSlots = [];
@@ -959,14 +971,20 @@
       for (let i = 0; i < state.maxBoxes; i++) pullNextBox();
 
       document.getElementById('txt-level-title').textContent = `Nivel ${spec.levelId}`;
-      document.getElementById('txt-sculpture-name').textContent = `${spec.levelId <= 4 ? getLevelOfficialTitle(spec.levelId) : spec.archetype.name} • ${spec.totalScrews} 🔩`;
+      document.getElementById('txt-sculpture-name').textContent = `${spec.displayName || spec.archetype.name} • ${spec.totalScrews} 🔩`;
       renderUI();
     }
 
     // Nivel 1: 7 colores (naranja, morado, azul, verde, rosa, amarillo, café) en rotación,
     // así cada 7 cajas seguidas son de colores distintos y el nivel sigue siendo resoluble.
     const L1_COLOR_IDS = [3, 2, 1, 4, 7, 5, 6];
-    const toyBoxColor = (lvl) => (b) => L1_COLOR_IDS[(b * 3 + Math.floor(b / 7) + (lvl - 1) * 2) % L1_COLOR_IDS.length];
+    // 7 colores desde el nivel 1; más adelante suben hasta 10 (se añaden rojo, turquesa y blanco)
+    const COLOR_POOL = [3, 2, 1, 4, 7, 5, 6, 0, 8, 9];
+    const toyBoxColor = (lvl, numColors = 7) => {
+      const n = Math.max(7, Math.min(10, numColors || 7));
+      const step = n % 3 === 0 ? 2 : 3; // coprimo con n: n cajas seguidas = n colores distintos
+      return (b) => COLOR_POOL[(b * step + Math.floor(b / n) + (lvl - 1) * 2) % n];
+    };
 
     // Cada caja ocupa una columna fija: una caja nueva reemplaza a la completada en la MISMA posición.
     // Si ya no quedan cajas en la cola, la columna queda como hueco vacío (empty) y las vecinas no se mueven.
@@ -1536,6 +1554,7 @@
     }
 
     // Iniciamos en el Nivel 1 con el Pingüino Navideño completo
+    window.__prism = { startLevel }; // gancho de depuración/capturas de CI
     startLevel(1);
     requestAnimationFrame(tick);
   </script>
