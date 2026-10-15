@@ -65,11 +65,11 @@ for (const t of [3, 6, 10, 14]) {
 }
 
 // Niveles con figura esculpida (2 unicornio, 3 zorro, 4 tortuga): frente, lado y espalda
-await page.evaluate(() => document.getElementById('btn-solver').click()); // pausa el auto-solver
-await page.mouse.move(206, 520);
-for (let i = 0; i < 14; i++) await page.mouse.wheel(0, 400); // deshace el zoom (hasta la distancia máxima)
-await page.waitForTimeout(800);
 for (const L of [2, 3, 4]) {
+  // Recarga la página para ver cada figura con la cámara inicial (frente, zoom por defecto)
+  await page.goto(url);
+  await page.waitForSelector('canvas', { timeout: 30000 });
+  await page.waitForTimeout(3000);
   await page.evaluate(n => { document.getElementById(`btn-jump-${n}`).click(); window.scrollTo(0, 0); }, L);
   await page.waitForTimeout(3500);
   await shot(`10-nivel${L}-frente`);
