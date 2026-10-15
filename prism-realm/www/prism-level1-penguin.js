@@ -8,9 +8,9 @@
 import * as THREE from 'three';
 
 // Factor de escala global del modelo (calibrado para que quepa entre el HUD superior e inferior en móvil).
-export const L1_SCALE = 1.25;
+export const L1_SCALE = 1.35;
 // Desplazamiento vertical del modelo (el HUD superior ocupa más pantalla que el inferior).
-export const L1_Y_OFFSET = -0.45;
+export const L1_Y_OFFSET = -0.25;
 // Radio del tornillo en unidades de diseño (0.125) -> en la escena del juego, 0.125 * L1_SCALE.
 export const L1_SCREW_RADIUS = 0.125;
 
@@ -203,9 +203,9 @@ export function buildLevel1PenguinScene() {
   botBeak.position.set(0, -0.08, -0.03);
   beakGroup.add(topBeak, botBeak);
 
+  // El pico es chico: lleva un solo tornillo (dos se solapan y tapan los ojos).
   addPiece('beak', 'Pico Naranja', beakGroup, [0, 0.54, 0.96], [0.08, 0, 0], [], [
-    { color: 'yellow', pos: [-0.15, 0.62, 1.12], normal: [-0.15, 0.6, 0.78] },
-    { color: 'orange', pos: [0.15, 0.62, 1.12],  normal: [0.15, 0.6, 0.78] }
+    { color: 'yellow', pos: [0, 0.65, 1.12], normal: [0, 0.62, 0.78] }
   ]);
 
   // 3. ROSTRO SÓLIDO CON OJOS AZULES
@@ -234,7 +234,8 @@ export function buildLevel1PenguinScene() {
   addPiece('face_cheeks', 'Rostro Polar', faceGroup, [0, 0.56, 0.06], [0, 0, 0], ['beak'], [
     { color: 'blue',   pos: [-0.62, 0.62, 0.68], normal: [-0.72, 0.12, 0.68] },
     { color: 'yellow', pos: [0.62,  0.62, 0.68], normal: [0.72,  0.12, 0.68] },
-    { color: 'pink',   pos: [0,     0.88, 0.66], normal: [0,     0.55, 0.83] }
+    { color: 'pink',   pos: [0,     0.88, 0.66], normal: [0,     0.55, 0.83] },
+    { color: 'orange', pos: [0.52,  0.30, 0.68], normal: [0.5,   -0.1, 0.86] }
   ]);
 
   // 4. OREJERAS DE INVIERNO (diseño original)
@@ -264,7 +265,7 @@ export function buildLevel1PenguinScene() {
   // Cúpula de la cabeza
   addPiece('head_crown', 'Cabeza Polar',
     createSolidHalfOvoid(0.92, 0.84, 0.90, 0, 0, PENGUIN_TOY_PALETTE.navyCoat),
-    [0, 0.68, -0.02], [0, 0, 0], ['headband_arch', 'earmuff_left', 'earmuff_right', 'face_cheeks'], [
+    [0, 0.68, -0.10], [0, 0, 0], ['headband_arch', 'earmuff_left', 'earmuff_right', 'face_cheeks'], [
       { color: 'brown',  pos: [-0.38, 1.25, 0.45],  normal: [-0.4, 0.75, 0.52] },
       { color: 'brown',  pos: [0.38,  1.25, 0.45],  normal: [0.4,  0.75, 0.52] },
       { color: 'orange', pos: [0,     1.18, -0.68], normal: [0,    0.65, -0.75] }
