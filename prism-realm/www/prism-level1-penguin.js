@@ -183,7 +183,8 @@ export function buildLevel1PenguinScene() {
     [-0.015, -0.26, 0.08], [0, 0, 0], [], [
       { color: 'orange', pos: [-0.36, -0.02, 0.92], normal: [-0.35, 0.08, 0.93] },
       { color: 'blue',   pos: [-0.38, -0.52, 0.86], normal: [-0.38, -0.32, 0.86] },
-      { color: 'purple', pos: [-0.68, -0.26, 0.68], normal: [-0.68, -0.05, 0.73] }
+      { color: 'purple', pos: [-0.68, -0.26, 0.68], normal: [-0.68, -0.05, 0.73] },
+      { color: 'green',  pos: [-0.18, -0.86, 0.84], normal: [-0.2, -0.45, 0.87] }
     ]);
 
   addPiece('belly_right', 'Panza Blanca Der',
@@ -234,8 +235,7 @@ export function buildLevel1PenguinScene() {
   addPiece('face_cheeks', 'Rostro Polar', faceGroup, [0, 0.56, 0.06], [0, 0, 0], ['beak'], [
     { color: 'blue',   pos: [-0.62, 0.62, 0.68], normal: [-0.72, 0.12, 0.68] },
     { color: 'yellow', pos: [0.62,  0.62, 0.68], normal: [0.72,  0.12, 0.68] },
-    { color: 'pink',   pos: [0,     0.88, 0.66], normal: [0,     0.55, 0.83] },
-    { color: 'orange', pos: [0.52,  0.30, 0.68], normal: [0.5,   -0.1, 0.86] }
+    { color: 'pink',   pos: [0,     0.88, 0.66], normal: [0,     0.55, 0.83] }
   ]);
 
   // 4. OREJERAS DE INVIERNO (diseño original)
