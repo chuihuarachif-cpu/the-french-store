@@ -496,6 +496,7 @@
                   transform 0.34s ease;
     }
     .toy-box { overflow: hidden; }
+    .screw-head-ui.no-anim { animation: none; }
     /* Tapa que cierra la caja al completar 3 tornillos */
     .box-closing-lid {
       position: absolute; inset: 0;
@@ -641,6 +642,7 @@
 
   <script type="module">
     import * as THREE from 'three';
+    import { getLevelOfficialTitle } from './prism-toy-catalog.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     import {
@@ -814,6 +816,7 @@
     const zeroMat = new THREE.Matrix4().makeScale(0, 0, 0);
     // Tamaño relativo del tornillo instanciado (el nivel 1 usa tornillos más chicos, radio 0.125 de diseño)
     let screwScale = 1;
+    let reserveShown = 0;
     let pendingReserve = 0;     // tornillos volando hacia la bandeja
     let boxEntranceAnim = false; // las cajas nuevas caen con rebote (no las iniciales)
 
@@ -862,6 +865,7 @@
       state.maxBoxes = 2;
       state.reserveSlots = [];
       pendingReserve = 0;
+      reserveShown = 0;
       boxEntranceAnim = false;
       state.maxReserve = 5;
       state.removedCount = 0;
@@ -943,7 +947,7 @@
       for (let i = 0; i < state.maxBoxes; i++) pullNextBox();
 
       document.getElementById('txt-level-title').textContent = `Nivel ${spec.levelId}`;
-      document.getElementById('txt-sculpture-name').textContent = `${spec.archetype.name} • ${spec.totalScrews} 🔩`;
+      document.getElementById('txt-sculpture-name').textContent = `${spec.levelId === 1 ? getLevelOfficialTitle(1) : spec.archetype.name} • ${spec.totalScrews} 🔩`;
       renderUI();
     }
 
@@ -952,10 +956,18 @@
     const L1_COLOR_IDS = [3, 2, 1, 4, 7, 5, 6];
     const L1_BOX_COLOR = (b) => L1_COLOR_IDS[(b * 3 + Math.floor(b / 7)) % L1_COLOR_IDS.length];
 
-    function pullNextBox() {
-      if (!state.levelData || state.levelData.boxQueue.length === 0) return;
+    // Cada caja ocupa una columna fija: una caja nueva reemplaza a la completada en la MISMA posición.
+    // Si ya no quedan cajas en la cola, la columna queda como hueco vacío (empty) y las vecinas no se mueven.
+    function pullNextBox(slotIdx = -1) {
+      if (!state.levelData) return;
+      if (state.levelData.boxQueue.length === 0) {
+        if (slotIdx >= 0) state.activeBoxes[slotIdx] = { empty: true, filled: 0, capacity: 0, pending: 0 };
+        return;
+      }
       const colorId = state.levelData.boxQueue.shift();
-      state.activeBoxes.push({ colorId, filled: 0, capacity: 3, pending: 0, isNew: !!boxEntranceAnim, enterStart: performance.now() });
+      const box = { colorId, filled: 0, capacity: 3, pending: 0, shown: 0, isNew: !!boxEntranceAnim, enterStart: performance.now() };
+      if (slotIdx < 0) slotIdx = state.activeBoxes.findIndex(b => b && b.empty);
+      if (slotIdx >= 0) state.activeBoxes[slotIdx] = box; else state.activeBoxes.push(box);
       sweepReserveIntoBoxes();
     }
 
@@ -990,9 +1002,8 @@
       setTimeout(() => {
         if (state.levelData !== lvl) return;
         const i = state.activeBoxes.indexOf(box);
-        if (i !== -1) state.activeBoxes.splice(i, 1);
         boxEntranceAnim = true;
-        pullNextBox();
+        pullNextBox(i);
         boxEntranceAnim = false;
         renderUI();
         verifyVictory();
@@ -1224,6 +1235,14 @@
       boxesEl.innerHTML = '';
       const nowTs = performance.now();
       state.activeBoxes.forEach((b, bi) => {
+        if (b.empty) {
+          const gap = document.createElement('div');
+          gap.className = 'toy-box';
+          gap.style.opacity = '0.25';
+          gap.style.borderStyle = 'dashed';
+          boxesEl.appendChild(gap);
+          return;
+        }
         const col = SCREW_COLORS[b.colorId];
         const card = document.createElement('div');
         card.className = 'toy-box';
@@ -1260,7 +1279,7 @@
           h.dataset.boxSlot = `${bi}_${i}`;
           if (i < b.filled) {
             const head = document.createElement('div');
-            head.className = 'screw-head-ui';
+            head.className = 'screw-head-ui' + (i < (b.shown || 0) ? ' no-anim' : '');
             head.style.background = col.hex;
             h.appendChild(head);
           }
@@ -1268,6 +1287,7 @@
         }
         card.appendChild(holes);
         boxesEl.appendChild(card);
+        b.shown = b.filled;
       });
 
       for (let i = state.activeBoxes.length; i < 4; i++) {
@@ -1290,12 +1310,13 @@
         if (i < state.reserveSlots.length) {
           const col = SCREW_COLORS[state.reserveSlots[i]];
           const head = document.createElement('div');
-          head.className = 'screw-head-ui';
+          head.className = 'screw-head-ui' + (i < reserveShown ? ' no-anim' : '');
           head.style.background = col.hex;
           h.appendChild(head);
         }
         resEl.appendChild(h);
       }
+      reserveShown = state.reserveSlots.length;
     }
 
     function toast(msg) {
@@ -1437,7 +1458,7 @@
       toast('⚡ Auto-Solver activo (máx. 2 tornillos a la vez)...');
       state.autoTimer = setInterval(() => {
         if (!state.levelData || state.isGameOver || state.activeUnscrewAnimations >= MAX_CONCURRENT_UNSCREW) return;
-        const activeColors = new Set(state.activeBoxes.filter(b => !b.closing).map(b => b.colorId));
+        const activeColors = new Set(state.activeBoxes.filter(b => !b.closing && !b.empty).map(b => b.colorId));
         let target = state.levelData.screws.find(
           s => !s.removed && !s.animating && !isBlocked(s) && activeColors.has(s.colorId)
         );
