@@ -52,17 +52,37 @@ export const L1_TOTAL_SCREWS = 60;
 
 const materialCache = new Map();
 
-export function getPlasticMaterial(hex, roughness = 0.30) {
+export function getPlasticMaterial(hex, roughness = 0.48) {
   const key = `${hex}_${roughness}`;
   if (!materialCache.has(key)) {
     materialCache.set(key, new THREE.MeshStandardMaterial({
       color: hex,
       roughness,
-      metalness: 0.03,
+      metalness: 0.02,
+      envMapIntensity: 0.45,
       flatShading: false
     }));
   }
   return materialCache.get(key);
+}
+
+/** Aleta de pingüino: larga hacia abajo, aplanada y curvada hacia el torso. */
+function createPenguinFlipperMesh(sideSign, colorHex) {
+  const geom = new THREE.SphereGeometry(0.32, 28, 22);
+  const pos = geom.attributes.position;
+  const v = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    v.y *= 2.35;
+    const t = (v.y + 0.75) / 1.5; // 0 punta, 1 hombro
+    const widthFactor = 0.55 + 0.45 * Math.sin(t * Math.PI * 0.85);
+    v.z *= 0.85 * widthFactor;
+    v.x *= 0.42;
+    v.x -= sideSign * Math.pow(1 - t, 1.6) * 0.16;
+    pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  geom.computeVertexNormals();
+  return new THREE.Mesh(geom, getPlasticMaterial(colorHex));
 }
 
 /** Bloque 3D sólido y cerrado con bordes redondeados (estilo juguete). */
@@ -150,9 +170,9 @@ export function buildLevel1PenguinScene() {
 
   // Relleno estructural central (estático): evita ver el interior vacío al desarmar.
   const innerCore = new THREE.Group();
-  const torsoFiller = new THREE.Mesh(new THREE.SphereGeometry(0.88, 24, 20), getPlasticMaterial(PENGUIN_TOY_PALETTE.navyCoat));
-  torsoFiller.scale.set(0.95, 1.15, 0.85);
-  torsoFiller.position.set(0, -0.22, 0);
+  const torsoFiller = new THREE.Mesh(new THREE.SphereGeometry(0.96, 26, 20), getPlasticMaterial(PENGUIN_TOY_PALETTE.navyCoat));
+  torsoFiller.scale.set(1.01, 1.15, 0.96);
+  torsoFiller.position.set(0, -0.25, 0.02);
   const headFiller = new THREE.Mesh(new THREE.SphereGeometry(0.75, 24, 20), getPlasticMaterial(PENGUIN_TOY_PALETTE.navyCoat));
   headFiller.position.set(0, 0.62, 0);
   innerCore.add(torsoFiller, headFiller);
@@ -272,18 +292,17 @@ export function buildLevel1PenguinScene() {
     ]);
 
   // 5. ALETAS Y ESPALDA MACIZA
-  const wingGeo = new THREE.CapsuleGeometry(0.24, 0.72, 16, 22);
-  wingGeo.scale(0.62, 1.0, 1.12);
-
-  addPiece('wing_left', 'Aleta Izquierda', new THREE.Mesh(wingGeo, getPlasticMaterial(PENGUIN_TOY_PALETTE.navyCoat)),
-    [-1.12, -0.22, 0.04], [0.08, 0, 0.32], [], [
-      { color: 'blue',  pos: [-1.26, -0.02, 0.16], normal: [-0.94, 0.25, 0.2] },
-      { color: 'green', pos: [-1.32, -0.44, 0.12], normal: [-0.95, -0.2, 0.2] }
+  // Aletas de pingüino: anchas arriba, curvas y en punta abajo; caen pegadas al cuerpo
+  const flipperMesh = (side) => createPenguinFlipperMesh(side, PENGUIN_TOY_PALETTE.navyCoat);
+  addPiece('wing_left', 'Aleta Izquierda', flipperMesh(-1),
+    [-1.0, -0.26, 0.06], [0.06, 0, -0.22], [], [
+      { color: 'blue',  pos: [-1.16, -0.06, 0.14], normal: [-0.95, 0.15, 0.2] },
+      { color: 'green', pos: [-1.2, -0.48, 0.10],  normal: [-0.95, -0.15, 0.2] }
     ]);
-  addPiece('wing_right', 'Aleta Derecha', new THREE.Mesh(wingGeo.clone(), getPlasticMaterial(PENGUIN_TOY_PALETTE.navyCoat)),
-    [1.12, -0.22, 0.04], [0.08, 0, -0.32], [], [
-      { color: 'blue',  pos: [1.26, -0.02, 0.16], normal: [0.94, 0.25, 0.2] },
-      { color: 'green', pos: [1.32, -0.44, 0.12], normal: [0.95, -0.2, 0.2] }
+  addPiece('wing_right', 'Aleta Derecha', flipperMesh(1),
+    [1.0, -0.26, 0.06], [0.06, 0, 0.22], [], [
+      { color: 'blue',  pos: [1.16, -0.06, 0.14], normal: [0.95, 0.15, 0.2] },
+      { color: 'green', pos: [1.2, -0.48, 0.10],  normal: [0.95, -0.15, 0.2] }
     ]);
 
   addPiece('back_left', 'Espalda Marina Izq',

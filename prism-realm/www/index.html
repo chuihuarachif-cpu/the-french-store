@@ -477,6 +477,51 @@
       pointer-events: none;
       white-space: nowrap;
     }
+
+    /* TORNILLO VOLADOR DESDE EL 3D HASTA LA CAJA / BANDEJA */
+    .flying-screw-token {
+      position: fixed;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2.5px solid #fff;
+      color: rgba(0,0,0,0.6);
+      font-weight: 900; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+      pointer-events: none;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+      transform: translate(-50%, -50%) scale(1.25);
+      transition: left 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+                  top 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.34s ease;
+    }
+    .toy-box { overflow: hidden; }
+    /* Tapa que cierra la caja al completar 3 tornillos */
+    .box-closing-lid {
+      position: absolute; inset: 0;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 900; font-size: 24px;
+      z-index: 5;
+      box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2);
+      transform: translateY(-105%);
+    }
+    .toy-box.closing .box-closing-lid {
+      animation: lidDown 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes lidDown { from { transform: translateY(-105%); } to { transform: translateY(0); } }
+    .toy-box.fly-up-exit { animation: boxFlyUp 0.32s cubic-bezier(0.55, 0.05, 0.67, 0.19) forwards; }
+    @keyframes boxFlyUp {
+      0%   { transform: scale(1.06) translateY(0); opacity: 1; }
+      30%  { transform: scale(0.95) translateY(8px); opacity: 1; }
+      100% { transform: scale(0.75) translateY(-120px); opacity: 0; }
+    }
+    .toy-box.drop-in-enter { animation: boxDropIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    @keyframes boxDropIn {
+      0%   { transform: translateY(-110px) scale(0.8); opacity: 0; }
+      70%  { transform: translateY(6px) scale(1.04); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
   </style>
 
   <!-- IMPORTMAP 100% LOCAL APUNTANDO A www/vendor/three/ -->
@@ -630,7 +675,8 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.08;
+    renderer.toneMappingExposure = 1.05;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     viewport.appendChild(renderer.domElement);
@@ -648,12 +694,15 @@
     controls.maxDistance = 26;
 
     // Luz direccional anclada a la cámara: la cara visible siempre queda iluminada al orbitar
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.15);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.78);
     dirLight.position.set(4, 5, 3);
     dirLight.castShadow = true;
     camera.add(dirLight);
     scene.add(camera, dirLight.target);
-    scene.add(new THREE.AmbientLight(0xffffff, 1.3));
+    scene.add(new THREE.AmbientLight(0xffffff, 0.82));
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xc7d2fe, 0.55);
+    hemiLight.position.set(0, 40, 0);
+    scene.add(hemiLight);
 
     const rootGroup = new THREE.Group();
     scene.add(rootGroup);
@@ -692,8 +741,9 @@
 
     const screwInstanceMat = new THREE.MeshStandardMaterial({
       map: metalMap,
-      roughness: 0.22,
-      metalness: 0.05
+      roughness: 0.42,
+      metalness: 0.05,
+      envMapIntensity: 0.5
     });
     const holeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
     const crossMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -704,8 +754,9 @@
       const headMat = new THREE.MeshStandardMaterial({
         color: colorInt,
         map: metalMap,
-        roughness: 0.2,
-        metalness: 0.05
+        roughness: 0.42,
+        metalness: 0.05,
+        envMapIntensity: 0.5
       });
       const shaftMat = new THREE.MeshStandardMaterial({
         color: 0xcbd5e1,
@@ -763,6 +814,8 @@
     const zeroMat = new THREE.Matrix4().makeScale(0, 0, 0);
     // Tamaño relativo del tornillo instanciado (el nivel 1 usa tornillos más chicos, radio 0.125 de diseño)
     let screwScale = 1;
+    let pendingReserve = 0;     // tornillos volando hacia la bandeja
+    let boxEntranceAnim = false; // las cajas nuevas caen con rebote (no las iniciales)
 
     function syncScrewMatrix(s) {
       if (s.removed || s.animating) {
@@ -803,11 +856,13 @@
       const lvlSpec = getLevelSpec(lvlNum);
       const vec3 = (x, y, z) => new THREE.Vector3(x, y, z);
       state.levelData = lvlNum === 1
-        ? penguinModelToLevel(buildLevel1PenguinScene(), lvlSpec, vec3, PENGUIN_L1_LAYERS)
+        ? penguinModelToLevel(buildLevel1PenguinScene(), lvlSpec, vec3, PENGUIN_L1_LAYERS, L1_BOX_COLOR)
         : generateFigureLevel(lvlSpec, vec3);
       state.activeBoxes = [];
       state.maxBoxes = 2;
       state.reserveSlots = [];
+      pendingReserve = 0;
+      boxEntranceAnim = false;
       state.maxReserve = 5;
       state.removedCount = 0;
       state.activeUnscrewAnimations = 0;
@@ -892,10 +947,15 @@
       renderUI();
     }
 
+    // Nivel 1: 7 colores (naranja, morado, azul, verde, rosa, amarillo, café) en rotación,
+    // así cada 7 cajas seguidas son de colores distintos y el nivel sigue siendo resoluble.
+    const L1_COLOR_IDS = [3, 2, 1, 4, 7, 5, 6];
+    const L1_BOX_COLOR = (b) => L1_COLOR_IDS[(b * 3 + Math.floor(b / 7)) % L1_COLOR_IDS.length];
+
     function pullNextBox() {
       if (!state.levelData || state.levelData.boxQueue.length === 0) return;
       const colorId = state.levelData.boxQueue.shift();
-      state.activeBoxes.push({ colorId, filled: 0, capacity: 3 });
+      state.activeBoxes.push({ colorId, filled: 0, capacity: 3, pending: 0, isNew: !!boxEntranceAnim, enterStart: performance.now() });
       sweepReserveIntoBoxes();
     }
 
@@ -905,7 +965,7 @@
         moved = false;
         for (let i = 0; i < state.reserveSlots.length; i++) {
           const cId = state.reserveSlots[i];
-          const bIdx = state.activeBoxes.findIndex(b => b.colorId === cId && b.filled < b.capacity);
+          const bIdx = state.activeBoxes.findIndex(b => !b.closing && b.colorId === cId && b.filled < b.capacity);
           if (bIdx !== -1) {
             state.reserveSlots.splice(i, 1);
             putScrewInBox(bIdx);
@@ -916,14 +976,36 @@
       }
     }
 
+    // Caja 3/3: baja la tapa → la caja sale volando hacia arriba → cae una caja nueva con rebote.
+    function closeAndReplaceBox(box) {
+      const lvl = state.levelData;
+      box.closing = true;
+      box.closeStart = performance.now();
+      setTimeout(() => {
+        if (state.levelData !== lvl) return;
+        box.exiting = true;
+        box.exitStart = performance.now();
+        renderUI();
+      }, 220);
+      setTimeout(() => {
+        if (state.levelData !== lvl) return;
+        const i = state.activeBoxes.indexOf(box);
+        if (i !== -1) state.activeBoxes.splice(i, 1);
+        boxEntranceAnim = true;
+        pullNextBox();
+        boxEntranceAnim = false;
+        renderUI();
+        verifyVictory();
+      }, 540);
+    }
+
     function putScrewInBox(bIdx) {
       const box = state.activeBoxes[bIdx];
       if (!box) return;
       box.filled++;
       if (box.filled >= box.capacity) {
         SoundFX.playBoxClose();
-        state.activeBoxes.splice(bIdx, 1);
-        pullNextBox();
+        closeAndReplaceBox(box);
       }
       renderUI();
       verifyVictory();
@@ -949,6 +1031,48 @@
     /* ========================================================================
      * 4. EXTRACCIÓN DE TORNILLOS (MÁX. 2 A LA VEZ + ANIMACIÓN DE DESENROSCADO)
      * ======================================================================== */
+    // Elige el agujero de destino visual del tornillo (caja de su color con espacio, o bandeja)
+    function pickFlightTarget(colorId) {
+      const bi = state.activeBoxes.findIndex(b => !b.closing && b.colorId === colorId && b.filled + b.pending < b.capacity);
+      if (bi !== -1) {
+        const b = state.activeBoxes[bi];
+        const slot = b.filled + b.pending;
+        b.pending++;
+        return {
+          el: document.querySelector(`[data-box-slot="${bi}_${slot}"]`),
+          release: () => { b.pending = Math.max(0, b.pending - 1); }
+        };
+      }
+      const slot = state.reserveSlots.length + pendingReserve;
+      pendingReserve++;
+      return {
+        el: document.querySelector(`[data-reserve-slot="${slot}"]`) || document.getElementById('reserve-container'),
+        release: () => { pendingReserve = Math.max(0, pendingReserve - 1); }
+      };
+    }
+
+    // Proyecta la posición 3D a pantalla y lanza un tornillo visual hasta el agujero destino
+    function flyScrew3DToDOMSlot(worldPos, colorId, targetEl, onArrived) {
+      const r = renderer.domElement.getBoundingClientRect();
+      const pr = worldPos.clone().project(camera);
+      const startX = r.left + (pr.x * 0.5 + 0.5) * r.width;
+      const startY = r.top + (-(pr.y * 0.5) + 0.5) * r.height;
+      const flyer = document.createElement('div');
+      flyer.className = 'flying-screw-token';
+      flyer.style.background = SCREW_COLORS[colorId].hex;
+      flyer.style.left = `${startX}px`;
+      flyer.style.top = `${startY}px`;
+      flyer.textContent = '+';
+      document.body.appendChild(flyer);
+      const tr = targetEl ? targetEl.getBoundingClientRect() : { left: window.innerWidth / 2, top: 80, width: 20, height: 20 };
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        flyer.style.left = `${tr.left + tr.width / 2}px`;
+        flyer.style.top = `${tr.top + tr.height / 2}px`;
+        flyer.style.transform = 'translate(-50%, -50%) scale(0.88) rotate(360deg)';
+      }));
+      setTimeout(() => { flyer.remove(); onArrived(); }, 350);
+    }
+
     function extractScrew(sId) {
       if (!state.levelData || state.isGameOver) return;
 
@@ -984,30 +1108,28 @@
 
       const startPos = screw.pos.clone();
       const unscrewedPos = screw.pos.clone().addScaledVector(screw.normal, 1.35); // tirón de salida más largo
-      const trayTargetPos = new THREE.Vector3((Math.random() - 0.5) * 1.8, 5.2, 3.2);
 
       let progress = 0;
       function animateUnscrewStep() {
-        progress += 0.045; // Velocidad calibrada para apreciar el giro de la rosca al salir
-        if (progress < 0.55) {
+        progress += 0.06; // Velocidad calibrada para apreciar el giro de la rosca al salir
+        if (progress < 0.99) {
           // Fase 1: Desenroscado mecánico girando 720° sobre su eje Z local mientras sale del agujero
-          const u = progress / 0.55;
+          const u = progress / 0.99;
           const easeOut = 1 - Math.pow(1 - u, 2);
           threadedScrew.position.lerpVectors(startPos, unscrewedPos, easeOut);
           threadedScrew.rotateZ(0.42);
           requestAnimationFrame(animateUnscrewStep);
-        } else if (progress < 1.0) {
-          // Fase 2: Vuelo parabólico ágil hacia la caja / bandeja superior
-          const v = (progress - 0.55) / 0.45;
-          threadedScrew.position.lerpVectors(unscrewedPos, trayTargetPos, v);
-          threadedScrew.position.y += Math.sin(v * Math.PI) * 1.4;
-          threadedScrew.rotateX(0.25);
-          threadedScrew.scale.setScalar(screwScale * (1 - v * 0.45));
-          requestAnimationFrame(animateUnscrewStep);
         } else {
+          // Fase 2: el tornillo sale del 3D y vuela por la pantalla hasta clavarse en su agujero (caja o bandeja)
           flyingGroup.remove(threadedScrew);
           state.activeUnscrewAnimations = Math.max(0, state.activeUnscrewAnimations - 1);
-          finalizeScrew(screw);
+          const lvl = state.levelData;
+          const dest = pickFlightTarget(screw.colorId);
+          flyScrew3DToDOMSlot(unscrewedPos, screw.colorId, dest.el, () => {
+            dest.release();
+            if (state.levelData !== lvl) return;
+            finalizeScrew(screw);
+          });
         }
       }
       animateUnscrewStep();
@@ -1054,7 +1176,7 @@
       }
 
       // Verificar si entra en una caja activa o va a la bandeja de reserva
-      const bIdx = state.activeBoxes.findIndex(b => b.colorId === screw.colorId && b.filled < b.capacity);
+      const bIdx = state.activeBoxes.findIndex(b => !b.closing && b.colorId === screw.colorId && b.filled < b.capacity);
       if (bIdx !== -1) {
         putScrewInBox(bIdx);
       } else {
@@ -1100,11 +1222,32 @@
 
       const boxesEl = document.getElementById('boxes-container');
       boxesEl.innerHTML = '';
-      state.activeBoxes.forEach(b => {
+      const nowTs = performance.now();
+      state.activeBoxes.forEach((b, bi) => {
         const col = SCREW_COLORS[b.colorId];
         const card = document.createElement('div');
         card.className = 'toy-box';
+        card.dataset.boxIndex = bi;
+        card.style.setProperty('--box-color', col.hex);
         card.style.borderColor = col.hex;
+        // Las animaciones se re-sincronizan con delay negativo, porque este HUD se redibuja seguido
+        if (b.closing) {
+          card.classList.add('closing');
+          card.style.setProperty('--lid', col.hex);
+          const lid = document.createElement('div');
+          lid.className = 'box-closing-lid';
+          lid.style.background = col.hex;
+          lid.style.animationDelay = `-${Math.max(0, nowTs - b.closeStart)}ms`;
+          lid.textContent = '✓';
+          card.appendChild(lid);
+          if (b.exiting) {
+            card.classList.add('fly-up-exit');
+            card.style.animationDelay = `-${Math.max(0, nowTs - b.exitStart)}ms`;
+          }
+        } else if (b.isNew && nowTs - b.enterStart < 380) {
+          card.classList.add('drop-in-enter');
+          card.style.animationDelay = `-${Math.max(0, nowTs - b.enterStart)}ms`;
+        }
         const lid = document.createElement('div');
         lid.className = 'toy-box-lid';
         lid.style.background = col.hex;
@@ -1114,6 +1257,7 @@
         for (let i = 0; i < b.capacity; i++) {
           const h = document.createElement('div');
           h.className = 'hole-socket';
+          h.dataset.boxSlot = `${bi}_${i}`;
           if (i < b.filled) {
             const head = document.createElement('div');
             head.className = 'screw-head-ui';
@@ -1142,6 +1286,7 @@
       for (let i = 0; i < state.maxReserve; i++) {
         const h = document.createElement('div');
         h.className = 'reserve-hole';
+        h.dataset.reserveSlot = i;
         if (i < state.reserveSlots.length) {
           const col = SCREW_COLORS[state.reserveSlots[i]];
           const head = document.createElement('div');
@@ -1292,7 +1437,7 @@
       toast('⚡ Auto-Solver activo (máx. 2 tornillos a la vez)...');
       state.autoTimer = setInterval(() => {
         if (!state.levelData || state.isGameOver || state.activeUnscrewAnimations >= MAX_CONCURRENT_UNSCREW) return;
-        const activeColors = new Set(state.activeBoxes.map(b => b.colorId));
+        const activeColors = new Set(state.activeBoxes.filter(b => !b.closing).map(b => b.colorId));
         let target = state.levelData.screws.find(
           s => !s.removed && !s.animating && !isBlocked(s) && activeColors.has(s.colorId)
         );

@@ -478,7 +478,7 @@ export const PENGUIN_LAYERS = {
 
 // Convierte el modelo esculpido al formato de nivel del juego (piezas con malla propia, tornillos, cajas).
 // Colores y cajas los asigna el generador (orden exterior → interior) para garantizar que el nivel se pueda resolver.
-export function penguinModelToLevel(model, spec, makeVec, layers = PENGUIN_LAYERS) {
+export function penguinModelToLevel(model, spec, makeVec, layers = PENGUIN_LAYERS, colorForBox = null) {
   const keyToIndex = new Map(model.pieces.map((p, i) => [p.id, i]));
   const pieces = model.pieces.map((p, i) => {
     const pos = p.mesh.position.clone();
@@ -529,7 +529,8 @@ export function penguinModelToLevel(model, spec, makeVec, layers = PENGUIN_LAYER
   const sorted = [...screws].sort((a, b) => b.layer - a.layer || a.id - b.id);
   const boxQueue = [];
   for (let t = 0; t < screws.length / 3; t++) {
-    const c = Math.floor(rnd() * spec.numColors);
+    const r = rnd();
+    const c = colorForBox ? colorForBox(t) : Math.floor(r * spec.numColors);
     boxQueue.push(c);
     for (let k = 0; k < 3; k++) sorted[t * 3 + k].colorId = c;
   }
