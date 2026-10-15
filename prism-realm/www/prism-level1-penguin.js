@@ -77,7 +77,7 @@ function createPenguinFlipperMesh(sideSign, colorHex) {
     const t = Math.min(1, Math.max(0, (v.y + 0.75) / 1.5)); // 0 punta, 1 hombro
     const widthFactor = 0.55 + 0.45 * Math.sin(t * Math.PI * 0.85);
     v.z *= 0.85 * widthFactor;
-    v.x *= 0.42;
+    v.x *= 0.6;
     v.x -= sideSign * Math.pow(1 - t, 1.6) * 0.16;
     pos.setXYZ(i, v.x, v.y, v.z);
   }
@@ -295,14 +295,14 @@ export function buildLevel1PenguinScene() {
   // Aletas de pingüino: anchas arriba, curvas y en punta abajo; caen pegadas al cuerpo
   const flipperMesh = (side) => createPenguinFlipperMesh(side, PENGUIN_TOY_PALETTE.navyCoat);
   addPiece('wing_left', 'Aleta Izquierda', flipperMesh(-1),
-    [-1.0, -0.26, 0.06], [0.06, 0, -0.22], [], [
-      { color: 'blue',  pos: [-1.16, -0.06, 0.14], normal: [-0.95, 0.15, 0.2] },
-      { color: 'green', pos: [-1.2, -0.48, 0.10],  normal: [-0.95, -0.15, 0.2] }
+    [-1.13, -0.26, 0.06], [0.06, 0, -0.22], [], [
+      { color: 'blue',  pos: [-1.34, -0.06, 0.14], normal: [-0.95, 0.15, 0.2] },
+      { color: 'green', pos: [-1.38, -0.48, 0.10],  normal: [-0.95, -0.15, 0.2] }
     ]);
   addPiece('wing_right', 'Aleta Derecha', flipperMesh(1),
-    [1.0, -0.26, 0.06], [0.06, 0, 0.22], [], [
-      { color: 'blue',  pos: [1.16, -0.06, 0.14], normal: [0.95, 0.15, 0.2] },
-      { color: 'green', pos: [1.2, -0.48, 0.10],  normal: [0.95, -0.15, 0.2] }
+    [1.13, -0.26, 0.06], [0.06, 0, 0.22], [], [
+      { color: 'blue',  pos: [1.34, -0.06, 0.14], normal: [0.95, 0.15, 0.2] },
+      { color: 'green', pos: [1.38, -0.48, 0.10],  normal: [0.95, -0.15, 0.2] }
     ]);
 
   addPiece('back_left', 'Espalda Marina Izq',
