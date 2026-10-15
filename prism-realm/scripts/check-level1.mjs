@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { buildLevel1PenguinScene, PENGUIN_L1_LAYERS, L1_TOTAL_SCREWS } from '../www/prism-level1-penguin.js';
 import { penguinModelToLevel } from '../www/penguin-level5-model.js';
 import { getLevelSpec } from '../www/prism-figure-math.js';
+import { getBlueprintForLevel, buildBlueprintScene, BLUEPRINT_SCREWS } from '../www/prism-toy-catalog.js';
 
 const out = [];
 let fatal = false;
@@ -36,6 +37,32 @@ try {
   out.push(`snap=${JSON.stringify(model.snapInfo)} (maxMove=${model.snapInfo.maxMove.toFixed(2)})`);
   out.push(`capas=${JSON.stringify(layerCount)}`);
   out.push(`tornillos fuera de superficie (${far.length}): ${far.join(', ') || 'ninguno'}`);
+
+  // Niveles 2–4: figuras esculpidas (unicornio 63, zorro 66, tortuga 69)
+  for (const L of [2, 3, 4]) {
+    const model = buildBlueprintScene(getBlueprintForLevel(L));
+    const spec = getLevelSpec(L);
+    const lvl = penguinModelToLevel(model, spec, (x, y, z) => new THREE.Vector3(x, y, z), model.layers);
+    const holder = new THREE.Group();
+    lvl.pieces.forEach(p => holder.add(p.mesh));
+    holder.updateMatrixWorld(true);
+    const rc = new THREE.Raycaster();
+    const far = [];
+    for (const s of lvl.screws) {
+      const p = lvl.pieces[s.pieceId];
+      rc.set(s.pos.clone().addScaledVector(s.normal, 0.4), s.normal.clone().negate());
+      rc.far = 1.2;
+      const hits = rc.intersectObject(p.mesh, true);
+      const d = hits.length ? hits[0].distance : null;
+      if (d === null || d < 0.2 || d > 0.62) far.push(`${p.key}:${d === null ? 'sin impacto' : d.toFixed(2)}`);
+    }
+    const layers = [...new Set(lvl.pieces.map(p => p.layer))].sort().join(',');
+    out.push(`Nv${L}: tornillos=${lvl.screws.length}/${BLUEPRINT_SCREWS[L]} piezas=${lvl.pieces.length} cajas=${lvl.boxQueue.length} spec.total=${spec.totalScrews} escala=${model.scale.toFixed(2)} capas=[${layers}] snap=${model.snapInfo.snapped}/kept ${model.snapInfo.kept} fuera(${far.length}): ${far.join(', ') || 'ninguno'}`);
+    if (lvl.screws.length !== BLUEPRINT_SCREWS[L] || lvl.boxQueue.length * 3 !== lvl.screws.length || spec.totalScrews !== lvl.screws.length) {
+      out.push(`ERROR Nv${L}: conteo inconsistente`);
+      fatal = true;
+    }
+  }
 } catch (e) {
   out.push(`EXCEPCION: ${e && e.message}`);
   fatal = true;

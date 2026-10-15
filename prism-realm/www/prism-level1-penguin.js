@@ -470,7 +470,7 @@ export function buildLevel1PenguinScene() {
  * Asienta cada tornillo sobre la superficie real de su pieza (rayo hacia adentro contra su propia malla)
  * y orienta su normal con la de la superficie. Evita tornillos medio enterrados o flotando.
  */
-function snapScrewsToSurface(rootGroup, screws) {
+export function snapScrewsToSurface(rootGroup, screws) {
   rootGroup.updateMatrixWorld(true);
   const rc = new THREE.Raycaster();
   const info = { snapped: 0, viaCenter: 0, kept: 0, maxMove: 0 };

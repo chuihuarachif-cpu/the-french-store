@@ -10,8 +10,8 @@ import { buildPenguinLevel } from './prism-toy-penguin.js';
 // El nivel 1 lo construye index.html con prism-level1-penguin.js (60 tornillos); aquí solo se fija su total.
 const TOY_LEVELS = new Set([5]);
 const TOY_ARCHETYPE = { id: 'penguin_toy', name: 'Pingüino Polar Navideño', shapeMode: 'penguin_toy' };
-// Totales fijos: nivel 1 = 60 (pingüino polar sólido), nivel 5 = 81 (foto).
-const FIXED_SCREWS = { 1: 60, 5: 81 };
+// Totales fijos: niveles 1–4 = figuras esculpidas (60/63/66/69), nivel 5 = 81 (foto).
+const FIXED_SCREWS = { 1: 60, 2: 63, 3: 66, 4: 69, 5: 81 };
 
 const TAU = Math.PI * 2;
 const GAP = 0.3;           // separación entre capas (encogimiento de la figura)

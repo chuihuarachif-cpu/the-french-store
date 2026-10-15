@@ -64,6 +64,19 @@ for (const t of [3, 6, 10, 14]) {
   await shot(`07-desarme-${String(t).padStart(2, '0')}s`);
 }
 
+// Niveles con figura esculpida (2 unicornio, 3 zorro, 4 tortuga): frente, lado y espalda
+await page.click('#btn-solver').catch(() => {}); // pausa el auto-solver
+await page.mouse.move(206, 520);
+for (let i = 0; i < 6; i++) await page.mouse.wheel(0, 300); // deshace el zoom
+await page.waitForTimeout(800);
+for (const L of [2, 3, 4]) {
+  await page.click(`#btn-jump-${L}`).catch(() => log.push(`[preview] no se pudo ir al nivel ${L}`));
+  await page.waitForTimeout(3500);
+  await shot(`10-nivel${L}-frente`);
+  await drag(230, 0); await shot(`10-nivel${L}-lado`);
+  await drag(230, 0); await shot(`10-nivel${L}-espalda`);
+}
+
 fs.writeFileSync(path.join(OUT, 'console.txt'), log.join('\n') || '(sin mensajes de consola)');
 await browser.close();
 server.close();

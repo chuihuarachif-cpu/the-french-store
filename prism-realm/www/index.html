@@ -103,6 +103,10 @@
       border-radius: 999px;
       border: 1.5px solid #fff;
       box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      max-width: 78vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .coins-pill {
@@ -565,7 +569,9 @@
         </div>
         <div class="quick-actions">
           <button class="chip-btn" id="btn-jump-1">Nv.1</button>
-          <button class="chip-btn" id="btn-jump-4">Nv.4 (Flor)</button>
+          <button class="chip-btn" id="btn-jump-2">Nv.2 (Unicornio)</button>
+          <button class="chip-btn" id="btn-jump-3">Nv.3 (Zorro)</button>
+          <button class="chip-btn" id="btn-jump-4">Nv.4 (Tortuga)</button>
           <button class="chip-btn" id="btn-jump-5">Nv.5 (Pingüino)</button>
           <button class="chip-btn highlight" id="btn-jump-500">Nv.500</button>
           <button class="chip-btn solver" id="btn-solver">⚡ Auto</button>
@@ -642,7 +648,7 @@
 
   <script type="module">
     import * as THREE from 'three';
-    import { getLevelOfficialTitle } from './prism-toy-catalog.js';
+    import { getLevelOfficialTitle, getBlueprintForLevel, buildBlueprintScene } from './prism-toy-catalog.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     import {
@@ -858,9 +864,15 @@
       // Nivel 1: pingüino esculpido por piezas (penguin-level5-model.js). El resto: generador.
       const lvlSpec = getLevelSpec(lvlNum);
       const vec3 = (x, y, z) => new THREE.Vector3(x, y, z);
-      state.levelData = lvlNum === 1
-        ? penguinModelToLevel(buildLevel1PenguinScene(), lvlSpec, vec3, PENGUIN_L1_LAYERS, L1_BOX_COLOR)
-        : generateFigureLevel(lvlSpec, vec3);
+      const blueprint = getBlueprintForLevel(lvlNum); // niveles 2–4: figuras esculpidas por piezas
+      if (lvlNum === 1) {
+        state.levelData = penguinModelToLevel(buildLevel1PenguinScene(), lvlSpec, vec3, PENGUIN_L1_LAYERS, toyBoxColor(1));
+      } else if (blueprint) {
+        const model = buildBlueprintScene(blueprint);
+        state.levelData = penguinModelToLevel(model, lvlSpec, vec3, model.layers, toyBoxColor(lvlNum));
+      } else {
+        state.levelData = generateFigureLevel(lvlSpec, vec3);
+      }
       state.activeBoxes = [];
       state.maxBoxes = 2;
       state.reserveSlots = [];
@@ -947,14 +959,14 @@
       for (let i = 0; i < state.maxBoxes; i++) pullNextBox();
 
       document.getElementById('txt-level-title').textContent = `Nivel ${spec.levelId}`;
-      document.getElementById('txt-sculpture-name').textContent = `${spec.levelId === 1 ? getLevelOfficialTitle(1) : spec.archetype.name} • ${spec.totalScrews} 🔩`;
+      document.getElementById('txt-sculpture-name').textContent = `${spec.levelId <= 4 ? getLevelOfficialTitle(spec.levelId) : spec.archetype.name} • ${spec.totalScrews} 🔩`;
       renderUI();
     }
 
     // Nivel 1: 7 colores (naranja, morado, azul, verde, rosa, amarillo, café) en rotación,
     // así cada 7 cajas seguidas son de colores distintos y el nivel sigue siendo resoluble.
     const L1_COLOR_IDS = [3, 2, 1, 4, 7, 5, 6];
-    const L1_BOX_COLOR = (b) => L1_COLOR_IDS[(b * 3 + Math.floor(b / 7)) % L1_COLOR_IDS.length];
+    const toyBoxColor = (lvl) => (b) => L1_COLOR_IDS[(b * 3 + Math.floor(b / 7) + (lvl - 1) * 2) % L1_COLOR_IDS.length];
 
     // Cada caja ocupa una columna fija: una caja nueva reemplaza a la completada en la MISMA posición.
     // Si ya no quedan cajas en la cola, la columna queda como hueco vacío (empty) y las vecinas no se mueven.
@@ -1425,6 +1437,8 @@
     document.getElementById('btn-close-modal').onclick = () => document.getElementById('modal-levels').classList.remove('open');
 
     document.getElementById('btn-jump-1').onclick = () => startLevel(1);
+    document.getElementById('btn-jump-2').onclick = () => startLevel(2);
+    document.getElementById('btn-jump-3').onclick = () => startLevel(3);
     document.getElementById('btn-jump-4').onclick = () => startLevel(4);
     document.getElementById('btn-jump-5').onclick = () => startLevel(5);
     document.getElementById('btn-jump-500').onclick = () => startLevel(500);
