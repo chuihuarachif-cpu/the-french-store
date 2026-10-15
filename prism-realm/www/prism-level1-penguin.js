@@ -7,8 +7,10 @@
 
 import * as THREE from 'three';
 
-// Factor de escala global del modelo (el diseño original es ~1.6 veces más chico que la escena del juego).
-export const L1_SCALE = 1.6;
+// Factor de escala global del modelo (calibrado para que quepa entre el HUD superior e inferior en móvil).
+export const L1_SCALE = 1.25;
+// Desplazamiento vertical del modelo (el HUD superior ocupa más pantalla que el inferior).
+export const L1_Y_OFFSET = -0.45;
 // Radio del tornillo en unidades de diseño (0.125) -> en la escena del juego, 0.125 * L1_SCALE.
 export const L1_SCREW_RADIUS = 0.125;
 
@@ -85,7 +87,7 @@ function createSolidRoundedPart(points2D, depth, colorHex, bevel = 0.09) {
 
 /** Medio ovoide macizo, cerrado por su cara plana interior (sin hueco lateral). */
 function createSolidHalfOvoid(radiusX, radiusY, radiusZ, sideSign, frontSign, colorHex) {
-  const geom = new THREE.SphereGeometry(1, 28, 22);
+  const geom = new THREE.SphereGeometry(1, 64, 48); // alta resolución: bordes de intersección suaves
   const pos = geom.attributes.position;
   const v = new THREE.Vector3();
 
@@ -202,8 +204,8 @@ export function buildLevel1PenguinScene() {
   beakGroup.add(topBeak, botBeak);
 
   addPiece('beak', 'Pico Naranja', beakGroup, [0, 0.54, 0.96], [0.08, 0, 0], [], [
-    { color: 'yellow', pos: [0, 0.65, 1.12], normal: [0, 0.62, 0.78] },
-    { color: 'orange', pos: [0, 0.45, 1.14], normal: [0, -0.25, 0.96] }
+    { color: 'yellow', pos: [-0.15, 0.62, 1.12], normal: [-0.15, 0.6, 0.78] },
+    { color: 'orange', pos: [0.15, 0.62, 1.12],  normal: [0.15, 0.6, 0.78] }
   ]);
 
   // 3. ROSTRO SÓLIDO CON OJOS AZULES
@@ -299,7 +301,18 @@ export function buildLevel1PenguinScene() {
     ]);
 
   // 6. PATITAS NARANJAS
-  const footShape = [[-0.34, -0.32], [0.34, -0.32], [0.42, 0.25], [0.14, 0.36], [0, 0.26], [-0.14, 0.36], [-0.42, 0.25]];
+  // Pata redondeada con 3 dedos (contorno suave, sin aristas dentadas)
+  const footShape = [];
+  {
+    const a = 0.40, b = 0.28, N = 72;
+    const toes = [0.95, Math.PI / 2, Math.PI - 0.95];
+    for (let i = 0; i < N; i++) {
+      const th = (i / N) * Math.PI * 2;
+      let r = (a * b) / Math.hypot(b * Math.cos(th), a * Math.sin(th));
+      for (const t of toes) r += 0.10 * Math.exp(-Math.pow((th - t) / 0.17, 2));
+      footShape.push([r * Math.cos(th), r * Math.sin(th)]);
+    }
+  }
   addPiece('foot_left', 'Patita Naranja Izq',
     createSolidRoundedPart(footShape, 0.20, PENGUIN_TOY_PALETTE.beakOrange, 0.08),
     [-0.48, -1.28, 0.52], [Math.PI / 2, 0, 0.15], ['belly_left'], [
@@ -409,18 +422,72 @@ export function buildLevel1PenguinScene() {
     throw new Error(`Pingüino nivel 1: ${screws.length} tornillos, se esperaban ${L1_TOTAL_SCREWS}`);
   }
 
-  // Escala global: posiciones de piezas y tornillos (los volúmenes se escalan con la malla).
+  // Escala global + desplazamiento vertical (los volúmenes se escalan con la malla).
   for (const p of pieces) {
     p.mesh.position.multiplyScalar(L1_SCALE);
+    p.mesh.position.y += L1_Y_OFFSET;
     p.mesh.scale.multiplyScalar(L1_SCALE);
   }
-  for (const s of screws) s.position.multiplyScalar(L1_SCALE);
+  for (const s of screws) {
+    s.position.multiplyScalar(L1_SCALE);
+    s.position.y += L1_Y_OFFSET;
+  }
   innerCore.scale.setScalar(L1_SCALE);
+  innerCore.position.y = L1_Y_OFFSET;
+
+  const snapInfo = snapScrewsToSurface(rootGroup, screws);
 
   return {
-    rootGroup, pieces, screws, innerCore,
+    rootGroup, pieces, screws, innerCore, snapInfo,
     totalScrews: L1_TOTAL_SCREWS,
     scale: L1_SCALE,
-    screwScale: (L1_SCREW_RADIUS * L1_SCALE) / 0.24 // el tornillo instanciado del juego tiene radio 0.24
+    // el tornillo instanciado del juego tiene radio 0.24; se deja un poco mayor que 0.125*escala para poder tocarlo
+    screwScale: (L1_SCREW_RADIUS * L1_SCALE * 1.1) / 0.24
   };
+}
+
+/**
+ * Asienta cada tornillo sobre la superficie real de su pieza (rayo hacia adentro contra su propia malla)
+ * y orienta su normal con la de la superficie. Evita tornillos medio enterrados o flotando.
+ */
+function snapScrewsToSurface(rootGroup, screws) {
+  rootGroup.updateMatrixWorld(true);
+  const rc = new THREE.Raycaster();
+  const info = { snapped: 0, viaCenter: 0, kept: 0, maxMove: 0 };
+  const worldNormal = new THREE.Vector3();
+  const box = new THREE.Box3();
+  const center = new THREE.Vector3();
+
+  for (const s of screws) {
+    const piece = s.userData.parentPiece;
+    const designNormal = s.userData.normal.clone().normalize();
+    const origin = s.position.clone().addScaledVector(designNormal, 0.9);
+    let hit = null;
+
+    rc.set(origin, designNormal.clone().negate());
+    rc.far = 2.4;
+    let hits = rc.intersectObject(piece.mesh, true);
+    if (hits.length) hit = hits[0];
+    else {
+      box.setFromObject(piece.mesh);
+      box.getCenter(center);
+      rc.set(origin, center.clone().sub(origin).normalize());
+      rc.far = 4;
+      hits = rc.intersectObject(piece.mesh, true);
+      if (hits.length) { hit = hits[0]; info.viaCenter++; }
+    }
+    if (!hit) { info.kept++; continue; }
+
+    if (hit.face) {
+      worldNormal.copy(hit.face.normal).transformDirection(hit.object.matrixWorld);
+      if (worldNormal.dot(designNormal) < 0.35) worldNormal.copy(designNormal);
+    } else worldNormal.copy(designNormal);
+
+    const target = hit.point.clone().addScaledVector(worldNormal, 0.01);
+    info.maxMove = Math.max(info.maxMove, target.distanceTo(s.position));
+    s.position.copy(target);
+    s.userData.normal.copy(worldNormal).normalize();
+    info.snapped++;
+  }
+  return info;
 }

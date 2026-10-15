@@ -33,6 +33,7 @@ try {
     const d = hits.length ? hits[0].distance : null;
     if (d === null || d < 0.2 || d > 0.62) far.push(`${p.key}:${d === null ? 'sin impacto' : d.toFixed(2)}`);
   }
+  out.push(`snap=${JSON.stringify(model.snapInfo)} (maxMove=${model.snapInfo.maxMove.toFixed(2)})`);
   out.push(`capas=${JSON.stringify(layerCount)}`);
   out.push(`tornillos fuera de superficie (${far.length}): ${far.join(', ') || 'ninguno'}`);
 } catch (e) {
