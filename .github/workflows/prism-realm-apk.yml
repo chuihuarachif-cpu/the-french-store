@@ -27,6 +27,10 @@ jobs:
         working-directory: prism-realm
         run: npm install --no-audit --no-fund
 
+      - name: Verificar modelo del nivel 1 (60 tornillos)
+        working-directory: prism-realm
+        run: node scripts/check-level1.mjs
+
       - name: Prepare offline assets (Three.js + iconos)
         working-directory: prism-realm
         run: |

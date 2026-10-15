@@ -608,7 +608,8 @@
       buildPartGeometry
     } from './prism-assets-catalog.js';
     import { getLevelSpec, generateFigureLevel, buildAll500LevelsManifest } from './prism-figure-math.js';
-    import { buildPenguinLevel5Scene, penguinModelToLevel } from './penguin-level5-model.js';
+    import { penguinModelToLevel } from './penguin-level5-model.js';
+    import { buildLevel1PenguinScene, PENGUIN_L1_LAYERS } from './prism-level1-penguin.js';
 
     // Inyectar SVGs detallados
     document.getElementById('screw-svg-holder').innerHTML = UI_SVGS.screwIcon;
@@ -760,6 +761,8 @@
 
     const dummy = new THREE.Object3D();
     const zeroMat = new THREE.Matrix4().makeScale(0, 0, 0);
+    // Tamaño relativo del tornillo instanciado (el nivel 1 usa tornillos más chicos, radio 0.125 de diseño)
+    let screwScale = 1;
 
     function syncScrewMatrix(s) {
       if (s.removed || s.animating) {
@@ -770,11 +773,11 @@
       }
       dummy.position.copy(s.pos);
       dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), s.normal);
-      dummy.scale.set(1, 1, 1);
+      dummy.scale.setScalar(screwScale);
       dummy.updateMatrix();
       screwInstMesh.setMatrixAt(s.id, dummy.matrix);
 
-      dummy.position.copy(s.pos).addScaledVector(s.normal, 0.09);
+      dummy.position.copy(s.pos).addScaledVector(s.normal, 0.09 * screwScale);
       dummy.updateMatrix();
       crossMeshA.setMatrixAt(s.id, dummy.matrix);
 
@@ -800,7 +803,7 @@
       const lvlSpec = getLevelSpec(lvlNum);
       const vec3 = (x, y, z) => new THREE.Vector3(x, y, z);
       state.levelData = lvlNum === 1
-        ? penguinModelToLevel(buildPenguinLevel5Scene(), lvlSpec, vec3)
+        ? penguinModelToLevel(buildLevel1PenguinScene(), lvlSpec, vec3, PENGUIN_L1_LAYERS)
         : generateFigureLevel(lvlSpec, vec3);
       state.activeBoxes = [];
       state.maxBoxes = 2;
@@ -811,10 +814,12 @@
       state.isGameOver = false;
 
       const { spec, pieces, screws } = state.levelData;
+      screwScale = state.levelData.screwScale || 1;
 
       // 1. Añadir el núcleo escultórico 3D central reconocible
       const coreModel = buildFigureCoreGroup(state.levelData.figure, state.levelData.coreGrow, plasticBump);
       coreGroup.add(coreModel);
+      if (state.levelData.extraCore) coreGroup.add(state.levelData.extraCore);
 
       // 2. Construir las cáscaras curvas encajadas alrededor de la escultura
       // Sombras solo en niveles chicos: en niveles grandes el celular no da abasto
@@ -865,9 +870,9 @@
         c.setHex(SCREW_COLORS[s.colorId].int);
         screwInstMesh.setColorAt(s.id, c);
 
-        dummy.position.copy(s.pos).addScaledVector(s.normal, -0.06);
+        dummy.position.copy(s.pos).addScaledVector(s.normal, -0.06 * screwScale);
         dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), s.normal);
-        dummy.scale.set(1, 1, 1);
+        dummy.scale.setScalar(screwScale);
         dummy.updateMatrix();
         holeInstMesh.setMatrixAt(s.id, dummy.matrix);
       }
@@ -974,6 +979,7 @@
       const threadedScrew = createAnimatedThreadedScrewMesh(SCREW_COLORS[screw.colorId].int);
       threadedScrew.position.copy(screw.pos);
       threadedScrew.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), screw.normal);
+      threadedScrew.scale.setScalar(screwScale);
       flyingGroup.add(threadedScrew);
 
       const startPos = screw.pos.clone();
@@ -996,7 +1002,7 @@
           threadedScrew.position.lerpVectors(unscrewedPos, trayTargetPos, v);
           threadedScrew.position.y += Math.sin(v * Math.PI) * 1.4;
           threadedScrew.rotateX(0.25);
-          threadedScrew.scale.setScalar(1 - v * 0.45);
+          threadedScrew.scale.setScalar(screwScale * (1 - v * 0.45));
           requestAnimationFrame(animateUnscrewStep);
         } else {
           flyingGroup.remove(threadedScrew);

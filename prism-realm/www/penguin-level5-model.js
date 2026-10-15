@@ -478,14 +478,14 @@ export const PENGUIN_LAYERS = {
 
 // Convierte el modelo esculpido al formato de nivel del juego (piezas con malla propia, tornillos, cajas).
 // Colores y cajas los asigna el generador (orden exterior → interior) para garantizar que el nivel se pueda resolver.
-export function penguinModelToLevel(model, spec, makeVec) {
+export function penguinModelToLevel(model, spec, makeVec, layers = PENGUIN_LAYERS) {
   const keyToIndex = new Map(model.pieces.map((p, i) => [p.id, i]));
   const pieces = model.pieces.map((p, i) => {
     const pos = p.mesh.position.clone();
     return {
       id: i,
       key: p.id,
-      layer: PENGUIN_LAYERS[p.id] ?? 0,
+      layer: layers[p.id] ?? 0,
       prebuilt: true,
       mesh: p.mesh,
       pos,
@@ -534,5 +534,11 @@ export function penguinModelToLevel(model, spec, makeVec) {
     for (let k = 0; k < 3; k++) sorted[t * 3 + k].colorId = c;
   }
 
-  return { spec, figure: { parts: [] }, coreGrow: 0, pieces, screws, boxQueue };
+  // innerCore (opcional): relleno macizo estático que el juego agrega al grupo del núcleo.
+  // screwScale (opcional): factor de tamaño del tornillo instanciado (1 = tamaño estándar del juego).
+  return {
+    spec, figure: { parts: [] }, coreGrow: 0, pieces, screws, boxQueue,
+    extraCore: model.innerCore || null,
+    screwScale: model.screwScale || 1
+  };
 }
