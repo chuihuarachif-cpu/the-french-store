@@ -2,6 +2,8 @@
 // Nivel 1 (pingüino) vive en prism-level1-penguin.js; el nivel 5 usa el pingüino del modelo anterior.
 import * as THREE from 'three';
 import { buildLevel1PenguinScene, PENGUIN_L1_LAYERS, snapScrewsToSurface, L1_SCREW_RADIUS } from './prism-level1-penguin.js';
+import { sculptLevel } from './prism-sculpt.js';
+import { designForLevel } from './prism-level-designs.js';
 
 export const LEVEL_NAMES_500 = [
   "Pingüino Polar", // Nivel 1
@@ -1391,6 +1393,11 @@ export function buildBlueprintScene(blueprintIn, target = Infinity) {
  */
 export function buildToyLevelModel(levelNumber, totalScrews) {
   const title = getLevelOfficialTitle(levelNumber);
+  const design = designForLevel(levelNumber, title);
+  if (design) {
+    const model = sculptLevel(design, totalScrews, { seed: levelNumber * 7919 + 17 });
+    return { model, layers: { ...model.layers }, title };
+  }
   const colors = getThemeColorsForName(title, levelNumber);
   const bp = getBlueprintForLevel(levelNumber, () => PENGUIN_FALLBACK);
   let model, layers;

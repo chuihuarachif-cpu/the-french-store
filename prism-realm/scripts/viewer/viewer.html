@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
+<style>html,body{margin:0;background:#dbeafe}</style></head>
+<body><script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { buildToyLevelModel, getLevelOfficialTitle } from './prism-toy-catalog.js';
+import { getLevelSpec } from './prism-figure-math.js';
+import { penguinModelToLevel } from './penguin-level5-model.js';
+import { buildLevel1PenguinScene, PENGUIN_L1_LAYERS } from './prism-level1-penguin.js';
+import { SCREW_COLORS } from './prism-assets-catalog.js';
+const W = 330, H = 420;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xe0efff);
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 500);
+const dl = new THREE.DirectionalLight(0xffffff, 0.78); dl.position.set(4, 5, 3); camera.add(dl); scene.add(camera);
+scene.add(new THREE.AmbientLight(0xffffff, 0.82)); scene.add(new THREE.HemisphereLight(0xffffff, 0xc7d2fe, 0.55));
+const head = new THREE.CylinderGeometry(0.24, 0.22, 0.16, 16); head.rotateX(Math.PI / 2);
+let current = null;
+window.shoot = (L, yaw = 0, zoom = 1.45) => {
+  if (current) scene.remove(current);
+  const spec = getLevelSpec(L);
+  const v = (x, y, z) => new THREE.Vector3(x, y, z);
+  let model, layers;
+  if (L === 1) { model = buildLevel1PenguinScene(); layers = PENGUIN_L1_LAYERS; }
+  else ({ model, layers } = buildToyLevelModel(L, spec.totalScrews));
+  const lvl = penguinModelToLevel(model, spec, v, layers, b => [3, 2, 1, 4, 7, 5, 6, 0, 8, 9][b % 7]);
+  const g = new THREE.Group();
+  for (const p of lvl.pieces) { g.add(p.mesh); if (window.DBGC && p.key.startsWith(window.DBGC)) p.mesh.material = new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(Math.random(), 0.9, 0.5) }); }
+  if (lvl.extraCore) g.add(lvl.extraCore);
+  const ss = lvl.screwScale || 1;
+  const inst = new THREE.InstancedMesh(head, new THREE.MeshStandardMaterial({ roughness: 0.4 }), lvl.screws.length);
+  const d = new THREE.Object3D(), c = new THREE.Color();
+  lvl.screws.forEach((s, i) => { d.position.copy(s.pos); d.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), s.normal); d.scale.setScalar(ss); d.updateMatrix(); inst.setMatrixAt(i, d.matrix); inst.setColorAt(i, c.setHex(SCREW_COLORS[s.colorId].int)); });
+  g.add(inst);
+  g.rotation.y = yaw;
+  scene.add(g); current = g;
+  const k = model.frameK || 1;
+  camera.position.set(Math.sin(0) * 13.5 * k, 3.2 * k - 0.42 * (k - 1), 13.5 * k / zoom);
+  camera.lookAt(0, -0.42 * (k - 1), 0);
+  renderer.render(scene, camera);
+  return { url: renderer.domElement.toDataURL('image/jpeg', 0.85), title: getLevelOfficialTitle(L), screws: lvl.screws.length, pieces: lvl.pieces.length };
+};
+window.ready = true;
+</script></body></html>

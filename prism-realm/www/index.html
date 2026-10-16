@@ -848,6 +848,21 @@
       crossMeshB.setMatrixAt(s.id, dummy.matrix);
     }
 
+    // Encuadre por nivel: las figuras de los niveles grandes son más grandes y la cámara se aleja en proporción
+    let camK = 1;
+    function frameCamera(k) {
+      camK = k;
+      controls.target.set(0, -0.42 * (k - 1), 0);
+      camera.position.set(0, 3.2 * k - 0.42 * (k - 1), 13.5 * k);
+      controls.minDistance = 5.5;
+      controls.maxDistance = 26 * k;
+      const sl = document.getElementById('slider-zoom');
+      sl.min = 5.5; sl.max = (26 * k).toFixed(1); sl.value = (13.5 * k).toFixed(1);
+      camera.far = 150 * k;
+      camera.updateProjectionMatrix();
+      controls.update();
+    }
+
     function startLevel(lvlNum) {
       if (state.autoTimer) { clearInterval(state.autoTimer); state.autoTimer = null; }
       document.getElementById('modal-victory').classList.remove('open');
@@ -875,6 +890,7 @@
           const built = buildToyLevelModel(lvlNum, lvlSpec.totalScrews);
           if (built.model.screws.length === lvlSpec.totalScrews) {
             state.levelData = penguinModelToLevel(built.model, lvlSpec, vec3, built.layers, colorFn);
+            state.levelData.frameK = built.model.frameK || 1;
           } else {
             console.error(`Nivel ${lvlNum}: ${built.model.screws.length} tornillos, se esperaban ${lvlSpec.totalScrews}`);
           }
@@ -898,6 +914,7 @@
 
       const { spec, pieces, screws } = state.levelData;
       screwScale = state.levelData.screwScale || 1;
+      frameCamera(state.levelData.frameK || 1);
 
       // 1. Añadir el núcleo escultórico 3D central reconocible
       const coreModel = buildFigureCoreGroup(state.levelData.figure, state.levelData.coreGrow, plasticBump);
@@ -906,12 +923,13 @@
 
       // 2. Construir las cáscaras curvas encajadas alrededor de la escultura
       // Sombras solo en niveles chicos: en niveles grandes el celular no da abasto
-      const heavyLevel = spec.totalScrews > 200;
+      const heavyLevel = spec.totalScrews > 200 || pieces.length > 110;
       renderer.shadowMap.enabled = !heavyLevel;
       dirLight.castShadow = !heavyLevel;
       for (const p of pieces) {
         // Pieza con malla propia (modelo esculpido): se usa tal cual, con sus materiales
         if (p.prebuilt) {
+          p.mesh.userData.levelPieceId = p.id;
           p.mesh.traverse(o => { if (o.isMesh) { o.castShadow = !heavyLevel; o.receiveShadow = !heavyLevel; } });
           piecesGroup.add(p.mesh);
           continue;
@@ -938,6 +956,7 @@
         mesh.castShadow = !heavyLevel;
         mesh.receiveShadow = !heavyLevel;
         p.mesh = mesh;
+        mesh.userData.levelPieceId = p.id;
         piecesGroup.add(mesh);
       }
 
@@ -1056,17 +1075,32 @@
     // Está bloqueado si el rayo toca una placa viva que no sea la suya.
     const blockRaycaster = new THREE.Raycaster();
     const blockOrigin = new THREE.Vector3();
+    // Las placas que tapan a cada tornillo se calculan una sola vez (la primera vez que se consulta)
+    // y se guardan; después solo se revisa si alguna sigue puesta. Así el toque es instantáneo.
     function isBlocked(screw) {
       if (!state.levelData) return false;
-      // Solo bloquean las placas de capas superiores (más exteriores) que todavía existan
-      const candidates = [];
-      for (const p of state.levelData.pieces) {
-        if (p.layer > screw.layer && p.mesh && p.mesh.visible && !p.falling && !p.removed) candidates.push(p.mesh);
+      const pieces = state.levelData.pieces;
+      if (!screw.blockers) {
+        const cand = [];
+        for (const p of pieces) {
+          if (p.layer > screw.layer && p.mesh && !p.falling && !p.removed) cand.push(p.mesh);
+        }
+        blockOrigin.copy(screw.pos).addScaledVector(screw.normal, 0.15);
+        blockRaycaster.set(blockOrigin, screw.normal);
+        blockRaycaster.far = 2.8 * (state.levelData.frameK || 1);
+        const ids = new Set();
+        for (const h of blockRaycaster.intersectObjects(cand, true)) {
+          let o = h.object;
+          while (o && !o.userData.levelPieceId && o.userData.levelPieceId !== 0) o = o.parent;
+          if (o) ids.add(o.userData.levelPieceId);
+        }
+        screw.blockers = [...ids];
       }
-      blockOrigin.copy(screw.pos).addScaledVector(screw.normal, 0.15);
-      blockRaycaster.set(blockOrigin, screw.normal);
-      blockRaycaster.far = 2.8;
-      return blockRaycaster.intersectObjects(candidates, true).length > 0;
+      for (const id of screw.blockers) {
+        const p = pieces[id];
+        if (p && !p.falling && !p.removed) return true;
+      }
+      return false;
     }
 
     /* ========================================================================
@@ -1150,15 +1184,18 @@
       const startPos = screw.pos.clone();
       const unscrewedPos = screw.pos.clone().addScaledVector(screw.normal, 1.35); // tirón de salida más largo
 
-      let progress = 0;
+      // Desenroscado por tiempo (igual de rápido en cualquier celular, 60 o 120 Hz)
+      const t0 = performance.now();
+      const UNSCREW_MS = 260;
+      const baseQuat = threadedScrew.quaternion.clone();
       function animateUnscrewStep() {
-        progress += 0.06; // Velocidad calibrada para apreciar el giro de la rosca al salir
-        if (progress < 0.99) {
-          // Fase 1: Desenroscado mecánico girando 720° sobre su eje Z local mientras sale del agujero
-          const u = progress / 0.99;
+        const u = (performance.now() - t0) / UNSCREW_MS;
+        if (u < 1) {
+          // Fase 1: Desenroscado mecánico girando ~2 vueltas sobre su eje mientras sale del agujero
           const easeOut = 1 - Math.pow(1 - u, 2);
           threadedScrew.position.lerpVectors(startPos, unscrewedPos, easeOut);
-          threadedScrew.rotateZ(0.42);
+          threadedScrew.quaternion.copy(baseQuat);
+          threadedScrew.rotateZ(u * Math.PI * 4);
           requestAnimationFrame(animateUnscrewStep);
         } else {
           // Fase 2: el tornillo sale del 3D y vuela por la pantalla hasta clavarse en su agujero (caja o bandeja)
@@ -1421,8 +1458,37 @@
       const hits = raycaster.intersectObjects([screwInstMesh, ...plateMeshes], true);
       if (hits.length > 0 && hits[0].object === screwInstMesh && hits[0].instanceId !== undefined) {
         extractScrew(hits[0].instanceId);
+        return;
       }
+      // Toque con tolerancia: si el dedo cayó junto a un tornillo visible (hasta ~26 px), se toma ese
+      const sid = nearestVisibleScrew(e.clientX, e.clientY, rect, plateMeshes);
+      if (sid !== -1) extractScrew(sid);
     });
+
+    const _proj = new THREE.Vector3();
+    function nearestVisibleScrew(cx, cy, rect, plateMeshes) {
+      if (!state.levelData) return -1;
+      const R = 26;
+      const near = [];
+      for (const s of state.levelData.screws) {
+        if (s.removed || s.animating) continue;
+        _proj.copy(s.pos).project(camera);
+        if (_proj.z > 1) continue;
+        const sx = rect.left + (_proj.x * 0.5 + 0.5) * rect.width;
+        const sy = rect.top + (-_proj.y * 0.5 + 0.5) * rect.height;
+        const d2 = (sx - cx) ** 2 + (sy - cy) ** 2;
+        if (d2 < R * R) near.push({ s, d2 });
+      }
+      near.sort((a, b) => a.d2 - b.d2);
+      for (const { s } of near.slice(0, 6)) {
+        // Visible: el rayo de la cámara hacia el tornillo toca primero ese mismo tornillo
+        _proj.copy(s.pos).addScaledVector(s.normal, 0.05 * screwScale);
+        raycaster.set(camera.position, _proj.clone().sub(camera.position).normalize());
+        const h = raycaster.intersectObjects([screwInstMesh, ...plateMeshes], true);
+        if (h.length && h[0].object === screwInstMesh && h[0].instanceId === s.id) return s.id;
+      }
+      return -1;
+    }
 
     // Modal de 500 niveles
     const all500 = buildAll500LevelsManifest();
@@ -1430,7 +1496,8 @@
     all500.forEach(item => {
       const cell = document.createElement('div');
       cell.className = 'lvl-cell';
-      cell.innerHTML = `<strong>Nv. ${item.levelId}</strong><span>🔩 ${item.totalScrews}</span>`;
+      const nm = getLevelOfficialTitle(item.levelId).split(' ').slice(0, 2).join(' ');
+      cell.innerHTML = `<strong>Nv. ${item.levelId}</strong><span style="font-size:9px;line-height:1.1;">${nm}</span><span>🔩 ${item.totalScrews}</span>`;
       cell.onclick = () => {
         document.getElementById('modal-levels').classList.remove('open');
         startLevel(item.levelId);
@@ -1501,10 +1568,7 @@
       }, 140);
     };
 
-    document.getElementById('btn-reset-cam').onclick = () => {
-      controls.reset();
-      camera.position.set(0, 3.2, 13.5);
-    };
+    document.getElementById('btn-reset-cam').onclick = () => frameCamera(camK);
 
     document.getElementById('slider-zoom').addEventListener('input', e => {
       const d = parseFloat(e.target.value);
@@ -1554,7 +1618,7 @@
     }
 
     // Iniciamos en el Nivel 1 con el Pingüino Navideño completo
-    window.__prism = { startLevel }; // gancho de depuración/capturas de CI
+    window.__prism = { startLevel, setPixelRatio: r => { renderer.setPixelRatio(r); renderer.setSize(window.innerWidth, window.innerHeight); } }; // gancho de depuración/capturas de CI
     startLevel(1);
     requestAnimationFrame(tick);
   </script>
