@@ -21,6 +21,8 @@ export function xform(parts, t = {}) {
       if (out.R) out.R *= S;
       if (out.tr) out.tr *= S;
       if (out.bend) out.bend = out.bend.map(v => v * S);
+      if (out.pts) out.pts = out.pts.map(q => q.map(v => v * S));
+      if (out.rad != null) out.rad = [].concat(out.rad).map(v => v * S);
     }
     if (t.prefix) out.name = t.prefix + out.name;
     return out;

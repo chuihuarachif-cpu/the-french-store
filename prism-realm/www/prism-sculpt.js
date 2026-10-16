@@ -100,7 +100,32 @@ class Part {
     this.role = raw.role || 'body';
     this.c = raw.c ?? 0xffffff;
     this.mat = raw.mat || 'plastic';
-    if (this.s === 'torus') {
+    if (this.s === 'tube') {
+      // Tubo orgánico a lo largo de una curva suave (cuellos, trompas, colas, tentáculos, patas)
+      const pts = raw.pts.map(q => new THREE.Vector3(...q));
+      const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
+      const N = this.N = Math.max(16, Math.min(64, pts.length * 12));
+      const fr = curve.computeFrenetFrames(N, false);
+      this.tc = []; this.tt = []; this.tn = []; this.tb = []; this.tr2 = [];
+      const rads = raw.rad;
+      const radAt = t => {
+        if (!Array.isArray(rads)) return rads ?? 0.2;
+        if (rads.length === 1) return rads[0];
+        const x = t * (rads.length - 1), i = Math.min(rads.length - 2, Math.floor(x)), f = x - i;
+        const sm = f * f * (3 - 2 * f);
+        return rads[i] * (1 - sm) + rads[i + 1] * sm;
+      };
+      for (let i = 0; i <= N; i++) {
+        const t = i / N;
+        this.tc.push(curve.getPointAt(t));
+        this.tt.push(fr.tangents[i].clone()); this.tn.push(fr.normals[i].clone()); this.tb.push(fr.binormals[i].clone());
+        this.tr2.push(radAt(t));
+      }
+      this.eta = raw.eta || [-HALF_PI, HALF_PI];
+      this.om = raw.om || [-Math.PI, Math.PI];
+      this.r = [Math.max(...this.tr2), Math.max(...this.tr2), Math.max(...this.tr2)];
+      this.minR = Math.min(...this.tr2);
+    } else if (this.s === 'torus') {
       this.R = raw.R ?? 1;
       this.tr = raw.tr ?? 0.25;
       this.eta = raw.eta || [-Math.PI, Math.PI];
@@ -141,6 +166,23 @@ class Part {
   // Punto local (antes de la matriz). inset encoge los radios; k < 1 lleva el punto hacia el eje (cuñas macizas)
   local(eta, om, inset, k, out) {
     let x, y, z;
+    if (this.s === 'tube') {
+      const u = (eta + HALF_PI) / Math.PI, c = 0.1, N = this.N;
+      let t, axial = 0, rad, rr;
+      if (u < c) { const ph = -HALF_PI + (u / c) * HALF_PI; t = 0; rr = Math.max(0.015, this.tr2[0] - inset); axial = Math.sin(ph) * rr; rad = Math.cos(ph) * rr; }
+      else if (u > 1 - c) { const ph = ((u - (1 - c)) / c) * HALF_PI; t = 1; rr = Math.max(0.015, this.tr2[N] - inset); axial = Math.sin(ph) * rr; rad = Math.cos(ph) * rr; }
+      else { t = (u - c) / (1 - 2 * c); const fi = t * N, i = Math.min(N - 1, Math.floor(fi)), f = fi - i; rr = Math.max(0.015, this.tr2[i] * (1 - f) + this.tr2[i + 1] * f - inset); rad = rr; }
+      const fi = t * N, i = Math.min(N - 1, Math.floor(fi)), f = fi - i;
+      const C = _t1.copy(this.tc[i]).lerp(this.tc[i + 1], f);
+      const T = _t2.copy(this.tt[i]).lerp(this.tt[i + 1], f).normalize();
+      const Nn = _t3.copy(this.tn[i]).lerp(this.tn[i + 1], f).normalize();
+      const B = _t4.copy(this.tb[i]).lerp(this.tb[i + 1], f).normalize();
+      const co = Math.cos(om) * rad, so = Math.sin(om) * rad;
+      return out.set(
+        C.x + k * (T.x * axial + Nn.x * co + B.x * so),
+        C.y + k * (T.y * axial + Nn.y * co + B.y * so),
+        C.z + k * (T.z * axial + Nn.z * co + B.z * so));
+    }
     if (this.s === 'torus') {
       const rr = Math.max(0.015, this.tr - inset) * k;
       const ring = this.R + rr * Math.cos(eta);
@@ -206,6 +248,22 @@ class Part {
   // ~1 en la superficie exterior, < 1 dentro
   insideG(wp) {
     const q = _v6.copy(wp).applyMatrix4(this.Minv);
+    if (this.s === 'tube') {
+      let best = 1e9, bt = 0;
+      const N = this.N;
+      for (let i = 0; i < N; i++) {
+        const a = this.tc[i], b = this.tc[i + 1];
+        const abx = b.x - a.x, aby = b.y - a.y, abz = b.z - a.z;
+        const L2 = abx * abx + aby * aby + abz * abz || 1e-9;
+        let f = ((q.x - a.x) * abx + (q.y - a.y) * aby + (q.z - a.z) * abz) / L2;
+        f = Math.max(0, Math.min(1, f));
+        const dx = q.x - a.x - abx * f, dy = q.y - a.y - aby * f, dz = q.z - a.z - abz * f;
+        const d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 < best) { best = d2; bt = i + f; }
+      }
+      const i = Math.min(N - 1, Math.floor(bt)), f = bt - i;
+      return Math.sqrt(best) / Math.max(1e-3, this.tr2[i] * (1 - f) + this.tr2[i + 1] * f);
+    }
     if (this.s === 'torus') {
       const d = Math.hypot(Math.hypot(q.x, q.z) - this.R, q.y);
       return d / this.tr;
@@ -272,6 +330,7 @@ export const POLY = {
 
 const _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _v3 = new THREE.Vector3();
 const _v4 = new THREE.Vector3(), _v5 = new THREE.Vector3(), _v6 = new THREE.Vector3();
+const _t1 = new THREE.Vector3(), _t2 = new THREE.Vector3(), _t3 = new THREE.Vector3(), _t4 = new THREE.Vector3();
 
 /* ============================================================================
  * GEOMETRÍAS
@@ -418,6 +477,11 @@ function buildDeco(d0, sc, hostC = 0xffffff) {
       } else if (style === 'visor') {
         add(decoShape({ r: [s * 1.0, s * 0.55, s * 0.3], e: [0.4, 0.4] }, d.c ?? 0x22d3ee, 'glow'), 0, 0, s * 0.1);
         add(decoShape({ r: [s * 0.26, s * 0.14, s * 0.1] }, 0xffffff, 'basic'), -s * 0.45, s * 0.2, s * 0.38);
+      } else if (style === 'real') {
+        // ojo animal realista: globo oscuro brillante con iris fino y un reflejo pequeño
+        add(decoShape({ r: [s * 0.62, s * 0.62, s * 0.34] }, d.iris ?? 0x3b2410, 'gloss'), 0, 0, s * 0.06);
+        add(decoShape({ r: [s * 0.42, s * 0.42, s * 0.3] }, 0x0b0b0f, 'gloss'), 0, 0, s * 0.16);
+        add(decoShape({ r: [s * 0.13, s * 0.13, s * 0.08] }, 0xffffff, 'basic'), -s * 0.2, s * 0.2, s * 0.4);
       } else if (style === 'dot') {
         add(decoShape({ r: [s * 0.55, s * 0.55, s * 0.3] }, d.c ?? 0x1b1b2f, 'gloss'), 0, 0, s * 0.1);
         add(decoShape({ r: [s * 0.18, s * 0.18, s * 0.1] }, 0xffffff, 'basic'), -s * 0.15, s * 0.18, s * 0.34);
@@ -593,7 +657,13 @@ export function sculptLevel(design, T, opts = {}) {
     if (kept.some(r => (r.role || 'body') !== 'deco')) rawParts = kept;
   }
   if (!design.keepFace) {
-    design = { ...design, decos: (design.decos || []).filter(d => !FACE_DECOS.has(d.d) || (design.creature && /^(head|face)/i.test(d.on || ''))) };
+    // Estética realista: en criaturas solo quedan los ojos (pequeños y naturales) y la nariz;
+    // nada de mejillas rosadas ni sonrisas dibujadas.
+    design = { ...design, decos: (design.decos || [])
+      .filter(d => !FACE_DECOS.has(d.d) || (design.creature && /^(head|face)/i.test(d.on || '') && (d.d === 'eye' || d.d === 'nose')))
+      .map(d => (d.d === 'eye' && !design.cartoonEyes && d.style !== 'real' && d.style !== 'visor')
+        ? { ...d, style: 'real', size: (d.size ?? 0.2) * (d.style === 'round' ? 0.75 : 0.62), iris: d.style === 'round' ? d.iris : undefined }
+        : d) };
   }
   // Niveles con muchos tornillos: las piezas finas del cuerpo (mangos, astas, patas) se engordan un poco,
   // estilo juguete macizo, para que quepan tornillos tocables.
@@ -610,6 +680,7 @@ export function sculptLevel(design, T, opts = {}) {
     rawParts = rawParts.map(r => {
       if ((r.role || 'body') !== 'body' || r.noChunk) return r;
       if (r.s === 'torus') return (r.tr ?? 0.25) < minR ? { ...r, tr: minR } : r;
+      if (r.s === 'tube') return { ...r, rad: [].concat(r.rad ?? 0.2).map(x => Math.max(x, minR * 0.85)) };
       if (!r.r) return r;
       const big = Math.max(...r.r);
       if (big < minR * 1.6) return r;          // piezas pequeñas (botones, gemas) quedan igual
@@ -1061,9 +1132,11 @@ function tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInside
       params.push([e0 + (e1 - e0) * fe, o0 + (o1 - o0) * fo]);
     }
     params.push([(e0 + e1) / 2, (o0 + o1) / 2]);
-    if (p.s !== 'torus' && e1 >= HALF_PI - 1e-6) params.push([HALF_PI - 0.02, (o0 + o1) / 2]);
+    if (p.s !== 'torus' && p.s !== 'tube' && e1 >= HALF_PI - 1e-6) params.push([HALF_PI - 0.02, (o0 + o1) / 2]);
     const good = [], soft = [], hard = [];
     for (const [eta, om] of params) {
+      // tubos: nada de tornillos en la punta redondeada (patas, cuernos, colas)
+      if (p.s === 'tube' && Math.abs(eta) > HALF_PI * 0.8) continue;
       const pos = p.world(eta, om, pt.inset, 1, new THREE.Vector3());
       const n = p.normal(eta, om, pt.inset, new THREE.Vector3());
       tmp.copy(pos).addScaledVector(n, 0.06);

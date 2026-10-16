@@ -13,6 +13,7 @@ import { addZone7 } from './prism-designs-z7.js';
 import { addZone8 } from './prism-designs-z8.js';
 import { addZone9 } from './prism-designs-z9.js';
 import { addZone10 } from './prism-designs-z10.js';
+import { addZone1Real } from './prism-designs-z1real.js';
 
 const D = {};
 
@@ -223,6 +224,7 @@ addZone7(D);
 addZone8(D);
 addZone9(D);
 addZone10(D);
+addZone1Real(D);
 
 // Objetos muy delgados con muchos tornillos: versión "juguete" más gruesa para que el tornillo sea tocable
 function thicken(fn, minR) {

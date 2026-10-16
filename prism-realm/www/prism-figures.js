@@ -12,6 +12,7 @@ export const BOX = (name, p, r, c, o = {}) => ({ name, p, r, c, e: [0.3, 0.3], .
 export const CYL = (name, p, r, c, o = {}) => ({ name, p, r, c, e: [0.3, 1], ...o });
 export const CONE = (name, p, r, c, o = {}) => ({ name, p, r, c, e: [0.55, 1], taper: -0.94, ...o });
 export const TOR = (name, p, R, tr, c, o = {}) => ({ name, s: 'torus', p, R, tr, c, ...o });
+export const TUBE = (name, pts, rad, c, o = {}) => ({ name, s: 'tube', p: [0, 0, 0], pts, rad, c, ...o });
 export const POLY = (name, p, r, faces, c, o = {}) => ({ name, s: 'poly', faces, p, r, c, ...o });
 
 // Barra/miembro entre dos puntos (cilindro redondeado o elipsoide)
@@ -28,6 +29,7 @@ export function mirror(part, suffix = 'R') {
   const rot = part.rot || [0, 0, 0];
   const m = { ...part, name: `${part.name}${suffix}`, p: [-part.p[0], part.p[1], part.p[2]], rot: [rot[0], -rot[1], -rot[2]] };
   if (part.bend) m.bend = [-part.bend[0], part.bend[1]];
+  if (part.pts) m.pts = part.pts.map(q => [-q[0], q[1], q[2]]);
   if (part.dir) m.dir = [-part.dir[0], part.dir[1], part.dir[2]];
   if (part.side) m.side = [-part.side[0], part.side[1], part.side[2]];
   if (part.on && part.mirrorOn) m.on = part.mirrorOn;
