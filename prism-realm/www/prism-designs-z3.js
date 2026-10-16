@@ -5,25 +5,40 @@ import { xform, cute, gear, wheel, pipe } from './prism-figures-obj.js';
 const M = { mat: 'metal' };
 const steel = 0xcbd5e1, dark = 0x334155, red = 0xef4444, blue = 0x3b82f6, yellow = 0xfacc15, orange = 0xf97316, green = 0x22c55e, purple = 0xa855f7, teal = 0x14b8a6;
 
-/* Bloque de motor: cilindros en línea, en V, bóxer o monocilíndrico */
+/* Bloque de motor: en línea, en V, bóxer o monocilíndrico — tapas de válvulas, escapes, admisión y poleas */
 function engine(o = {}) {
   const c = o.c ?? red, c2 = o.c2 ?? steel, n = o.cyl ?? 4, lay = o.layout ?? 'inline';
-  const parts = [BOX('block', [0, -1.25, 0], [o.bw ?? 0.95, 0.62, o.bl ?? 0.25 + n * 0.22], c2, { ...M, e: [0.45, 0.45] }),
-    BOX('pan', [0, -1.95, 0], [(o.bw ?? 0.95) * 0.8, 0.18, (o.bl ?? 0.25 + n * 0.22) * 0.9], dark, { e: [0.5, 0.5] })];
-  const per = lay === 'V' ? Math.ceil(n / 2) : n;
-  const zs = Array.from({ length: per }, (_, i) => (i - (per - 1) / 2) * 0.44);
-  const banks = lay === 'V' ? [[-0.48, 0.55], [0.48, -0.55]] : lay === 'boxer' ? [[-1.05, HP], [1.05, -HP]] : [[0, 0]];
-  for (const [x, ang] of banks) {
-    const head = [0, 0.5, 0];
-    for (const z of zs) parts.push(...xform([CYL(`cyl${x}${z}`, [0, 0, 0], [0.24, 0.35, 0.24], c2, M)], { p: [x * (lay === 'boxer' ? 1 : 1), -0.45, z], rot: [0, 0, ang] }));
-    parts.push(...xform([BOX(`cover${x}`, head, [0.36, 0.17, zs.length * 0.22 + 0.12], c, { e: [0.5, 0.5] })], { p: [x * (lay === 'boxer' ? 1.02 : 1.0) + (lay === 'boxer' ? 0 : 0), -0.45, 0], rot: [0, 0, ang] }));
+  const per = lay === 'V' || lay === 'boxer' ? Math.ceil(n / 2) : n;
+  const L = 0.32 + per * 0.24;            // media longitud del bloque
+  const bw = o.bw ?? (lay === 'inline' ? 0.7 : 0.85);
+  const parts = [
+    BOX('block', [0, -0.95, 0], [bw, 0.62, L], c2, { ...M, e: [0.35, 0.35] }),
+    BOX('pan', [0, -1.72, 0], [bw * 0.8, 0.2, L * 0.92], dark, { e: [0.5, 0.5] })
+  ];
+  const zs = Array.from({ length: per }, (_, i) => (i - (per - 1) / 2) * 0.48);
+  const banks = lay === 'V' ? [[-0.55, 0.62], [0.55, -0.62]] : lay === 'boxer' ? [[-1.0, HP], [1.0, -HP]] : [[0, 0]];
+  banks.forEach(([x, ang], bi) => {
+    const up = [-Math.sin(ang), Math.cos(ang), 0];
+    const at = k => [x + up[0] * k, -0.35 + up[1] * k, 0];
+    // banco de cilindros (macizo) + tapa de válvulas con nervios
+    parts.push(...xform([BOX(`bank${bi}`, [0, 0, 0], [0.42, 0.42, L * 0.94], c2, { ...M, e: [0.4, 0.4] })], { p: at(0.05), rot: [0, 0, ang] }));
+    parts.push(...xform([BOX(`cover${bi}`, [0, 0, 0], [0.4, 0.16, L * 0.86], c, { e: [0.45, 0.45] })], { p: at(0.58), rot: [0, 0, ang] }));
+    // escapes: un tubo por cilindro hacia fuera
+    const out = [Math.sign(x || 1) * Math.cos(ang), Math.sign(x || 1) * Math.sin(ang), 0];
+    if (lay !== 'inline' || bi === 0) zs.forEach((z, k) => parts.push(rod(`exh${bi}_${k}`, [x + out[0] * 0.35, -0.35 + out[1] * 0.35 - 0.05, z], [x + out[0] * 0.75, -0.75, z * 0.8], 0.08, 0x9ca3af, { ...M, role: 'acc' })));
+  });
+  if (lay === 'inline') zs.forEach((z, k) => parts.push(rod(`intake${k}`, [-0.35, 0.1, z], [-0.85, -0.2, z], 0.08, dark, { role: 'acc' })));
+  if (lay === 'V') {
+    parts.push(BOX('manifold', [0, 0.05, 0], [0.3, 0.2, L * 0.8], o.manC ?? dark, { e: [0.5, 0.5] }));
+    if (!o.blower) zs.forEach((z, k) => parts.push(CYL(`stack${k}`, [0, 0.4, z], [0.1, 0.18, 0.1], 0xe5e7eb, { ...M, role: 'acc' })));
   }
-  parts.push(...xform(wheel('pulley', 0.42, 0.18, dark, yellow), { p: [0, -1.3, -(o.bl ?? 0.25 + n * 0.22) - 0.15], rot: [0, HP, 0] }));
-  if (o.blower) parts.push(BOX('blower', [0, 0.35, 0], [0.42, 0.3, 0.55], yellow, M), CYL('scoop', [0, 0.85, 0.15], [0.32, 0.22, 0.38], dark));
+  if (o.blower) parts.push(BOX('blower', [0, 0.45, 0], [0.38, 0.28, L * 0.5], yellow, M), BOX('scoop', [0, 0.9, 0.1], [0.3, 0.16, 0.42], dark));
+  // frente: poleas y correa
+  parts.push(...xform(wheel('pulley', 0.42, 0.18, dark, yellow), { p: [0, -1.05, L + 0.12], rot: [0, HP, 0] }));
+  parts.push(...xform(wheel('pulleyB', 0.24, 0.14, dark, 0xe5e7eb), { p: [0.55, -0.45, L + 0.12], rot: [0, HP, 0] }));
+  parts.push(E('alternator', [-0.6, -0.5, L - 0.05], [0.24, 0.24, 0.3], 0xe5e7eb, M));
   if (o.extra) parts.push(...o.extra);
-  parts.push(...base(o.base ?? 'metal'));
-  const decos = [...cute('block', [0, 0.1, 1], { eye: 0.17, spread: 0.35, cheekSpread: 0.6 })];
-  return { parts, decos, view: o.view ?? 0.55 };
+  return { parts, decos: [], view: o.view ?? 0.75, pitch: o.pitch ?? 0.28 };
 }
 
 /* Turbina / ventilador radial con aspas */

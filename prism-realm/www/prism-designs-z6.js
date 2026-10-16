@@ -355,7 +355,7 @@ export function addZone6(D) {
   // 276 Telar Jacquard con tarjetas perforadas
   D[276] = () => ({
     parts: [
-      ...[[0.95, 0.5], [-0.95, 0.5], [0.95, -0.5], [-0.95, -0.5]].map(([x, z], i) => rod(`post${i}`, [x, -2.2, z], [x, 1.2, z], 0.08, darkWood)),
+      ...[[0.95, 0.5], [-0.95, 0.5], [0.95, -0.5], [-0.95, -0.5]].map(([x, z], i) => rod(`post${i}`, [x, -2.2, z], [x, 1.2, z], 0.08, darkWood, { support: false })),
       BOX('topBeam', [0, 1.25, 0], [1.05, 0.12, 0.6], darkWood),
       BOX('jacquard', [0, 0.85, 0], [0.55, 0.32, 0.4], wood),
       ...[0, 1, 2, 3, 4].map(i => BOX(`card${i}`, [0.0, 0.45 - i * 0.18, 0.65 + (i % 2) * 0.06], [0.45, 0.08, 0.02], 0xfef3c7, { rot: [0.3, 0, 0], role: 'acc' })),
@@ -434,7 +434,7 @@ export function addZone6(D) {
       E('pommel', [1.48, -0.88, 0], [0.26, 0.24, 0.24], brass, M),
       BOX('hammerF', [0.85, 0.72, 0], [0.07, 0.18, 0.06], 0x64748b, { rot: [0, 0, -0.5], role: 'acc' }),
       TOR('guard', [0.55, 0.0, 0], 0.17, 0.04, brass, { rot: [HP, 0, 0], ...M, role: 'acc' }),
-      ...pair(rod('holder', [0.6, -2.05, 0], [0.6, 0.05, 0], 0.08, 0x7f1d1d)).map((p, i) => ({ ...p, p: [i ? -1.0 : 0.3, p.p[1], 0] })),
+      ...pair(rod('holder', [0.6, -2.05, 0], [0.6, 0.05, 0], 0.08, 0x7f1d1d, { support: true })).map((p, i) => ({ ...p, p: [i ? -1.0 : 0.3, p.p[1], 0] })),
       BOX('standF', [0, -2.0, 0.0], [1.25, 0.15, 0.45], 0x7f1d1d),
       ...base('wood')
     ],

@@ -19,6 +19,7 @@ page.on('pageerror', e => errs.push(e.message));
 page.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
 await page.goto(`http://127.0.0.1:${server.address().port}/viewer.html`);
 await page.waitForFunction(() => window.ready, null, { timeout: 60000 });
+if (process.env.PEEL) await page.evaluate(c => { window.PEEL = Number(c); }, process.env.PEEL);
 if (process.env.DBGC) await page.evaluate(c => { window.DBGC = c; }, process.env.DBGC);
 const meta = [];
 for (const L of LEVELS) {

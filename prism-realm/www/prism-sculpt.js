@@ -463,15 +463,82 @@ function buildDeco(d0, sc, hostC = 0xffffff) {
 /* ============================================================================
  * CONSTRUCCIÓN DEL NIVEL
  * ========================================================================== */
-const FRAME_W = 4.5;      // ancho máximo en pantalla (igual que el pingüino del nivel 1)
-const FRAME_H = 5.05;     // alto máximo
+const FRAME_W = 3.95;     // ancho máximo en pantalla (igual que el pingüino del nivel 1)
+const FRAME_H = 5.5;      // alto máximo
 const FRAME_BOTTOM = -2.98;
+// Centro vertical de la figura: algo por debajo del punto que mira la cámara (zona libre entre HUD y barra)
+const FRAME_CY = k => -0.42 * (k - 1) - 0.8 * k;
+
+const SPACING_K = 2.5;   // distancia mínima entre tornillos de una capa, en radios de tornillo
+
+// Peanas, postes y pedestales de exhibición: se quitan para que el objeto llene la pantalla
+const SUPPORT_RE = /^(stand|post|ped|plinth|pedestal|cradle|base)([A-Z0-9_]|$)|(Post|Stand|Ped|Plinth|Pedestal|Cradle)(R|[0-9])?$/;
+const FORCED_SUPPORT_RE = /^(rack|block|cushion)[A-Z0-9]|^(easel|holder)([A-Z0-9_]|$)/;
+const FACE_DECOS = new Set(['eye', 'mouth', 'cheek', 'nose']);
+
+// Cámara inicial del juego (index.html → frameCamera) y zona de pantalla disponible en NDC
+const CAM_ASPECT = 0.45;
+const SAFE_X = 0.88, SAFE_TOP = 0.42, SAFE_BOTTOM = -0.74;
+function gameCamera(k) {
+  const cam = new THREE.PerspectiveCamera(42, CAM_ASPECT, 0.1, 200 * k);
+  cam.position.set(0, 3.2 * k - 0.42 * (k - 1), 13.5 * k);
+  cam.lookAt(0, -0.42 * (k - 1), 0);
+  cam.updateMatrixWorld(true);
+  cam.updateProjectionMatrix();
+  return cam;
+}
+function fitToCamera(parts, k, cx, cz, sc0) {
+  const pts = [];
+  const v = new THREE.Vector3();
+  for (const p of parts) {
+    if (p.role === 'ghost') continue;
+    for (let i = 0; i <= 6; i++) for (let j = 0; j < 10; j++) {
+      p.world(p.eta[0] + (p.eta[1] - p.eta[0]) * i / 6, p.om[0] + (p.om[1] - p.om[0]) * j / 10, 0, 1, v);
+      pts.push(v.x - cx, v.y, v.z - cz);
+    }
+  }
+  const cam = gameCamera(k);
+  const q = new THREE.Vector3();
+  const unitsPerNdc = 13.87 * k * Math.tan(21 * Math.PI / 180);
+  const test = (s) => {
+    // centra en vertical (3 pasadas) y devuelve el desplazamiento y si cabe
+    let ymid = 0, y0 = 0;
+    for (let n = 0; n < 4; n++) {
+      let xmax = 0, ylo = 9, yhi = -9;
+      for (let i = 0; i < pts.length; i += 3) {
+        q.set(pts[i] * s, pts[i + 1] * s + y0, pts[i + 2] * s).project(cam);
+        xmax = Math.max(xmax, Math.abs(q.x)); ylo = Math.min(ylo, q.y); yhi = Math.max(yhi, q.y);
+      }
+      const target = (SAFE_TOP + SAFE_BOTTOM) / 2;
+      ymid = (ylo + yhi) / 2;
+      if (n === 3) return { ok: xmax <= SAFE_X && yhi - ylo <= SAFE_TOP - SAFE_BOTTOM, y0 };
+      y0 += (target - ymid) * unitsPerNdc;
+    }
+    return { ok: false, y0 };
+  };
+  // por el centro de la caja en y: el punto de partida centra la figura en el origen
+  let ymin = 1e9, ymax = -1e9;
+  for (let i = 1; i < pts.length; i += 3) { ymin = Math.min(ymin, pts[i]); ymax = Math.max(ymax, pts[i]); }
+  const yc = (ymin + ymax) / 2;
+  for (let i = 1; i < pts.length; i += 3) pts[i] -= yc;
+  let lo = sc0 * 0.4, hi = sc0 * 2.2;
+  let best = null;
+  for (let it = 0; it < 16; it++) {
+    const mid = (lo + hi) / 2;
+    const r = test(mid);
+    if (r.ok) { best = { sc: mid, y0: r.y0 }; lo = mid; } else hi = mid;
+  }
+  if (!best) { const r = test(lo); best = { sc: lo, y0: r.y0 }; }
+  return { sc: best.sc, y0: best.y0 - yc * best.sc };
+}
 
 function levelDepth(T) {
   if (T <= 90) return 2;
   if (T <= 260) return 3;
-  if (T <= 700) return 4;
-  return 5;
+  if (T <= 520) return 4;
+  if (T <= 800) return 5;
+  if (T <= 1100) return 6;
+  return 7;
 }
 
 function screwScaleFor(T) {
@@ -485,7 +552,57 @@ function screwScaleFor(T) {
  */
 export function sculptLevel(design, T, opts = {}) {
   const seed = (opts.seed ?? design.seed ?? 12345) >>> 0;
-  const rawParts = design.parts.filter(Boolean);
+  // Estilo "juguete real" (como el juego de referencia): sin peana ni pedestales y sin caritas
+  // pegadas a objetos. Solo las cabezas de criaturas conservan sus ojos naturales.
+  const keepSupports = design.keepBase || opts.keepBase;
+  let rawParts = design.parts.filter(Boolean);
+  if (!keepSupports) {
+    // Se quitan: la peana, lo marcado como soporte y las piezas con nombre de soporte que quedan
+    // por DEBAJO del objeto (un poste que sostiene algo por arriba, como el de una balanza, se queda).
+    const forced = r => r.role === 'base' || r.support === true || (r.support !== false && FORCED_SUPPORT_RE.test(r.name || ''));
+    const named = r => r.support !== false && SUPPORT_RE.test(r.name || '');
+    const I = new THREE.Matrix4();
+    const yRange = r => {
+      const P = new Part(r, 0);
+      P.setGlobal(I, new THREE.Quaternion(), 1);
+      let lo = 1e9, hi = -1e9;
+      const v = new THREE.Vector3();
+      for (let i = 0; i <= 6; i++) for (let j = 0; j < 8; j++) {
+        P.world(P.eta[0] + (P.eta[1] - P.eta[0]) * i / 6, P.om[0] + (P.om[1] - P.om[0]) * j / 8, 0, 1, v);
+        lo = Math.min(lo, v.y); hi = Math.max(hi, v.y);
+      }
+      return [lo, hi];
+    };
+    const others = rawParts.filter(r => !forced(r) && !named(r) && (r.role || 'body') !== 'deco');
+    let minY = 1e9;
+    for (const r of others) minY = Math.min(minY, yRange(r)[0]);
+    const kept = rawParts.filter(r => !forced(r) && !(named(r) && (yRange(r)[1] <= minY + 0.2 || yRange(r)[0] < minY - 0.05)));
+    if (kept.some(r => (r.role || 'body') !== 'deco')) rawParts = kept;
+  }
+  if (!design.keepFace) {
+    design = { ...design, decos: (design.decos || []).filter(d => !FACE_DECOS.has(d.d) || (design.creature && /^(head|face)/i.test(d.on || ''))) };
+  }
+  // Niveles con muchos tornillos: las piezas finas del cuerpo (mangos, astas, patas) se engordan un poco,
+  // estilo juguete macizo, para que quepan tornillos tocables.
+  if (!design.noChunk && T > 320) {
+    const I = new THREE.Matrix4(), v = new THREE.Vector3(), box = new THREE.Box3();
+    for (const r of rawParts) {
+      if ((r.role || 'body') === 'deco') continue;
+      const P = new Part(r, 0);
+      P.setGlobal(I, new THREE.Quaternion(), 1);
+      for (let i = 0; i <= 4; i++) for (let j = 0; j < 6; j++) box.expandByPoint(P.world(P.eta[0] + (P.eta[1] - P.eta[0]) * i / 4, P.om[0] + (P.om[1] - P.om[0]) * j / 6, 0, 1, v));
+    }
+    const dim = box.isEmpty() ? 4 : Math.max(...box.getSize(v).toArray());
+    const minR = 0.045 * dim * Math.min(1, (T - 320) / 480);
+    rawParts = rawParts.map(r => {
+      if ((r.role || 'body') !== 'body' || r.noChunk) return r;
+      if (r.s === 'torus') return (r.tr ?? 0.25) < minR ? { ...r, tr: minR } : r;
+      if (!r.r) return r;
+      const big = Math.max(...r.r);
+      if (big < minR * 1.6) return r;          // piezas pequeñas (botones, gemas) quedan igual
+      return r.r.some(x => x < minR) ? { ...r, r: r.r.map(x => Math.max(x, minR)) } : r;
+    });
+  }
   const parts = rawParts.map((r, i) => new Part(r, i));
   const byName = new Map();
   parts.forEach(p => { if (!byName.has(p.name)) byName.set(p.name, p); });
@@ -494,25 +611,47 @@ export function sculptLevel(design, T, opts = {}) {
   const yaw = design.view ?? 0;
   const pitch = design.pitch ?? 0;
   const gQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(pitch, yaw, 0, 'YXZ'));
-  const G0 = new THREE.Matrix4().makeRotationFromQuaternion(gQuat);
-  parts.forEach(p => p.setGlobal(G0, gQuat, 1));
+  const G0 = new THREE.Matrix4();
   const bb = new THREE.Box3();
   const tmp = new THREE.Vector3();
-  for (const p of parts) {
-    if (p.role === 'ghost') continue;
-    for (let i = 0; i <= 10; i++) for (let j = 0; j < 16; j++) {
-      const eta = p.eta[0] + (p.eta[1] - p.eta[0]) * i / 10;
-      const om = p.om[0] + (p.om[1] - p.om[0]) * j / 15;
-      bb.expandByPoint(p.world(eta, om, 0, 1, tmp));
+  const measure = () => {
+    G0.makeRotationFromQuaternion(gQuat);
+    parts.forEach(p => p.setGlobal(G0, gQuat, 1));
+    bb.makeEmpty();
+    for (const p of parts) {
+      if (p.role === 'ghost') continue;
+      for (let i = 0; i <= 10; i++) for (let j = 0; j < 16; j++) {
+        const eta = p.eta[0] + (p.eta[1] - p.eta[0]) * i / 10;
+        const om = p.om[0] + (p.om[1] - p.om[0]) * j / 15;
+        bb.expandByPoint(p.world(eta, om, 0, 1, tmp));
+      }
+    }
+  };
+  measure();
+  // Objetos alargados (flautas, espadas, lanzas…) se inclinan hacia la diagonal de la pantalla:
+  // ocupan más superficie visible y los tornillos pueden ser más grandes.
+  {
+    const sz = bb.getSize(new THREE.Vector3());
+    const diag = Math.atan2(FRAME_H, FRAME_W);
+    let roll = 0;
+    if (!design.noRoll && T > 240) {
+      if (sz.x > 2.6 * sz.y) roll = diag * 0.8;
+      else if (sz.y > 2.6 * Math.max(sz.x, sz.z * 0.82)) roll = -(Math.PI / 2 - diag) * 0.9;
+    }
+    if (roll) {
+      gQuat.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), roll));
+      measure();
     }
   }
   const size = bb.getSize(new THREE.Vector3());
   // Niveles grandes: la figura crece (la cámara se aleja en proporción) para que quepan los tornillos
   const frameK = Math.max(1, Math.min(2.2, Math.sqrt(T / 170))) * (opts.growK ?? 1) * Math.pow(1.15, opts.grow && opts.grow < 9 ? opts.grow : 0);
-  const sc = Math.min(FRAME_W / Math.max(size.x, size.z * 0.82), FRAME_H / size.y, 1.6) * frameK;
   const cx = (bb.min.x + bb.max.x) / 2, cz = (bb.min.z + bb.max.z) / 2;
+  // Encuadre con la cámara real del juego (perspectiva incluida): la figura llena la zona libre
+  // entre el HUD y la barra de herramientas sin salirse por los lados.
+  const { sc, y0 } = fitToCamera(parts, frameK, cx, cz, Math.min(FRAME_W / Math.max(size.x, size.z * 0.82), FRAME_H / size.y, 1.6) * frameK);
   const G = new THREE.Matrix4()
-    .makeTranslation(-cx * sc, FRAME_BOTTOM * frameK - bb.min.y * sc + Math.max(0, (FRAME_H * frameK - size.y * sc) * 0.12), -cz * sc)
+    .makeTranslation(-cx * sc, y0, -cz * sc)
     .multiply(new THREE.Matrix4().makeScale(sc, sc, sc))
     .multiply(G0);
   parts.forEach(p => p.setGlobal(G, gQuat, sc));
@@ -576,18 +715,19 @@ export function sculptLevel(design, T, opts = {}) {
   const decoParts = parts.filter(p => p.role === 'deco');
 
   // ---------- 3. Capas por parte ----------
-  const D = levelDepth(T);
-  const gapD = LAYER_GAP / Math.pow(frameK, 0.75);
-  const shellD = SHELL / Math.pow(frameK, 0.75);
+  const D = levelDepth(T) + (opts.extraLayers ?? 0);
+  const gapD = 0.2 / frameK;   // espesor de cada capa maciza (unidades locales de la figura)
   const layerList = [];
   for (const p of solidParts) {
-    let nl = 1;
-    if (p.role === 'body') {
-      nl = Math.max(1, Math.min(D, 1 + Math.floor((p.minR - 0.12) / gapD)));
-      if (p.layers) nl = Math.min(nl, p.layers);
+    // Todas las partes del cuerpo tienen D capas macizas apiladas; en las piezas delgadas (hojas,
+    // tablas, discos) cada capa es más fina, como placas superpuestas.
+    let nl = 1, thick = gapD;
+    if (p.role === 'body' && p.minR >= 0.05) {
+      nl = p.layers ? Math.min(D, p.layers) : D;
+      thick = Math.min(gapD, (p.minR * 0.85) / nl);
     }
     for (let k = 0; k < nl; k++) {
-      layerList.push({ part: p, depth: k, inset: k * gapD, solid: k === nl - 1 });
+      layerList.push({ part: p, depth: k, inset: k * thick, thick, solid: k === nl - 1 });
     }
   }
 
@@ -647,21 +787,39 @@ export function sculptLevel(design, T, opts = {}) {
   }
 
   // ---------- 4. Intentos: cortar placas y repartir tornillos ----------
-  let screwScale = screwScaleFor(T) * Math.sqrt(frameK) * (opts.screwBoost ?? 1);
-  let spp = T <= 90 ? 2.4 : T <= 300 ? 2.8 : T <= 800 ? 3.2 : 3.6;
-  let result = null;
+  // Tamaño de tornillo a partir de la superficie disponible: densidad pareja en todas las capas,
+  // tornillos lo más grandes posible (como en el juego de referencia).
+  const totalArea = layerList.reduce((a, L) => a + L.area, 0) || 1;
+  const fromArea = (0.84 * Math.sqrt(totalArea / T)) / SPACING_K / 0.24;
+  let screwScale = Math.min(0.8 * frameK, Math.max(0.42 * Math.sqrt(frameK), fromArea)) * (opts.screwBoost ?? 1);
+  let spp = T <= 90 ? 2.6 : T <= 300 ? 3.0 : T <= 800 ? 3.4 : 3.8;
+  let result = null, failScale = 0;
   for (let attempt = 0; attempt < 22 && !result; attempt++) {
     const rS = 0.24 * screwScale;
-    const dmin = 2.4 * rS;
+    const dmin = SPACING_K * rS;
     const r = tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInsideOther, sc });
-    if (r.ok) { result = r; break; }
+    if (r.ok) {
+      result = r;
+      // Afinado: el tornillo más grande que todavía cabe (búsqueda entre el último fallo y este éxito)
+      let lo = screwScale, hi = failScale;
+      for (let it = 0; hi && it < 3 && hi / lo > 1.03; it++) {
+        const mid = Math.sqrt(lo * hi);
+        const r2 = tryAllocate({ layerList, T, spp, dmin: SPACING_K * 0.24 * mid, rS: 0.24 * mid, anchors, occluders, isInsideOther, sc });
+        if (r2.ok) { result = r2; lo = mid; } else hi = mid;
+      }
+      screwScale = lo;
+      break;
+    }
     if (r.reason === 'too_many_patches') spp *= 1.22;
     else if (r.reason === 'too_few_slots') {
-      const floor = 0.4 * Math.sqrt(frameK);
-      if (screwScale > floor + 1e-6) screwScale = Math.max(floor, screwScale * Math.max(0.72, Math.min(0.96, Math.sqrt(r.count / T) * 0.95)));
+      failScale = screwScale;
+      const floor = 0.36 * Math.sqrt(frameK);
+      if (screwScale > floor + 1e-6) screwScale = Math.max(floor, screwScale * Math.max(0.8, Math.min(0.96, Math.sqrt(r.count / T) * 0.97)));
       else if (r.count > T * 0.9 && spp > 1.6) spp *= 0.85;
       else {
         // En el mínimo de tamaño de tornillo: la figura crece lo necesario (capacidad ∝ tamaño)
+        // Antes de agrandar la figura: más capas macizas apiladas (más superficie para tornillos)
+        if ((opts.extraLayers ?? 0) < 4 && T > 300) return sculptLevel(design, T, { ...opts, extraLayers: (opts.extraLayers ?? 0) + 2 });
         const growK = (opts.growK ?? 1) * Math.min(1.6, Math.max(1.08, (T / r.count) * 1.06));
         if (growK > 4) break;
         return sculptLevel(design, T, { ...opts, growK, grow: 9 });
@@ -684,8 +842,10 @@ export function sculptLevel(design, T, opts = {}) {
   for (const pt of result.patches) {
     const p = pt.part;
     const center = p.world((pt.rect[0] + pt.rect[1]) / 2, (pt.rect[2] + pt.rect[3]) / 2, pt.inset, 1, new THREE.Vector3());
-    const geo = buildPatchGeometry(p, pt.renderRect, pt.inset, pt.solid, center, shellD);
-    const col = pt.depth === 0 ? p.c : (p.inner != null ? shade(p.inner, -0.05 * (pt.depth - 1)) : shade(p.c, -0.1 - 0.05 * pt.depth, -0.05));
+    const geo = buildPatchGeometry(p, pt.renderRect, pt.inset, pt.solid, center, Math.max(0.003, (pt.thick ?? gapD) * 0.97));
+    // Capas interiores con tono propio (alternando claro/oscuro) para que cada capa maciza se distinga
+    const col = pt.depth === 0 ? p.c : (p.inner != null ? shade(p.inner, -0.05 * (pt.depth - 1))
+      : (pt.depth % 2 === 1 ? shade(p.c, 0.13, -0.12) : shade(p.c, -0.13, 0.02)));
     const mesh = new THREE.Mesh(geo, toyMat(col, p.mat));
     mesh.position.copy(center);
     const id = `${p.name}_${pt.depth}_${pt.k}`;
@@ -850,18 +1010,16 @@ function tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInside
           fullLoop ? o0 : o0 + sO,
           fullLoop ? o1 : o1 - sO
         ];
-        patches.push({ part: p, depth: L.depth, inset: L.inset, solid: L.solid, rect, renderRect, k: k++, screws: [] });
+        patches.push({ part: p, depth: L.depth, inset: L.inset, thick: L.thick, solid: L.solid, rect, renderRect, k: k++, screws: [] });
       }
     }
   }
   if (patches.length > T) return { ok: false, reason: 'too_many_patches' };
 
-  // Candidatos de tornillo por placa
-  const nrm = new THREE.Vector3();
+  // Candidatos de tornillo por placa: retícula fina (≈0.7·dmin) sobre la cara despejada
   for (const pt of patches) {
     const p = pt.part;
     const [e0, e1, o0, o1] = pt.rect;
-    // tamaño aproximado de la placa
     const arcLen = (fixE, val, lo, hi) => {
       let L = 0;
       const prev = new THREE.Vector3(), cur = new THREE.Vector3();
@@ -875,10 +1033,11 @@ function tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInside
     };
     const lenE = arcLen(false, (o0 + o1) / 2, e0, e1);
     const lenO = Math.max(arcLen(true, (e0 + e1) / 2, o0, o1), arcLen(true, e0 * 0.3 + e1 * 0.7, o0, o1), arcLen(true, e0 * 0.7 + e1 * 0.3, o0, o1));
-    let KE = Math.max(3, Math.min(12, 1 + Math.floor((lenE - dmin) / (dmin * 1.0))));
-    let KO = Math.max(3, Math.min(12, 1 + Math.floor((lenO - dmin) / (dmin * 1.0))));
-    while (KE * KO > 72) { if (KE > KO) KE--; else KO--; }
-    const mE = Math.min(0.32, (dmin * 0.55) / Math.max(lenE, 1e-3)), mO = Math.min(0.32, (dmin * 0.55) / Math.max(lenO, 1e-3));
+    const step = dmin * 0.7;
+    let KE = Math.max(3, Math.min(14, 1 + Math.floor((lenE - dmin * 0.6) / step)));
+    let KO = Math.max(3, Math.min(14, 1 + Math.floor((lenO - dmin * 0.6) / step)));
+    while (KE * KO > 110) { if (KE > KO) KE--; else KO--; }
+    const mE = Math.min(0.3, (dmin * 0.5) / Math.max(lenE, 1e-3)), mO = Math.min(0.3, (dmin * 0.5) / Math.max(lenO, 1e-3));
     const params = [];
     for (let i = 0; i < KE; i++) for (let j = 0; j < KO; j++) {
       const fe = KE === 1 ? 0.5 : mE + (1 - 2 * mE) * i / (KE - 1);
@@ -891,96 +1050,188 @@ function tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInside
     for (const [eta, om] of params) {
       const pos = p.world(eta, om, pt.inset, 1, new THREE.Vector3());
       const n = p.normal(eta, om, pt.inset, new THREE.Vector3());
-      // dentro de otra parte → descartado
       tmp.copy(pos).addScaledVector(n, 0.06);
       if (isInsideOther(tmp, p, 0.985)) continue;
       hard.push({ pos, n, eta, om });
-      // demasiado cerca de una decoración
       let nearDeco = false;
       for (const an of anchors) {
         if (an.pos.distanceTo(pos) < an.rad + rS * 1.1) { nearDeco = true; break; }
       }
       if (nearDeco) continue;
-      // despeje: nada de otra parte en la dirección de salida del tornillo
       let open = true;
       for (const dist of [0.16, 0.34, 0.6, 0.95, 1.4, 1.9]) {
         tmp.copy(pos).addScaledVector(n, dist);
         if (isInsideOther(tmp, p, 1.0)) { open = false; break; }
       }
-      const cand = { pos, n, eta, om };
+      const cand = { pos, n, eta, om, pt };
       const downward = n.y < -0.42;
       if (open && !downward) good.push(cand); else if (open) soft.push(cand);
     }
     pt.good = good;
-    pt.soft = soft.length || good.length ? soft : hard.slice(0, 1);
+    pt.soft = soft.length || good.length ? soft : hard.slice(0, 1).map(c => ({ ...c, pt }));
+    pt.pool = good.length ? good.concat(soft) : pt.soft;
     pt.areaW = lenE * lenO;
+    // superficie útil (la fracción de la retícula que no queda dentro de otras partes)
+    pt.effA = pt.areaW * (good.length + soft.length * 0.7) / Math.max(1, params.length);
   }
-  const usable = patches.filter(pt => pt.good.length || pt.soft.length);
+  const usable = patches.filter(pt => pt.pool.length);
   if (usable.length > T) return { ok: false, reason: 'too_many_patches' };
 
-  // Reparto greedy con distancia mínima entre tornillos de la misma capa
-  // Hash espacial por capa para la distancia mínima entre tornillos
-  const cell = dmin;
-  const chosenByDepth = new Map();
-  const listFor = dpt => {
-    if (!chosenByDepth.has(dpt)) {
-      const map = new Map();
-      chosenByDepth.set(dpt, { map, push(v) { const k = `${Math.floor(v.x / cell)},${Math.floor(v.y / cell)},${Math.floor(v.z / cell)}`; if (!map.has(k)) map.set(k, []); map.get(k).push(v); } });
-    }
-    return chosenByDepth.get(dpt);
+  // Cuotas por capa proporcionales a su superficie útil → misma densidad en todas las capas
+  const depths = [...new Set(usable.map(pt => pt.depth))].sort((a, b) => a - b);
+  const effByD = new Map(depths.map(d => [d, 0]));
+  const nByD = new Map(depths.map(d => [d, 0]));
+  for (const pt of usable) { effByD.set(pt.depth, effByD.get(pt.depth) + pt.effA + 1e-6); nByD.set(pt.depth, nByD.get(pt.depth) + 1); }
+  const effTot = [...effByD.values()].reduce((a, b) => a + b, 0) || 1;
+  const quota = new Map();
+  let assigned = 0;
+  const rema = [];
+  for (const d of depths) {
+    const exact = T * effByD.get(d) / effTot;
+    const q = Math.max(nByD.get(d), Math.floor(exact));
+    quota.set(d, q); assigned += q; rema.push([exact - Math.floor(exact), d]);
+  }
+  rema.sort((a, b) => b[0] - a[0]);
+  for (let i = 0; assigned < T && rema.length; i = (i + 1) % rema.length) { const d = rema[i][1]; quota.set(d, quota.get(d) + 1); assigned++; }
+  while (assigned > T) {
+    // demasiadas placas obligatorias: se recorta de la capa con más holgura
+    let bd = null, slack = 0;
+    for (const d of depths) { const s = quota.get(d) - nByD.get(d); if (s > slack) { slack = s; bd = d; } }
+    if (bd === null) return { ok: false, reason: 'too_many_patches' };
+    quota.set(bd, quota.get(bd) - 1); assigned--;
+  }
+
+  // Distancias con hash espacial por capa (celda = 1.5·dmin, distancias exactas hasta ~1.5·dmin)
+  const cell = dmin * 1.5, cap = cell * 1.5;
+  const hashes = new Map();
+  const hashFor = d => {
+    if (!hashes.has(d)) hashes.set(d, new Map());
+    return hashes.get(d);
   };
-  const minDistTo = (list, pos) => {
-    let m = 1e9;
+  const keyOf = (x, y, z) => `${x},${y},${z}`;
+  const addPt = (map, v) => {
+    const k = keyOf(Math.floor(v.x / cell), Math.floor(v.y / cell), Math.floor(v.z / cell));
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(v);
+  };
+  const minDist = (map, pos) => {
+    let m = cap * cap;
     const cx = Math.floor(pos.x / cell), cy = Math.floor(pos.y / cell), cz = Math.floor(pos.z / cell);
     for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (let dz = -1; dz <= 1; dz++) {
-      const arr = list.map.get(`${cx + dx},${cy + dy},${cz + dz}`);
+      const arr = map.get(keyOf(cx + dx, cy + dy, cz + dz));
       if (!arr) continue;
       for (const q of arr) { const d = q.distanceToSquared(pos); if (d < m) m = d; }
     }
-    return Math.min(Math.sqrt(m), cell * 1.5);
+    return Math.sqrt(m);
   };
-  usable.sort((a, b) => a.depth - b.depth || b.areaW - a.areaW);
+
+  const maxPer = Math.max(T > 900 ? 8 : T > 600 ? 7 : T > 300 ? 6 : 5, Math.ceil(1.7 * T / Math.max(1, usable.length)));
   let count = 0;
-  for (const pt of usable) {
-    const list = listFor(pt.depth);
-    const pool = pt.good.length ? pt.good : pt.soft;
-    // primer tornillo: el más centrado que respete la distancia; si no, el más alejado de todos
-    const cx = (pt.rect[0] + pt.rect[1]) / 2, co = (pt.rect[2] + pt.rect[3]) / 2;
-    let best = null, bestScore = -1e9;
-    for (const c of pool) {
-      const md = minDistTo(list, c.pos);
-      const centered = -Math.hypot(c.eta - cx, (c.om - co) * 0.6);
-      const score = (md >= dmin ? 100 : md * 10) + centered;
-      if (score > bestScore) { bestScore = score; best = c; }
+  const heaps = new Map();
+  for (const d of depths) {
+    const map = hashFor(d);
+    const list = usable.filter(pt => pt.depth === d).sort((a, b) => b.areaW - a.areaW);
+    // 1) un tornillo por placa: el más centrado que respete la distancia
+    for (const pt of list) {
+      const cx = (pt.rect[0] + pt.rect[1]) / 2, co = (pt.rect[2] + pt.rect[3]) / 2;
+      const pool = pt.good.length ? pt.good : pt.pool;
+      let best = null, bestScore = -1e9;
+      for (const c of pool) {
+        const md = minDist(map, c.pos);
+        const score = (md >= dmin ? 100 : md * 10) - Math.hypot(c.eta - cx, (c.om - co) * 0.6);
+        if (score > bestScore) { bestScore = score; best = c; }
+      }
+      pt.screws.push(best);
+      pt.used = new Set([best]);
+      addPt(map, best.pos);
+      count++;
     }
-    pt.screws.push(best);
-    pt.used = new Set([best]);
-    list.push(best.pos);
-    count++;
+    // 2) el resto: siempre el candidato más alejado de los ya puestos (reparto uniforme)
+    const heap = new MaxHeap();
+    for (const pt of list) for (const c of pt.pool) if (!pt.used.has(c)) heap.push(minDist(map, c.pos) + (c.n.y < -0.42 ? -0.25 * dmin : 0), c);
+    heaps.set(d, heap);
+    let need = quota.get(d) - list.length;
+    while (need > 0) {
+      const c = popBest(heap, map, minDist, maxPer, dmin);
+      if (!c) break;
+      c.pt.screws.push(c); c.pt.used.add(c); addPt(map, c.pos);
+      count++; need--;
+    }
   }
-  const maxPer = Math.max(T > 900 ? 8 : T > 600 ? 6 : T > 300 ? 5 : 4, Math.ceil(1.6 * T / Math.max(1, usable.length)));
-  const active = usable.filter(pt => pt.good.length > 1);
+  // 3) si alguna capa no llegó a su cuota, el resto va a la capa con más espacio libre
   while (count < T) {
-    let pick = null, pr = -1;
-    for (const pt of active) {
-      if (pt.exhausted || pt.screws.length >= maxPer) continue;
-      const pri = pt.areaW / (pt.screws.length + 0.6);
-      if (pri > pr) { pr = pri; pick = pt; }
+    let bestD = null, bestKey = -1;
+    for (const d of depths) {
+      const h = heaps.get(d);
+      const top = peekBest(h, hashFor(d), minDist, maxPer, dmin);
+      if (top && top.key > bestKey) { bestKey = top.key; bestD = d; }
     }
-    if (!pick) break;
-    const list = listFor(pick.depth);
-    let best = null, bd = -1;
-    for (const c of pick.good) {
-      if (pick.used.has(c)) continue;
-      const md = minDistTo(list, c.pos);
-      if (md >= dmin && md > bd) { bd = md; best = c; }
-    }
-    if (!best) { pick.exhausted = true; continue; }
-    pick.screws.push(best);
-    pick.used.add(best);
-    list.push(best.pos);
+    if (bestD === null) break;
+    const c = popBest(heaps.get(bestD), hashFor(bestD), minDist, maxPer, dmin);
+    if (!c) break;
+    c.pt.screws.push(c); c.pt.used.add(c); addPt(hashFor(bestD), c.pos);
     count++;
   }
   if (count < T) return { ok: false, reason: "too_few_slots", count, patches: usable.length };
   return { ok: true, patches: usable };
+}
+
+// Montículo de máximos (clave, valor) para el muestreo por punto más lejano
+class MaxHeap {
+  constructor() { this.k = []; this.v = []; }
+  get size() { return this.k.length; }
+  push(key, val) {
+    const k = this.k, v = this.v;
+    let i = k.length; k.push(key); v.push(val);
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (k[p] >= k[i]) break;
+      [k[p], k[i]] = [k[i], k[p]]; [v[p], v[i]] = [v[i], v[p]]; i = p;
+    }
+  }
+  pop() {
+    const k = this.k, v = this.v;
+    if (!k.length) return null;
+    const top = { key: k[0], val: v[0] };
+    const lk = k.pop(), lv = v.pop();
+    if (k.length) {
+      k[0] = lk; v[0] = lv;
+      let i = 0;
+      for (;;) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < k.length && k[l] > k[m]) m = l;
+        if (r < k.length && k[r] > k[m]) m = r;
+        if (m === i) break;
+        [k[m], k[i]] = [k[i], k[m]]; [v[m], v[i]] = [v[i], v[m]]; i = m;
+      }
+    }
+    return top;
+  }
+}
+// Saca el mejor candidato vigente (las distancias solo bajan: evaluación perezosa)
+function popBest(heap, map, minDist, maxPer, dmin) {
+  while (heap.size) {
+    const { key, val: c } = heap.pop();
+    if (c.pt.used.has(c) || c.pt.screws.length >= maxPer) continue;
+    const pen = c.n.y < -0.42 ? -0.25 * dmin : 0;
+    const cur = minDist(map, c.pos) + pen;
+    if (cur < key - 1e-9) { if (cur - pen >= dmin) heap.push(cur, c); continue; }
+    if (cur - pen < dmin) continue;
+    return c;
+  }
+  return null;
+}
+function peekBest(heap, map, minDist, maxPer, dmin) {
+  while (heap.size) {
+    const top = heap.pop();
+    const c = top.val;
+    if (c.pt.used.has(c) || c.pt.screws.length >= maxPer) continue;
+    const pen = c.n.y < -0.42 ? -0.25 * dmin : 0;
+    const cur = minDist(map, c.pos) + pen;
+    if (cur - pen < dmin) continue;
+    heap.push(cur, c);
+    if (cur >= top.key - 1e-9) return { key: cur, c };
+  }
+  return null;
 }

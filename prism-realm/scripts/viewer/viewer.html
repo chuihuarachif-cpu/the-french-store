@@ -31,6 +31,12 @@ window.shoot = (L, yaw = 0, zoom = 1.45) => {
   else ({ model, layers } = buildToyLevelModel(L, spec.totalScrews));
   const lvl = penguinModelToLevel(model, spec, v, layers, b => [3, 2, 1, 4, 7, 5, 6, 0, 8, 9][b % 7]);
   const g = new THREE.Group();
+  if (window.PEEL) {
+    const maxL = Math.max(...lvl.pieces.map(p => p.layer));
+    const hide = new Set(lvl.pieces.filter(p => p.layer > maxL - window.PEEL).map(p => p.id));
+    lvl.pieces = lvl.pieces.filter(p => !hide.has(p.id));
+    lvl.screws = lvl.screws.filter(s => !hide.has(s.pieceId));
+  }
   for (const p of lvl.pieces) { g.add(p.mesh); if (window.DBGC && p.key.startsWith(window.DBGC)) p.mesh.material = new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(Math.random(), 0.9, 0.5) }); }
   if (lvl.extraCore) g.add(lvl.extraCore);
   const ss = lvl.screwScale || 1;

@@ -191,7 +191,7 @@ export function quad(o = {}) {
   if (o.spots) for (const [dir, s, on] of o.spots) decos.push(spot(on || 'body', dir, s, o.spotC ?? 0x7c4a1e));
   if (o.stripes) for (const [dir, s, on] of o.stripes) decos.push({ d: 'shape', on: on || 'body', dir, size: s, c: o.stripeC ?? 0x1f2937, shape: { r: [s * 0.28, s, s * 0.15], e: [1, 1] }, excl: 0.45 });
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.62 };
+  return { parts, decos, creature: true, view: o.view ?? 0.62 };
 }
 
 /* ============================================================================
@@ -233,7 +233,7 @@ export function sitter(o = {}) {
   if (o.face !== false) decos.push(...face('head', { dir: [0, 0, 1], spread: 0.38, h: 0.18, eye: o.eye ?? 0.22, mouthOn: o.muzzle === false ? 'head' : 'snout', mouthH: o.muzzle === false ? -0.32 : -0.45, mouth: o.mouth ?? 'w', cheekSpread: 0.75, ...(o.face || {}) }));
   if (o.muzzle !== false && o.nose !== false) decos.push({ d: 'nose', on: 'snout', dir: [0, 0.45, 1], size: o.noseSize ?? 0.1, c: o.noseC ?? 0x3b2a2a });
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.28 };
+  return { parts, decos, creature: true, view: o.view ?? 0.28 };
 }
 
 /* ============================================================================
@@ -262,7 +262,7 @@ export function bird(o = {}) {
     parts.push(...base(o.base ?? (isSwan ? 'water' : 'water')));
     if (o.decos) decos.push(...o.decos);
     if (o.extra) parts.push(...o.extra);
-    return { parts, decos, view: o.view ?? 0.75 };
+    return { parts, decos, creature: true, view: o.view ?? 0.75 };
   }
   // ave compacta de percha
   const by = style === 'fly' ? -0.6 : -0.85;
@@ -293,14 +293,14 @@ export function bird(o = {}) {
     parts.push(rod('perch', [-1.3, by - 1.12, 0.25], [1.3, by - 1.12, 0.25], 0.16, o.perchC ?? 0x92400e, { rot: [0, 0, HP] }));
     parts.push(CYL('post', [0, (by - 1.12 - 2.3) / 2, 0.25], [0.18, (by - 1.12 + 2.3) / 2, 0.18], o.perchC ?? 0x92400e));
   } else {
-    parts.push(CYL('post', [0, -1.75, 0.1], [0.16, 0.6, 0.16], 0x65a30d));
-    parts.push(E('flower', [0, -1.05, 0.1], [0.5, 0.25, 0.5], o.flowerC ?? 0xf472b6));
+    parts.push(CYL('post', [0, -1.75, 0.1], [0.16, 0.6, 0.16], 0x65a30d, { support: true }));
+    parts.push(E('flower', [0, -1.05, 0.1], [0.5, 0.25, 0.5], o.flowerC ?? 0xf472b6, { support: true }));
   }
   parts.push(...base(o.base ?? 'grass'));
   decos.push(...face('head', { dir: [0, 0.05, 1], spread: 0.45, h: 0.12, eye: o.eye ?? 0.17, mouth: false, cheek: 0.11, cheekSpread: 0.8, style: o.eyeStyle, iris: o.iris, ...(o.face || {}) }));
   if (o.decos) decos.push(...o.decos);
   if (o.extra) parts.push(...o.extra);
-  return { parts, decos, view: o.view ?? 0.45 };
+  return { parts, decos, creature: true, view: o.view ?? 0.45 };
 }
 
 function shadeHex(hex, dl) {
@@ -334,7 +334,7 @@ export function fish(o = {}) {
   if (o.kind === 'narwhal') parts.push(CONE('tusk', [0, by + 0.2, L + 0.85], [0.08, 0.85, 0.08], 0xfffbeb, { rot: [HP, 0, 0], role: 'acc' }));
   if (o.kind === 'whale') parts.push(...[-0.18, 0, 0.18].map((x, i) => CONE(`spout${i}`, [x, by + 1.12, 0.6], [0.09, 0.3, 0.09], 0x7dd3fc, { rot: [0, 0, -x * 2], taper: 0.8, role: 'acc' })));
   // soporte de agua
-  parts.push(CYL('wave', [0, -1.75, -0.1], [0.42, 0.45, 0.42], o.standC ?? 0x7dd3fc, { taper: -0.35 }));
+  parts.push(CYL('wave', [0, -1.75, -0.1], [0.42, 0.45, 0.42], o.standC ?? 0x7dd3fc, { taper: -0.35, support: true }));
   parts.push(...base(o.base ?? 'water'));
   const fz = o.kind === 'hammer' ? 'hammer' : 'body';
   const decos = [];
@@ -346,7 +346,7 @@ export function fish(o = {}) {
   }
   if (o.spots) for (const [dir, s] of o.spots) decos.push(spot('body', dir, s, o.spotC ?? 0xffffff));
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.95 };
+  return { parts, decos, creature: true, view: o.view ?? 0.95 };
 }
 
 export function manta(o = {}) {
@@ -357,12 +357,12 @@ export function manta(o = {}) {
     ...pair(E('horn', [0.4, -0.7, 0.85], [0.12, 0.12, 0.32], c, { role: 'acc' })),
     rod('tail', [0, -0.75, -0.8], [0, -0.85, -2.1], 0.06, c, { role: 'acc' }),
     E('belly', [0, -0.92, 0.05], [0.55, 0.18, 0.62], c2),
-    CYL('wave', [0, -1.65, 0], [0.38, 0.55, 0.38], 0x7dd3fc, { taper: -0.3 }),
+    CYL('wave', [0, -1.65, 0], [0.38, 0.55, 0.38], 0x7dd3fc, { taper: -0.3 , support: true }),
     ...base(o.base ?? 'water')
   ];
   const decos = face('body', { dir: [0, 0.35, 1], spread: 0.5, h: 0.05, eye: 0.15, mouthH: -0.35 });
   if (o.spots) for (const [dir, s] of o.spots) decos.push(spot('body', dir, s, 0xffffff));
-  return { parts, decos, view: o.view ?? 0.35, pitch: 0.18 };
+  return { parts, decos, creature: true, view: o.view ?? 0.35, pitch: 0.18 };
 }
 
 /* ============================================================================
@@ -392,7 +392,7 @@ export function octo(o = {}) {
   const decos = face('head', { dir: [0, jelly ? 0.1 : -0.25, 1], spread: 0.38, h: 0.1, eye: 0.22, style: o.eyeStyle, iris: o.iris, mouth: o.mouth ?? (jelly ? 'smile' : 'smile') });
   if (o.spots) for (const [dir, s] of o.spots) decos.push(spot('head', dir, s, o.spotC ?? c2));
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.15 };
+  return { parts, decos, creature: true, view: o.view ?? 0.15 };
 }
 
 /* ============================================================================
@@ -427,7 +427,7 @@ export function turtle(o = {}) {
     decos.push({ d: 'shape', on: 'shell', dir: [Math.cos(a) * 0.9, 0.75, Math.sin(a) * 0.9], size: 0.3, c: sc, shape: { s: 'poly', faces: 'hex', r: [0.3, 0.3, 0.05] }, excl: 0.7 });
   }
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.55, pitch: 0.12 };
+  return { parts, decos, creature: true, view: o.view ?? 0.55, pitch: 0.12 };
 }
 
 /* ============================================================================
@@ -458,7 +458,7 @@ export function crab(o = {}) {
     { d: 'cheek', on: 'body', dir: [-0.55, -0.05, 1], size: 0.14 }
   ];
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.1, pitch: 0.12 };
+  return { parts, decos, creature: true, view: o.view ?? 0.1, pitch: 0.12 };
 }
 
 /* ============================================================================
@@ -507,8 +507,8 @@ export function bug(o = {}) {
       parts.push(...pair(E('wingB', [0.85, -0.55, -0.25], [0.62, 0.5, 0.07], wc2, { rot: [0.15, 0.3, 0.3], role: 'acc' })));
     }
     parts.push(...pair(rod('ant', [0.15, 0.2, 1.05], [0.45, 0.85, 1.25], 0.04, c2, { role: 'acc' })));
-    parts.push(CYL('stem', [0, -1.55, 0.1], [0.12, 0.85, 0.12], 0x65a30d));
-    parts.push(E('flower', [0, -0.75, 0.1], [0.55, 0.18, 0.55], o.flowerC ?? 0xfde047));
+    parts.push(CYL('stem', [0, -1.55, 0.1], [0.12, 0.85, 0.12], 0x65a30d, { support: true }));
+    parts.push(E('flower', [0, -0.75, 0.1], [0.55, 0.18, 0.55], o.flowerC ?? 0xfde047, { support: true }));
     decos.push(...face('head', { dir: [0, 0, 1], spread: 0.5, h: 0.1, eye: 0.17, mouthH: -0.25, cheekSpread: 0.8 }));
     if (kind === 'bee') for (const z of [0.25, -0.15, -0.6]) decos.push({ d: 'shape', on: 'abdomen', dir: [0, 1, z], size: 0.3, c: 0x1f2937, shape: { r: [0.6, 0.1, 0.12], e: [1, 1] }, up: [0, 0, 1], excl: 0.5 });
     if (o.wingSpots) for (const [s, d, sz, col] of o.wingSpots) decos.push(spot(s, d, sz, col));
@@ -532,7 +532,7 @@ export function bug(o = {}) {
   if (o.extra) parts.push(...o.extra);
   parts.push(...base(o.base ?? 'grass'));
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.6, pitch: o.pitch ?? 0.15 };
+  return { parts, decos, creature: true, view: o.view ?? 0.6, pitch: o.pitch ?? 0.15 };
 }
 
 /* ============================================================================
@@ -559,7 +559,7 @@ export function frog(o = {}) {
     { d: 'cheek', on: 'head', dir: [-0.6, 0, 1], size: 0.14 }
   ];
   if (o.spots) for (const [s, d, sz] of o.spots) decos.push(spot(s, d, sz, o.spotC ?? 0x1f2937));
-  return { parts, decos, view: o.view ?? 0.35, pitch: 0.1 };
+  return { parts, decos, creature: true, view: o.view ?? 0.35, pitch: 0.1 };
 }
 
 export function lizard(o = {}) {
@@ -590,7 +590,7 @@ export function lizard(o = {}) {
     decos.push({ d: 'mouth', on: 'head', dir: [0, -0.35, 1], size: 0.2 });
   } else decos.push(...face('head', { dir: [0, 0.35, 1], spread: 0.55, h: 0.15, eye: croc ? 0.15 : 0.2, mouthH: -0.45, cheekSpread: 0.85, mouth: croc ? 'fangs' : 'smile' }));
   if (o.spots) for (const [d, sz] of o.spots) decos.push(spot('body', d, sz, o.spotC ?? 0xf97316));
-  return { parts, decos, view: o.view ?? 0.7, pitch: 0.18 };
+  return { parts, decos, creature: true, view: o.view ?? 0.7, pitch: 0.18 };
 }
 
 /* ============================================================================
@@ -621,7 +621,7 @@ export function hedgehog(o = {}) {
     { d: 'nose', on: 'snout', dir: [0, 0.2, 1], size: 0.09, c: 0x1f2937 },
     { d: 'mouth', on: 'face', dir: [0, -0.55, 1], size: 0.13 }
   ];
-  return { parts, decos, view: o.view ?? 0.4 };
+  return { parts, decos, creature: true, view: o.view ?? 0.4 };
 }
 
 /* ============================================================================
@@ -639,7 +639,7 @@ export function serpent(o = {}) {
     if (o.wings) parts.push(...pair(E('wing', [1.6, 0.85, -0.3], [0.62, 0.15, 0.45], o.wings, { rot: [0, 0.3, -0.6], role: 'acc' })));
     decos.push(...face('head', { dir: [0.3, 0.2, 1], spread: 0.45, h: 0.1, eye: 0.15, mouthH: -0.25 }));
     parts.push(...base(o.base ?? 'gold'));
-    return { parts, decos, view: o.view ?? 0.05 };
+    return { parts, decos, creature: true, view: o.view ?? 0.05 };
   }
   // cuerpo enroscado sobre la base + cuello erguido
   const coils = o.coils ?? 2;
@@ -660,7 +660,7 @@ export function serpent(o = {}) {
   if (o.extra) parts.push(...o.extra);
   parts.push(...base(o.base ?? 'grass'));
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.2 };
+  return { parts, decos, creature: true, view: o.view ?? 0.2 };
 }
 
 /* ============================================================================
@@ -770,7 +770,7 @@ export function humanoid(o = {}) {
   if (o.face !== false) decos.push(...face('head', { dir: [0, 0, 1], spread: 0.36, h: 0.06, eye: o.eye ?? 0.19, mouth: o.mouth ?? 'smile', mouthOn: o.snout ? 'snout' : 'head', mouthH: o.snout ? -0.45 : -0.32, style: o.eyeStyle, iris: o.iris, ...(o.faceOpt || {}) }));
   if (o.snout && o.nose !== false) decos.push({ d: 'nose', on: 'snout', dir: [0, 0.5, 1], size: 0.09, c: o.noseC ?? 0x3b2a2a });
   if (o.decos) decos.push(...o.decos);
-  return { parts, decos, view: o.view ?? 0.3 };
+  return { parts, decos, creature: true, view: o.view ?? 0.3 };
 }
 
 /* ============================================================================

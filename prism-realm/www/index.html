@@ -826,8 +826,61 @@
     let pendingReserve = 0;     // tornillos volando hacia la bandeja
     let boxEntranceAnim = false; // las cajas nuevas caen con rebote (no las iniciales)
 
+    // Tornillo "enterrado": está debajo de una placa maciza de una capa superior (no se ve ni se toca)
+    function isBuried(s) {
+      if (!s.buriedBy || !s.buriedBy.length || !state.levelData) return false;
+      for (const id of s.buriedBy) {
+        const p = state.levelData.pieces[id];
+        if (p && !p.falling && !p.removed) return true;
+      }
+      return false;
+    }
+    function computeBuried(screws, pieces) {
+      const rc = new THREE.Raycaster();
+      const o = new THREE.Vector3();
+      const byLayer = new Map();
+      for (const p of pieces) if (p.mesh) { if (!byLayer.has(p.layer)) byLayer.set(p.layer, []); byLayer.get(p.layer).push(p.mesh); }
+      const layersSorted = [...byLayer.keys()].sort((a, b) => a - b);
+      const buriedUnder = new Map();
+      for (const s of screws) {
+        const cand = [];
+        for (const L of layersSorted) if (L > s.layer) cand.push(...byLayer.get(L));
+        if (!cand.length) continue;
+        o.copy(s.pos).addScaledVector(s.normal, 0.004);
+        rc.set(o, s.normal);
+        rc.far = 0.32 * screwScale;
+        const ids = new Set();
+        for (const h of rc.intersectObjects(cand, false)) {
+          const id = h.object.userData.levelPieceId;
+          if (id !== undefined) ids.add(id);
+        }
+        s.buriedBy = [...ids];
+        for (const id of ids) { if (!buriedUnder.has(id)) buriedUnder.set(id, []); buriedUnder.get(id).push(s); }
+      }
+      state.buriedUnder = buriedUnder;
+    }
+    // Al soltarse una placa, aparecen los tornillos que tapaba
+    function revealUnder(piece) {
+      const list = state.buriedUnder && state.buriedUnder.get(piece.id);
+      if (!list) return;
+      for (const s of list) {
+        syncScrewMatrix(s);
+        if (!s.removed && !isBuried(s)) {
+          dummy.position.copy(s.pos).addScaledVector(s.normal, -0.06 * screwScale);
+          dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), s.normal);
+          dummy.scale.setScalar(screwScale);
+          dummy.updateMatrix();
+          holeInstMesh.setMatrixAt(s.id, dummy.matrix);
+        }
+      }
+      screwInstMesh.instanceMatrix.needsUpdate = true;
+      crossMeshA.instanceMatrix.needsUpdate = true;
+      crossMeshB.instanceMatrix.needsUpdate = true;
+      holeInstMesh.instanceMatrix.needsUpdate = true;
+    }
+
     function syncScrewMatrix(s) {
-      if (s.removed || s.animating) {
+      if (s.removed || s.animating || isBuried(s)) {
         screwInstMesh.setMatrixAt(s.id, zeroMat);
         crossMeshA.setMatrixAt(s.id, zeroMat);
         crossMeshB.setMatrixAt(s.id, zeroMat);
@@ -967,6 +1020,8 @@
       holeInstMesh = new THREE.InstancedMesh(holeSocketGeo, holeMat, screws.length);
 
       const c = new THREE.Color();
+      rootGroup.updateMatrixWorld(true);
+      computeBuried(screws, state.levelData.pieces);
       for (const s of screws) {
         syncScrewMatrix(s);
         c.setHex(SCREW_COLORS[s.colorId].int);
@@ -976,7 +1031,7 @@
         dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), s.normal);
         dummy.scale.setScalar(screwScale);
         dummy.updateMatrix();
-        holeInstMesh.setMatrixAt(s.id, dummy.matrix);
+        holeInstMesh.setMatrixAt(s.id, isBuried(s) ? zeroMat : dummy.matrix);
       }
 
       screwInstMesh.instanceMatrix.needsUpdate = true;
@@ -1085,7 +1140,7 @@
         for (const p of pieces) {
           if (p.layer > screw.layer && p.mesh && !p.falling && !p.removed) cand.push(p.mesh);
         }
-        blockOrigin.copy(screw.pos).addScaledVector(screw.normal, 0.15);
+        blockOrigin.copy(screw.pos).addScaledVector(screw.normal, 0.03);
         blockRaycaster.set(blockOrigin, screw.normal);
         blockRaycaster.far = 2.8 * (state.levelData.frameK || 1);
         const ids = new Set();
@@ -1248,6 +1303,7 @@
         if (piece.remainingScrews <= 0) {
           SoundFX.playPieceDrop();
           piece.falling = true;
+          revealUnder(piece);
           piece.vel.copy(piece.normal).multiplyScalar(2.4).add(new THREE.Vector3(0, 1.5, 0));
           piece.angVel.set((Math.random() - 0.5) * 6, (Math.random() - 0.5) * 6, (Math.random() - 0.5) * 6);
         }
@@ -1618,7 +1674,7 @@
     }
 
     // Iniciamos en el Nivel 1 con el Pingüino Navideño completo
-    window.__prism = { startLevel, setPixelRatio: r => { renderer.setPixelRatio(r); renderer.setSize(window.innerWidth, window.innerHeight); } }; // gancho de depuración/capturas de CI
+    window.__prism = { startLevel, state, extractScrew, isBlocked, isBuried, setPixelRatio: r => { renderer.setPixelRatio(r); renderer.setSize(window.innerWidth, window.innerHeight); } }; // gancho de depuración/capturas de CI
     startLevel(1);
     requestAnimationFrame(tick);
   </script>

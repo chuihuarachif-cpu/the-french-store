@@ -98,7 +98,7 @@ export function addZone9(D) {
       CYL('kickHead', [0, -1.15, 0.44], [0.72, 0.03, 0.72], white(), { rot: [HP, 0, 0], role: 'deco', on: 'kick' }),
       ...pair(CYL('tom', [0.45, -0.05, 0.1], [0.32, 0.22, 0.32], 0x1d4ed8, { rot: [0.5, 0, 0.15] })),
       CYL('snare', [-1.2, -0.85, 0.55], [0.38, 0.18, 0.38], silver, { rot: [0.2, 0, 0], ...M }),
-      ...pair(rod('cymStand', [1.35, -2.2, -0.2], [1.35, 0.45, -0.2], 0.04, silver, { role: 'acc' })),
+      ...pair(rod('cymStand', [1.35, -2.2, -0.2], [1.35, 0.45, -0.2], 0.04, silver, { role: 'acc', support: false })),
       ...pair(CYL('cymbal', [1.35, 0.5, -0.2], [0.55, 0.03, 0.55], gold, { rot: [0.25, 0, -0.15], ...M })),
       rod('stick', [-0.3, 0.35, 0.65], [0.5, 0.85, 0.9], 0.04, woodL, { role: 'acc' }),
       ...base('night')
@@ -184,15 +184,17 @@ export function addZone9(D) {
   // 414 Flauta traversa
   D[414] = () => ({
     parts: [
-      rod('fluteBody', [-1.75, 0.2, 0], [1.75, 0.2, 0], 0.13, silver, M),
-      E('embouch', [-1.25, 0.32, 0.0], [0.15, 0.06, 0.1], silver, { ...M, role: 'acc' }),
-      ...Array.from({ length: 8 }, (_, i) => CYL(`fKey${i}`, [-0.6 + i * 0.3, 0.34, 0], [0.08, 0.03, 0.08], ivory, { role: 'acc' })),
-      ...pair(rod('fStand', [0.9, -2.2, 0], [0.9, 0.05, 0], 0.07, black)),
-      E('flutePal', [0, -1.3, 0.2], [0.55, 0.45, 0.4], 0x93c5fd),
-      ...base('cloud')
+      rod('fluteHead', [-1.85, 0.0, 0], [-0.95, 0.0, 0], 0.2, silver, M),
+      rod('fluteBody', [-0.95, 0.0, 0], [1.05, 0.0, 0], 0.19, silver, M),
+      rod('fluteFoot', [1.05, 0.0, 0], [1.85, 0.0, 0], 0.17, silver, M),
+      ...[-0.95, 1.05].map((x, i) => TOR(`fJoint${i}`, [x, 0, 0], 0.2, 0.05, gold, { rot: [0, 0, HP], ...M, role: 'acc' })),
+      E('lipPlate', [-1.45, 0.2, 0], [0.22, 0.06, 0.14], silver, M),
+      ...Array.from({ length: 7 }, (_, i) => CYL(`fKey${i}`, [-0.6 + i * 0.3, 0.2, 0], [0.11, 0.05, 0.11], ivory, { role: 'acc' })),
+      ...Array.from({ length: 3 }, (_, i) => CYL(`fFootKey${i}`, [1.3 + i * 0.2, 0.17, 0.05], [0.08, 0.04, 0.08], ivory, { role: 'acc' })),
+      rod('keyRod', [-0.7, 0.12, 0.17], [1.6, 0.1, 0.15], 0.035, gold, { ...M, role: 'acc' })
     ],
-    decos: [...cute('flutePal', [0, 0.1, 1], { eye: 0.14, spread: 0.38 }), { d: 'shape', on: 'fluteBody', dir: [0, 1, 0.3], off: [1.3, 0.1], size: 0.15, c: 0x60a5fa, shape: { r: [0.08, 0.14, 0.03] }, excl: 0.2 }],
-    view: 0.15, pitch: 0.1
+    decos: [],
+    view: 0.2, pitch: 0.35
   });
   // 415 Acordeón
   D[415] = () => ({
@@ -310,7 +312,7 @@ export function addZone9(D) {
     const parts = [];
     for (let i = 0; i < 5; i++) {
       const y = -1.75 + i * 0.75, w = 0.85 - i * 0.1;
-      parts.push(BOX(`floor${i}`, [0, y, 0], [w * 0.8, 0.28, w * 0.8], 0xfef3c7), POLY(`roof${i}`, [0, y + 0.4, 0], [w * 0.8 + 0.25, 0.14, w * 0.8 + 0.25], 'pyr4', 0x991b1b));
+      parts.push(BOX(`floor${i}`, [0, y, 0], [w * 0.8, 0.28, w * 0.8], 0xfef3c7), POLY(`roof${i}`, [0, y + 0.42, 0], [(w * 0.8 + 0.3) / 1.7, 0.2, (w * 0.8 + 0.3) / 1.7], 'pyr4', 0x991b1b));
     }
     parts.push(CYL('sorin', [0, 2.15, 0], [0.05, 0.42, 0.05], gold, { ...M, role: 'acc' }), ...base('grass'));
     return { parts, decos: cute('floor0', [0, 0, 1], { flat: true, eye: 0.12, gap: 0.24, eyeY: 0.02, mouthDy: 0.15 }), view: 0.4, pitch: -0.05 };
@@ -426,7 +428,7 @@ export function addZone9(D) {
   // 433 Taj Mahal
   D[433] = () => ({
     parts: [
-      BOX('plinthT', [0, -1.85, 0], [1.6, 0.18, 1.2], white()),
+      BOX('plinthT', [0, -1.85, 0], [1.6, 0.18, 1.2], white(), { support: false }),
       BOX('mainHall', [0, -1.05, 0], [0.82, 0.62, 0.72], white()),
       E('bigDome', [0, 0.15, 0], [0.62, 0.72, 0.6], white()),
       CONE('domeTip', [0, 0.95, 0], [0.08, 0.25, 0.08], gold, { ...M, role: 'acc' }),
@@ -514,7 +516,7 @@ export function addZone9(D) {
   // 439 Balanza de dos platillos
   D[439] = () => ({
     parts: [
-      CYL('balPost', [0, -0.75, 0], [0.13, 1.1, 0.13], gold, M),
+      CYL('balPost', [0, -0.75, 0], [0.13, 1.1, 0.13], gold, { ...M, support: false }),
       BOX('beam', [0, 0.45, 0], [1.35, 0.06, 0.08], gold, M),
       E('pivot', [0, 0.45, 0.05], [0.25, 0.25, 0.15], gold, M),
       ...[1, -1].flatMap(s => [rod(`chain${s}`, [s * 1.25, 0.4, 0], [s * 1.25, -0.45, 0], 0.025, silver, { role: 'acc' }), CYL(`pan${s}`, [s * 1.25, -0.55, 0], [0.55, 0.08, 0.55], gold, { ...M, e: [1, 1] })]),

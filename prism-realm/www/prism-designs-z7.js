@@ -6,7 +6,7 @@ const M = { mat: 'metal' };
 const steel = 0xcbd5e1, iron = 0x64748b, dark = 0x334155, gold = 0xfbbf24, bronze = 0xd97706, red = 0xdc2626, blue = 0x2563eb, wood = 0x92400e, darkWood = 0x78350f, white = 0xf8fafc, purple = 0x7c3aed, green = 0x16a34a, black = 0x1f2937;
 
 // Busto exhibidor (para cascos y máscaras): hombros + cuello + pedestal
-const bust = (c = 0xa8a29e) => [E('shoulders', [0, -1.35, 0], [1.05, 0.45, 0.62], c), CYL('neck', [0, -0.75, 0], [0.35, 0.35, 0.35], c), CYL('plinth', [0, -1.95, 0], [0.75, 0.22, 0.55], darkWood)];
+const bust = (c = 0xa8a29e) => [E('shoulders', [0, -1.35, 0], [1.05, 0.45, 0.62], c, { support: true }), CYL('neck', [0, -0.75, 0], [0.35, 0.35, 0.35], c, { support: true }), CYL('plinth', [0, -1.95, 0], [0.75, 0.22, 0.55], darkWood)];
 // Ojos asomando por la ranura/visor de un casco
 const peek = (on, y = 0, gap = 0.3, size = 0.13) => [{ d: 'eye', on, dir: [0, 0, 1], off: [-gap, y], size, style: 'round', iris: 0x1f2937 }, { d: 'eye', on, dir: [0, 0, 1], off: [gap, y], size, style: 'round', iris: 0x1f2937 }];
 
@@ -20,7 +20,7 @@ function sword(o = {}) {
     E('pommel', [0, 1.85 - (2.3 - L) / 2 + (o.bladeY ?? 0), 0], [0.24, 0.2, 0.2], o.guardC ?? gold, M)
   ];
   if (o.stone) parts.push(E('stone', [0, -1.75, 0], [1.25, 0.65, 0.95], o.stone));
-  else parts.push(BOX('holder', [0, -1.7, 0], [0.95, 0.42, 0.62], o.holderC ?? darkWood, { taper: -0.2 }));
+  else parts.push(BOX('holder', [0, -1.7, 0], [0.95, 0.42, 0.62], o.holderC ?? darkWood, { taper: -0.2, support: true }));
   if (o.extra) parts.push(...o.extra);
   parts.push(...base(o.base ?? 'stone'));
   const decos = [...cute(o.faceOn ?? (o.stone ? 'stone' : 'holder'), [0, 0.2, 1], { eye: 0.17, spread: 0.32 })];
@@ -123,7 +123,7 @@ export function addZone7(D) {
   });
   // 320 Shuriken estrella ninja
   D[320] = () => ({
-    parts: [CYL('hubSh', [0, 0.1, 0], [0.55, 0.12, 0.55], iron, { rot: [HP, 0, 0], ...M }), ...around(4, (i, a) => POLY(`bladeSh${i}`, [Math.cos(a + HP / 2) * 0.85, 0.1 + Math.sin(a + HP / 2) * 0.85, 0], [0.38, 0.62, 0.1], 'diamond', steel, { dir: [Math.cos(a + HP / 2), Math.sin(a + HP / 2), 0], side: [0, 0, 1], ...M })), TOR('holeSh', [0, 0.1, 0.12], 0.18, 0.05, black, { rot: [HP, 0, 0], role: 'acc' }), BOX('standSh', [0, -1.45, -0.1], [0.3, 0.75, 0.25], darkWood), ...base('dark')],
+    parts: [CYL('hubSh', [0, 0.1, 0], [0.55, 0.12, 0.55], iron, { rot: [HP, 0, 0], ...M }), ...around(4, (i, a) => POLY(`bladeSh${i}`, [Math.cos(a + HP / 2) * 0.85, 0.1 + Math.sin(a + HP / 2) * 0.85, 0], [0.38, 0.62, 0.1], 'diamond', steel, { dir: [Math.cos(a + HP / 2), Math.sin(a + HP / 2), 0], side: [0, 0, 1], ...M })), TOR('holeSh', [0, 0.1, 0.12], 0.18, 0.05, black, { rot: [HP, 0, 0], role: 'acc' }), BOX('standSh', [0, -1.45, -0.1], [0.3, 0.75, 0.25], darkWood, { support: true }), ...base('dark')],
     decos: flatFace('hubSh', { eye: 0.11, gap: 0.22, eyeY: 0.18, cheeks: false, mouthDy: 0.4 }), view: 0.15
   });
   // 321 Kusarigama
@@ -165,7 +165,7 @@ export function addZone7(D) {
   });
   // 326 Trabuquete de contrapeso
   D[326] = () => ({
-    parts: [...pair(rod('aframeA', [0.65, -2.05, 0.75], [0.62, 0.85, 0], 0.09, wood)), ...pair(rod('aframeB', [0.65, -2.05, -0.75], [0.62, 0.85, 0], 0.09, wood)), rod('axleTr', [-0.75, 0.85, 0], [0.75, 0.85, 0], 0.07, iron), rod('armTr', [0, 0.85, 0], [0, 1.85, -1.55], 0.1, darkWood), rod('armShort', [0, 0.85, 0], [0, 0.4, 0.65], 0.12, darkWood), BOX('counterweight', [0, -0.15, 0.75], [0.42, 0.42, 0.42], 0x6b7280), rod('slingT', [0, 1.85, -1.55], [0, 1.0, -1.7], 0.02, 0x78350f, { role: 'acc' }), E('stoneT', [0, 0.9, -1.72], [0.15, 0.15, 0.15], 0x9ca3af, { role: 'acc' }), BOX('baseFrame', [0, -2.05, 0], [0.75, 0.12, 0.95], wood), ...base('grass')],
+    parts: [...pair(rod('aframeA', [0.65, -2.05, 0.75], [0.62, 0.85, 0], 0.09, wood)), ...pair(rod('aframeB', [0.65, -2.05, -0.75], [0.62, 0.85, 0], 0.09, wood)), rod('axleTr', [-0.75, 0.85, 0], [0.75, 0.85, 0], 0.07, iron), rod('armTr', [0, 0.85, 0], [0, 1.85, -1.55], 0.1, darkWood), rod('armShort', [0, 0.85, 0], [0, 0.4, 0.65], 0.12, darkWood), BOX('counterweight', [0, -0.15, 0.75], [0.42, 0.42, 0.42], 0x6b7280), rod('slingT', [0, 1.85, -1.55], [0, 1.0, -1.7], 0.02, 0x78350f, { role: 'acc' }), E('stoneT', [0, 0.9, -1.72], [0.15, 0.15, 0.15], 0x9ca3af, { role: 'acc' }), BOX('baseFrame', [0, -2.05, 0], [0.75, 0.12, 0.95], wood, { support: false }), ...base('grass')],
     decos: cute('counterweight', [0, 0, 1], { eye: 0.12, spread: 0.45 }), view: 1.1
   });
   // 327 Ariete de asedio con cabeza de hierro

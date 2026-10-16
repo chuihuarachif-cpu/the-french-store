@@ -169,7 +169,7 @@ export function addZone2(D) {
   // 62 Llave Allen múltiple (abanico)
   D[62] = () => ({
     parts: [
-      BOX('holder', [0, -1.3, 0], [1.0, 0.42, 0.3], red, { e: [0.45, 0.45] }),
+      BOX('holder', [0, -1.3, 0], [1.0, 0.42, 0.3], red, { e: [0.45, 0.45], support: false }),
       ...[-0.75, -0.45, -0.15, 0.15, 0.45, 0.75].map((x, i) => rod(`key${i}`, [x * 0.9, -1.0, 0], [x * 2.2, 0.9 - Math.abs(x) * 0.6, 0], 0.08 - i * 0.004, dark, { ...M, e: [0.3, 0.3] })),
       CYL('pin', [0, -1.3, 0.32], [0.12, 0.08, 0.12], steel, { rot: [HP, 0, 0], role: 'acc' }),
       ...base('metal')

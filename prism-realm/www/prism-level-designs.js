@@ -224,6 +224,21 @@ addZone8(D);
 addZone9(D);
 addZone10(D);
 
+// Objetos muy delgados con muchos tornillos: versión "juguete" más gruesa para que el tornillo sea tocable
+function thicken(fn, minR) {
+  return (t) => {
+    const d = fn(t);
+    return { ...d, parts: d.parts.map(p => {
+      if (!p || p.role === 'deco') return p;
+      if (p.s === 'torus') return { ...p, tr: Math.max(p.tr ?? 0.25, minR) };
+      return p.r ? { ...p, r: p.r.map(v => Math.max(v, minR)) } : p;
+    }) };
+  };
+}
+for (const [L, m] of [[333, 0.15], [410, 0.15], [281, 0.14], [282, 0.14], [364, 0.14], [389, 0.14], [452, 0.14], [414, 0.2], [335, 0.14], [359, 0.12], [411, 0.14], [486, 0.14], [317, 0.13], [322, 0.13], [413, 0.16], [303, 0.13], [306, 0.13], [316, 0.13], [334, 0.13], [365, 0.14], [366, 0.13], [361, 0.11]]) {
+  if (D[L]) D[L] = thicken(D[L], m);
+}
+
 export function designForLevel(L, title) {
   const f = D[L];
   if (f) return f(title);
