@@ -32,9 +32,11 @@ func setup(color: Color, with_lights := false, lite := false) -> void:
 	if with_lights:
 		_add_headlights()
 	if lite:
-		for n in _all(model):
-			if n is MeshInstance3D and String(n.name).contains("BrakePad"):
-				n.visible = false
+		for n in _all(self):
+			if n is MeshInstance3D:
+				n.lod_bias = 0.3
+				if String(n.name).contains("BrakePad"):
+					n.visible = false
 
 func _all(n: Node) -> Array:
 	var out := []

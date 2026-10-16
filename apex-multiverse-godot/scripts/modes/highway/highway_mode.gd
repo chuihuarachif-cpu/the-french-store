@@ -558,7 +558,11 @@ func _process(delta: float) -> void:
 				Sfx.play("beep", -2.0, 1.6)
 				car.speed = 12.0
 		"run":
+			var was_nitro := car.nitro_on
 			car.step(dt, steer, braking, want_nitro)
+			if car.nitro_on and not was_nitro:
+				Sfx.play("nitro", -3.0)
+				shake = maxf(shake, 0.3)
 			invuln = maxf(0.0, invuln - dt)
 			score += car.speed * dt * 0.5 * mult
 			combo = maxf(0.0, combo - dt / 4.0)

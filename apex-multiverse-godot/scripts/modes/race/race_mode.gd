@@ -288,7 +288,11 @@ func _step_racer(r: Dictionary, dt: float) -> void:
 		braking = Input.is_action_pressed("brake")
 		want_nitro = Input.is_action_pressed("nitro")
 	var prev_s := c.s
+	var was_nitro := c.nitro_on
 	c.step(dt, steer, braking, want_nitro, track.curvature(c.s))
+	if r == player and c.nitro_on and not was_nitro:
+		Sfx.play("nitro", -3.0)
+		shake = maxf(shake, 0.3)
 	c.nitro = minf(100.0, c.nitro + 1.5 * dt)
 	r["steer"] = steer
 	# Rampa
