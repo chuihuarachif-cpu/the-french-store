@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>APEX MULTIVERSE 3D — Edición Ultra Detallada</title>
+<style>
+  :root {
+    --accent: #00f0ff;
+    --warn: #ffaa00;
+    --danger: #ff2a55;
+    --success: #00ff88;
+    --glass: rgba(10, 14, 24, 0.82);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+  body, html { width: 100%; height: 100%; overflow: hidden; background: #04060c; color: #fff; }
+  #gameCanvas { width: 100%; height: 100%; display: block; }
+
+  /* HUD PRINCIPAL */
+  #hud { position: absolute; inset: 0; pointer-events: none; display: none; flex-direction: column; justify-content: space-between; padding: 20px 28px; z-index: 10; }
+  .hud-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+  .hud-box { background: var(--glass); backdrop-filter: blur(12px); border-left: 4px solid var(--accent); padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+  .hud-tag { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 800; }
+  .hud-main-val { font-size: 40px; font-weight: 900; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+  .hud-sub { font-size: 12px; color: #cbd5e1; margin-top: 4px; font-weight: 600; }
+
+  /* POPUP CENTRAL ESTILO REDLINE / OPUS 5.5 */
+  .center-feed { text-align: center; transform: scale(0.9) translateY(10px); opacity: 0; transition: all 0.16s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  .center-feed.show { transform: scale(1) translateY(0); opacity: 1; }
+  .feed-badge { display: inline-block; background: rgba(15, 23, 42, 0.9); border: 1.5px solid var(--warn); padding: 6px 20px; border-radius: 30px; font-size: 15px; font-weight: 900; letter-spacing: 2.5px; color: #fff; text-shadow: 0 0 12px var(--warn); box-shadow: 0 0 25px rgba(255,170,0,0.35); }
+  .feed-pts { font-size: 30px; font-weight: 900; color: var(--warn); margin-top: 4px; text-shadow: 0 0 18px rgba(255,170,0,0.9); }
+
+  /* ALERTA DE CAMIÓN ATASCADO O PELIGRO */
+  #stuckAlert { position: absolute; top: 24%; left: 50%; transform: translateX(-50%); background: rgba(220, 38, 38, 0.92); border: 2px solid #fff; padding: 12px 26px; border-radius: 10px; font-weight: 900; font-size: 15px; letter-spacing: 1.5px; text-align: center; display: none; box-shadow: 0 0 30px rgba(255,42,85,0.8); animation: pulse 0.6s infinite alternate; }
+  @keyframes pulse { from { transform: translateX(-50%) scale(0.97); } to { transform: translateX(-50%) scale(1.04); } }
+
+  .mult-box { background: var(--glass); backdrop-filter: blur(12px); padding: 12px 20px; border-radius: 8px; text-align: right; border-right: 4px solid var(--warn); }
+  .mult-num { font-size: 36px; font-weight: 900; color: var(--warn); font-variant-numeric: tabular-nums; }
+  .combo-track { width: 130px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; margin-top: 5px; overflow: hidden; }
+  .combo-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--warn), var(--danger)); }
+
+  .hud-bottom { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
+  .bars-box { background: var(--glass); backdrop-filter: blur(12px); padding: 14px 20px; border-radius: 8px; min-width: 250px; }
+  .bar-lbl { display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; margin-bottom: 5px; color: #e2e8f0; letter-spacing: 1px; }
+  .bar-bg { width: 100%; height: 9px; background: rgba(255,255,255,0.12); border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
+  .bar-val { height: 100%; width: 100%; background: linear-gradient(90deg, #00f0ff, #00ff88); transition: width 0.1s; }
+  .bar-val.sec { background: linear-gradient(90deg, #f59e0b, #22c55e); }
+
+  .speed-box { background: var(--glass); backdrop-filter: blur(12px); padding: 14px 28px; border-radius: 10px; text-align: right; border-bottom: 4px solid var(--accent); }
+  .speed-digits { font-size: 58px; font-weight: 900; line-height: 0.9; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
+  .speed-unit { font-size: 13px; font-weight: 800; color: var(--accent); letter-spacing: 3px; margin-top: 4px; }
+
+  /* MENÚ PRINCIPAL */
+  #mainMenu, #endScreen {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    background: radial-gradient(circle at center, rgba(14, 23, 42, 0.85) 0%, rgba(4, 6, 12, 0.98) 100%);
+    backdrop-filter: blur(14px); z-index: 30; padding: 20px; overflow-y: auto;
+  }
+
+  .logo-title { font-size: clamp(28px, 4.2vw, 54px); font-weight: 900; letter-spacing: 4px; text-transform: uppercase; background: linear-gradient(90deg, #ffffff, #00f0ff, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
+  .logo-sub { font-size: 13px; color: #94a3b8; letter-spacing: 2.5px; text-transform: uppercase; margin: 6px 0 20px; text-align: center; }
+
+  .env-pill { display: flex; gap: 8px; margin-bottom: 22px; background: rgba(255,255,255,0.05); padding: 6px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.12); flex-wrap: wrap; justify-content: center; }
+  .env-btn { padding: 8px 18px; border-radius: 30px; border: none; background: transparent; color: #94a3b8; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.2s; }
+  .env-btn.active { background: var(--accent); color: #05070b; box-shadow: 0 0 15px rgba(0,240,255,0.5); }
+
+  .grid-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)); gap: 16px; width: 100%; max-width: 1120px; }
+  .card-mode {
+    background: rgba(17, 24, 39, 0.88); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 20px;
+    cursor: pointer; transition: all 0.24s ease; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .card-mode:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 14px 32px rgba(0,240,255,0.2); }
+  .m-badge { font-size: 11px; font-weight: 900; letter-spacing: 1.5px; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+  .m-title { font-size: 20px; font-weight: 900; margin-bottom: 8px; color: #fff; }
+  .m-desc { font-size: 12.5px; color: #94a3b8; line-height: 1.48; margin-bottom: 16px; }
+  .m-footer { font-size: 11px; color: #f8fafc; background: rgba(255,255,255,0.07); padding: 7px 11px; border-radius: 6px; font-weight: 800; display: flex; justify-content: space-between; }
+
+  .help-bar { margin-top: 22px; font-size: 12.5px; color: #94a3b8; text-align: center; background: rgba(255,255,255,0.04); padding: 10px 22px; border-radius: 30px; }
+  .help-bar kbd { color: #fff; font-weight: 800; background: rgba(255,255,255,0.14); padding: 2px 8px; border-radius: 4px; margin: 0 3px; }
+
+  /* PANTALLA DE RESULTADOS (ESTILO REDLINE / OPUS) */
+  #endScreen { display: none; }
+  .result-panel { background: rgba(13, 19, 33, 0.96); border: 1px solid rgba(255,255,255,0.16); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.85); }
+  .res-head { font-size: 36px; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; }
+  .res-sub { font-size: 14px; color: #94a3b8; margin-bottom: 22px; }
+  .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; background: rgba(0,0,0,0.4); padding: 14px; border-radius: 10px; }
+  .res-col { display: flex; flex-direction: column; }
+  .res-lbl { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  .res-val { font-size: 20px; font-weight: 900; color: #fff; margin-top: 3px; }
+  .res-actions { display: flex; gap: 12px; }
+  .btn-act { flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
+  .btn-go { background: #eab308; color: #05070b; }
+  .btn-go:hover { filter: brightness(1.12); }
+  .btn-back { background: rgba(255,255,255,0.1); color: #fff; }
+
+  /* CONTROLES TÁCTILES */
+  #touchPad { position: absolute; bottom: 18px; left: 18px; right: 18px; display: none; justify-content: space-between; pointer-events: none; z-index: 20; }
+  .t-cluster { display: flex; gap: 10px; pointer-events: auto; }
+  .t-key { width: 62px; height: 62px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.32); color: #fff; font-weight: 900; font-size: 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
+  .t-key:active { background: var(--accent); color: #000; }
+  @media (max-width: 900px) { #touchPad { display: flex; } .hud-bottom { margin-bottom: 76px; } }
+</style>
+</head>
+<body>
+
+<canvas id="gameCanvas"></canvas>
+
+<!-- HUD EN PARTIDA -->
+<div id="hud">
+  <div id="stuckAlert">⚠️ ¡CAMIÓN ATASCADO EN EL HUECO! PULSA [ESPACIO] (TRACCIÓN 6x6) + GIRA [A/D] PARA SALIR</div>
+  <div class="hud-top">
+    <div class="hud-box">
+      <div class="hud-tag" id="hudTag">REDLINE // NIVEL 1</div>
+      <div class="hud-main-val" id="hudMain">000000</div>
+      <div class="hud-sub" id="hudSub">DISTANCIA: 0.00 km</div>
+    </div>
+
+    <div class="center-feed" id="centerFeed">
+      <div class="feed-badge" id="feedBadge">THREAD THE NEEDLE</div>
+      <div class="feed-pts" id="feedPts">+3,200</div>
+    </div>
+
+    <div class="mult-box">
+      <div class="hud-tag" id="rightTag" style="color:#cbd5e1;">MULTIPLICADOR</div>
+      <div class="mult-num" id="rightVal">x1.0</div>
+      <div class="combo-track"><div class="combo-fill" id="comboFill"></div></div>
+    </div>
+  </div>
+
+  <div class="hud-bottom">
+    <div class="bars-box">
+      <div class="bar-lbl"><span id="b1Name">NITRO / TURBO</span><span id="b1Pct">100%</span></div>
+      <div class="bar-bg"><div class="bar-val" id="b1Bar"></div></div>
+      <div class="bar-lbl"><span id="b2Name">INTEGRIDAD / CARGA</span><span id="b2Pct">100%</span></div>
+      <div class="bar-bg"><div class="bar-val sec" id="b2Bar"></div></div>
+    </div>
+
+    <div class="speed-box">
+      <div class="speed-digits" id="speedDigits">0</div>
+      <div class="speed-unit" id="speedUnit">KM/H</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTROLES MÓVILES -->
+<div id="touchPad">
+  <div class="t-cluster">
+    <button class="t-key" id="tLeft">◀</button>
+    <button class="t-key" id="tRight">▶</button>
+  </div>
+  <div class="t-cluster">
+    <button class="t-key" id="tUp">▲</button>
+    <button class="t-key" id="tDown">▼</button>
+    <button class="t-key" id="tBoost" style="border-color:#00f0ff;color:#00f0ff;">⚡</button>
+  </div>
+</div>
+
+<!-- MENÚ PRINCIPAL -->
+<div id="mainMenu">
+  <div class="logo-title">APEX MULTIVERSE 3D</div>
+  <div class="logo-sub">Texturas Realistas PBR • Iluminación Dinámica • Nivel 1 de 120 por Modo</div>
+
+  <div class="env-pill">
+    <button class="env-btn active" onclick="setEnvPref('RANDOM', this)">🎲 Clima Aleatorio (Día / Noche)</button>
+    <button class="env-btn" onclick="setEnvPref('DAY', this)">☀️ Día Soleado</button>
+    <button class="env-btn" onclick="setEnvPref('NIGHT', this)">🌙 Noche Neón & Reflejos</button>
+  </div>
+
+  <div class="grid-modes">
+    <div class="card-mode" onclick="launchMode(1)">
+      <div>
+        <div class="m-badge">MODO 1 • INFINITO AUTOS</div>
+        <div class="m-title">Highway Redline</div>
+        <div class="m-desc">Autopista infinita estilo Redline y Opus 5.5 con estelas de luz, tráfico denso, camiones blancos y obstáculos viales. Adelanta al límite para activar combos Razor y Thread the Needle.</div>
+      </div>
+      <div class="m-footer"><span>Nivel 1 / 120 (Infinito)</span><span>Día/Noche + Tráfico</span></div>
+    </div>
+
+    <div class="card-mode" onclick="launchMode(2)">
+      <div>
+        <div class="m-badge">MODO 2 • HISTORIA CARRERA</div>
+        <div class="m-title">Asphalt & Rally Legends</div>
+        <div class="m-desc">Carrera corta en circuito con curvas, pendientes, pianos de rally, plataformas de impulso y saltos. Compite contra 9 rivales IA (10 autos en pista) que luchan por llegar 1.º a la meta.</div>
+      </div>
+      <div class="m-footer"><span>Nivel 1 / 120</span><span>Jugador vs 9 IA</span></div>
+    </div>
+
+    <div class="card-mode" onclick="launchMode(3)">
+      <div>
+        <div class="m-badge">MODO 3 • CAMIONES EXTREMOS</div>
+        <div class="m-title">Rift Trucks: Tramo Peligroso</div>
+        <div class="m-desc">Cruza puentes colgantes estrechos, cuestas empinadas, giros cerrados y baches profundos donde el camión o la carga pueden quedar atrapados. La flora y la fauna salvaje son tus rivales.</div>
+      </div>
+      <div class="m-footer"><span>Nivel 1 / 120</span><span>Puente + Baches + Fauna</span></div>
+    </div>
+
+    <div class="card-mode" onclick="launchMode(4)">
+      <div>
+        <div class="m-badge">MODO 4 • COHETES GALAXIA</div>
+        <div class="m-title">Cosmic Anti-Gravity</div>
+        <div class="m-desc">Vuelo infinito de alta velocidad con nave espacial y estela de plasma verde. Esquiva meteoros rotatorios, estrellas ardientes, agujeros negros y atraviesa anillos hiperespaciales.</div>
+      </div>
+      <div class="m-footer"><span>Nivel 1 / 120 (Infinito)</span><span>Meteoros + Estrellas</span></div>
+    </div>
+  </div>
+
+  <div class="help-bar">
+    Controles: <kbd>W A S D</kbd> o <kbd>Flechas</kbd> Conducir / Maniobrar • <kbd>ESPACIO</kbd> Nitro / Bloqueo 6x6 (Salir de baches) • <kbd>N</kbd> Cambiar Día/Noche • <kbd>ESC</kbd> Menú
+  </div>
+</div>
+
+<!-- PANTALLA DE FIN DE PARTIDA -->
+<div id="endScreen">
+  <div class="result-panel">
+    <div class="res-head" id="resHead">SO CLOSE.</div>
+    <div class="res-sub" id="resSub">Crashed at 332 km/h on the highway</div>
+    <div class="res-grid">
+      <div class="res-col"><span class="res-lbl" id="rLbl1">PUNTOS</span><span class="res-val" id="rVal1">43,736</span></div>
+      <div class="res-col"><span class="res-lbl" id="rLbl2">DISTANCIA</span><span class="res-val" id="rVal2">4.98 km</span></div>
+      <div class="res-col"><span class="res-lbl" id="rLbl3">VEL. MÁX</span><span class="res-val" id="rVal3">359 km/h</span></div>
+    </div>
+    <div class="res-actions">
+      <button class="btn-act btn-back" onclick="returnToMenu()">MENÚ</button>
+      <button class="btn-act btn-go" onclick="restartCurrent()">DRIVE AGAIN ↻</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============================================================================
+   1. MOTOR DE SONIDO SINTETIZADO (MOTORES, TURBO, BACHES, CLOSE CALLS)
+   ============================================================================ */
+class AudioEngine {
+  constructor() { this.ctx = null; this.osc = null; this.gain = null; }
+  init() {
+    if (this.ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    this.ctx = new AC();
+    this.osc = this.ctx.createOscillator();
+    this.gain = this.ctx.createGain();
+    this.osc.type = 'sawtooth';
+    this.osc.frequency.value = 50;
+    this.gain.gain.value = 0;
+    const flt = this.ctx.createBiquadFilter();
+    flt.type = 'lowpass';
+    flt.frequency.value = 340;
+    this.osc.connect(flt);
+    flt.connect(this.gain);
+    this.gain.connect(this.ctx.destination);
+    this.osc.start();
+  }
+  update(ratio, mode, boosting, bogged) {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    let f = 52 + ratio * 185;
+    if (mode === 3) f = 34 + ratio * 92 + (bogged ? Math.sin(t * 25) * 12 : 0);
+    if (mode === 4) f = 115 + ratio * 270;
+    if (boosting) f *= 1.25;
+    this.osc.frequency.setTargetAtTime(f, t, 0.05);
+    this.gain.gain.setTargetAtTime(0.06, t, 0.08);
+  }
+  stop() {
+    if (this.ctx && this.gain) this.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.06);
+  }
+  fxNearMiss() {
+    if (!this.ctx) return;
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(520, this.ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(1240, this.ctx.currentTime + 0.19);
+    g.gain.setValueAtTime(0.14, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(); o.stop(this.ctx.currentTime + 0.22);
+  }
+  fxHit() {
+    if (!this.ctx) return;
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(115, this.ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(25, this.ctx.currentTime + 0.4);
+    g.gain.setValueAtTime(0.26, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.42);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(); o.stop(this.ctx.currentTime + 0.42);
+  }
+}
+const sound = new AudioEngine();
+
+/* ============================================================================
+   2. TEXTURAS PROCEDURALES REALISTAS PBR (ASFALTO, PIANOS RALLY, MADERA, ROCA)
+   ============================================================================ */
+function makeRoadTexture(mode, night) {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 512;
+  const ctx = c.getContext('2d');
+
+  if (mode === 3) {
+    // Textura de puente de tablones de madera y barro para Camiones
+    ctx.fillStyle = '#432d18';
+    ctx.fillRect(0, 0, 512, 512);
+    for (let i = 0; i < 14000; i++) {
+      ctx.fillStyle = Math.random() > 0.5 ? '#352210' : '#573b21';
+      ctx.fillRect(Math.random() * 512, Math.random() * 512, 4, 2);
+    }
+    ctx.strokeStyle = '#1f1207';
+    ctx.lineWidth = 5;
+    for (let y = 0; y < 512; y += 28) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
+    }
+    // Huellas de barro longitudinales
+    ctx.fillStyle = 'rgba(22, 14, 6, 0.45)';
+    ctx.fillRect(110, 0, 75, 512);
+    ctx.fillRect(325, 0, 75, 512);
+  } else {
+    // Textura de asfalto granulado de alta resolución
+    ctx.fillStyle = night ? '#12151e' : '#242933';
+    ctx.fillRect(0, 0, 512, 512);
+    for (let i = 0; i < 20000; i++) {
+      const v = Math.floor(Math.random() * 42) + (night ? 10 : 28);
+      ctx.fillStyle = `rgb(${v},${v},${v + 5})`;
+      ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 2);
+    }
+    if (mode === 2) {
+      // Pianos rojos y blancos estilo Pocket Rally / Asphalt en los bordes
+      for (let y = 0; y < 512; y += 32) {
+        ctx.fillStyle = (y / 32) % 2 === 0 ? '#dc2626' : '#f8fafc';
+        ctx.fillRect(0, y, 22, 32);
+        ctx.fillRect(490, y, 22, 32);
+      }
+      // Línea central de circuito
+      ctx.fillStyle = 'rgba(255,255,255,0.65)';
+      for (let y = 0; y < 512; y += 64) ctx.fillRect(252, y, 8, 34);
+    } else {
+      // Autopista de 4 carriles (Modo 1)
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(12, 0, 8, 512);
+      ctx.fillRect(492, 0, 8, 512);
+      ctx.fillStyle = '#fbbf24';
+      for (let y = 0; y < 512; y += 64) {
+        ctx.fillRect(130, y, 6, 38);
+        ctx.fillRect(253, y, 6, 38);
+        ctx.fillRect(378, y, 6, 38);
+      }
+    }
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = THREE.RepeatWrapping;
+  t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(1, 18);
+  return t;
+}
+
+function makeRockTexture() {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 256;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#475569';
+  ctx.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 4500; i++) {
+    const s = 35 + Math.floor(Math.random() * 75);
+    ctx.fillStyle = `rgb(${s},${s - 2},${s - 6})`;
+    ctx.fillRect(Math.random() * 256, Math.random() * 256, 4, 4);
+  }
+  return new THREE.CanvasTexture(c);
+}
+const sharedRockTex = makeRockTexture();
+
+/* ============================================================================
+   3. ESCENA THREE.JS Y CONSTRUCTORES DE MODELOS 3D CON ESTELAS DE LUZ
+   ============================================================================ */
+const canvas = document.getElementById('gameCanvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+let scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+function createCarMesh(hexColor, withTrails = false) {
+  const g = new THREE.Group();
+  const paint = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0.78, roughness: 0.18 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x090d16, metalness: 0.95, roughness: 0.08 });
+  const carbon = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.62, 4.6), paint);
+  body.position.y = 0.54;
+  body.castShadow = true;
+  g.add(body);
+
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.52, 2.25), glass);
+  cabin.position.set(0, 1.08, -0.15);
+  g.add(cabin);
+
+  const wing = new THREE.Mesh(new THREE.BoxGeometry(2.05, 0.1, 0.45), carbon);
+  wing.position.set(0, 1.05, 2.08);
+  g.add(wing);
+
+  // Barra LED trasera estilo Redline / Opus 5.5
+  const tailMat = new THREE.MeshBasicMaterial({ color: 0xff1133 });
+  const tail = new THREE.Mesh(new THREE.BoxGeometry(1.92, 0.16, 0.1), tailMat);
+  tail.position.set(0, 0.68, 2.31);
+  g.add(tail);
+
+  // Ruedas
+  const wGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.34, 16);
+  wGeo.rotateZ(Math.PI / 2);
+  [[-1.05, 0.42, -1.45], [1.05, 0.42, -1.45], [-1.05, 0.42, 1.45], [1.05, 0.42, 1.45]].forEach(p => {
+    const w = new THREE.Mesh(wGeo, carbon);
+    w.position.set(...p);
+    g.add(w);
+  });
+
+  if (withTrails) {
+    // Estelas rojas de velocidad (como en Opus 5.5)
+    const trailMat = new THREE.MeshBasicMaterial({ color: 0xff1e42, transparent: true, opacity: 0.65 });
+    const tL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 4.5), trailMat);
+    tL.position.set(-0.78, 0.65, 4.5);
+    const tR = tL.clone(); tR.position.x = 0.78;
+    g.add(tL, tR);
+    g.userData.trails = [tL, tR];
+
+    // Llamas de Nitro
+    const nMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    const nL = new THREE.Mesh(new THREE.ConeGeometry(0.2, 1.4, 8), nMat);
+    nL.rotation.x = Math.PI / 2; nL.position.set(-0.5, 0.4, 2.9);
+    const nR = nL.clone(); nR.position.x = 0.5;
+    nL.visible = false; nR.visible = false;
+    g.add(nL, nR);
+    g.userData.flames = [nL, nR];
+
+    // Faros reales para modo noche
+    const spot = new THREE.SpotLight(0xe0f2fe, 2.2, 75, Math.PI / 5, 0.4, 1);
+    spot.position.set(0, 0.8, -2.2);
+    spot.target.position.set(0, 0, -40);
+    g.add(spot);
+    g.add(spot.target);
+    g.userData.headlight = spot;
+  }
+  return g;
+}
+
+function createTruckMesh(isHighwaySemi = false) {
+  const g = new THREE.Group();
+  const cabMat = new THREE.MeshStandardMaterial({ color: isHighwaySemi ? 0xf8fafc : 0xeab308, metalness: 0.45, roughness: 0.35 });
+  const bedMat = new THREE.MeshStandardMaterial({ color: isHighwaySemi ? 0xffffff : 0x334155, roughness: 0.75 });
+  const tireMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 });
+
+  const cab = new THREE.Mesh(new THREE.BoxGeometry(2.55, 2.25, 2.45), cabMat);
+  cab.position.set(0, 1.65, -2.25);
+  cab.castShadow = true;
+  g.add(cab);
+
+  const bedH = isHighwaySemi ? 2.7 : 0.65;
+  const bedY = isHighwaySemi ? 1.9 : 1.05;
+  const bed = new THREE.Mesh(new THREE.BoxGeometry(2.65, bedH, 5.6), bedMat);
+  bed.position.set(0, bedY, 1.65);
+  bed.castShadow = true;
+  g.add(bed);
+
+  const wGeo = new THREE.CylinderGeometry(0.64, 0.64, 0.5, 16);
+  wGeo.rotateZ(Math.PI / 2);
+  [[-1.38, 0.64, -2.2], [1.38, 0.64, -2.2], [-1.38, 0.64, 0.6], [1.38, 0.64, 0.6], [-1.38, 0.64, 3.2], [1.38, 0.64, 3.2]].forEach(p => {
+    const w = new THREE.Mesh(wGeo, tireMat);
+    w.position.set(...p);
+    g.add(w);
+  });
+
+  if (!isHighwaySemi) {
+    // Carga física articulada en la tolva (3 contenedores pesados)
+    const cargoGroup = new THREE.Group();
+    const boxMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.85 });
+    for (let i = 0; i < 3; i++) {
+      const box = new THREE.Mesh(new THREE.BoxGeometry(1.95, 1.1, 1.45), boxMat);
+      box.position.set(0, 1.9, 0.1 + i * 1.58);
+      box.castShadow = true;
+      cargoGroup.add(box);
+    }
+    g.add(cargoGroup);
+    g.userData.cargoGroup = cargoGroup;
+
+    const spot = new THREE.SpotLight(0xfffbeb, 2.4, 65, Math.PI / 4, 0.5, 1);
+    spot.position.set(0, 2.1, -3.4);
+    spot.target.position.set(0, 0, -35);
+    g.add(spot);
+    g.add(spot.target);
+    g.userData.headlight = spot;
+  }
+  return g;
+}
+
+function createStarfighterMesh() {
+  const g = new THREE.Group();
+  const hullMat = new THREE.MeshStandardMaterial({ color: 0xe11d48, metalness: 0.82, roughness: 0.2 });
+  const wingMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, metalness: 0.65, roughness: 0.25 });
+  const glassMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+
+  // Diseño afilado estilo Anti-Gravity Racer (@neokinetic_dev)
+  const fuselage = new THREE.Mesh(new THREE.ConeGeometry(0.92, 5.2, 6), hullMat);
+  fuselage.rotation.x = -Math.PI / 2;
+  g.add(fuselage);
+
+  const wings = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.14, 1.9), wingMat);
+  wings.position.set(0, 0, 0.9);
+  g.add(wings);
+
+  const wingletsL = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.8, 1.2), hullMat);
+  wingletsL.position.set(-2.25, 0.3, 1.1);
+  const wingletsR = wingletsL.clone(); wingletsR.position.x = 2.25;
+  g.add(wingletsL, wingletsR);
+
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.42, 1.7), glassMat);
+  canopy.position.set(0, 0.38, 0.15);
+  g.add(canopy);
+
+  // Estela láser verde neón larga como en el video de referencia
+  const jetMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.85 });
+  const jet = new THREE.Mesh(new THREE.ConeGeometry(0.55, 6.5, 12), jetMat);
+  jet.rotation.x = Math.PI / 2;
+  jet.position.set(0, 0, 5.4);
+  g.add(jet);
+  g.userData.jet = jet;
+
+  return g;
+}
+
+/* ============================================================================
+   4. VARIABLES DE PARTIDA, CURVAS, PENDIENTES (CUESTAS) Y BACHES
+   ============================================================================ */
+let activeMode = 0;
+let envPref = 'RANDOM';
+let isNightMode = false;
+let isPlaying = false;
+
+let player = null;
+let roadMesh = null;
+let roadTex = null;
+let speed = 0;
+let topRecordedSpeed = 0;
+let distKm = 0;
+let score = 0;
+let mult = 1.0;
+let comboTime = 0;
+let nearMisses = 0;
+let nitro = 100;
+let integrity = 100;
+
+// Variables de terreno dinámico (Giros, Cuestas, Rampa y Atascamiento en Baches)
+let roadCurveX = 0;
+let roadSlopeY = 0;
+let playerJumpY = 0;
+let playerVelY = 0;
+let boggedTimer = 0; // > 0 cuando el camión cae en un hueco/bache profundo
+
+let entities = [];
+let props = [];
+
+const input = { left: false, right: false, up: false, down: false, boost: false };
+window.addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (k === 'a' || e.key === 'ArrowLeft') input.left = true;
+  if (k === 'd' || e.key === 'ArrowRight') input.right = true;
+  if (k === 'w' || e.key === 'ArrowUp') input.up = true;
+  if (k === 's' || e.key === 'ArrowDown') input.down = true;
+  if (e.key === ' ' || e.key === 'Shift') input.boost = true;
+  if (k === 'n' && isPlaying && activeMode !== 4) applyDayNight(!isNightMode);
+  if (e.key === 'Escape' && isPlaying) returnToMenu();
+});
+window.addEventListener('keyup', e => {
+  const k = e.key.toLowerCase();
+  if (k === 'a' || e.key === 'ArrowLeft') input.left = false;
+  if (k === 'd' || e.key === 'ArrowRight') input.right = false;
+  if (k === 'w' || e.key === 'ArrowUp') input.up = false;
+  if (k === 's' || e.key === 'ArrowDown') input.down = false;
+  if (e.key === ' ' || e.key === 'Shift') input.boost = false;
+});
+
+function bindTouchBtn(id, key) {
+  const b = document.getElementById(id);
+  b.addEventListener('touchstart', e => { e.preventDefault(); input[key] = true; });
+  b.addEventListener('touchend', e => { e.preventDefault(); input[key] = false; });
+}
+bindTouchBtn('tLeft', 'left'); bindTouchBtn('tRight', 'right');
+bindTouchBtn('tUp', 'up'); bindTouchBtn('tDown', 'down');
+bindTouchBtn('tBoost', 'boost');
+
+function setEnvPref(p, btn) {
+  envPref = p;
+  document.querySelectorAll('.env-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function triggerBanner(badge, pts) {
+  const box = document.getElementById('centerFeed');
+  document.getElementById('feedBadge').textContent = badge;
+  document.getElementById('feedPts').textContent = pts;
+  box.classList.add('show');
+  clearTimeout(box.tid);
+  box.tid = setTimeout(() => box.classList.remove('show'), 1150);
+}
+
+function applyDayNight(night) {
+  isNightMode = night;
+  const skyHex = night ? 0x050811 : 0x5c8ab8;
+  scene.background = new THREE.Color(skyHex);
+  scene.fog = new THREE.FogExp2(skyHex, activeMode === 3 ? 0.0075 : 0.005);
+  if (scene.userData.sun) {
+    scene.userData.sun.intensity = night ? 0.32 : 1.35;
+    scene.userData.sun.color.setHex(night ? 0x60a5fa : 0xfffbeb);
+  }
+  if (scene.userData.amb) {
+    scene.userData.amb.intensity = night ? 0.28 : 0.75;
+  }
+  if (player && player.userData.headlight) {
+    player.userData.headlight.intensity = night ? 2.6 : 0;
+  }
+}
+
+/* ============================================================================
+   5. CONSTRUCCIÓN DE LOS 4 MODOS (NIVEL 1 ULTRA DETALLADO)
+   ============================================================================ */
+function launchMode(m) {
+  sound.init();
+  activeMode = m;
+  isPlaying = true;
+  document.getElementById('mainMenu').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('hud').style.display = 'flex';
+  document.getElementById('stuckAlert').style.display = 'none';
+
+  scene = new THREE.Scene();
+  entities = [];
+  props = [];
+  speed = 0; topRecordedSpeed = 0; distKm = 0; score = 0;
+  mult = 1.0; comboTime = 0; nearMisses = 0;
+  nitro = 100; integrity = 100;
+  roadCurveX = 0; roadSlopeY = 0; playerJumpY = 0; playerVelY = 0; boggedTimer = 0;
+
+  const amb = new THREE.AmbientLight(0xffffff, 0.7);
+  const sun = new THREE.DirectionalLight(0xfffbeb, 1.3);
+  sun.position.set(35, 65, 40);
+  sun.castShadow = true;
+  scene.add(amb, sun);
+  scene.userData.amb = amb;
+  scene.userData.sun = sun;
+
+  // Selección aleatoria Día / Noche
+  const nightRoll = envPref === 'RANDOM' ? (Math.random() > 0.5) : (envPref === 'NIGHT');
+
+  if (m === 1) buildLevelMode1(nightRoll);
+  if (m === 2) buildLevelMode2(nightRoll);
+  if (m === 3) buildLevelMode3(nightRoll);
+  if (m === 4) buildLevelMode4();
+
+  applyDayNight(m === 4 ? true : nightRoll);
+}
+
+/* --- MODO 1: AUTOPISTA INFINITA --- */
+function buildLevelMode1(night) {
+  document.getElementById('hudTag').textContent = `REDLINE HIGHWAY // ${night ? 'NOCHE' : 'DÍA'} (NIVEL 1/120)`;
+  document.getElementById('rightTag').textContent = 'NEAR MISS CHAIN';
+  document.getElementById('b1Name').textContent = 'NITRO BOOST';
+  document.getElementById('b2Name').textContent = 'BLINDAJE CHASIS';
+  document.getElementById('speedUnit').textContent = 'KM/H';
+
+  roadTex = makeRoadTexture(1, night);
+  const rMat = new THREE.MeshStandardMaterial({
+    map: roadTex,
+    roughness: night ? 0.15 : 0.6,
+    metalness: night ? 0.5 : 0.1
+  });
+  roadMesh = new THREE.Mesh(new THREE.PlaneGeometry(18.5, 620), rMat);
+  roadMesh.rotation.x = -Math.PI / 2;
+  roadMesh.position.z = -260;
+  roadMesh.receiveShadow = true;
+  scene.add(roadMesh);
+
+  // Muros guardarraíl y pórticos de autopista
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.5 });
+  const wL = new THREE.Mesh(new THREE.BoxGeometry(0.65, 1.15, 620), wallMat);
+  wL.position.set(-9.5, 0.55, -260);
+  const wR = wL.clone(); wR.position.x = 9.5;
+  scene.add(wL, wR);
+
+  const bldgMat = new THREE.MeshStandardMaterial({ color: night ? 0x0f172a : 0x475569 });
+  const lightMat = new THREE.MeshBasicMaterial({ color: 0xffedd5 });
+  for (let z = 0; z > -580; z -= 36) {
+    [-1, 1].forEach(s => {
+      const h = 16 + Math.random() * 44;
+      const b = new THREE.Mesh(new THREE.BoxGeometry(13, h, 15), bldgMat);
+      b.position.set(s * (19 + Math.random() * 12), h / 2, z);
+      scene.add(b);
+      props.push(b);
+
+      const pole = new THREE.Mesh(new THREE.BoxGeometry(0.3, 9.5, 0.3), wallMat);
+      pole.position.set(s * 9.9, 4.75, z);
+      const lamp = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.25, 0.45), lightMat);
+      lamp.position.set(s * -0.85, 4.6, 0);
+      pole.add(lamp);
+      scene.add(pole);
+      props.push(pole);
+    });
+  }
+
+  player = createCarMesh(0xe11d48, true);
+  scene.add(player);
+
+  const lanes = [-6.3, -2.1, 2.1, 6.3];
+  const palette = [0x3b82f6, 0xf59e0b, 0x10b981, 0xa855f7, 0xe2e8f0];
+  for (let i = 0; i < 17; i++) {
+    const isTruck = Math.random() < 0.28;
+    const isBlock = !isTruck && Math.random() < 0.16;
+    let m;
+    if (isBlock) {
+      // Obstáculo vial reflectante
+      m = new THREE.Mesh(new THREE.BoxGeometry(2.7, 1.25, 1.1), new THREE.MeshStandardMaterial({ color: 0xf97316 }));
+      m.position.y = 0.62;
+    } else if (isTruck) {
+      m = createTruckMesh(true);
+    } else {
+      m = createCarMesh(palette[i % palette.length], false);
+    }
+    m.position.x = lanes[Math.floor(Math.random() * lanes.length)];
+    m.position.z = -50 - i * 33;
+    m.userData = {
+      speed: isBlock ? 0 : (115 + Math.random() * 95),
+      passed: false,
+      kind: isBlock ? 'BARRIER' : (isTruck ? 'TRUCK' : 'CAR'),
+      hw: isTruck ? 1.38 : 1.1,
+      hl: isTruck ? 4.1 : (isBlock ? 0.65 : 2.3)
+    };
+    scene.add(m);
+    entities.push(m);
+  }
+}
+
+/* --- MODO 2: MODO HISTORIA / CARRERA (JUGADOR VS 9 RIVALES IA + SALTOS + CURVAS) --- */
+function buildLevelMode2(night) {
+  document.getElementById('hudTag').textContent = 'HISTORIA // NIVEL 1/120: PASO ALPINO';
+  document.getElementById('rightTag').textContent = 'META (3.5 KM)';
+  document.getElementById('b1Name').textContent = 'SHOCKWAVE NITRO';
+  document.getElementById('b2Name').textContent = 'PROGRESO DE CARRERA';
+  document.getElementById('speedUnit').textContent = 'KM/H';
+
+  roadTex = makeRoadTexture(2, night);
+  roadMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(23, 620),
+    new THREE.MeshStandardMaterial({ map: roadTex, roughness: 0.42 })
+  );
+  roadMesh.rotation.x = -Math.PI / 2;
+  roadMesh.position.z = -260;
+  scene.add(roadMesh);
+
+  const terrain = new THREE.Mesh(
+    new THREE.PlaneGeometry(340, 620),
+    new THREE.MeshStandardMaterial({ color: night ? 0x0b1d16 : 0x2e5a27, roughness: 0.9 })
+  );
+  terrain.rotation.x = -Math.PI / 2;
+  terrain.position.set(0, -0.12, -260);
+  scene.add(terrain);
+
+  const rockMat = new THREE.MeshStandardMaterial({ map: sharedRockTex, roughness: 0.85 });
+  const pineMat = new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 0.8 });
+
+  for (let z = 0; z > -580; z -= 26) {
+    [-1, 1].forEach(s => {
+      const peak = new THREE.Mesh(new THREE.ConeGeometry(24 + Math.random() * 14, 48 + Math.random() * 30, 5), rockMat);
+      peak.position.set(s * (38 + Math.random() * 18), 20, z);
+      scene.add(peak);
+      props.push(peak);
+
+      const tree = new THREE.Mesh(new THREE.ConeGeometry(2.9, 9.5, 6), pineMat);
+      tree.position.set(s * (14 + Math.random() * 5), 4.7, z);
+      scene.add(tree);
+      props.push(tree);
+    });
+
+    // Plataformas de Boost y Rampas de salto (estilo Asphalt 9 / Wild Torque)
+    if (z % 104 === 0) {
+      const ramp = new THREE.Mesh(
+        new THREE.BoxGeometry(4.5, 0.9, 7.5),
+        new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x005577 })
+      );
+      ramp.rotation.x = 0.14;
+      ramp.position.set((Math.random() - 0.5) * 12, 0.35, z);
+      ramp.userData = { isRamp: true };
+      scene.add(ramp);
+      props.push(ramp);
+    }
+  }
+
+  player = createCarMesh(0x00f0ff, true);
+  scene.add(player);
+
+  // 9 Rivales controlados por IA (10 competidores en total buscando el 1.er lugar)
+  const aiColors = [0xff2a55, 0xf59e0b, 0x10b981, 0xa855f7, 0xec4899, 0x3b82f6, 0xeab308, 0x14b8a6, 0xf97316];
+  for (let i = 0; i < 9; i++) {
+    const ai = createCarMesh(aiColors[i], false);
+    const sx = -7.8 + (i % 3) * 7.8 + (Math.random() - 0.5) * 1.8;
+    const sz = -16 - Math.floor(i / 3) * 28;
+    ai.position.set(sx, 0, sz);
+    ai.userData = {
+      kind: 'AI_RIVAL',
+      baseSpd: 292 + i * 7.5 + Math.random() * 16,
+      speed: 265,
+      laneTarget: sx,
+      hw: 1.05,
+      hl: 2.3
+    };
+    scene.add(ai);
+    entities.push(ai);
+  }
+}
+
+/* --- MODO 3: CAMIONES EXTREMOS (PUENTE, BACHES QUE ATRAPAN, CUESTAS, GIROS, FAUNA Y FLORA) --- */
+function buildLevelMode3(night) {
+  document.getElementById('hudTag').textContent = 'RIFT TRUCKS // NIVEL 1/120: PUENTE Y CAÑÓN';
+  document.getElementById('rightTag').textContent = 'CARGA EN TOLVA';
+  document.getElementById('b1Name').textContent = 'TRACCIÓN 6x6 / DIFERENCIAL';
+  document.getElementById('b2Name').textContent = 'INTEGRIDAD DE LA CARGA';
+  document.getElementById('speedUnit').textContent = 'KM/H';
+
+  roadTex = makeRoadTexture(3, night);
+  roadMesh = new THREE.Mesh(
+    new THREE.BoxGeometry(9.8, 1.4, 620),
+    new THREE.MeshStandardMaterial({ map: roadTex, roughness: 0.92 })
+  );
+  roadMesh.position.set(0, -0.7, -260);
+  roadMesh.receiveShadow = true;
+  scene.add(roadMesh);
+
+  // Río caudaloso debajo del puente
+  const water = new THREE.Mesh(
+    new THREE.PlaneGeometry(280, 620),
+    new THREE.MeshStandardMaterial({ color: 0x0c344d, roughness: 0.2, metalness: 0.6 })
+  );
+  water.rotation.x = -Math.PI / 2;
+  water.position.set(0, -19, -260);
+  scene.add(water);
+
+  // Pilares y cuerdas de puente colgante + Flora selvática
+  const timberMat = new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.9 });
+  const canopyMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.85 });
+  for (let z = 0; z > -580; z -= 22) {
+    [-4.75, 4.75].forEach(x => {
+      const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.45, 22, 0.45), timberMat);
+      pillar.position.set(x, -9.2, z);
+      scene.add(pillar);
+      props.push(pillar);
+    });
+    [-1, 1].forEach(s => {
+      const bush = new THREE.Mesh(new THREE.DodecahedronGeometry(5.2), canopyMat);
+      bush.position.set(s * (9.5 + Math.random() * 5), 4 + Math.random() * 4, z);
+      scene.add(bush);
+      props.push(bush);
+    });
+  }
+
+  player = createTruckMesh(false);
+  scene.add(player);
+
+  // Obstáculos: Baches profundos que atrapan, Flora (troncos/rocas) y Fauna en movimiento
+  for (let i = 0; i < 22; i++) {
+    const z = -34 - i * 25;
+    const r = Math.random();
+    let m;
+    if (r < 0.44) {
+      // Hueco / Bache profundo de lodo
+      m = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.75, 1.75, 0.2, 16),
+        new THREE.MeshStandardMaterial({ color: 0x170f07, roughness: 0.98 })
+      );
+      m.position.set((Math.random() - 0.5) * 5.2, 0.05, z);
+      m.userData = { kind: 'MUD_HOLE', hw: 1.55, hl: 1.55 };
+    } else if (r < 0.74) {
+      // Flora rival: Tronco caído o roca de derrumbe
+      m = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.65, 0.65, 3.2, 10),
+        new THREE.MeshStandardMaterial({ color: 0x45260e, roughness: 0.9 })
+      );
+      m.rotation.z = Math.PI / 2;
+      m.position.set((Math.random() - 0.5) * 5.0, 0.65, z);
+      m.userData = { kind: 'FLORA_LOG', hw: 1.6, hl: 0.75 };
+    } else {
+      // Fauna rival: Animal salvaje cruzando el camino estrecho
+      m = new THREE.Group();
+      const torso = new THREE.Mesh(
+        new THREE.BoxGeometry(1.35, 0.9, 0.8),
+        new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 })
+      );
+      torso.position.y = 0.8;
+      const head = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 0.6, 0.5),
+        new THREE.MeshStandardMaterial({ color: 0x451a03 })
+      );
+      head.position.set(0.68, 1.2, 0);
+      m.add(torso, head);
+      m.position.set((Math.random() - 0.5) * 5.2, 0, z);
+      m.userData = {
+        kind: 'FAUNA_BEAST',
+        dir: Math.random() > 0.5 ? 1 : -1,
+        walkSpd: 2.8 + Math.random() * 2.4,
+        hw: 0.9,
+        hl: 0.75
+      };
+    }
+    scene.add(m);
+    entities.push(m);
+  }
+}
+
+/* --- MODO 4: COHETES GALÁCTICOS (INFINITO EN LA GALAXIA) --- */
+function buildLevelMode4() {
+  document.getElementById('hudTag').textContent = 'GALAXIA // NIVEL 1/120: CINTURÓN DE METEOROS';
+  document.getElementById('rightTag').textContent = 'NÚCLEOS ESTELARES';
+  document.getElementById('b1Name').textContent = 'PLASMA OVERDRIVE';
+  document.getElementById('b2Name').textContent = 'ESCUDO CUÁNTICO';
+  document.getElementById('speedUnit').textContent = 'MACH';
+
+  scene.background = new THREE.Color(0x03040b);
+  scene.fog = new THREE.FogExp2(0x03040b, 0.0038);
+
+  // Pista magnética translúcida y anillos de neón verde (estilo Anti-Gravity Racer)
+  const grid = new THREE.GridHelper(38, 42, 0x00ff88, 0x1e293b);
+  grid.position.set(0, -6.5, -160);
+  grid.scale.z = 16;
+  scene.add(grid);
+  roadMesh = grid;
+
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, wireframe: true });
+  for (let z = -40; z > -560; z -= 65) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(14, 0.25, 8, 24), ringMat);
+    ring.position.set(0, 0, z);
+    scene.add(ring);
+    props.push(ring);
+  }
+
+  // Estrellas de velocidad
+  const sGeo = new THREE.BufferGeometry();
+  const pts = [];
+  for (let i = 0; i < 2000; i++) {
+    pts.push((Math.random() - 0.5) * 320, (Math.random() - 0.5) * 220, -Math.random() * 620);
+  }
+  sGeo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+  const stars = new THREE.Points(sGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.75 }));
+  scene.add(stars);
+  props.push(stars);
+
+  player = createStarfighterMesh();
+  scene.add(player);
+
+  const meteorMat = new THREE.MeshStandardMaterial({ map: sharedRockTex, roughness: 0.85 });
+  const sunMat = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
+  const coreMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true });
+
+  for (let i = 0; i < 30; i++) {
+    const r = Math.random();
+    let m;
+    if (r < 0.62) {
+      const rad = 1.7 + Math.random() * 2.5;
+      m = new THREE.Mesh(new THREE.DodecahedronGeometry(rad, 1), meteorMat);
+      m.userData = { kind: 'METEOR', rad, rx: Math.random() * 2, ry: Math.random() * 2 };
+    } else if (r < 0.84) {
+      m = new THREE.Mesh(new THREE.SphereGeometry(2.4, 16, 16), sunMat);
+      m.userData = { kind: 'STAR_HAZARD', rad: 2.4, rx: 1, ry: 1 };
+    } else {
+      m = new THREE.Mesh(new THREE.OctahedronGeometry(1.4, 0), coreMat);
+      m.userData = { kind: 'SPECIAL_CORE', rad: 1.5, rx: 3.5, ry: 3.5 };
+    }
+    m.position.set((Math.random() - 0.5) * 28, (Math.random() - 0.5) * 12, -45 - i * 21);
+    scene.add(m);
+    entities.push(m);
+  }
+}
+
+/* ============================================================================
+   6. BUCLE PRINCIPAL DE SIMULACIÓN FÍSICA (60 FPS)
+   ============================================================================ */
+let prevTime = performance.now();
+
+function stepSimulation(dt) {
+  if (!isPlaying || !player) return;
+
+  // 1. Control de atascamiento en baches (Modo 3 Camiones)
+  if (boggedTimer > 0) {
+    document.getElementById('stuckAlert').style.display = 'block';
+    speed = Math.min(speed, 16);
+    // Si pulsa ESPACIO (Bloqueo diferencial 6x6) y gira A/D, sale más rápido del hueco
+    const freeingFactor = (input.boost ? 2.6 : 0.7) + ((input.left || input.right) ? 1.2 : 0);
+    boggedTimer = Math.max(0, boggedTimer - freeingFactor * dt);
+    if (boggedTimer === 0) {
+      document.getElementById('stuckAlert').style.display = 'none';
+      triggerBanner('¡TRACCIÓN 6x6 RECUPERADA!', 'LIBRE DEL BACHE');
+    }
+  } else {
+    document.getElementById('stuckAlert').style.display = 'none';
+  }
+
+  // 2. Cuestas (pendientes) y Giros difíciles dinámicos (Modos 2 y 3)
+  if (activeMode === 2 || activeMode === 3) {
+    roadCurveX = Math.sin(distKm * (activeMode === 3 ? 9.5 : 5.5)) * (activeMode === 3 ? 2.6 : 3.2);
+    roadSlopeY = Math.sin(distKm * 12.0) * (activeMode === 3 ? 0.14 : 0.08);
+    roadMesh.rotation.z = roadCurveX * 0.015;
+    // La fuerza centrífuga del giro empuja al vehículo lateralmente
+    player.position.x -= roadCurveX * (speed / 120) * dt * 0.85;
+  }
+
+  // 3. Velocidad máxima, pendientes y Nitro
+  const baseMax = activeMode === 1 ? 358 : (activeMode === 2 ? 348 : (activeMode === 3 ? 112 : 690));
+  const slopePenalty = activeMode === 3 ? (roadSlopeY * 95) : 0; // Las cuestas arriba frenan al camión
+  const boostAdd = (input.boost && nitro > 2) ? (activeMode === 3 ? 34 : 68) : 0;
+  const currentMax = Math.max(40, baseMax - slopePenalty + boostAdd);
+
+  if (boggedTimer === 0) {
+    if (input.up || activeMode === 1 || activeMode === 4) {
+      speed = THREE.MathUtils.lerp(speed, currentMax, dt * (activeMode === 3 ? 1.05 : 0.88));
+    } else {
+      speed = THREE.MathUtils.lerp(speed, 70, dt * 0.65);
+    }
+    if (input.down) {
+      speed = Math.max(18, speed - (activeMode === 3 ? 95 : 195) * dt);
+    }
+  }
+
+  if (input.boost && nitro > 0) {
+    nitro = Math.max(0, nitro - 25 * dt);
+    camera.fov = THREE.MathUtils.lerp(camera.fov, 78, dt * 5);
+  } else {
+    nitro = Math.min(100, nitro + 10 * dt);
+    camera.fov = THREE.MathUtils.lerp(camera.fov, 65, dt * 5);
+  }
+  camera.updateProjectionMatrix();
+
+  if (player.userData.flames) {
+    player.userData.flames.forEach(f => f.visible = (input.boost && nitro > 2));
+  }
+
+  topRecordedSpeed = Math.max(topRecordedSpeed, Math.round(speed));
+  const stepZ = (speed / 3.6) * dt;
+  distKm += stepZ / 1000;
+
+  if (roadTex) roadTex.offset.y -= stepZ * 0.085;
+
+  // 4. Física de Salto en Rampa (Modo 2)
+  if (playerJumpY > 0 || playerVelY !== 0) {
+    playerJumpY += playerVelY * dt;
+    playerVelY -= 26 * dt;
+    if (playerJumpY <= 0) {
+      playerJumpY = 0;
+      playerVelY = 0;
+    }
+    player.position.y = playerJumpY;
+  }
+
+  // 5. Dirección, Maniobras y Balanceo de Carga
+  const steerPower = activeMode === 3 ? 7.8 : (activeMode === 4 ? 18.5 : 14.0);
+  const steer = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+  player.position.x += steer * steerPower * dt;
+
+  player.rotation.z = THREE.MathUtils.lerp(player.rotation.z, -steer * (activeMode === 4 ? 0.58 : 0.085), dt * 8);
+  player.rotation.y = THREE.MathUtils.lerp(player.rotation.y, -steer * 0.13, dt * 8);
+
+  if (activeMode === 4) {
+    const pitch = (input.up ? 1 : 0) - (input.down ? 1 : 0);
+    player.position.y = THREE.MathUtils.clamp(player.position.y + pitch * 12.5 * dt, -5.0, 6.8);
+    player.rotation.x = THREE.MathUtils.lerp(player.rotation.x, pitch * 0.3, dt * 8);
+    player.position.x = THREE.MathUtils.clamp(player.position.x, -14.5, 14.5);
+  } else if (activeMode === 3) {
+    // Caída del puente estrecho
+    if (Math.abs(player.position.x) > 4.55) {
+      sound.fxHit();
+      finishRun('¡CAÍSTE DEL PUENTE!', `El camión salió del tramo estrecho en un giro difícil a ${Math.round(speed)} km/h`);
+      return;
+    }
+    // Física de las cajas de carga en cuestas y giros
+    if (player.userData.cargoGroup) {
+      const tilt = steer * 0.22 * (speed / 85) + roadCurveX * 0.05;
+      player.userData.cargoGroup.rotation.z = THREE.MathUtils.lerp(player.userData.cargoGroup.rotation.z, tilt, dt * 5);
+      player.userData.cargoGroup.rotation.x = THREE.MathUtils.lerp(player.userData.cargoGroup.rotation.x, roadSlopeY, dt * 5);
+      if (Math.abs(tilt) > 0.16 && speed > 82) {
+        integrity = Math.max(0, integrity - 9.5 * dt);
+      }
+    }
+  } else {
+    const maxX = activeMode === 2 ? 9.8 : 8.0;
+    player.position.x = THREE.MathUtils.clamp(player.position.x, -maxX, maxX);
+  }
+
+  // 6. Decoración y Rampas
+  props.forEach(p => {
+    p.position.z += stepZ;
+    if (p.userData && p.userData.isRamp) {
+      if (Math.abs(p.position.z - player.position.z) < 3.8 && Math.abs(p.position.x - player.position.x) < 2.6 && playerJumpY === 0) {
+        playerVelY = 10.5;
+        speed = Math.min(baseMax + 80, speed + 55);
+        nitro = 100;
+        score += 3500;
+        triggerBanner('BARREL ROLL / RAMPA BOOST', '+3,500');
+        sound.fxNearMiss();
+      }
+    }
+    if (p.position.z > 25) p.position.z -= 580;
+  });
+
+  if (comboTime > 0) {
+    comboTime = Math.max(0, comboTime - dt);
+    if (comboTime === 0) mult = 1.0;
+  }
+
+  stepEntities(dt, stepZ);
+
+  // 7. Seguimiento de Cámara con Efecto de Pendiente (Cuestas)
+  if (activeMode === 4) {
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, player.position.x * 0.65, dt * 6);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, player.position.y + 2.4, dt * 6);
+    camera.position.z = 8.4;
+    camera.lookAt(player.position.x * 0.4, player.position.y, -22);
+  } else {
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, player.position.x * 0.55, dt * 6);
+    camera.position.y = (activeMode === 3 ? 4.5 : 2.65) + playerJumpY * 0.5;
+    camera.position.z = activeMode === 3 ? 9.6 : 6.6;
+    camera.lookAt(player.position.x * 0.35 + roadCurveX, 1.0 + roadSlopeY * 18, -26);
+  }
+
+  sound.update(speed / baseMax, activeMode, input.boost && nitro > 2, boggedTimer > 0);
+  refreshHUD();
+}
+
+function stepEntities(dt, stepZ) {
+  let rank = 1;
+
+  for (let i = 0; i < entities.length; i++) {
+    const e = entities[i];
+    const d = e.userData;
+
+    if (activeMode === 1) {
+      const relZ = ((speed - d.speed) / 3.6) * dt;
+      e.position.z += relZ;
+
+      const dz = Math.abs(e.position.z - player.position.z);
+      const dx = Math.abs(e.position.x - player.position.x);
+
+      if (dz < (d.hl + 1.9) && dx < (d.hw + 0.85)) {
+        integrity -= 55;
+        sound.fxHit();
+        e.position.z = -540;
+        if (integrity <= 0) {
+          finishRun('SO CLOSE.', `Crashed at ${Math.round(speed)} km/h on the highway`);
+          return;
+        }
+      }
+
+      if (!d.passed && e.position.z > player.position.z) {
+        d.passed = true;
+        if (dx < (d.hw + 2.3) && speed > 195) {
+          nearMisses++;
+          mult = Math.min(10.0, +(mult + 0.5).toFixed(1));
+          comboTime = 4.0;
+          const pts = Math.round((d.kind === 'TRUCK' ? 2200 : 1400) * mult);
+          score += pts;
+          const tag = d.kind === 'TRUCK' ? 'RAZOR TRUCK' : (dx < 1.95 ? 'THREAD THE NEEDLE' : 'CLOSE CALL');
+          triggerBanner(tag, `+${pts.toLocaleString()}`);
+          sound.fxNearMiss();
+        }
+      }
+
+      if (e.position.z > 24) {
+        const lanes = [-6.3, -2.1, 2.1, 6.3];
+        e.position.x = lanes[Math.floor(Math.random() * lanes.length)];
+        e.position.z = -540 - Math.random() * 80;
+        d.passed = false;
+      }
+    }
+
+    else if (activeMode === 2) {
+      d.speed = THREE.MathUtils.lerp(d.speed, d.baseSpd + Math.sin(performance.now() * 0.002 + i) * 24, dt);
+      e.position.z += ((speed - d.speed) / 3.6) * dt;
+      if (Math.random() < 0.016) d.laneTarget = (Math.random() - 0.5) * 16;
+      e.position.x = THREE.MathUtils.lerp(e.position.x, d.laneTarget, dt * 1.6);
+
+      if (Math.abs(e.position.z - player.position.z) < 4.0 && Math.abs(e.position.x - player.position.x) < 1.85 && playerJumpY < 0.8) {
+        speed *= 0.85;
+        player.position.x += (player.position.x > e.position.x ? 1.15 : -1.15);
+        sound.fxHit();
+      }
+      if (e.position.z < player.position.z) rank++;
+    }
+
+    else if (activeMode === 3) {
+      e.position.z += stepZ;
+      if (d.kind === 'FAUNA_BEAST') {
+        e.position.x += d.dir * d.walkSpd * dt;
+        if (Math.abs(e.position.x) > 4.0) d.dir *= -1;
+      }
+
+      const dz = Math.abs(e.position.z - player.position.z);
+      const dx = Math.abs(e.position.x - player.position.x);
+
+      if (dz < (d.hl + 2.4) && dx < (d.hw + 1.15)) {
+        if (d.kind === 'MUD_HOLE') {
+          // El camión o la carga queda atrapado en el hueco si no lleva tracción 6x6 activa
+          if (!input.boost) {
+            boggedTimer = 2.4;
+            speed = 12;
+          } else {
+            speed *= 0.78;
+          }
+          player.position.y = -0.26;
+          setTimeout(() => { if (player) player.position.y = 0; }, 220);
+          integrity = Math.max(0, integrity - 12);
+          triggerBanner('¡BACHE PROFUNDO!', input.boost ? 'SUPERADO CON 6x6' : '¡CAMIÓN ATRAPADO!');
+          sound.fxHit();
+          e.position.z = 28;
+        } else {
+          integrity = Math.max(0, integrity - 32);
+          speed *= 0.42;
+          sound.fxHit();
+          triggerBanner(d.kind === 'FAUNA_BEAST' ? '¡ATAQUE DE FAUNA!' : '¡FLORA / TRONCO EN RUTA!', '-32% CARGA');
+          e.position.z = 28;
+        }
+        if (integrity <= 0) {
+          finishRun('¡CARGA DESTRUIDA!', 'La carga cayó del camión al quedar atrapado en el tramo peligroso');
+          return;
+        }
+      }
+
+      if (e.position.z > 25) {
+        e.position.z = -530 - Math.random() * 45;
+        e.position.x = (Math.random() - 0.5) * 5.5;
+      }
+    }
+
+    else if (activeMode === 4) {
+      e.position.z += stepZ * 1.38;
+      e.rotation.x += d.rx * dt;
+      e.rotation.y += d.ry * dt;
+
+      const dist = e.position.distanceTo(player.position);
+      if (dist < (d.rad + 1.45)) {
+        if (d.kind === 'SPECIAL_CORE') {
+          nearMisses++;
+          score += 5000;
+          nitro = 100;
+          triggerBanner('HIPERNÚCLEO GALÁCTICO', '+5,000');
+          sound.fxNearMiss();
+          e.position.z = -580;
+        } else {
+          integrity -= 50;
+          sound.fxHit();
+          triggerBanner(d.kind === 'STAR_HAZARD' ? '¡ESTRELLA DE PLASMA!' : '¡IMPACTO METEORO!', '-50% ESCUDO');
+          e.position.z = -580;
+          if (integrity <= 0) {
+            finishRun('NAVE DESINTEGRADA', 'Colisión en la galaxia contra un cuerpo estelar a velocidad Mach');
+            return;
+          }
+        }
+      } else if (dist < (d.rad + 3.8) && Math.abs(e.position.z - player.position.z) < 2.2 && d.kind !== 'SPECIAL_CORE') {
+        score += 1900;
+        triggerBanner('RASANTE ESTELAR', '+1,900');
+      }
+
+      if (e.position.z > 22) {
+        e.position.set((Math.random() - 0.5) * 28, (Math.random() - 0.5) * 12, -570 - Math.random() * 60);
+      }
+    }
+  }
+
+  if (activeMode === 2) {
+    scene.userData.rank = rank;
+    integrity = Math.min(100, (distKm / 3.5) * 100);
+    if (distKm >= 3.5) {
+      finishRun(rank === 1 ? '🏆 ¡VICTORIA — 1.º DE 10!' : `META ALCANZADA (${rank}.º DE 10)`,
+        'Nivel 1/120 completado en el circuito alpino contra los 9 rivales IA');
+    }
+  } else if (activeMode === 3 && distKm >= 1.5) {
+    finishRun('🏆 ¡TRAMO PELIGROSO SUPERADO!', `Nivel 1/120 completado con ${Math.round(integrity)}% de la carga a salvo`);
+  }
+}
+
+function refreshHUD() {
+  score += Math.round(speed * 0.13 * mult);
+  document.getElementById('speedDigits').textContent = Math.round(speed);
+  document.getElementById('b1Bar').style.width = `${nitro}%`;
+  document.getElementById('b1Pct').textContent = `${Math.round(nitro)}%`;
+  document.getElementById('b2Bar').style.width = `${integrity}%`;
+  document.getElementById('b2Pct').textContent = `${Math.round(integrity)}%`;
+
+  if (activeMode === 1) {
+    document.getElementById('hudMain').textContent = String(score).padStart(6, '0');
+    document.getElementById('hudSub').textContent = `DISTANCIA: ${distKm.toFixed(2)} km • NEAR MISSES: ${nearMisses}`;
+    document.getElementById('rightVal').textContent = `x${mult.toFixed(1)}`;
+    document.getElementById('comboFill').style.width = `${(comboTime / 4.0) * 100}%`;
+  } else if (activeMode === 2) {
+    const r = scene.userData.rank || 1;
+    document.getElementById('hudMain').textContent = `POS ${r} / 10`;
+    document.getElementById('hudSub').textContent = `RESTANTE: ${(Math.max(0, 3.5 - distKm)).toFixed(2)} km • CURVAS Y RAMPAS`;
+    document.getElementById('rightVal').textContent = `${Math.round(integrity)}%`;
+    document.getElementById('comboFill').style.width = `${integrity}%`;
+  } else if (activeMode === 3) {
+    document.getElementById('hudMain').textContent = `${(Math.max(0, 1.5 - distKm) * 1000).toFixed(0)} m`;
+    document.getElementById('hudSub').textContent = `PENDIENTE: ${(roadSlopeY * 100).toFixed(0)}% • GIRO: ${(roadCurveX * 10).toFixed(0)}°`;
+    document.getElementById('rightVal').textContent = `${Math.round(integrity)}%`;
+    document.getElementById('comboFill').style.width = `${integrity}%`;
+  } else if (activeMode === 4) {
+    document.getElementById('hudMain').textContent = String(score).padStart(6, '0');
+    document.getElementById('hudSub').textContent = `PARSECS: ${distKm.toFixed(2)} • NÚCLEOS: ${nearMisses}`;
+    document.getElementById('rightVal').textContent = `★ ${nearMisses}`;
+    document.getElementById('comboFill').style.width = `100%`;
+  }
+}
+
+function finishRun(head, sub) {
+  isPlaying = false;
+  sound.stop();
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'flex';
+  document.getElementById('resHead').textContent = head;
+  document.getElementById('resSub').textContent = sub;
+  document.getElementById('rVal1').textContent = score.toLocaleString();
+  document.getElementById('rVal2').textContent = `${distKm.toFixed(2)} km`;
+  document.getElementById('rVal3').textContent = `${topRecordedSpeed} ${activeMode === 4 ? 'MACH' : 'km/h'}`;
+}
+
+function restartCurrent() { launchMode(activeMode); }
+function returnToMenu() {
+  isPlaying = false;
+  sound.stop();
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('mainMenu').style.display = 'flex';
+}
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+function renderLoop(now) {
+  requestAnimationFrame(renderLoop);
+  const dt = Math.min(0.05, (now - prevTime) / 1000);
+  prevTime = now;
+  if (isPlaying) stepSimulation(dt);
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(renderLoop);
+</script>
+</body>
+</html>
