@@ -570,16 +570,16 @@ export function addZone10(D) {
     decos: [...cute('throneBack', [0, 0, 1], { flat: true, eye: 0.17, gap: 0.38, eyeY: 0.1, mouthDy: 0.3 }), ...cute('voidOrb', [0, 0, 1], { eye: 0.09, spread: 0.42, cheeks: false, mouth: false, style: 'round', iris: 0xa78bfa }), ...Array.from({ length: 5 }, (_, i) => star('throneBack', [0, 0, 1], 0.06, [cyan, pink, 0xfde047][i % 3])).map((d, i) => ({ ...d, off: [-0.75 + i * 0.37, -0.55] }))],
     view: 0.25
   });
-  // 500 Núcleo de la singularidad prismática (gran final)
+  // 500 Núcleo de la singularidad prismática (gran final): gema tallada con anillo orbital
   D[500] = () => ({
     parts: [
-      POLY('singCore', [0, 0.2, 0], [1.15, 1.15, 1.15], 'octa', 0xffffff, GL),
-      ...[0, 1, 2].map(i => TOR(`singRing${i}`, [0, 0.2, 0], 1.55 + i * 0.15, 0.1, [pink, cyan, 0xfde047][i], { rot: [HP * 0.6 + i * 0.6, i * 0.8, 0], ...G })),
-      ...around(6, (i, a) => POLY(`shard${i}`, [Math.cos(a) * 1.95, 0.2 + Math.sin(a * 2) * 0.45, Math.sin(a) * 1.25 - 0.3], [0.18, 0.32, 0.18], 'bipyr', [pink, orange, 0xfde047, lime, cyan, purple][i], { ...GL, role: 'acc' })),
-      CYL('singPed', [0, -1.65, 0], [0.75, 0.42, 0.75], 0x1e1b4b),
-      ...base('night')
+      POLY('singCore', [0, 0.35, 0], [1.25, 1.6, 1.25], 'bipyr', 0xe0e7ff, GL),
+      POLY('singBand', [0, 0.35, 0], [1.3, 0.22, 1.3], 'oct8', 0xc4b5fd, M),
+      TOR('singRing', [0, 0.35, 0], 1.75, 0.2, 0xfbbf24, { rot: [HP * 0.75, 0, 0.35], ...M }),
+      ...around(4, (i, a) => POLY(`shard${i}`, [Math.cos(a + 0.4) * 2.0, 0.35 + Math.sin(a * 2) * 0.6, Math.sin(a + 0.4) * 1.2], [0.22, 0.4, 0.22], 'bipyr', [pink, cyan, 0xfde047, lime][i], { ...GL, role: 'acc' })),
+      POLY('singBase', [0, -1.55, 0], [0.75, 0.3, 0.75], 'hex', 0x1e1b4b, M)
     ],
-    decos: [...cute('singCore', [0, -0.05, 1], { eye: 0.18, spread: 0.3, style: 'round', iris: 0xa855f7 }), ...cute('singPed', [0, 0.2, 1], { eyes: false, cheeks: false, mouth: false })],
-    view: 0.25
+    decos: [],
+    view: 0.35, pitch: 0.15
   });
 }

@@ -1299,7 +1299,7 @@
       const piece = state.levelData.pieces[screw.pieceId];
       if (piece && !piece.falling) {
         piece.remainingScrews--;
-        if (piece.remainingScrews === 1) startSag(piece);
+        // La pieza no se mueve ni se separa hasta quitarle el ÚLTIMO tornillo
         if (piece.remainingScrews <= 0) {
           SoundFX.playPieceDrop();
           piece.falling = true;

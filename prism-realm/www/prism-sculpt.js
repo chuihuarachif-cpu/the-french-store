@@ -332,6 +332,19 @@ function buildPatchGeometry(part, rect, inset, solid, center, shell = SHELL) {
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setIndex(idx);
   g.computeVertexNormals();
+  // Cara exterior con la normal real de la superficie: no se nota el corte entre placas vecinas
+  const nrm = g.getAttribute('normal');
+  const nv = new THREE.Vector3();
+  let vi = 0;
+  for (let i = 0; i <= nE; i++) {
+    const eta = e0 + (e1 - e0) * i / nE;
+    for (let j = 0; j <= nO; j++, vi++) {
+      const om = o0 + (o1 - o0) * j / nO;
+      part.normal(eta, om, inset, nv);
+      if (nv.lengthSq() > 1e-8) nrm.setXYZ(vi, nv.x, nv.y, nv.z);
+    }
+  }
+  nrm.needsUpdate = true;
   g.computeBoundingSphere();
   return g;
 }
@@ -533,12 +546,12 @@ function fitToCamera(parts, k, cx, cz, sc0) {
 }
 
 function levelDepth(T) {
-  if (T <= 90) return 2;
-  if (T <= 260) return 3;
-  if (T <= 520) return 4;
-  if (T <= 800) return 5;
-  if (T <= 1100) return 6;
-  return 7;
+  if (T <= 90) return 3;
+  if (T <= 260) return 4;
+  if (T <= 520) return 5;
+  if (T <= 800) return 6;
+  if (T <= 1100) return 7;
+  return 8;
 }
 
 function screwScaleFor(T) {
@@ -970,7 +983,13 @@ export function sculptLevel(design, T, opts = {}) {
 function tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInsideOther, sc }) {
   const tmp = new THREE.Vector3();
   const nTarget = Math.max(1, Math.round(T / spp));
-  const weightOf = L => L.area * (L.part.role === 'base' ? 0.32 : 1) * (L.part.weight ?? 1) * (L.depth === 0 ? 1 : 0.85);
+  // La capa que se ve primero lleva pocos tornillos (≈30 %); el resto va en las capas de adentro
+  const multi = layerList.some(L => L.depth > 0);
+  const f0 = multi ? (T > 600 ? 0.18 : T > 120 ? 0.25 : 0.38) : 1;
+  const baseW = L => L.area * (L.part.role === 'base' ? 0.32 : 1) * (L.part.weight ?? 1);
+  const W0 = layerList.filter(L => L.depth === 0).reduce((a, L) => a + baseW(L), 0) || 1;
+  const Wi = layerList.filter(L => L.depth > 0).reduce((a, L) => a + baseW(L), 0) || 1;
+  const weightOf = L => L.depth === 0 ? f0 * 1.15 * baseW(L) / W0 : (1 - f0) * baseW(L) / Wi;
   const totalW = layerList.reduce((a, L) => a + weightOf(L), 0) || 1;
   const minPatchArea = Math.pow(dmin * 1.25, 2);
   const patches = [];
@@ -1004,12 +1023,9 @@ function tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInside
         // Costuras: se encoge un poco la placa (salvo en polos y lazos completos)
         const sE = Math.min(0.025, (e1 - e0) * 0.06), sO = Math.min(0.025, (o1 - o0) * 0.06);
         const fullLoop = segs === 1 && p.fullOm;
-        const renderRect = [
-          (poleLo && i === 0) || (p.fullEta && nE === 1) ? e0 : e0 + sE,
-          (poleHi && i === nE - 1) || (p.fullEta && nE === 1) ? e1 : e1 - sE,
-          fullLoop ? o0 : o0 + sO,
-          fullLoop ? o1 : o1 - sO
-        ];
+        // Sin costuras: las placas encajan justas y la figura se ve como un bloque macizo
+        void sE; void sO; void fullLoop;
+        const renderRect = [e0, e1, o0, o1];
         patches.push({ part: p, depth: L.depth, inset: L.inset, thick: L.thick, solid: L.solid, rect, renderRect, k: k++, screws: [] });
       }
     }
@@ -1079,15 +1095,18 @@ function tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInside
 
   // Cuotas por capa proporcionales a su superficie útil → misma densidad en todas las capas
   const depths = [...new Set(usable.map(pt => pt.depth))].sort((a, b) => a - b);
+  const depthsHaveInner = depths.length > 1;
   const effByD = new Map(depths.map(d => [d, 0]));
   const nByD = new Map(depths.map(d => [d, 0]));
   for (const pt of usable) { effByD.set(pt.depth, effByD.get(pt.depth) + pt.effA + 1e-6); nByD.set(pt.depth, nByD.get(pt.depth) + 1); }
-  const effTot = [...effByD.values()].reduce((a, b) => a + b, 0) || 1;
+  const effInner = depths.filter(d => d > 0).reduce((a, d) => a + effByD.get(d), 0) || 1;
+  const fOut = depthsHaveInner ? f0 : 1;
+  const shareOf = d => d === 0 ? fOut : (1 - fOut) * effByD.get(d) / effInner;
   const quota = new Map();
   let assigned = 0;
   const rema = [];
   for (const d of depths) {
-    const exact = T * effByD.get(d) / effTot;
+    const exact = T * shareOf(d);
     const q = Math.max(nByD.get(d), Math.floor(exact));
     quota.set(d, q); assigned += q; rema.push([exact - Math.floor(exact), d]);
   }
@@ -1164,7 +1183,8 @@ function tryAllocate({ layerList, T, spp, dmin, rS, anchors, occluders, isInside
     for (const d of depths) {
       const h = heaps.get(d);
       const top = peekBest(h, hashFor(d), minDist, maxPer, dmin);
-      if (top && top.key > bestKey) { bestKey = top.key; bestD = d; }
+      const key = top ? top.key * (d === 0 && depths.length > 1 ? 0.7 : 1) : -1;
+      if (top && key > bestKey) { bestKey = key; bestD = d; }
     }
     if (bestD === null) break;
     const c = popBest(heaps.get(bestD), hashFor(bestD), minDist, maxPer, dmin);
