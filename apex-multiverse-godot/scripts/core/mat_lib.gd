@@ -102,8 +102,8 @@ static func shader_mat(path: String, params := {}) -> ShaderMaterial:
 	_cache[key] = m
 	return m
 
-static func terrain(grass_tint := Color.WHITE, dirt := 0.35, snow_height := 9999.0) -> ShaderMaterial:
-	return shader_mat("res://shaders/terrain.gdshader", {
+static func terrain(grass_tint := Color.WHITE, dirt := 0.35, snow_height := 9999.0, sand_height := -9999.0) -> ShaderMaterial:
+	return shader_mat("res://shaders/terrain.gdshader", {"sand_tex": tex("sand_albedo"), "sand_height": sand_height,
 		"grass_tex": tex("grass_albedo"), "grass_nrm": tex("grass_normal"),
 		"dirt_tex": tex("dirt_albedo"), "dirt_nrm": tex("dirt_normal"),
 		"rock_tex": tex("rock_albedo"), "rock_nrm": tex("rock_normal"),

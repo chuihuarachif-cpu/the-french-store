@@ -25,7 +25,7 @@ var y := 0.0
 var vy := 0.0
 var airborne := false
 
-func step(dt: float, steer: float, braking: bool, want_nitro: bool) -> void:
+func step(dt: float, steer: float, braking: bool, want_nitro: bool, curvature := 0.0) -> void:
 	nitro_on = want_nitro and nitro > 0.5 and not braking
 	var top := nitro_speed if nitro_on else max_speed
 	if nitro_on:
@@ -49,6 +49,8 @@ func step(dt: float, steer: float, braking: bool, want_nitro: bool) -> void:
 	else:
 		drift = move_toward(drift, 0.0, dt * 2.5)
 	vx = lerpf(vx, target, clampf(grip * dt, 0.0, 1.0))
+	# Fuerza centrífuga: en curva empuja hacia el exterior (hay que girar y, en las cerradas, frenar)
+	vx -= speed * speed * curvature * 0.55 * dt
 	x += vx * dt
 	scraping = 0
 	if x < x_min:
@@ -62,6 +64,22 @@ func step(dt: float, steer: float, braking: bool, want_nitro: bool) -> void:
 		scraping = 1
 		speed *= 1.0 - 0.6 * dt
 	s += speed * dt
+	# Vertical: saltos
+	if airborne:
+		vy -= 24.0 * dt
+		y += vy * dt
+		if y <= 0.0:
+			y = 0.0
+			vy = 0.0
+			airborne = false
+			landed = true
+
+var landed := false
+
+func launch(up_speed: float) -> void:
+	airborne = true
+	vy = up_speed
+	y = maxf(y, 0.05)
 
 ## Ángulo visual de guiñada (rad) respecto a la vía.
 func yaw() -> float:

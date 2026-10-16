@@ -3,7 +3,7 @@ class_name EnvFactory
 
 const PRESETS := {
 	"day": {"hdri": "res://assets/hdri/quarry_01_1k.hdr", "sun_u": 0.6001, "sun_az": 35.0, "sun_elev": 42.0, "sky_energy": 0.9,
-		"sun": Color(1.0, 0.95, 0.87), "sun_energy": 1.5, "fog": Color(0.66, 0.74, 0.84), "fog_density": 0.0011, "ambient": 0.75, "exposure": 0.9, "glow": 0.3},
+		"sun": Color(1.0, 0.95, 0.87), "sun_energy": 1.5, "fog": Color(0.66, 0.74, 0.84), "fog_density": 0.0011, "ambient": 1.0, "exposure": 0.9, "glow": 0.3},
 	"sunset": {"hdri": "res://assets/hdri/venice_sunset_1k.hdr", "sun_u": 0.6001, "sun_az": -12.0, "sun_elev": 9.0, "sky_energy": 0.5,
 		"sun": Color(1.0, 0.62, 0.34), "sun_energy": 1.7, "fog": Color(0.80, 0.60, 0.48), "fog_density": 0.0016, "ambient": 0.6, "exposure": 0.85, "glow": 0.6},
 	"sunrise": {"hdri": "res://assets/hdri/spruit_sunrise_1k.hdr", "sun_u": 0.5991, "sun_az": 20.0, "sun_elev": 14.0, "sky_energy": 0.55,
@@ -11,11 +11,11 @@ const PRESETS := {
 	"night": {"hdri": "res://assets/hdri/moonless_golf_1k.hdr", "sun_u": 0.25, "sun_az": 60.0, "sun_elev": 50.0, "sky_energy": 0.7,
 		"sun": Color(0.5, 0.62, 1.0), "sun_energy": 0.14, "fog": Color(0.02, 0.025, 0.05), "fog_density": 0.0032, "ambient": 0.18, "exposure": 1.15, "glow": 1.2},
 	"canyon": {"hdri": "res://assets/hdri/quarry_01_1k.hdr", "sun_u": 0.6001, "sun_az": -55.0, "sun_elev": 38.0, "sky_energy": 0.9,
-		"sun": Color(1.0, 0.92, 0.80), "sun_energy": 1.6, "fog": Color(0.70, 0.74, 0.80), "fog_density": 0.0014, "ambient": 0.75, "exposure": 0.9, "glow": 0.3},
+		"sun": Color(1.0, 0.92, 0.80), "sun_energy": 1.6, "fog": Color(0.70, 0.74, 0.80), "fog_density": 0.0014, "ambient": 1.0, "exposure": 0.9, "glow": 0.3},
 	"coast": {"hdri": "res://assets/hdri/blouberg_sunrise_2_1k.hdr", "sun_u": 0.0562, "sun_az": 40.0, "sun_elev": 30.0, "sky_energy": 0.9,
-		"sun": Color(1.0, 0.88, 0.72), "sun_energy": 1.6, "fog": Color(0.76, 0.79, 0.84), "fog_density": 0.0010, "ambient": 0.75, "exposure": 0.9, "glow": 0.4},
-	"space": {"panorama": "res://assets/textures/space_sky.png", "sun_u": 0.5, "sun_az": 50.0, "sun_elev": 20.0, "sky_energy": 1.3,
-		"sun": Color(1.0, 0.92, 0.85), "sun_energy": 1.8, "fog": Color(0.04, 0.02, 0.08), "fog_density": 0.0, "ambient": 0.35, "exposure": 1.1, "glow": 1.1},
+		"sun": Color(1.0, 0.88, 0.72), "sun_energy": 1.6, "fog": Color(0.76, 0.79, 0.84), "fog_density": 0.0010, "ambient": 1.1, "exposure": 0.9, "glow": 0.4},
+	"space": {"panorama": "res://assets/textures/space_sky.png", "sun_u": 0.5, "sun_az": 50.0, "sun_elev": 20.0, "sky_energy": 0.45,
+		"sun": Color(1.0, 0.92, 0.85), "sun_energy": 1.8, "fog": Color(0.04, 0.02, 0.08), "fog_density": 0.0, "ambient": 0.35, "exposure": 1.0, "glow": 0.7},
 }
 
 ## Dirección hacia el sol a partir de azimut (grados, + a la derecha de -Z) y elevación.

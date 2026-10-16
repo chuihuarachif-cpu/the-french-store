@@ -80,3 +80,14 @@ static func button(text: String, primary := true, size := 30) -> Button:
 	b.add_theme_color_override("font_pressed_color", Color(0.02, 0.04, 0.08) if primary else Color.WHITE)
 	b.pressed.connect(func(): Sfx.play("ui_click", -4.0))
 	return b
+
+## Ancla un control a un punto relativo del padre (0..1) con desplazamiento en píxeles (esquina sup. izq.).
+static func place(c: Control, anchor: Vector2, offset: Vector2) -> void:
+	c.anchor_left = anchor.x
+	c.anchor_right = anchor.x
+	c.anchor_top = anchor.y
+	c.anchor_bottom = anchor.y
+	c.offset_left = offset.x
+	c.offset_top = offset.y
+	c.offset_right = offset.x + c.custom_minimum_size.x
+	c.offset_bottom = offset.y + c.custom_minimum_size.y

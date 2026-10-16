@@ -27,7 +27,7 @@ var _banner_tw: Tween
 func _ready() -> void:
 	layer = 10
 	root = Control.new()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
 	# --- Arriba izquierda: puntuación ---
@@ -49,8 +49,7 @@ func _ready() -> void:
 	root.add_child(lives_box)
 	# --- Arriba centro: multiplicador ---
 	var tc := VBoxContainer.new()
-	tc.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	tc.position = Vector2(-90, 14)
+	UIKit.place(tc, Vector2(0.5, 0), Vector2(-90, 14))
 	tc.custom_minimum_size = Vector2(180, 0)
 	tc.alignment = BoxContainer.ALIGNMENT_CENTER
 	tc.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -83,8 +82,7 @@ func _ready() -> void:
 	pos_box.add_child(pos_lbl)
 	# --- Arriba derecha: distancia + pausa ---
 	var tr := HBoxContainer.new()
-	tr.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	tr.position = Vector2(-330, 18)
+	UIKit.place(tr, Vector2(1, 0), Vector2(-330, 18))
 	tr.custom_minimum_size = Vector2(300, 0)
 	tr.alignment = BoxContainer.ALIGNMENT_END
 	tr.add_theme_constant_override("separation", 14)
@@ -103,19 +101,16 @@ func _ready() -> void:
 	pb.pressed.connect(func(): pause_pressed.emit())
 	tr.add_child(pb)
 	extra_lbl = UIKit.label("", 20, "Rajdhani-Bold", Color(0.85, 0.9, 1.0), HORIZONTAL_ALIGNMENT_RIGHT)
-	extra_lbl.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	extra_lbl.position = Vector2(-330, 104)
-	extra_lbl.size = Vector2(300, 60)
+	UIKit.place(extra_lbl, Vector2(1, 0), Vector2(-430, 104))
+	extra_lbl.size = Vector2(400, 40)
 	root.add_child(extra_lbl)
 	# --- Abajo derecha: velocímetro ---
 	gauge = SpeedGauge.new()
-	gauge.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	gauge.position = Vector2(-150, -246)
+	UIKit.place(gauge, Vector2(0.5, 1), Vector2(-150, -246))
 	root.add_child(gauge)
 	# --- Centro: banner ---
 	banner_box = VBoxContainer.new()
-	banner_box.set_anchors_preset(Control.PRESET_CENTER)
-	banner_box.position = Vector2(-400, -150)
+	UIKit.place(banner_box, Vector2(0.5, 0.5), Vector2(-400, -150))
 	banner_box.custom_minimum_size = Vector2(800, 0)
 	banner_box.alignment = BoxContainer.ALIGNMENT_CENTER
 	banner_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -129,8 +124,7 @@ func _ready() -> void:
 	banner_box.add_child(banner_sub)
 	warn_lbl = UIKit.label("", 30, "Orbitron-Black", Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER)
 	var wp := UIKit.panel(Color(0.85, 0.08, 0.15, 0.85))
-	wp.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	wp.position = Vector2(-260, 150)
+	UIKit.place(wp, Vector2(0.5, 0), Vector2(-260, 150))
 	wp.custom_minimum_size = Vector2(520, 0)
 	wp.visible = false
 	wp.add_child(warn_lbl)

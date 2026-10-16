@@ -418,3 +418,62 @@ for fn in (asphalt, grass, dirt, rock, sand, planks, bark, foliage, concrete, fa
         continue
     fn()
     print('ok', fn.__name__)
+
+# ---------------- PATROCINADORES Y PÚBLICO (marcas ficticias) ----------------
+def banners():
+    from PIL import ImageDraw, ImageFont
+    fp = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+    brands = [('APEX ENERGY', (10, 14, 24), (0, 220, 255)), ('TURBO COLA', (200, 20, 30), (255, 255, 255)),
+              ('NEXUS MOBILE', (250, 250, 250), (20, 30, 60)), ('VOLTA TIRES', (255, 196, 0), (15, 15, 15)),
+              ('ORBITA OIL', (10, 60, 140), (255, 210, 60)), ('SOLARIS', (255, 120, 0), (255, 255, 255)),
+              ('KAIROS', (20, 20, 20), (230, 230, 230)), ('RAPIDO', (0, 150, 80), (255, 255, 255))]
+    W, H = 1024, 512
+    img = Image.new('RGB', (W, H))
+    d = ImageDraw.Draw(img)
+    for i, (txt, bg, fg) in enumerate(brands):
+        x0, y0 = (i % 2) * 512, (i // 2) * 128
+        d.rectangle([x0, y0, x0 + 511, y0 + 127], fill=bg)
+        d.rectangle([x0 + 8, y0 + 8, x0 + 503, y0 + 119], outline=fg, width=3)
+        size = 70
+        f = ImageFont.truetype(fp, size)
+        while d.textlength(txt, font=f) > 460:
+            size -= 4
+            f = ImageFont.truetype(fp, size)
+        tw = d.textlength(txt, font=f)
+        d.text((x0 + 256 - tw / 2, y0 + 64 - size * 0.6), txt, font=f, fill=fg)
+        d.polygon([(x0 + 18, y0 + 100), (x0 + 60, y0 + 100), (x0 + 50, y0 + 112), (x0 + 8, y0 + 112)], fill=fg)
+    img.save(os.path.join(OUT, 'banners.png'))
+    # Público en gradas
+    r = np.random.default_rng(301)
+    cw, ch = 512, 256
+    crowd = np.zeros((ch, cw, 3))
+    for row in range(8):
+        y = row * 32
+        crowd[y:y + 32] = (0.18, 0.19, 0.22)
+        crowd[y + 28:y + 32] = (0.35, 0.36, 0.4)
+        for k in range(64):
+            x = k * 8 + r.integers(0, 3)
+            c = r.choice([(0.9, 0.2, 0.2), (0.2, 0.4, 0.9), (0.95, 0.85, 0.2), (0.95, 0.95, 0.95), (0.1, 0.1, 0.1), (0.2, 0.7, 0.3), (0.95, 0.5, 0.1)])
+            skin = r.choice([(0.85, 0.65, 0.5), (0.6, 0.42, 0.3), (0.4, 0.28, 0.2)])
+            crowd[y + 14:y + 27, x:x + 6] = c
+            crowd[y + 8:y + 14, x + 1:x + 5] = skin
+    save_rgb('crowd.png', crowd)
+    # Línea de meta a cuadros (1024x128)
+    Y, X = np.mgrid[0:128, 0:1024]
+    ck = ((X // 64 + Y // 64) % 2).astype(float) * 0.9 + 0.05
+    save_rgb('finish_line.png', np.stack([ck, ck, ck], -1))
+    # Agua: mapa de normales tileable
+    hgt = band(512, 4, 40, 311) * 0.6 + band(512, 30, 120, 312) * 0.4
+    save_n('water_normal.png', normal_from_height(hgt, 4.0))
+    # Neumático (barrera de neumáticos) y flecha de turbo
+    a = np.zeros((128, 256, 4))
+    Yy, Xx = np.mgrid[0:128, 0:256]
+    for k in range(3):
+        cx = 50 + k * 75
+        m = (np.abs((Xx - cx) - np.abs(Yy - 64) * 0.7) < 14) & (np.abs(Yy - 64) < 50)
+        a[m] = (0.3, 0.8, 1.0, 1.0)
+    save_rgba('boost_arrows.png', a)
+
+if not only or 'banners' in only:
+    banners()
+    print('ok banners')

@@ -12,6 +12,8 @@ uniform float dirt_amount = 0.35;
 uniform vec3 grass_tint : source_color = vec3(1.0);
 uniform vec3 snow_color : source_color = vec3(0.92, 0.94, 0.98);
 uniform float snow_height = 9999.0;
+uniform sampler2D sand_tex : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform float sand_height = -9999.0;
 
 varying vec3 wpos;
 varying vec3 wnrm;
@@ -38,6 +40,8 @@ void fragment() {
 	col = mix(col, r, rm);
 	float sm = smoothstep(snow_height, snow_height + 12.0, wpos.y + n * 10.0) * smoothstep(0.45, 0.7, wnrm.y);
 	col = mix(col, snow_color, sm);
+	float sd = smoothstep(sand_height + 1.5, sand_height - 0.5, wpos.y + n * 1.5);
+	col = mix(col, texture(sand_tex, uv * 0.7).rgb, sd);
 	ALBEDO = col;
 	vec3 nm = mix(texture(grass_nrm, uv).rgb, texture(dirt_nrm, uv * 0.8).rgb, dm);
 	nm = mix(nm, texture(rock_nrm, wpos.zy * scale * 0.6).rgb, rm);

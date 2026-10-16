@@ -2,14 +2,13 @@ extends Control
 ## Pantalla de arranque: logo animado y paso al menú.
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var bg := ColorRect.new()
 	bg.color = Color(0.01, 0.015, 0.03)
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 	var v := VBoxContainer.new()
-	v.set_anchors_preset(Control.PRESET_CENTER)
-	v.position = Vector2(-400, -90)
+	UIKit.place(v, Vector2(0.5, 0.5), Vector2(-400, -90))
 	v.custom_minimum_size = Vector2(800, 0)
 	v.add_theme_constant_override("separation", -10)
 	add_child(v)

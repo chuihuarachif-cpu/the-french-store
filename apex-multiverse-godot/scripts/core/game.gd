@@ -111,7 +111,7 @@ func _fade_layer() -> CanvasLayer:
 	_fade.layer = 100
 	var r := ColorRect.new()
 	r.color = Color(0.01, 0.015, 0.03)
-	r.set_anchors_preset(Control.PRESET_FULL_RECT)
+	r.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	r.modulate.a = 0.0
 	_fade.add_child(r)

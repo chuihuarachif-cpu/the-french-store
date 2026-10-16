@@ -16,7 +16,7 @@ func _ready() -> void:
 func _dim() -> ColorRect:
 	var d := ColorRect.new()
 	d.color = Color(0.0, 0.01, 0.03, 0.72)
-	d.set_anchors_preset(Control.PRESET_FULL_RECT)
+	d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	return d
 
 func show_pause(title := "PAUSA") -> void:
@@ -25,8 +25,7 @@ func show_pause(title := "PAUSA") -> void:
 	_pause = _dim()
 	add_child(_pause)
 	var box := VBoxContainer.new()
-	box.set_anchors_preset(Control.PRESET_CENTER)
-	box.position = Vector2(-220, -230)
+	UIKit.place(box, Vector2(0.5, 0.5), Vector2(-220, -230))
 	box.custom_minimum_size = Vector2(440, 0)
 	box.add_theme_constant_override("separation", 16)
 	_pause.add_child(box)
@@ -73,8 +72,7 @@ func show_results(title: String, subtitle: String, rows: Array, headline := "", 
 	_results = _dim()
 	add_child(_results)
 	var card := UIKit.panel(Color(0.04, 0.06, 0.11, 0.95), UIKit.OK if win else UIKit.DANGER, 6, 0.0)
-	card.set_anchors_preset(Control.PRESET_CENTER)
-	card.position = Vector2(-330, -280)
+	UIKit.place(card, Vector2(0.5, 0.5), Vector2(-330, -280))
 	card.custom_minimum_size = Vector2(660, 0)
 	_results.add_child(card)
 	var v := VBoxContainer.new()

@@ -129,6 +129,10 @@ func _ready() -> void:
 	hud.banner(pn[0], "AUTOPISTA INFINITA · " + pn[1], 1.8, UIKit.WARN if preset != "night" else UIKit.ACCENT)
 	_place_player(0.016, 0.0)
 	_update_camera(1.0)
+	# Pruebas: avanzar la simulación N segundos (SKIP=n)
+	var skip := float(OS.get_environment("SKIP")) if OS.get_environment("SKIP") != "" else 0.0
+	for i in int(skip / 0.05):
+		_process(0.05)
 
 func _pause() -> void:
 	if state == "over":

@@ -21,6 +21,8 @@ func _ready() -> void:
 	Sfx.play_music("music_menu")
 	_build_garage()
 	_build_ui()
+	if OS.get_environment("MENU_OPEN") != "":
+		_open_levels(OS.get_environment("MENU_OPEN"))
 
 func _build_garage() -> void:
 	var e := EnvFactory.build(self, "sunset")
@@ -125,7 +127,7 @@ func _build_ui() -> void:
 	ui = CanvasLayer.new()
 	add_child(ui)
 	var root := Control.new()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.add_child(root)
 	var grad := TextureRect.new()
@@ -137,7 +139,7 @@ func _build_ui() -> void:
 	gt.fill_from = Vector2(0, 0.35)
 	gt.fill_to = Vector2(0, 1)
 	grad.texture = gt
-	grad.set_anchors_preset(Control.PRESET_FULL_RECT)
+	grad.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	grad.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(grad)
 	var logo := VBoxContainer.new()
@@ -157,8 +159,7 @@ func _build_ui() -> void:
 	logo.add_child(tag)
 	# Monedas + ajustes
 	var tr := HBoxContainer.new()
-	tr.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	tr.position = Vector2(-700, 30)
+	UIKit.place(tr, Vector2(1, 0), Vector2(-700, 30))
 	tr.custom_minimum_size = Vector2(660, 0)
 	tr.alignment = BoxContainer.ALIGNMENT_END
 	tr.add_theme_constant_override("separation", 12)
@@ -183,10 +184,12 @@ func _build_ui() -> void:
 		if Game.save["music"]: Sfx.music.play()
 		else: Sfx.music.stop())
 	tr.add_child(mb)
+	var cb := UIKit.button("CRÉDITOS", false, 14)
+	cb.pressed.connect(_show_credits)
+	tr.add_child(cb)
 	# Pintura
 	var pv := VBoxContainer.new()
-	pv.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
-	pv.position = Vector2(-90, -170)
+	UIKit.place(pv, Vector2(1, 0.5), Vector2(-90, -170))
 	pv.add_theme_constant_override("separation", 10)
 	root.add_child(pv)
 	pv.add_child(UIKit.label("PINTURA", 14, "Orbitron-Bold", Color(0.7, 0.76, 0.86), HORIZONTAL_ALIGNMENT_CENTER))
@@ -211,8 +214,7 @@ func _build_ui() -> void:
 		pv.add_child(b)
 	# Tarjetas de modo
 	var cards := HBoxContainer.new()
-	cards.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	cards.position = Vector2(-610, -250)
+	UIKit.place(cards, Vector2(0.5, 1), Vector2(-610, -250))
 	cards.custom_minimum_size = Vector2(1220, 220)
 	cards.add_theme_constant_override("separation", 18)
 	cards.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -220,9 +222,38 @@ func _build_ui() -> void:
 	for m in MODE_ORDER:
 		cards.add_child(_mode_card(m))
 	level_panel = Control.new()
-	level_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	level_panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	level_panel.visible = false
 	root.add_child(level_panel)
+
+func _show_credits() -> void:
+	for c in level_panel.get_children():
+		c.queue_free()
+	level_panel.visible = true
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0.01, 0.03, 0.85)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	level_panel.add_child(dim)
+	var card := UIKit.panel(Color(0.04, 0.06, 0.11, 0.97), UIKit.ACCENT, 6)
+	UIKit.place(card, Vector2(0.5, 0.5), Vector2(-480, -300))
+	card.custom_minimum_size = Vector2(960, 0)
+	level_panel.add_child(card)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 10)
+	card.add_child(v)
+	v.add_child(UIKit.label("CRÉDITOS", 40, "Orbitron-Black", UIKit.ACCENT))
+	var t := UIKit.label("""Auto deportivo: \"Car Concept\" de Eric Chadwick / Darmstadt Graphics Group (Khronos glTF Sample Assets), licencia CC BY 4.0. Basado en un modelo de dominio público de Unity Fan. Modificado (sin interior) para móviles.
+Zorro/lobo: \"Fox\" de PixelMannen (CC0), rigging y animación de tomkranis (CC BY 4.0), Khronos glTF Sample Assets.
+Cielos HDR: Poly Haven (venice_sunset, quarry_01, spruit_sunrise, moonless_golf, blouberg_sunrise_2), CC0.
+Fuentes: Orbitron y Rajdhani (SIL Open Font License).
+Texturas, vehículos de tráfico, camión, nave, escenarios, efectos, música y sonidos: generados proceduralmente para Apex Multiverse.
+Motor: Godot Engine 4.3 (MIT).""", 20, "Rajdhani-Bold", Color(0.85, 0.9, 0.97))
+	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	t.custom_minimum_size = Vector2(900, 0)
+	v.add_child(t)
+	var back := UIKit.button("VOLVER", false)
+	back.pressed.connect(func(): level_panel.visible = false)
+	v.add_child(back)
 
 func _mode_card(mode: String) -> Control:
 	var info: Dictionary = MODE_INFO[mode]
@@ -245,7 +276,7 @@ func _mode_card(mode: String) -> Control:
 	b.add_theme_stylebox_override("pressed", h)
 	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	var v := VBoxContainer.new()
-	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	v.offset_left = 26
 	v.offset_top = 14
 	v.offset_right = -18
@@ -301,11 +332,10 @@ func _open_levels(mode: String) -> void:
 	var col: Color = info["color"]
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0.01, 0.03, 0.8)
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	level_panel.add_child(dim)
 	var card := UIKit.panel(Color(0.04, 0.06, 0.11, 0.97), col, 6)
-	card.set_anchors_preset(Control.PRESET_CENTER)
-	card.position = Vector2(-520, -320)
+	UIKit.place(card, Vector2(0.5, 0.5), Vector2(-520, -320))
 	card.custom_minimum_size = Vector2(1040, 640)
 	card.mouse_filter = Control.MOUSE_FILTER_STOP
 	level_panel.add_child(card)

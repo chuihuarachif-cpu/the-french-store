@@ -12,8 +12,10 @@ func _init(layout: Array = []) -> void:
 	buttons = layout
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	resized.connect(queue_redraw)
+	queue_redraw.call_deferred()
 
 func _btn_center(b: Dictionary) -> Vector2:
 	return Vector2(size.x * b["anchor"].x, size.y * b["anchor"].y) + b.get("offset", Vector2.ZERO)
