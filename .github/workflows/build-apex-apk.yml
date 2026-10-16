@@ -1,0 +1,105 @@
+name: Build Apex Multiverse APK
+
+on:
+  push:
+    branches: [game/apex-multiverse]
+    paths:
+      - "apex-multiverse-godot/**"
+      - ".github/workflows/build-apex-apk.yml"
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.3"
+  PROJECT_DIR: apex-multiverse-godot
+
+jobs:
+  export-android:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare Godot (templates, SDK paths, debug keystore)
+        shell: bash
+        run: |
+          set -x
+          mkdir -p ~/.local/share/godot/export_templates ~/.config/godot "$PROJECT_DIR/build"
+          for src in /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable /root/.local/share/godot/templates/${GODOT_VERSION}.stable; do
+            if [ -d "$src" ] && [ "$src" != "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable" ]; then
+              cp -r "$src" ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable || true
+              break
+            fi
+          done
+          ls ~/.local/share/godot/export_templates/ ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/lib/android-sdk}}"
+          JAVAC_BIN="$(command -v javac || command -v java || true)"
+          if [ -n "$JAVAC_BIN" ]; then
+            JAVA_HOME_DETECT="$(dirname "$(dirname "$(readlink -f "$JAVAC_BIN")")")"
+          else
+            JAVA_HOME_DETECT="${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk-amd64}"
+          fi
+          echo "Android SDK: $SDK | Java: $JAVA_HOME_DETECT"
+
+          for f in editor_settings-4.tres editor_settings-4.3.tres; do
+            cat > ~/.config/godot/$f <<EOS
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "$SDK"
+          export/android/java_sdk_path = "$JAVA_HOME_DETECT"
+          EOS
+          done
+
+          rm -f /root/apex-debug.keystore
+          keytool -genkeypair -v -keystore /root/apex-debug.keystore -storepass android -alias androiddebugkey \
+            -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Import project
+        run: godot --headless --path "$PROJECT_DIR" --import || true
+
+      - name: Export APK (debug)
+        env:
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: /root/apex-debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
+        shell: bash
+        run: |
+          godot --headless --path "$PROJECT_DIR" --export-debug "Android" build/apex-multiverse.apk > export.log 2>&1 || true
+          ls -la "$PROJECT_DIR/build/" || true
+          if [ ! -s "$PROJECT_DIR/build/apex-multiverse.apk" ]; then
+            DIAG="templates: $(ls ~/.local/share/godot/export_templates/ 2>&1 | tr '\n' ' ') | log: $(grep -v -E '^\s*$' export.log | tail -25 | tr '\n' '~' | cut -c1-2500)"
+            echo "::error title=Export failed::${DIAG}"
+            exit 1
+          fi
+          grep -E "SCRIPT ERROR|Parse Error" export.log | head -20 || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apex-multiverse-apk
+          path: apex-multiverse-godot/build/apex-multiverse.apk
+          if-no-files-found: error
+
+  release:
+    needs: export-android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apex-multiverse-apk
+          path: dist
+
+      - name: Publish release with APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apex-multiverse-v${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Apex Multiverse (build ${{ github.run_number }})
+          body: |
+            APK de Apex Multiverse (Godot 4.3). 4 modos con su nivel 1: Infinito, Historia, Camiones y Cohetes.
+            Instálalo en Android permitiendo "instalar apps de orígenes desconocidos".
+          files: dist/apex-multiverse.apk
+          make_latest: false
