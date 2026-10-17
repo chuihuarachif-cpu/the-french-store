@@ -68,6 +68,8 @@ func _ready() -> void:
 		current_level = int(OS.get_environment("LEVEL"))
 	if OS.get_environment("SHOT") != "":
 		add_child(load("res://tools_test/shot.gd").new())
+	if OS.get_environment("TOUCHTEST") != "":
+		add_child(load("res://tools_test/touch_test.gd").new())
 
 const ACTIONS := {
 	"steer_left": [KEY_LEFT, KEY_A], "steer_right": [KEY_RIGHT, KEY_D],

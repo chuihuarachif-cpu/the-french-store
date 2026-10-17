@@ -39,7 +39,7 @@ func _input(event: InputEvent) -> void:
 			var a := _hit(p)
 			if a != "":
 				_touch[event.index] = a
-				_set_action(a, false)
+				_set_action(a, true)
 		elif _touch.has(event.index):
 			var a: String = _touch[event.index]
 			_touch.erase(event.index)
@@ -56,7 +56,7 @@ func _input(event: InputEvent) -> void:
 					_set_action(prev, false)
 			if a != "":
 				_touch[event.index] = a
-				_set_action(a, false)
+				_set_action(a, true)
 
 func _set_action(action: String, on: bool) -> void:
 	_pressed[action] = on
