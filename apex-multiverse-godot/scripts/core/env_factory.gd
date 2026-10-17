@@ -14,8 +14,6 @@ const PRESETS := {
 		"sun": Color(1.0, 0.92, 0.80), "sun_energy": 1.6, "fog": Color(0.70, 0.74, 0.80), "fog_density": 0.0014, "ambient": 1.0, "exposure": 0.9, "glow": 0.3},
 	"coast": {"hdri": "res://assets/hdri/blouberg_sunrise_2_1k.hdr", "sun_u": 0.0562, "sun_az": 40.0, "sun_elev": 30.0, "sky_energy": 0.9,
 		"sun": Color(1.0, 0.88, 0.72), "sun_energy": 1.6, "fog": Color(0.76, 0.79, 0.84), "fog_density": 0.0010, "ambient": 1.1, "exposure": 0.9, "glow": 0.4},
-	"space": {"panorama": "res://assets/textures/space_sky.png", "sun_u": 0.5, "sun_az": 50.0, "sun_elev": 20.0, "sky_energy": 0.45,
-		"sun": Color(1.0, 0.92, 0.85), "sun_energy": 1.8, "fog": Color(0.04, 0.02, 0.08), "fog_density": 0.0, "ambient": 0.35, "exposure": 1.0, "glow": 0.7},
 }
 
 ## Dirección hacia el sol a partir de azimut (grados, + a la derecha de -Z) y elevación.

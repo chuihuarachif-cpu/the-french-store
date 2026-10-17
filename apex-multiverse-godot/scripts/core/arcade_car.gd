@@ -20,6 +20,7 @@ var x_min := -8.0
 var x_max := 8.0
 var scraping := 0
 var throttle := 1.0
+var allow_reverse := false
 # Vertical (saltos)
 var y := 0.0
 var vy := 0.0
@@ -31,7 +32,12 @@ func step(dt: float, steer: float, braking: bool, want_nitro: bool, curvature :=
 	if nitro_on:
 		nitro = maxf(0.0, nitro - 24.0 * dt)
 	if braking:
-		speed = maxf(0.0, speed - brake_decel * dt)
+		if allow_reverse and speed <= 0.5:
+			speed = maxf(-5.0, speed - 3.0 * dt)
+		else:
+			speed = maxf(0.0, speed - brake_decel * dt)
+	elif speed < 0.0:
+		speed = minf(0.0, speed + brake_decel * dt)
 	elif speed < top:
 		var a := accel * (1.0 - pow(speed / top, 2.2) * 0.75) * throttle
 		if nitro_on:

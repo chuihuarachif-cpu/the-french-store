@@ -13,7 +13,7 @@ func _ready() -> void:
 	v.add_theme_constant_override("separation", -10)
 	add_child(v)
 	v.add_child(UIKit.label("APEX", 110, "Orbitron-Black", Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER))
-	v.add_child(UIKit.label("M U L T I V E R S E", 30, "Orbitron-Bold", UIKit.ACCENT, HORIZONTAL_ALIGNMENT_CENTER))
+	v.add_child(UIKit.label("F R A N S T E R R A", 30, "Orbitron-Bold", UIKit.ACCENT, HORIZONTAL_ALIGNMENT_CENTER))
 	v.modulate.a = 0.0
 	var tw := create_tween()
 	tw.tween_property(v, "modulate:a", 1.0, 0.6)

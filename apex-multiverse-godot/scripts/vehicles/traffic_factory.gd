@@ -234,12 +234,13 @@ static func _car(p: Dictionary) -> Dictionary:
 	# Ruedas
 	var wr: float = p["wr"]
 	var wb: float = p["wb"]
-	for z in [-wb * 0.5 + p.get("wo", 0.0), wb * 0.5 + p.get("wo", 0.0)]:
-		for sx in [-1, 1]:
-			_wheel(sts, Vector3(sx * (W - 0.12), wr, z), wr, 0.24)
+	if not p.get("no_wheels", false):
+		for z in [-wb * 0.5 + p.get("wo", 0.0), wb * 0.5 + p.get("wo", 0.0)]:
+			for sx in [-1, 1]:
+				_wheel(sts, Vector3(sx * (W - 0.12), wr, z), wr, 0.24)
 	if p.get("bed", false):
 		MeshKit.box(sts["plastic"], Vector3(0, deck - 0.05, zf + L * 0.79), Vector3(W * 1.7, 0.04, L * 0.38))
-	return {"mesh": _finish(sts), "length": L, "width": W * 2.0, "height": roof}
+	return {"mesh": _finish(sts), "length": L, "width": W * 2.0, "height": roof, "wr": wr, "wb": wb, "wo": p.get("wo", 0.0), "track": W - 0.12, "belt": belt, "deck": deck, "roof": roof, "hood": hood}
 
 static func _boxy(L: float, W: float, H: float, cab_len: float, trailer: bool, bus: bool) -> Dictionary:
 	var sts := _new_sts()

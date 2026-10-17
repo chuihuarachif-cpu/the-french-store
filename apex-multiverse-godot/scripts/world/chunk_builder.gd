@@ -353,7 +353,7 @@ func _buildings() -> void:
 		var sty: int = b[7]
 		var seed := fmod(absf(x * 0.013 + z * 0.007), 1.0)
 		var pal: Array = PAL[sty]
-		var col: Color = pal[int(seed * 997.0) % pal.size()]
+		var col: Color = pal[int(seed * 997.0) % pal.size()] * Color(0.82, 0.82, 0.82, 1.0)
 		var gy: float = W.height(x, z) - 1.2
 		var basis := Basis(Vector3.UP, yaw)
 		var xf := Transform3D(basis, Vector3(x, gy, z))
