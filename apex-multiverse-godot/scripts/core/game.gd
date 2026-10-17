@@ -69,6 +69,9 @@ func _load() -> void:
 	if not save.has("quality"):
 		save["quality"] = 1
 
+func quality() -> int:
+	return int(save.get("quality", 1))
+
 func car_color() -> Color:
 	var c = save.get("car_color", "")
 	return Color.html(c) if c is String and c != "" else Color(0.78, 0.04, 0.05)
