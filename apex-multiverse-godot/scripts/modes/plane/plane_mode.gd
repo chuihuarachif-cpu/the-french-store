@@ -112,6 +112,16 @@ func _ready() -> void:
 	streamer.prewarm(pos, -pb.z)
 	cam_pos = pos + pb.z * 22.0 + Vector3.UP * 6.0
 	hud.banner(mission["name"].to_upper(), mission["desc"], 3.0, Color(0.65, 0.55, 1.0))
+	if OS.get_environment("LANDTEST") != "":
+		# prueba: empezar en la aproximación final
+		var la: Dictionary = World.poi(land_kind) if land_kind != "carrier" else {}
+		land_frame = WorldLandmarks.runway_frame(la, false) if land_kind != "carrier" else WorldLandmarks.carrier_frame()
+		pos = land_frame * Vector3(float(OS.get_environment("LANDTEST")), 300, 4500)
+		pb = Basis.looking_at(-land_frame.basis.z, Vector3.UP)
+		speed = vrot * 1.6
+		on_ground = false
+		state = "land"
+		kills = 1
 	var skip := float(OS.get_environment("SKIP")) if OS.get_environment("SKIP") != "" else 0.0
 	for i in int(skip / 0.05):
 		_process(0.05)
@@ -534,8 +544,8 @@ func _landing_assist() -> Dictionary:
 		return {}
 	var rf := land_frame
 	var lp := rf.affine_inverse() * pos
-	if OS.get_environment("DBG") != "" and Engine.get_process_frames() % 120 == 0:
-		print("LAND lp=", lp, " v=", speed, " agl=", pos.y - rf.origin.y)
+	if OS.get_environment("DBG") != "" and Engine.get_process_frames() % 60 == 0:
+		print("LAND lp=", lp, " v=", speed, " agl=", pos.y - rf.origin.y, " on=", _assist_on, " fwd=", -pb.z)
 	var aligned := (-pb.z).dot(-rf.basis.z) > 0.45
 	if not _assist_on:
 		if lp.z > 900.0 and lp.z < 5500.0 and absf(lp.x) < 2200.0 and pos.y - rf.origin.y < 700.0 and aligned:
@@ -554,7 +564,7 @@ func _landing_assist() -> Dictionary:
 	var vy := clampf((glide_h - (pos.y - rf.origin.y)) * 0.012 - 0.05, -0.16, 0.06)
 	vy *= clampf(1.0 - (absf(lp.x) - 60.0) / 300.0, 0.0, 1.0)   # baja solo cuando está alineado
 	if lp.z < 60.0:
-		vy = -0.02
+		vy = -0.035
 	return {"dir": (flat + Vector3(0, vy, 0)).normalized()}
 
 func _land_target() -> Vector3:
