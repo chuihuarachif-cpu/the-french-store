@@ -111,7 +111,8 @@ func _process(dt: float) -> void:
 	var a := 0.7 + sin(t * 0.17) * 0.2
 	var h := 1.8 + _cam_dist * 0.12
 	cam.position = Vector3(sin(a) * _cam_dist, h, cos(a) * _cam_dist)
-	cam.look_at(Vector3(-_cam_dist * 0.14, 0.4 + _cam_dist * 0.02, 0))
+	cam.look_at(Vector3(0, 0.4 + _cam_dist * 0.03, 0))
+	cam.h_offset = _cam_dist * 0.17
 	if preview:
 		preview.update_visual(dt, 2.0, 0.0)
 

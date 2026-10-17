@@ -55,6 +55,9 @@ var is_prop := false
 var _ground_y := 0.0
 var _tracer_mesh: Mesh
 var _enemy_spec: Dictionary
+var land_frame := Transform3D.IDENTITY
+var _assist_on := false
+var _ap_turnin := false
 
 func _ready() -> void:
 	Game.current_mode = "plane"
@@ -393,11 +396,18 @@ func _process(delta: float) -> void:
 		hud.banner("OBJETIVO", "Vuela hacia la zona marcada y derriba %d enemigos" % mission["enemies"], 2.4, UIKit.WARN)
 	if state == "fly" and enemies.is_empty() and kills > 0:
 		state = "land"
+		if land_kind == "carrier":
+			land_frame = WorldLandmarks.carrier_frame()
+			land_frame.origin += Vector3(6.0, 0.0, 150.0)
+		else:
+			var la: Dictionary = World.poi(land_kind)
+			land_frame = WorldLandmarks.runway_frame(la, pos.x > float(la["x"]))
 		var ldst := _land_target()
 		minimap.target = ldst
 		hud.banner("ZONA DESPEJADA", "Ahora aterriza en %s" % {"airport": "el Aeropuerto Saint-Exupéry", "airfield": "el Aeródromo de Provence", "carrier": "el portaaviones"}[land_kind], 3.0, UIKit.OK)
 	if state in ["fly", "land"]:
-		if Input.is_action_pressed("fire") and gun_heat < 1.0:
+		var ap_fire: bool = Game.autopilot and lock_target != null and (-pb.z).angle_to((lock_target["pos"] - pos).normalized()) < 0.08 and pos.distance_to(lock_target["pos"]) < 900.0
+		if (Input.is_action_pressed("fire") or ap_fire) and gun_heat < 1.0:
 			gun_cd -= dt
 			if gun_cd <= 0.0:
 				gun_cd = 0.07
@@ -406,7 +416,7 @@ func _process(delta: float) -> void:
 					_fire_bullet(pos + pb.x * sx - pb.z * 6.0, -pb.z, speed, true)
 				Sfx.play("laser", -16.0, randf_range(1.6, 1.9))
 		gun_heat = maxf(0.0, gun_heat - dt * 0.3)
-		if Input.is_action_just_pressed("missile"):
+		if Input.is_action_just_pressed("missile") or (Game.autopilot and lock_t > 1.2 and missiles > 0 and fmod(time, 3.0) < 0.02):
 			_fire_missile()
 		_update_lock(dt)
 	_update_enemies(dt)
@@ -439,11 +449,18 @@ func _flight(dt: float, roll_in: float, pitch_in: float, want_boost: bool, airbr
 		boost = maxf(0.0, boost - 20.0 * dt)
 	else:
 		boost = minf(100.0, boost + 4.0 * dt)
+	var assist := _landing_assist()
+	if not assist.is_empty():
+		thrust_target = 0.3
+		speed = move_toward(speed, vstall * 1.45, 12.0 * dt)
+	if on_ground and state == "land":
+		thrust_target = 0.0
+		speed = move_toward(speed, 0.0, 14.0 * dt)
 	throttle = move_toward(throttle, thrust_target, dt * 0.6)
 	var top := vmax * (1.3 if want_boost else 1.0) * throttle
 	var fwd := -pb.z
 	# aceleración: empuje - resistencia - componente de la gravedad
-	var acc := (top - speed) * (0.35 if not want_boost else 0.8) - fwd.y * G * 0.9
+	var acc := (top - speed) * (0.12 if not want_boost else 0.3) - fwd.y * G * 0.9
 	if airbrake:
 		acc -= speed * 0.4
 	speed = clampf(speed + acc * dt, 0.0, vmax * 1.45)
@@ -478,6 +495,9 @@ func _flight(dt: float, roll_in: float, pitch_in: float, want_boost: bool, airbr
 	if lift < 1.0:
 		# pérdida: el morro cae
 		pb = pb.rotated(pb.x.normalized(), -(1.0 - lift) * 0.6 * dt)
+	if not assist.is_empty() and absf(roll_in) < 0.2 and absf(pitch_in) < 0.2:
+		var want: Vector3 = assist["dir"]
+		pb = pb.slerp(Basis.looking_at(want, Vector3.UP), clampf(dt * 1.8, 0.0, 1.0))
 	pb = pb.orthonormalized()
 	fwd = -pb.z
 	pos += fwd * speed * dt + Vector3(0, -(1.0 - lift) * 9.0 * dt, 0)
@@ -490,9 +510,9 @@ func _flight(dt: float, roll_in: float, pitch_in: float, want_boost: bool, airbr
 	pos.y = minf(pos.y, 2400.0)
 	gear = (pos.y - gy < 70.0 and speed < vrot * 1.8) or state == "land" and pos.y - gy < 120.0
 	plane.set_gear(gear)
-	if pos.y <= gy + 0.5:
-		var vs := fwd.y * speed
-		var ok = surf[1] and gear and vs > -7.0 and absf(roll) < 0.35 and fwd.y > -0.2 and speed < vrot * 1.7
+	var vs := fwd.y * speed - (1.0 - lift) * 9.0
+	if pos.y <= gy + 0.3 and vs <= 0.5:
+		var ok: bool = surf[1] and gear and vs > -7.0 and absf(roll) < 0.35 and fwd.y > -0.2 and (state != "land" or speed < vrot * 1.8)
 		if ok and state == "land":
 			on_ground = true
 			pos.y = gy
@@ -504,8 +524,38 @@ func _flight(dt: float, roll_in: float, pitch_in: float, want_boost: bool, airbr
 		elif ok:
 			on_ground = true
 			pos.y = gy
+			pb = Basis.looking_at(Vector3(fwd.x, 0, fwd.z).normalized(), Vector3.UP)
 		else:
 			_crash("Te estrellaste" if surf[2] != "water" else "Caíste al agua")
+
+## Asistente de aterrizaje: dirección deseada (alineación + senda de planeo de ~4°) cerca de la pista de destino.
+func _landing_assist() -> Dictionary:
+	if state != "land" or on_ground:
+		return {}
+	var rf := land_frame
+	var lp := rf.affine_inverse() * pos
+	if OS.get_environment("DBG") != "" and Engine.get_process_frames() % 120 == 0:
+		print("LAND lp=", lp, " v=", speed, " agl=", pos.y - rf.origin.y)
+	var aligned := (-pb.z).dot(-rf.basis.z) > 0.45
+	if not _assist_on:
+		if lp.z > 900.0 and lp.z < 5500.0 and absf(lp.x) < 2200.0 and pos.y - rf.origin.y < 700.0 and aligned:
+			_assist_on = true
+			hud.popup("ASISTENTE DE ATERRIZAJE", 0, UIKit.OK)
+		else:
+			return {}
+	if lp.z < -400.0 or (-pb.z).dot(-rf.basis.z) < 0.0 or (lp.z < 250.0 and lp.y > 45.0):
+		_assist_on = false
+		_ap_turnin = false
+		hud.banner("APROXIMACIÓN FALLIDA", "Demasiado alto o desalineado: da otra vuelta", 2.0, UIKit.WARN)
+		return {}
+	var aim := rf * Vector3(0, 0, minf(lp.z - maxf(180.0, lp.z * 0.22), -60.0))
+	var flat := Vector3(aim.x - pos.x, 0, aim.z - pos.z).normalized()
+	var glide_h := maxf(lp.z, 0.0) * 0.085 + 2.0
+	var vy := clampf((glide_h - (pos.y - rf.origin.y)) * 0.012 - 0.05, -0.16, 0.06)
+	vy *= clampf(1.0 - (absf(lp.x) - 60.0) / 300.0, 0.0, 1.0)   # baja solo cuando está alineado
+	if lp.z < 60.0:
+		vy = -0.02
+	return {"dir": (flat + Vector3(0, vy, 0)).normalized()}
 
 func _land_target() -> Vector3:
 	match land_kind:
@@ -544,6 +594,7 @@ func _place(dt: float, roll_in: float) -> void:
 		engine.volume_db = -10.0 + throttle * 6.0
 
 func _crash(why: String) -> void:
+	print("CRASH ", why, " pos=", pos, " speed=", speed, " state=", state, " t=", time)
 	if state == "done":
 		return
 	FX.burst(self, pos, Color(1.0, 0.5, 0.15), 120, 30.0)
@@ -595,8 +646,8 @@ func _hud() -> void:
 		warn = "⚠ ¡SUBE! TERRENO CERCA"
 	if speed < vstall * 1.1 and not on_ground and state != "ready":
 		warn = "⚠ PÉRDIDA · ACELERA"
-	if state == "land" and agl < 300.0:
-		warn = "TREN ABAJO · ALINEA CON LA PISTA" if gear else warn
+	if state == "land" and not _landing_assist().is_empty():
+		warn = "ASISTENTE DE ATERRIZAJE · SUELTA LA PALANCA"
 	hud.warn(warn)
 	minimap.center = pos
 	var f := -pb.z
@@ -611,11 +662,27 @@ func _autopilot() -> Array:
 	if not enemies.is_empty():
 		tgt = enemies[0]["pos"]
 	if state == "land":
-		tgt = minimap.target + Vector3(0, 300, 0)
+		if not _landing_assist().is_empty():
+			return [0.0, 0.0]
+		var lpa := land_frame.affine_inverse() * pos
+		if lpa.z > 5600.0 or _ap_turnin:
+			_ap_turnin = true
+			tgt = land_frame * Vector3(0, 200, 0)
+		else:
+			tgt = land_frame * Vector3(0, 380, 6000)
 	var to := (tgt - pos).normalized()
 	var local := pb.inverse() * to
-	var pitch := clampf(local.y * 3.0 + (0.6 if on_ground and speed > vrot else 0.0), -1.0, 1.0)
-	if pos.y - _terrain_y(pos) < 150.0 and not on_ground:
-		pitch = 1.0
+	var fwd := -pb.z
+	var want_climb := clampf(to.y, -0.25, 0.35)
+	if pos.y - _terrain_y(pos) < 200.0:
+		want_climb = 0.3
+	var pitch := clampf((want_climb - fwd.y) * 4.0, -1.0, 1.0)
+	if on_ground:
+		pitch = 1.0 if speed > vrot else 0.0
 	var agl := pos.y - _terrain_y(pos)
-	return [clampf(local.x * 3.0, -1.0, 1.0) if agl > 90.0 else 0.0, pitch]
+	var rl := clampf(local.x * 3.0, -1.0, 1.0)
+	if local.z > 0.0:
+		rl = 1.0 if local.x >= 0.0 else -1.0
+	var roll_now := atan2(-pb.x.y, pb.y.y)
+	rl = clampf(rl * 0.9 - roll_now * 0.0, -1.0, 1.0) if absf(roll_now) < 1.0 else -signf(roll_now)
+	return [rl if agl > 90.0 else 0.0, pitch]

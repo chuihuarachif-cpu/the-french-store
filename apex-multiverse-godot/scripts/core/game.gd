@@ -62,6 +62,8 @@ func _ready() -> void:
 	_setup_input()
 	apply_quality()
 	autopilot = OS.get_environment("AUTOPILOT") == "1"
+	if OS.get_environment("MODE") != "":
+		current_mode = OS.get_environment("MODE")
 	if OS.get_environment("LEVEL") != "":
 		current_level = int(OS.get_environment("LEVEL"))
 	if OS.get_environment("SHOT") != "":

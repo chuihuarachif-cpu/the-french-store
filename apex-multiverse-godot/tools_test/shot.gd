@@ -26,6 +26,8 @@ func _process(_dt: float) -> void:
 		var n: int = maxi(acc["n"], 1)
 		print("PERF proceso %.2f ms · draw calls %d · triángulos %d · nodos %d" % [acc["proc"] / n, acc["draws"] / n, acc["prims"] / n, Performance.get_monitor(Performance.OBJECT_NODE_COUNT)])
 		var sc = get_tree().current_scene
+		if sc and "state" in sc:
+			print("ESTADO ", sc.state, " kills=", sc.get("kills"), " hp=", sc.get("hp"), " fines=", sc.get("fines"), " dmg=", sc.get("damage"), " s=", sc.car.s if "car" in sc else 0)
 		if sc and "streamer" in sc and sc.streamer:
 			var cnt := {}
 			var lods := [0, 0, 0]
