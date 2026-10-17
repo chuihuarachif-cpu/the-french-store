@@ -177,6 +177,29 @@ func _show_settings() -> void:
 		Game.apply_quality()
 		qb.text = "GRÁFICOS: %s" % q_names[Game.quality()])
 	v.add_child(qb)
+	var c_names := {"pedals": "FLECHAS Y PEDALES", "wheel": "VOLANTE", "tilt": "INCLINACIÓN DEL CELULAR"}
+	var cb := UIKit.button("CONTROLES: %s" % c_names[Game.control_mode()], false, 18)
+	cb.pressed.connect(func():
+		var order := ["pedals", "wheel", "tilt"]
+		Game.save["controls"] = order[(order.find(Game.control_mode()) + 1) % 3]
+		Game.write_save()
+		cb.text = "CONTROLES: %s" % c_names[Game.control_mode()])
+	v.add_child(cb)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	v.add_child(row)
+	var gb := UIKit.button("ACELERADOR: %s" % ("AUTOMÁTICO" if Game.save.get("auto_gas", false) else "PEDAL"), false, 16)
+	gb.pressed.connect(func():
+		Game.save["auto_gas"] = not Game.save.get("auto_gas", false)
+		Game.write_save()
+		gb.text = "ACELERADOR: %s" % ("AUTOMÁTICO" if Game.save.get("auto_gas", false) else "PEDAL"))
+	row.add_child(gb)
+	var ib := UIKit.button("INCLINACIÓN: %s" % ("INVERTIDA" if Game.save.get("tilt_invert", false) else "NORMAL"), false, 16)
+	ib.pressed.connect(func():
+		Game.save["tilt_invert"] = not Game.save.get("tilt_invert", false)
+		Game.write_save()
+		ib.text = "INCLINACIÓN: %s" % ("INVERTIDA" if Game.save.get("tilt_invert", false) else "NORMAL"))
+	row.add_child(ib)
 	var mb := UIKit.button("MÚSICA: %s" % ("SÍ" if Game.save["music"] else "NO"), false, 18)
 	mb.pressed.connect(func():
 		Game.save["music"] = not Game.save["music"]

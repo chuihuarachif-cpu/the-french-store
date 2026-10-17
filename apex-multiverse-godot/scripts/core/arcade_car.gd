@@ -38,6 +38,9 @@ func step(dt: float, steer: float, braking: bool, want_nitro: bool, curvature :=
 			speed = maxf(0.0, speed - brake_decel * dt)
 	elif speed < 0.0:
 		speed = minf(0.0, speed + brake_decel * dt)
+	elif throttle < 0.05 and not nitro_on:
+		# sin acelerar: el motor y el roce frenan suavemente
+		speed = maxf(0.0, speed - (1.6 + speed * 0.018) * dt)
 	elif speed < top:
 		var a := accel * (1.0 - pow(speed / top, 2.2) * 0.75) * throttle
 		if nitro_on:

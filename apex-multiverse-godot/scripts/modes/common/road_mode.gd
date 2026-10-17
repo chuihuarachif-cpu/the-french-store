@@ -102,7 +102,7 @@ func setup_world(r: RoadPath, s_start: float, time_preset: String) -> void:
 	traffic.night = night
 	hud = HUD.new()
 	add_child(hud)
-	touch = TouchControls.new(touch_layout())
+	touch = TouchControls.driving(touch_layout(), "TURBO" if is_truck else "NITRO")
 	hud.root.add_child(touch)
 	minimap = WorldMinimap.new()
 	minimap.anchor_left = 1.0
@@ -167,9 +167,10 @@ static func apply_stats(c: ArcadeCar, v: Dictionary) -> void:
 			c.grip += 1.5
 	c.nitro = 40.0 + float(v["nitro"]) * 4.0
 
+## Botones extra además de dirección, pedales y nitro.
 func touch_layout() -> Array:
-	var l := TouchControls.racing_layout()
-	l.append({"action": "camera", "text": "CAM", "anchor": Vector2(1, 1), "offset": Vector2(-470, -70), "radius": 40.0, "color": Color(1, 1, 1), "font_size": 14})
+	var l: Array = []
+	l.append({"action": "camera", "text": "CAM", "anchor": Vector2(1, 1), "offset": Vector2(-490, -70), "radius": 40.0, "color": Color(1, 1, 1), "font_size": 14})
 	return l
 
 func _show_loading() -> void:
@@ -205,6 +206,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func read_input() -> void:
 	steer_in = Input.get_axis("steer_left", "steer_right")
 	brake_in = Input.is_action_pressed("brake")
+	if Game.autopilot or Game.save.get("auto_gas", false):
+		car.throttle = 1.0
+	else:
+		car.throttle = Input.get_action_strength("accelerate")
 	nitro_in = Input.is_action_pressed("nitro")
 	if Input.is_action_just_pressed("camera"):
 		cam_mode = (cam_mode + 1) % 3

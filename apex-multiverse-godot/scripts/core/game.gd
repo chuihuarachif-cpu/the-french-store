@@ -64,6 +64,8 @@ func _ready() -> void:
 	autopilot = OS.get_environment("AUTOPILOT") == "1"
 	if OS.get_environment("MODE") != "":
 		current_mode = OS.get_environment("MODE")
+	if OS.get_environment("CONTROLS") != "":
+		save["controls"] = OS.get_environment("CONTROLS")
 	if OS.get_environment("LEVEL") != "":
 		current_level = int(OS.get_environment("LEVEL"))
 	if OS.get_environment("SHOT") != "":
@@ -88,6 +90,10 @@ func _setup_input() -> void:
 			InputMap.action_add_event(a, ev)
 
 ## Calidad: 0 = rendimiento (móviles modestos), 1 = equilibrada, 2 = alta.
+## Modo de control: "pedals" (flechas + pedales), "wheel" (volante) o "tilt" (inclinación).
+func control_mode() -> String:
+	return str(save.get("controls", "pedals"))
+
 func quality() -> int:
 	return int(save.get("quality", 0))
 

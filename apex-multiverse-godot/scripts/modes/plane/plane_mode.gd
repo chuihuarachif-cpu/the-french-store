@@ -161,12 +161,25 @@ func _build_hud() -> void:
 	stick.anchor_bottom = 1.0
 	stick.anchor_right = 0.42
 	hud.root.add_child(stick)
-	touch = TouchControls.new([
+	# controles según el ajuste: palanca (volante), flechas o inclinación
+	var cm := Game.control_mode()
+	stick.visible = cm == "wheel"
+	var arrows: Array = []
+	if cm != "wheel":
+		arrows.append({"action": "pitch_down", "icon": "up", "anchor": Vector2(0, 1), "offset": Vector2(215, -300), "radius": 62.0, "color": UIKit.ACCENT})
+		arrows.append({"action": "pitch_up", "icon": "down", "anchor": Vector2(0, 1), "offset": Vector2(215, -105), "radius": 62.0, "color": UIKit.ACCENT})
+	if cm == "pedals":
+		arrows.append({"action": "steer_left", "icon": "left", "anchor": Vector2(0, 1), "offset": Vector2(95, -200), "radius": 62.0, "color": UIKit.ACCENT})
+		arrows.append({"action": "steer_right", "icon": "right", "anchor": Vector2(0, 1), "offset": Vector2(335, -200), "radius": 62.0, "color": UIKit.ACCENT})
+	touch = TouchControls.new(arrows + [
 		{"action": "fire", "text": "FUEGO", "anchor": Vector2(1, 1), "offset": Vector2(-130, -140), "radius": 86.0, "color": UIKit.DANGER, "font_size": 20},
 		{"action": "missile", "text": "MISIL", "anchor": Vector2(1, 1), "offset": Vector2(-300, -95), "radius": 60.0, "color": UIKit.WARN, "font_size": 16},
 		{"action": "nitro", "text": "TURBO", "anchor": Vector2(1, 1), "offset": Vector2(-120, -330), "radius": 54.0, "color": Color(0.35, 0.8, 1.0), "font_size": 14},
 		{"action": "brake", "text": "FRENO", "anchor": Vector2(1, 1), "offset": Vector2(-290, -270), "radius": 50.0, "color": Color(1, 1, 1), "font_size": 13},
 	])
+	if cm == "tilt":
+		touch.steer_widget = "tilt"
+		touch.wheel_offset = Vector2(215, -200)
 	hud.root.add_child(touch)
 	minimap = WorldMinimap.new()
 	minimap.anchor_left = 1.0

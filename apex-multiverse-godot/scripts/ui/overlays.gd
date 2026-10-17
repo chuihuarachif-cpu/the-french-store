@@ -59,6 +59,16 @@ func show_pause(title := "PAUSA") -> void:
 		Game.apply_quality()
 		ql.text = "CALIDAD: %s" % q_names[Game.save["quality"]])
 	row.add_child(ql)
+	var c_names := {"pedals": "FLECHAS Y PEDALES", "wheel": "VOLANTE", "tilt": "INCLINACIÓN"}
+	var cb := UIKit.button("CONTROLES: %s" % c_names[Game.control_mode()], false, 16)
+	cb.pressed.connect(func():
+		var order := ["pedals", "wheel", "tilt"]
+		Game.save["controls"] = order[(order.find(Game.control_mode()) + 1) % 3]
+		Game.write_save()
+		hide_pause()
+		restart.emit())
+	box.add_child(cb)
+	box.add_child(UIKit.label("Cambiar los controles reinicia el evento", 14, "Rajdhani-Bold", Color(0.75, 0.8, 0.9), HORIZONTAL_ALIGNMENT_CENTER))
 
 func hide_pause() -> void:
 	if _pause:

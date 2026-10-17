@@ -62,10 +62,9 @@ func _ready() -> void:
 		_process(0.05)
 
 func touch_layout() -> Array:
-	var l := TouchControls.racing_layout()
-	l[3]["text"] = "TURBO"
-	l.append({"action": "horn", "text": "BOCINA", "anchor": Vector2(1, 1), "offset": Vector2(-150, -300), "radius": 46.0, "color": UIKit.WARN, "font_size": 13})
-	l.append({"action": "camera", "text": "CAM", "anchor": Vector2(1, 1), "offset": Vector2(-470, -70), "radius": 40.0, "color": Color(1, 1, 1), "font_size": 14})
+	var l: Array = []
+	l.append({"action": "horn", "text": "BOCINA", "anchor": Vector2(1, 1), "offset": Vector2(-330, -265), "radius": 46.0, "color": UIKit.WARN, "font_size": 13})
+	l.append({"action": "camera", "text": "CAM", "anchor": Vector2(1, 1), "offset": Vector2(-490, -70), "radius": 40.0, "color": Color(1, 1, 1), "font_size": 14})
 	return l
 
 # ------------------------------------------------------------------ PELIGROS
