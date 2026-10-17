@@ -26,6 +26,7 @@ func _ready() -> void:
 	var park: Dictionary = World.poi("park")
 	_reg("tower", Vector3(park["x"], World.height(park["x"], park["z"]), park["z"]), 9000.0, func(): return _tower())
 	_reg("cranes", Vector3(4300, 0, -250), 3000.0, func(): return _cranes())
+	_reg("ships", Vector3(5600, 0, -900), 5000.0, func(): return _ships())
 	for r in World.roads:
 		if r.draw_s >= 0.0:
 			draw_road = r
@@ -123,7 +124,7 @@ func _runway(a: Dictionary, main: bool) -> Node3D:
 	var root := Node3D.new()
 	var L: float = a["len"]
 	var Wd: float = a["w"]
-	var y: float = a["h"] + 0.25
+	var y: float = a["h"] + 0.6
 	var cx: float = a["x"]
 	var cz: float = a["z"]
 	root.position = Vector3(cx, y, cz)
@@ -159,12 +160,16 @@ func _runway(a: Dictionary, main: bool) -> Node3D:
 	var mi3 := MeshInstance3D.new()
 	mi3.mesh = lights.to_mesh(WorldAssets.mat("tunnel_light"))
 	root.add_child(mi3)
+	if main:
+		_parked_planes(root, [Vector3(-300, 0, -260), Vector3(-250, 0, -260), Vector3(-200, 0, -260), Vector3(200, 0, -250), Vector3(260, 0, -250)], PI)
+	else:
+		_parked_planes(root, [Vector3(-400, 0, 90), Vector3(-280, 0, 90)], PI)
 	return root
 
 ## Marco de la pista: origen en la cabecera oeste, -Z = rumbo de despegue hacia el este.
 static func runway_frame(a: Dictionary, from_east := false) -> Transform3D:
 	var L: float = a["len"]
-	var y: float = a["h"] + 0.25
+	var y: float = a["h"] + 0.6
 	if from_east:
 		return Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(a["x"] + L * 0.5, y, a["z"]))
 	return Transform3D(Basis(Vector3.UP, -PI * 0.5), Vector3(a["x"] - L * 0.5, y, a["z"]))
@@ -182,22 +187,23 @@ func _carrier(cv: Dictionary) -> Node3D:
 	var hull := MeshData.new()
 	var grey := Color(0.42, 0.45, 0.48)
 	var L := 330.0
-	# casco por secciones
-	var secs := 12
-	for i in secs:
-		var z0 := lerpf(-L * 0.5, L * 0.5, float(i) / secs)
-		var z1 := lerpf(-L * 0.5, L * 0.5, float(i + 1) / secs)
-		var w0 := 20.0 * sin(clampf((z0 + L * 0.5) / 60.0, 0.15, 1.0) * PI * 0.5)
-		var w1 := 20.0 * sin(clampf((z1 + L * 0.5) / 60.0, 0.15, 1.0) * PI * 0.5)
+	# casco: caja principal + proa en cuña
+	hull.box(Transform3D(Basis.IDENTITY, Vector3(4, (CARRIER_DECK - 8.0) * 0.5 - 4.0, 20.0)), Vector3(44.0, CARRIER_DECK + 6.0, L - 70.0), grey, Vector2.ZERO, 6)
+	var pz := -L * 0.5 + 35.0
+	for k in 6:
+		var t0 := k / 6.0
+		var t1 := (k + 1) / 6.0
+		var w0 := lerpf(22.0, 3.0, t0)
+		var w1 := lerpf(22.0, 3.0, t1)
+		var z0 := pz - t0 * 35.0 + 20.0
+		var z1 := pz - t1 * 35.0 + 20.0
 		for sx in [-1.0, 1.0]:
-			var a := Vector3(sx * w0, -8, z0)
-			var b := Vector3(sx * w1, -8, z1)
-			var c := Vector3(sx * (w1 + 6.0), CARRIER_DECK - 1.0, z1)
-			var d := Vector3(sx * (w0 + 6.0), CARRIER_DECK - 1.0, z0)
-			if sx > 0:
-				hull.quad(b, a, d, c, grey)
-			else:
-				hull.quad(a, b, c, d, grey)
+			var a0 := Vector3(4 + sx * w0, -8.0, z0)
+			var a1 := Vector3(4 + sx * w1, -8.0, z1)
+			var b0 := Vector3(4 + sx * (w0 + 8.0), CARRIER_DECK - 1.0, z0)
+			var b1 := Vector3(4 + sx * (w1 + 8.0), CARRIER_DECK - 1.0, z1)
+			hull.quad(a0, a1, b1, b0, grey)
+			hull.quad(a1, a0, b0, b1, grey)
 	hull.box(Transform3D(Basis.IDENTITY, Vector3(6, CARRIER_DECK - 0.6, 0)), Vector3(70.0, 1.2, L), Color(0.3, 0.32, 0.34), Vector2.ZERO, 5)
 	# isla
 	hull.box(Transform3D(Basis.IDENTITY, Vector3(34, CARRIER_DECK + 10, 30)), Vector3(10, 20, 36), grey.lightened(0.1), Vector2(2, 0.3), 5)
@@ -216,7 +222,18 @@ func _carrier(cv: Dictionary) -> Node3D:
 	mi2.mesh = deck.to_mesh(dm)
 	mi2.position.x = 0.0
 	root.add_child(mi2)
+	_parked_planes(root, [Vector3(16, CARRIER_DECK, 60), Vector3(16, CARRIER_DECK, 80), Vector3(16, CARRIER_DECK, 100), Vector3(-2, CARRIER_DECK, 130)], -0.6)
 	return root
+
+func _parked_planes(root: Node3D, spots: Array, yaw: float) -> void:
+	var l: Array = VehicleCatalog.list("plane")
+	for i in spots.size():
+		var v := VehicleVisual.new()
+		root.add_child(v)
+		v.setup(l[[5, 6, 8, 7, 13, 1][i % 6]], VehicleCatalog.color_of("gris naval"), true)
+		v.set_gear(true)
+		v.position = spots[i]
+		v.rotation.y = yaw
 
 # ------------------------------------------------------------------ TORRE LUMIÈRE
 func _tower() -> Node3D:
@@ -264,6 +281,37 @@ func _tower() -> Node3D:
 	lights.to_mesh(WorldAssets.mat("lamp"), false, true, mesh)
 	mi.mesh = mesh
 	root.add_child(mi)
+	return root
+
+# ------------------------------------------------------------------ BUQUES (bahía y río)
+func _ships() -> Node3D:
+	var root := Node3D.new()
+	var defs := [[Vector3(5350, 0, -820), 0.3, 200.0], [Vector3(5900, 0, -420), -1.2, 240.0], [Vector3(6150, 0, -1150), 1.5, 180.0], [Vector3(4700, 0, -600), 1.7, 90.0], [Vector3(1500, 0, 230), 1.55, 60.0]]
+	var cols := [Color(0.75, 0.15, 0.1), Color(0.1, 0.35, 0.65), Color(0.1, 0.5, 0.3), Color(0.85, 0.6, 0.1), Color(0.55, 0.55, 0.58), Color(0.9, 0.9, 0.9)]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 99
+	for d in defs:
+		var L: float = d[2]
+		var Wd := L * 0.15
+		var md := MeshData.new()
+		var hull := Color(0.12, 0.14, 0.18) if L > 100.0 else Color(0.3, 0.2, 0.15)
+		md.box(Transform3D(Basis.IDENTITY, Vector3(0, 2.0, 0)), Vector3(Wd, 10.0, L * 0.8), hull, Vector2.ZERO, 5, Color(0.5, 0.2, 0.15))
+		md.prism(Vector3(0, -3.0, -L * 0.4), Wd * 0.5, Wd * 0.5, 10.0, 6, hull, Vector2.ZERO, true)
+		md.box(Transform3D(Basis.IDENTITY, Vector3(0, -2.4, 0)), Vector3(Wd * 0.98, 1.2, L * 0.79), Color(0.6, 0.12, 0.1), Vector2.ZERO, 4)
+		md.box(Transform3D(Basis.IDENTITY, Vector3(0, 13.0, L * 0.33)), Vector3(Wd * 0.9, 12.0, L * 0.1), Color(0.92, 0.92, 0.9), Vector2(2, 0.4), 5)
+		if L > 100.0:
+			for k in int(L * 0.55 / 12.5):
+				for row in 3:
+					for h in rng.randi_range(1, 4):
+						md.box(Transform3D(Basis.IDENTITY, Vector3((row - 1) * Wd * 0.3, 8.3 + h * 2.6, -L * 0.3 + k * 12.5)), Vector3(Wd * 0.28, 2.5, 12.0), cols[rng.randi() % cols.size()], Vector2.ZERO, 5)
+		var mi := MeshInstance3D.new()
+		mi.mesh = md.to_mesh(WorldAssets.mat("building"), true)
+		var p: Vector3 = d[0]
+		var wl := 0.0
+		if p.x < 3000.0:
+			wl = World.height(p.x, p.z) + 6.0
+		mi.transform = Transform3D(Basis(Vector3.UP, d[1]), Vector3(p.x, wl, p.z))
+		root.add_child(mi)
 	return root
 
 # ------------------------------------------------------------------ GRÚAS DEL PUERTO

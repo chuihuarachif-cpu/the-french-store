@@ -429,7 +429,7 @@ func _surface(p: Vector3) -> Array:
 	for k in ["airport", "airfield"]:
 		var a: Dictionary = World.poi(k)
 		if absf(p.x - a["x"]) < a["len"] * 0.5 and absf(p.z - a["z"]) < a["w"] * 0.5 + 4.0:
-			return [a["h"] + 0.25, true, k]
+			return [a["h"] + 0.6, true, k]
 	var h := World.height(p.x, p.z)
 	return [maxf(h, 0.0), false, "water" if h < 0.0 else "ground"]
 

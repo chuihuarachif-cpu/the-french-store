@@ -4,7 +4,7 @@ class_name EnvFactory
 const PRESETS := {
 	"day": {"hdri": "res://assets/hdri/quarry_01_1k.hdr", "sun_u": 0.6001, "sun_az": 35.0, "sun_elev": 42.0, "sky_energy": 0.9,
 		"sun": Color(1.0, 0.95, 0.87), "sun_energy": 1.5, "fog": Color(0.66, 0.74, 0.84), "fog_density": 0.0011, "ambient": 1.0, "exposure": 0.9, "glow": 0.3},
-	"sunset": {"hdri": "res://assets/hdri/venice_sunset_1k.hdr", "sun_u": 0.6001, "sun_az": -12.0, "sun_elev": 9.0, "sky_energy": 0.5,
+	"sunset": {"hdri": "res://assets/hdri/spruit_sunrise_1k.hdr", "sun_u": 0.5991, "sun_az": -12.0, "sun_elev": 9.0, "sky_energy": 0.5,
 		"sun": Color(1.0, 0.62, 0.34), "sun_energy": 1.7, "fog": Color(0.80, 0.60, 0.48), "fog_density": 0.0016, "ambient": 0.6, "exposure": 0.85, "glow": 0.6},
 	"sunrise": {"hdri": "res://assets/hdri/spruit_sunrise_1k.hdr", "sun_u": 0.5991, "sun_az": 20.0, "sun_elev": 14.0, "sky_energy": 0.55,
 		"sun": Color(1.0, 0.76, 0.52), "sun_energy": 1.6, "fog": Color(0.72, 0.70, 0.66), "fog_density": 0.0016, "ambient": 0.65, "exposure": 0.85, "glow": 0.5},
