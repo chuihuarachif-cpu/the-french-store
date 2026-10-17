@@ -18,13 +18,11 @@ var next_work := 900.0
 
 func _ready() -> void:
 	Game.current_mode = "highway"
-	var roll := randf()
-	var p := "night" if roll < 0.35 else ("sunset" if roll < 0.6 else ("sunrise" if roll < 0.72 else "day"))
 	var a1: RoadPath = World.road("A1 · Autopista Nacional")
 	var start := randf_range(0.0, a1.length)
 	if OS.get_environment("START_S") != "":
 		start = float(OS.get_environment("START_S"))
-	setup_world(a1, start, p)
+	setup_world(a1, start)
 	own_side_only = true
 	car.x = 6.45
 	car.speed = 0.0
@@ -39,7 +37,7 @@ func _ready() -> void:
 	for i in 6:
 		traffic.spawn(road_s(car.s + 90.0 + i * 100.0), -1)
 	traffic.player_s = car.s
-	hud.banner(PRESET_NAMES[preset], "AUTOPISTA A1 · %s" % World.dept_name(road.frame(car.s).origin.x, road.frame(car.s).origin.z), 1.8, UIKit.WARN if not night else UIKit.ACCENT)
+	hud.banner(Atmosphere.hud_text(), "AUTOPISTA A1 · %s" % World.dept_name(road.frame(car.s).origin.x, road.frame(car.s).origin.z), 1.8, UIKit.WARN if not night else UIKit.ACCENT)
 	minimap.route = PackedVector3Array()
 	place_player(0.016, 0.0)
 	update_camera(1.0)
@@ -219,7 +217,7 @@ func _game_over() -> void:
 	if record:
 		Game.save["best_highway"] = final_score
 	Game.add_coins(final_score / 80 + int(dist / 100.0))
-	overlays.show_results("FIN DE LA RUTA", "Autopista A1 · %s" % PRESET_NAMES[preset].to_lower(), [
+	overlays.show_results("FIN DE LA RUTA", "Autopista A1 · %s" % Atmosphere.hud_text().to_lower(), [
 		["Puntos", HUD._fmt(final_score)],
 		["Distancia", "%.2f km" % (dist / 1000.0)],
 		["Rozones", str(close_calls)],

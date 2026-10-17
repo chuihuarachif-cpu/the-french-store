@@ -13,44 +13,47 @@ const MODES := {
 ## road + [s0, s1] (tramo) o laps (circuito cerrado). rivals = cantidad de rivales.
 const RACES := [
 	{"name": "Gran Premio de Lumière", "road": "Boulevard Circulaire", "laps": 1, "rivals": 7, "dept": "Lumière", "time": "day", "desc": "El circuito urbano de la capital: rascacielos, puentes sobre el Sena y rivales que no frenan."},
-	{"name": "Corniche d'Azur", "road": "Corniche d'Azur", "s0": 200.0, "s1": 5200.0, "rivals": 7, "dept": "Côte d'Azur", "time": "sunset", "desc": "Sprint por la costa al atardecer, entre playas, palmeras y hoteles."},
+	{"name": "Corniche d'Azur", "road": "Corniche d'Azur", "s0": 400.0, "s1": 10400.0, "rivals": 7, "dept": "Côte d'Azur", "time": "sunset", "desc": "Sprint por la costa al atardecer, entre playas, palmeras y hoteles."},
 	{"name": "Barrio Rojo", "road": "Circuito Bastille", "laps": 1, "rivals": 7, "dept": "Bastille Sur", "time": "night", "desc": "Noche en Bastille Sur: barriles en llamas, edificios abandonados y pilotos sin reglas."},
 	{"name": "Ruta de los Viñedos", "road": "Route des Vins", "laps": 1, "rivals": 7, "dept": "Vallée d'Or", "time": "sunrise", "desc": "Curvas rápidas entre viñedos al amanecer. Usa el nitro en las rectas."},
-	{"name": "Duelo en la A1", "road": "A1 · Autopista Nacional", "s0": 2000.0, "s1": 8500.0, "rivals": 7, "dept": "Provence Verte", "time": "day", "desc": "Autopista nacional a fondo, con tráfico real. Los derribos valen doble."},
-	{"name": "Bosque Negro", "road": "Chemin Forestier", "s0": 100.0, "s1": 6500.0, "rivals": 5, "dept": "Forêt Noire", "time": "day", "desc": "Rally por caminos de tierra del bosque. Saltos, árboles y polvo."},
-	{"name": "Puerto Levadizo", "road": "Avenue du Port", "s0": 50.0, "s1": 4000.0, "rivals": 7, "dept": "Seine-Marine", "time": "sunset", "desc": "Hasta el puerto por el puente levadizo. Si se está abriendo... ¡salta!"},
+	{"name": "Duelo en la A1", "road": "A1 · Autopista Nacional", "s0": 4000.0, "s1": 17000.0, "rivals": 7, "dept": "Provence Verte", "time": "day", "desc": "Autopista nacional a fondo, con tráfico real. Los derribos valen doble."},
+	{"name": "Bosque Negro", "road": "Chemin Forestier", "s0": 200.0, "s1": 13000.0, "rivals": 5, "dept": "Forêt Noire", "time": "day", "desc": "Rally por caminos de tierra del bosque. Saltos, árboles y polvo."},
+	{"name": "Puerto Levadizo", "road": "Avenue du Port", "s0": 100.0, "s1": 8000.0, "rivals": 7, "dept": "Seine-Marine", "time": "sunset", "desc": "Hasta el puerto por el puente levadizo. Si se está abriendo... ¡salta!"},
 	{"name": "Perímetro del Aeropuerto", "road": "Perímetro Saint-Exupéry", "laps": 1, "rivals": 7, "dept": "Saint-Exupéry", "time": "day", "desc": "Rectas eternas junto a la pista mientras despegan los aviones."},
-	{"name": "Rally Alpino", "road": "Route des Alpes", "s0": 200.0, "s1": 12000.0, "rivals": 5, "dept": "Alpes du Nord", "time": "day", "desc": "Puerto de montaña con túneles, viaductos y curvas de herradura."},
-	{"name": "Final: Vuelta a Fransterra", "road": "A1 · Autopista Nacional", "s0": 9000.0, "s1": 24000.0, "rivals": 7, "dept": "Fransterra", "time": "night", "desc": "La gran final: 15 km de autopista nocturna contra los mejores del país."},
+	{"name": "Rally Alpino", "road": "Route des Alpes", "s0": 400.0, "s1": 24000.0, "rivals": 5, "dept": "Alpes du Nord", "time": "day", "desc": "Puerto de montaña con túneles, viaductos y curvas de herradura."},
+	{"name": "Final: Vuelta a Fransterra", "road": "A1 · Autopista Nacional", "s0": 18000.0, "s1": 48000.0, "rivals": 7, "dept": "Fransterra", "time": "night", "desc": "La gran final: 15 km de autopista nocturna contra los mejores del país."},
 ]
 
 ## Trabajos del modo Camiones: de A a B por carreteras del país.
 const TRUCK_JOBS := [
-	{"name": "Madera para Saint-Clair", "road": "Ruta Maderera", "s0": 30.0, "s1": 4100.0, "from": "Aserradero de Forêt Noire", "to": "Ruta del Bosque (N7)", "cargo": "Troncos", "time": "day", "pay": 900},
-	{"name": "Contenedores al puerto", "road": "Avenue du Port", "s0": 40.0, "s1": 4000.0, "from": "Port-Lumière", "to": "Puerto de Lumière", "cargo": "Contenedores", "time": "day", "pay": 1100},
-	{"name": "Cruce de los Alpes", "road": "Route des Alpes", "s0": 100.0, "s1": 12400.0, "from": "Lumière Norte", "to": "Mont-Blanc Est", "cargo": "Maquinaria", "time": "day", "pay": 2400},
-	{"name": "Reparto en la costa", "road": "Corniche d'Azur", "s0": 100.0, "s1": 8500.0, "from": "Puerto de Lumière", "to": "Vallée d'Or", "cargo": "Alimentos", "time": "sunset", "pay": 1500},
-	{"name": "Carga aérea a Bastille", "road": "Ruta del Aeropuerto Carga", "s0": 20.0, "s1": 4500.0, "from": "Aeropuerto Saint-Exupéry", "to": "Bastille Sur", "cargo": "Paquetería", "time": "night", "pay": 1300},
-	{"name": "Granja de Saint-Clair", "road": "Ruta de Saint-Clair", "s0": 20.0, "s1": 4600.0, "from": "Beaumont", "to": "Port-Lumière", "cargo": "Cosecha", "time": "sunrise", "pay": 1000},
-	{"name": "Ronda Nacional", "road": "A1 · Autopista Nacional", "s0": 12000.0, "s1": 22000.0, "from": "Saint-Exupéry", "to": "Côte d'Azur", "cargo": "Combustible", "time": "day", "pay": 2000},
-	{"name": "Bosque profundo", "road": "Chemin Forestier", "s0": 20.0, "s1": 6700.0, "from": "Valfroid", "to": "Aserradero de Forêt Noire", "cargo": "Troncos", "time": "sunset", "pay": 1700},
+	{"name": "Madera para Saint-Clair", "road": "Ruta Maderera", "s0": 60.0, "s1": 8200.0, "from": "Aserradero de Forêt Noire", "to": "Ruta del Bosque (N7)", "cargo": "Troncos", "time": "day", "pay": 900},
+	{"name": "Contenedores al puerto", "road": "Avenue du Port", "s0": 80.0, "s1": 8000.0, "from": "Port-Lumière", "to": "Puerto de Lumière", "cargo": "Contenedores", "time": "day", "pay": 1100},
+	{"name": "Cruce de los Alpes", "road": "Route des Alpes", "s0": 200.0, "s1": 24800.0, "from": "Lumière Norte", "to": "Mont-Blanc Est", "cargo": "Maquinaria", "time": "day", "pay": 2400},
+	{"name": "Reparto en la costa", "road": "Corniche d'Azur", "s0": 200.0, "s1": 17000.0, "from": "Puerto de Lumière", "to": "Vallée d'Or", "cargo": "Alimentos", "time": "sunset", "pay": 1500},
+	{"name": "Carga aérea a Bastille", "road": "Ruta del Aeropuerto Carga", "s0": 40.0, "s1": 9000.0, "from": "Aeropuerto Saint-Exupéry", "to": "Bastille Sur", "cargo": "Paquetería", "time": "night", "pay": 1300},
+	{"name": "Granja de Saint-Clair", "road": "Ruta de Saint-Clair", "s0": 40.0, "s1": 9200.0, "from": "Beaumont", "to": "Port-Lumière", "cargo": "Cosecha", "time": "sunrise", "pay": 1000},
+	{"name": "Ronda Nacional", "road": "A1 · Autopista Nacional", "s0": 24000.0, "s1": 44000.0, "from": "Saint-Exupéry", "to": "Côte d'Azur", "cargo": "Combustible", "time": "day", "pay": 2000},
+	{"name": "Bosque profundo", "road": "Chemin Forestier", "s0": 40.0, "s1": 13400.0, "from": "Valfroid", "to": "Aserradero de Forêt Noire", "cargo": "Troncos", "time": "sunset", "pay": 1700},
 ]
 
 ## Misiones aéreas: despegue (aeropuerto, aeródromo o portaaviones), combate y aterrizaje.
 const AIR_MISSIONS := [
-	{"name": "Bautismo de vuelo", "start": "airport", "land": "airport", "enemies": 2, "target": [-2000.0, 3000.0], "time": "day", "desc": "Despega del Saint-Exupéry, derriba a 2 intrusos sobre Vallée d'Or y vuelve a aterrizar."},
-	{"name": "Defensa de la capital", "start": "airport", "land": "airfield", "enemies": 4, "target": [0.0, -200.0], "time": "sunset", "desc": "Cazas enemigos sobre Port-Lumière. Protege la Torre Lumière y aterriza en Provence."},
-	{"name": "Operación Sena", "start": "carrier", "land": "carrier", "enemies": 4, "target": [3800.0, -1500.0], "time": "day", "desc": "Despega del portaaviones, limpia el cielo del puerto y aterriza de nuevo en la cubierta."},
-	{"name": "Cañones de los Alpes", "start": "airfield", "land": "airport", "enemies": 5, "target": [-500.0, -5600.0], "time": "day", "desc": "Persecución entre montañas nevadas. Cuidado con los picos."},
-	{"name": "Costa en llamas", "start": "carrier", "land": "airport", "enemies": 6, "target": [4200.0, 3600.0], "time": "sunset", "desc": "Un escuadrón ataca la Côte d'Azur. Derríbalos sobre el mar."},
-	{"name": "Noche sobre Bastille", "start": "airport", "land": "airport", "enemies": 5, "target": [900.0, 2700.0], "time": "night", "desc": "Combate nocturno sobre la zona roja. Usa el radar."},
-	{"name": "Tormenta del norte", "start": "airfield", "land": "carrier", "enemies": 7, "target": [3200.0, -6000.0], "time": "day", "desc": "Escuadrón de élite sobre Mont-Blanc Est. Aterriza después en el portaaviones."},
-	{"name": "Última batalla", "start": "carrier", "land": "carrier", "enemies": 10, "target": [-3000.0, 0.0], "time": "sunset", "desc": "Toda la fuerza aérea enemiga. Defiende Fransterra."},
+	{"name": "Bautismo de vuelo", "start": "airport", "land": "airport", "enemies": 2, "target": [-4000.0, 6000.0], "time": "day", "desc": "Despega del Saint-Exupéry, derriba a 2 intrusos sobre Vallée d'Or y vuelve a aterrizar."},
+	{"name": "Defensa de la capital", "start": "airport", "land": "airfield", "enemies": 4, "target": [0.0, -400.0], "time": "sunset", "desc": "Cazas enemigos sobre Port-Lumière. Protege la Torre Lumière y aterriza en Provence."},
+	{"name": "Operación Sena", "start": "carrier", "land": "carrier", "enemies": 4, "target": [7600.0, -3000.0], "time": "day", "desc": "Despega del portaaviones, limpia el cielo del puerto y aterriza de nuevo en la cubierta."},
+	{"name": "Cañones de los Alpes", "start": "airfield", "land": "airport", "enemies": 5, "target": [-1000.0, -11200.0], "time": "day", "desc": "Persecución entre montañas nevadas. Cuidado con los picos."},
+	{"name": "Costa en llamas", "start": "carrier", "land": "airport", "enemies": 6, "target": [8400.0, 7200.0], "time": "sunset", "desc": "Un escuadrón ataca la Côte d'Azur. Derríbalos sobre el mar."},
+	{"name": "Noche sobre Bastille", "start": "airport", "land": "airport", "enemies": 5, "target": [1800.0, 5400.0], "time": "night", "desc": "Combate nocturno sobre la zona roja. Usa el radar."},
+	{"name": "Tormenta del norte", "start": "airfield", "land": "carrier", "enemies": 7, "target": [6400.0, -12000.0], "time": "day", "desc": "Escuadrón de élite sobre Mont-Blanc Est. Aterriza después en el portaaviones."},
+	{"name": "Última batalla", "start": "carrier", "land": "carrier", "enemies": 10, "target": [-6000.0, 0.0], "time": "sunset", "desc": "Toda la fuerza aérea enemiga. Defiende Fransterra."},
 ]
 
 var autopilot := false
 var current_mode := "highway"
 var current_level := 0
+## Trabajo de carrera en curso (camionero o piloto) y base a la que volver al terminar.
+var career_job := {}
+var hub_return := ""
 var rng := RandomNumberGenerator.new()
 var save := {}
 const SAVE_PATH := "user://apex_save.json"
@@ -115,6 +118,116 @@ func apply_quality() -> void:
 	Engine.max_fps = 60
 	RenderingServer.directional_shadow_atlas_set_size(1024 if q < 2 else 2048, true)
 
+# ------------------------------------------------------------------ HORA Y CLIMA UNIVERSALES
+## Un solo reloj y un solo clima para todo el juego: se guardan y siguen corriendo entre modos.
+const DAY_SECONDS := 1440.0   # 24 minutos reales = 1 día
+const WEATHER_NAMES := {"clear": "DESPEJADO", "cloudy": "NUBLADO", "rain": "LLUVIA", "storm": "TORMENTA ELÉCTRICA", "fog": "NEBLINA", "hail": "GRANIZO", "snow": "NEVADA"}
+const WEATHER_WEIGHTS := {"clear": 30, "cloudy": 20, "rain": 16, "storm": 8, "fog": 11, "hail": 6, "snow": 7}
+const WEATHER_CLOUD := {"clear": 0.12, "cloudy": 0.72, "rain": 0.92, "storm": 1.0, "fog": 0.6, "hail": 0.95, "snow": 0.9}
+var hour := 9.0
+var weather := "clear"
+var weather_next := "clear"
+var weather_level := 1.0
+var weather_timer := 300.0
+var cloud := 0.12
+var wetness := 0.0
+var snow_cover := 0.0
+var _clock_save_t := 0.0
+var _clock_frozen := false
+
+func _process(dt: float) -> void:
+	if get_tree().paused:
+		return
+	if not _clock_frozen:
+		hour = fposmod(hour + dt * 24.0 / DAY_SECONDS, 24.0)
+		weather_timer -= dt
+	if weather_timer <= 0.0:
+		weather_timer = randf_range(180.0, 480.0)
+		weather_next = _pick_weather()
+	if weather_next != weather:
+		weather_level = move_toward(weather_level, 0.0, dt / 25.0)
+		if weather_level <= 0.0:
+			weather = weather_next
+	else:
+		weather_level = move_toward(weather_level, 1.0, dt / 30.0)
+	var ct: float = lerpf(0.12, WEATHER_CLOUD[weather], weather_level)
+	cloud = move_toward(cloud, ct, dt * 0.012)
+	var pr := precipitation()
+	if weather == "snow":
+		snow_cover = clampf(snow_cover + dt * 0.006 * pr, 0.0, 1.0)
+	else:
+		snow_cover = clampf(snow_cover - dt * 0.004, 0.0, 1.0)
+	if pr > 0.05 and weather != "snow":
+		wetness = clampf(wetness + dt * 0.03 * pr, 0.0, 1.0)
+	else:
+		wetness = clampf(wetness - dt * 0.004, 0.0, 1.0)
+	_clock_save_t += dt
+	if _clock_save_t > 15.0:
+		_clock_save_t = 0.0
+		store_clock()
+		write_save()
+
+func _pick_weather() -> String:
+	var tot := 0
+	for k in WEATHER_WEIGHTS:
+		if k != weather:
+			tot += WEATHER_WEIGHTS[k]
+	var r := randi() % tot
+	for k in WEATHER_WEIGHTS:
+		if k == weather:
+			continue
+		r -= WEATHER_WEIGHTS[k]
+		if r < 0:
+			return k
+	return "clear"
+
+## Intensidad de la precipitación (lluvia, tormenta, granizo o nieve) 0..1.
+func precipitation() -> float:
+	if weather in ["rain", "storm", "hail", "snow"] and weather_next == weather:
+		return weather_level * (1.0 if weather != "rain" else 0.75)
+	if weather in ["rain", "storm", "hail", "snow"]:
+		return weather_level
+	return 0.0
+
+func fog_amount() -> float:
+	return weather_level if weather == "fog" else 0.0
+
+func clock_text() -> String:
+	var h := int(hour)
+	var m := int((hour - h) * 60.0)
+	return "%02d:%02d" % [h, m]
+
+func store_clock() -> void:
+	save["clock"] = {"hour": hour, "weather": weather, "next": weather_next, "level": weather_level, "timer": weather_timer, "cloud": cloud, "wet": wetness, "snow": snow_cover}
+
+func _load_clock() -> void:
+	var c = save.get("clock")
+	if c is Dictionary:
+		hour = float(c.get("hour", 9.0))
+		weather = str(c.get("weather", "clear"))
+		weather_next = str(c.get("next", weather))
+		weather_level = float(c.get("level", 1.0))
+		weather_timer = float(c.get("timer", 300.0))
+		cloud = float(c.get("cloud", 0.12))
+		wetness = float(c.get("wet", 0.0))
+		snow_cover = float(c.get("snow", 0.0))
+	if not WEATHER_NAMES.has(weather):
+		weather = "clear"
+	if not WEATHER_NAMES.has(weather_next):
+		weather_next = weather
+	# pruebas: HOUR=21.5 WEATHER=rain
+	if OS.get_environment("HOUR") != "":
+		hour = float(OS.get_environment("HOUR"))
+		_clock_frozen = OS.get_environment("FREEZE") != ""
+	if OS.get_environment("WEATHER") != "":
+		weather = OS.get_environment("WEATHER")
+		weather_next = weather
+		weather_level = 1.0
+		weather_timer = 99999.0
+		cloud = WEATHER_CLOUD[weather]
+		wetness = 1.0 if weather in ["rain", "storm", "hail"] else 0.0
+		snow_cover = 1.0 if weather == "snow" else 0.0
+
 func _load() -> void:
 	if FileAccess.file_exists(SAVE_PATH):
 		var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
@@ -142,6 +255,7 @@ func _load() -> void:
 				save["owned"][v["id"]] = true
 		if not save["selected"].has(m):
 			save["selected"][m] = {"id": VehicleCatalog.list(m)[0]["id"], "color": VehicleCatalog.list(m)[0]["colors"][0]}
+	_load_clock()
 
 func write_save() -> void:
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -229,13 +343,25 @@ func start_mode(mode: String, level: int = 0) -> void:
 
 func open_garage(mode: String) -> void:
 	current_mode = mode
-	goto_scene("res://scenes/Garage.tscn")
+	career_job = {}
+	if mode == "truck" or mode == "plane":
+		# camiones y aviones: se aparece en la concesionaria / centro de pilotos
+		goto_scene("res://scenes/CareerHub.tscn")
+	else:
+		goto_scene("res://scenes/Garage.tscn")
 
 func goto_menu() -> void:
+	if hub_return != "":
+		var k := hub_return
+		hub_return = ""
+		open_garage(k)
+		return
 	goto_scene("res://scenes/Menu.tscn")
 
 func goto_scene(path: String) -> void:
 	get_tree().paused = false
+	store_clock()
+	write_save()
 	Engine.time_scale = 1.0
 	var fade := _fade_layer()
 	var tw := create_tween()
@@ -261,3 +387,9 @@ func _fade_layer() -> CanvasLayer:
 	_fade.add_child(r)
 	add_child(_fade)
 	return _fade
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if not save.is_empty():
+			store_clock()
+			write_save()

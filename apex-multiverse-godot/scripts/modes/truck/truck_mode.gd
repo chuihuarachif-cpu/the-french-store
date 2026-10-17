@@ -25,13 +25,36 @@ var limit_kmh := 90
 var boost := 100.0
 var _draw_barrier: Node3D
 
+var career := false
+var load_s := -1.0          # punto de carga (si hay que ir a recoger primero)
+var loaded := true
+var _loading_t := -1.0
+
 func _ready() -> void:
 	Game.current_mode = "truck"
-	job = Game.TRUCK_JOBS[clampi(Game.current_level, 0, Game.TRUCK_JOBS.size() - 1)]
-	var r: RoadPath = World.road(job["road"])
-	s0 = job["s0"]
-	s1 = minf(job["s1"], r.length - 10.0)
-	setup_world(r, s0, job["time"])
+	if Game.career_job.is_empty() and OS.get_environment("CAREER_TEST") != "":
+		var js := Career.truck_jobs()
+		for jj in js:
+			if not jj["locked"]:
+				Game.career_job = jj.duplicate()
+				Game.career_job["rent"] = int(jj["pay"] * 0.3)
+				var tr := Career.tractors()
+				var sp: Dictionary = tr[0].duplicate()
+				sp["trailer"] = Career.trailer_visual(jj["trailer"])
+				Game.career_job["vehicle"] = sp
+				break
+	var r: RoadPath
+	if not Game.career_job.is_empty():
+		career = true
+		job = Game.career_job.duplicate()
+		r = _career_route()
+	if r == null:
+		career = false
+		job = Game.TRUCK_JOBS[clampi(Game.current_level, 0, Game.TRUCK_JOBS.size() - 1)]
+		r = World.road(job["road"])
+		s0 = job["s0"]
+		s1 = minf(job["s1"], r.length - 10.0)
+	setup_world(r, s0, "")
 	own_side_only = true
 	car.allow_reverse = true
 	car.speed = 0.0
@@ -46,7 +69,7 @@ func _ready() -> void:
 	hud.mult_lbl.visible = false
 	hud.gauge.label_nitro = "TURBO"
 	minimap.set_route_from(road, s0, s1)
-	minimap.target = road.frame(s1).origin
+	minimap.target = road.frame(s1 if loaded else load_s).origin
 	_place_trees()
 	next_animal = s0 + randf_range(250.0, 450.0)
 	_destination_marker()
@@ -60,6 +83,35 @@ func _ready() -> void:
 	var skip := float(OS.get_environment("SKIP")) if OS.get_environment("SKIP") != "" else 0.0
 	for i in int(skip / 0.05):
 		_process(0.05)
+
+## Ruta real: concesionaria -> depósito de carga (si no es la misma) -> destino.
+func _career_route() -> RoadPath:
+	var dealer := Career.depot("dealer")
+	var a := Career.depot(job["from"])
+	var b := Career.depot(job["to"])
+	if a.is_empty() or b.is_empty():
+		return null
+	var legs: Array = []
+	var first: Array = []
+	if a["id"] != "dealer" and not dealer.is_empty():
+		first = RoutePlanner.find(int(dealer["road"]), float(dealer["s"]), int(a["road"]), float(a["s"]))
+	var second := RoutePlanner.find(int(a["road"]), float(a["s"]), int(b["road"]), float(b["s"]))
+	if second.is_empty():
+		return null
+	legs.append_array(first)
+	legs.append_array(second)
+	var route := RoutePlanner.compose(legs, "%s ➜ %s" % [job["from_name"], job["to_name"]])
+	if not first.is_empty():
+		var part := RoutePlanner.compose(first, "")
+		load_s = part.length
+		loaded = false
+	job["name"] = "%s · %s" % [job["cargo"], job["to_name"]]
+	job["from"] = job["from_name"]
+	job["to"] = job["to_name"]
+	s0 = 8.0
+	s1 = route.length - 12.0
+	print("RUTA %d tramos, %.1f km, carga en %.0f m" % [legs.size(), route.length / 1000.0, load_s])
+	return route
 
 func touch_layout() -> Array:
 	var l: Array = []
@@ -226,7 +278,7 @@ func _check_junctions() -> void:
 			passed_junctions[key] = true
 			var other: RoadPath = World.roads[int(jn[1])]
 			if jn[2] == "cross" and road.kind_at(js) != "highway":
-				var st := World.light_state(World.junction_phase(road.id, other.id), World.time, TrafficSystem._is_major(road, other))
+				var st := TrafficSystem.junction_light(road, jn)
 				if st == 2 and car.speed > 2.0:
 					_fine("SEMÁFORO EN ROJO", FINE_RED)
 			elif jn[2] == "rail":
@@ -327,7 +379,9 @@ func _process(delta: float) -> void:
 			car.speed = 0.0
 		elif r == "scrape":
 			damage += 1.0
-		if car.s >= s1 - 4.0:
+		if not loaded:
+			_update_loading(dt)
+		elif car.s >= s1 - 4.0:
 			car.speed = minf(car.speed, 8.0)
 			if absf(car.speed) < 1.0 or car.s >= s1 + 20.0:
 				_finish(true, "")
@@ -354,6 +408,25 @@ func x_limits(s: float) -> Vector2:
 			hi += smoothstep(0.0, 1.0, t) * 8.0
 	return Vector2(lo, hi)
 
+func _update_loading(dt: float) -> void:
+	if _loading_t < 0.0:
+		if car.s >= load_s - 18.0:
+			car.speed = minf(car.speed, 7.0)
+			if absf(car.speed) < 1.5 or car.s >= load_s + 4.0:
+				_loading_t = 0.0
+				hud.banner("CARGANDO…", "%s · %s" % [job["from"], job["cargo"]], 2.6, UIKit.WARN)
+				Sfx.play("pickup", -4.0)
+		return
+	_loading_t += dt
+	car.speed = 0.0
+	if _loading_t > 3.0:
+		loaded = true
+		car.s = load_s + 32.0
+		var lanes: Array = road.lanes_at(car.s)
+		car.x = lanes[lanes.size() - 1] if road.kind_at(car.s) != "highway" else 6.45
+		hud.banner("¡CARGA LISTA!", "Entrega en " + str(job["to"]), 2.2, UIKit.OK)
+		minimap.target = road.frame(s1).origin
+
 func _speed_check(dt: float) -> void:
 	var p := road.frame(car.s).origin
 	var b: int = World.biome(p.x, p.z)
@@ -377,8 +450,7 @@ func _autopilot() -> Array:
 	for jn in road.junctions:
 		var g: float = jn[0] - car.s
 		if g > 0.0 and g < 40.0 and jn[2] == "cross":
-			var other: RoadPath = World.roads[int(jn[1])]
-			if World.light_state(World.junction_phase(road.id, other.id), World.time, TrafficSystem._is_major(road, other)) == 2:
+			if TrafficSystem.junction_light(road, jn) == 2:
 				braking = true
 	for c in traffic.cars:
 		if c["dir"] > 0 and absf(c["x"] - car.x) < 2.0:
@@ -424,9 +496,21 @@ func _finish(win: bool, why: String) -> void:
 	if win:
 		stars = 3 if (fines.is_empty() and damage < 20.0) else (2 if total_fines <= 300 and damage < 50.0 else 1)
 		Game.complete_event("truck", Game.current_level, stars)
-	Game.add_coins(earned)
+	var rent := int(job.get("rent", 0)) if career else 0
+	if career:
+		earned = maxi(0, earned - rent) if win else 0
+		if win:
+			Career.complete("truck", earned, int(int(job.get("rep_gain", 100)) * (0.6 + stars * 0.2)), float(job.get("km", 0.0)))
+	else:
+		Game.add_coins(earned)
 	Sfx.play("win" if win else "lose", -2.0)
-	var rows := [["Tiempo", Game.fmt_time(time)], ["Pago del trabajo", "◆ %d" % pay], ["Multas", "- ◆ %d (%d)" % [total_fines, fines.size()]], ["Daños a la carga", "%d%% (- ◆ %d)" % [int(damage), dmg_cut]], ["Ganancia", "◆ %d" % earned], ["Estrellas", "★".repeat(stars) + "☆".repeat(3 - stars)]]
+	var cur := "€ " if career else "◆ "
+	var rows := [["Tiempo", Game.fmt_time(time)], ["Pago del trabajo", cur + str(pay)], ["Multas", "- %s%d (%d)" % [cur, total_fines, fines.size()]], ["Daños a la carga", "%d%% (- %s%d)" % [int(damage), cur, dmg_cut]]]
+	if career:
+		rows.append(["Alquiler", "- € %d" % rent])
+	rows.append_array([["Ganancia", cur + str(earned)], ["Estrellas", "★".repeat(stars) + "☆".repeat(3 - stars)]])
+	if career:
+		rows.append(["Tu dinero", Career.fmt_eur(Career.money())])
 	for f in fines.slice(0, 3):
 		rows.append(["· " + f[0], "◆ %d" % f[1]])
 	await get_tree().create_timer(1.0).timeout
@@ -436,17 +520,19 @@ func _hud() -> void:
 	var total_fines := 0
 	for f in fines:
 		total_fines += f[1]
-	hud.score_lbl.text = "◆ %d" % maxi(0, int(job["pay"]) - total_fines)
+	hud.score_lbl.text = ("€ %d" if career else "◆ %d") % maxi(0, int(job["pay"]) - total_fines - int(job.get("rent", 0)))
 	hud.best_lbl.text = "MULTAS %d · DAÑO %d%%" % [fines.size(), int(damage)]
-	hud.set_distance("DESTINO", "%.2f km" % maxf(0.0, (s1 - car.s) / 1000.0))
+	if not loaded:
+		hud.set_distance("RECOGER CARGA", "%.2f km" % maxf(0.0, (load_s - car.s) / 1000.0))
+	else:
+		hud.set_distance("DESTINO", "%.2f km" % maxf(0.0, (s1 - car.s) / 1000.0))
 	hud.set_speed(car.speed_kmh(), boost / 100.0, car.nitro_on)
 	hud.set_extra("Límite %d km/h · %s" % [limit_kmh, job["cargo"]])
 	var warn := ""
 	for jn in road.junctions:
 		var g: float = jn[0] - car.s
 		if g > 0.0 and g < 120.0 and jn[2] == "cross" and road.kind_at(jn[0]) != "highway":
-			var other: RoadPath = World.roads[int(jn[1])]
-			var st := World.light_state(World.junction_phase(road.id, other.id), World.time, TrafficSystem._is_major(road, other))
+			var st := TrafficSystem.junction_light(road, jn)
 			warn = ["SEMÁFORO EN VERDE", "SEMÁFORO EN ÁMBAR", "SEMÁFORO EN ROJO · DETENTE"][st]
 			break
 		if g > 0.0 and g < 200.0 and jn[2] == "rail" and _train_near(World.roads[int(jn[1])], jn[0]):

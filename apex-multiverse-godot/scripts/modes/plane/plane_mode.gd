@@ -9,6 +9,7 @@ var spec := {}
 var paint := Color.GRAY
 var streamer: WorldStreamer
 var env_info := {}
+var atmos: Atmosphere
 var plane: VehicleVisual
 var cam: Camera3D
 var hud: HUD
@@ -56,27 +57,32 @@ var _ground_y := 0.0
 var _tracer_mesh: Mesh
 var _enemy_spec: Dictionary
 var land_frame := Transform3D.IDENTITY
+var career := false
 var _assist_on := false
 var _ap_turnin := false
 
 func _ready() -> void:
 	Game.current_mode = "plane"
 	mission = Game.AIR_MISSIONS[clampi(Game.current_level, 0, Game.AIR_MISSIONS.size() - 1)]
-	preset = mission["time"]
-	if OS.get_environment("PRESET") != "":
-		preset = OS.get_environment("PRESET")
-	env_info = EnvFactory.build(self, preset)
-	var env: Environment = env_info["env"]
-	env.fog_density *= 0.45
-	if Game.quality() == 0:
-		(env_info["sun"] as DirectionalLight3D).shadow_enabled = false
-		env.glow_enabled = false
-		env.sky.radiance_size = Sky.RADIANCE_SIZE_32
-	RenderingServer.global_shader_parameter_set("night", 1.0 if preset == "night" else 0.0)
-	RenderingServer.global_shader_parameter_set("wet", 0.0)
+	if not Game.career_job.is_empty() and Game.career_job.get("career", "") == "plane":
+		career = true
+		var cj: Dictionary = Game.career_job
+		if cj["type"] == "combat":
+			mission = Game.AIR_MISSIONS[int(cj["mission"])].duplicate()
+		else:
+			var to := Career.runway(cj["to"])
+			mission = {"name": cj["name"], "start": "airport", "land": cj["to"], "enemies": 0, "target": [to["x"], to["z"]],
+				"desc": "Despega del Saint-Exupéry y aterriza en %s." % to["name"]}
+	env_info = Atmosphere.create(self)
+	atmos = env_info["atmos"]
+	atmos.fog_scale = 0.45
+	preset = "night" if atmos.night_w > 0.5 else "day"
 	var sel := Game.selected("plane")
 	spec = sel["spec"]
 	paint = sel["color"]
+	if career and Game.career_job.has("vehicle"):
+		spec = Game.career_job["vehicle"]
+		paint = VehicleCatalog.color_of(spec["colors"][0])
 	is_prop = spec["shape"] in ["highwing", "trainer", "warbird"]
 	vmax = (60.0 + float(spec["speed"]) * 9.0) if is_prop else (120.0 + float(spec["speed"]) * 12.0)
 	vrot = vmax * 0.36
@@ -114,7 +120,7 @@ func _ready() -> void:
 	hud.banner(mission["name"].to_upper(), mission["desc"], 3.0, Color(0.65, 0.55, 1.0))
 	if OS.get_environment("LANDTEST") != "":
 		# prueba: empezar en la aproximación final
-		var la: Dictionary = World.poi(land_kind) if land_kind != "carrier" else {}
+		var la: Dictionary = Career.runway(land_kind) if land_kind != "carrier" else {}
 		land_frame = WorldLandmarks.runway_frame(la, false) if land_kind != "carrier" else WorldLandmarks.carrier_frame()
 		pos = land_frame * Vector3(float(OS.get_environment("LANDTEST")), 300, 4500)
 		pb = Basis.looking_at(-land_frame.basis.z, Vector3.UP)
@@ -135,11 +141,11 @@ func _setup_start() -> void:
 			fr = WorldLandmarks.carrier_frame()
 			fr.origin += Vector3(6.0, 0.0, 140.0)
 			catapult = true
-		"airfield":
-			fr = WorldLandmarks.runway_frame(World.poi("airfield"))
-			fr.origin += -fr.basis.z * 30.0
 		_:
-			fr = WorldLandmarks.runway_frame(World.poi("airport"))
+			var sr := Career.runway(start_kind)
+			if sr.is_empty():
+				sr = World.poi("airport")
+			fr = WorldLandmarks.runway_frame(sr)
 			fr.origin += -fr.basis.z * 40.0
 	pb = fr.basis
 	pos = fr.origin
@@ -389,6 +395,8 @@ func _update_rockets(dt: float) -> void:
 func _process(delta: float) -> void:
 	var dt := minf(delta, 0.05)
 	state_t += dt
+	if Engine.get_process_frames() % 30 == 0:
+		hud.set_clock(Atmosphere.hud_text())
 	var roll_in := Input.get_axis("steer_left", "steer_right")
 	var pitch_in := Input.get_action_strength("pitch_up") - Input.get_action_strength("pitch_down")
 	var want_boost := Input.is_action_pressed("nitro") and boost > 1.0
@@ -416,18 +424,20 @@ func _process(delta: float) -> void:
 		gear = false
 		plane.set_gear(false)
 		_spawn_enemies()
-		hud.banner("OBJETIVO", "Vuela hacia la zona marcada y derriba %d enemigos" % mission["enemies"], 2.4, UIKit.WARN)
-	if state == "fly" and enemies.is_empty() and kills > 0:
+		if int(mission["enemies"]) > 0:
+			hud.banner("OBJETIVO", "Vuela hacia la zona marcada y derriba %d enemigos" % mission["enemies"], 2.4, UIKit.WARN)
+	if state == "fly" and enemies.is_empty() and (kills > 0 or int(mission["enemies"]) == 0):
 		state = "land"
 		if land_kind == "carrier":
 			land_frame = WorldLandmarks.carrier_frame()
 			land_frame.origin += Vector3(6.0, 0.0, 150.0)
 		else:
-			var la: Dictionary = World.poi(land_kind)
+			var la: Dictionary = Career.runway(land_kind)
 			land_frame = WorldLandmarks.runway_frame(la, pos.x > float(la["x"]))
 		var ldst := _land_target()
 		minimap.target = ldst
-		hud.banner("ZONA DESPEJADA", "Ahora aterriza en %s" % {"airport": "el Aeropuerto Saint-Exupéry", "airfield": "el Aeródromo de Provence", "carrier": "el portaaviones"}[land_kind], 3.0, UIKit.OK)
+		var lname: String = "el portaaviones" if land_kind == "carrier" else str(Career.runway(land_kind).get("name", ""))
+		hud.banner("RUMBO AL DESTINO" if int(mission["enemies"]) == 0 else "ZONA DESPEJADA", "Aterriza en %s" % lname, 3.0, UIKit.OK)
 	if state in ["fly", "land"]:
 		var ap_fire: bool = Game.autopilot and lock_target != null and (-pb.z).angle_to((lock_target["pos"] - pos).normalized()) < 0.08 and pos.distance_to(lock_target["pos"]) < 900.0
 		if (Input.is_action_pressed("fire") or ap_fire) and gun_heat < 1.0:
@@ -459,10 +469,9 @@ func _surface(p: Vector3) -> Array:
 	var lc := cv.affine_inverse() * p
 	if lc.x > -10.0 and lc.x < 22.0 and absf(lc.z) < 165.0 and p.y > cv.origin.y - 6.0:
 		return [cv.origin.y, true, "carrier"]
-	for k in ["airport", "airfield"]:
-		var a: Dictionary = World.poi(k)
+	for a in Career.runways():
 		if absf(p.x - a["x"]) < a["len"] * 0.5 and absf(p.z - a["z"]) < a["w"] * 0.5 + 4.0:
-			return [a["h"] + 0.6, true, k]
+			return [a["h"] + 0.6, true, str(a.get("id", ""))]
 	var h := World.height(p.x, p.z)
 	return [maxf(h, 0.0), false, "water" if h < 0.0 else "ground"]
 
@@ -581,13 +590,11 @@ func _landing_assist() -> Dictionary:
 	return {"dir": (flat + Vector3(0, vy, 0)).normalized()}
 
 func _land_target() -> Vector3:
-	match land_kind:
-		"carrier":
-			return WorldLandmarks.carrier_frame().origin
-		"airfield":
-			var a: Dictionary = World.poi("airfield")
-			return Vector3(a["x"], a["h"], a["z"])
-	var b: Dictionary = World.poi("airport")
+	if land_kind == "carrier":
+		return WorldLandmarks.carrier_frame().origin
+	var b := Career.runway(land_kind)
+	if b.is_empty():
+		b = World.poi("airport")
 	return Vector3(b["x"], b["h"], b["z"])
 
 func _place(dt: float, roll_in: float) -> void:
@@ -635,14 +642,19 @@ func _finish(win: bool, why := "") -> void:
 	stick.release()
 	var reward := 0
 	var stars := 0
+	var cj: Dictionary = Game.career_job
 	if win:
 		stars = 3 if hp > 70.0 else (2 if hp > 35.0 else 1)
 		reward = 800 + kills * 300 + int(hp) * 5
-		Game.complete_event("plane", Game.current_level, stars)
-		Game.add_coins(reward)
+		if career:
+			reward = maxi(0, int(int(cj["pay"]) * (0.7 + hp / 1000.0)) - int(cj.get("rent", 0)))
+			Career.complete("plane", reward, int(int(cj.get("rep_gain", 100)) * (0.6 + stars * 0.2)), float(cj.get("km", 0.0)))
+		else:
+			Game.complete_event("plane", Game.current_level, stars)
+			Game.add_coins(reward)
 		Sfx.play("win", -2.0)
 	else:
-		reward = kills * 150
+		reward = kills * 150 if not career else 0
 		Game.add_coins(reward)
 		Sfx.play("lose", -2.0)
 	await get_tree().create_timer(1.5).timeout
@@ -651,7 +663,7 @@ func _finish(win: bool, why := "") -> void:
 		["Tiempo", Game.fmt_time(time)],
 		["Integridad", "%d%%" % int(maxf(hp, 0.0))],
 		["Estrellas", "★".repeat(stars) + "☆".repeat(3 - stars)],
-		["Monedas", "◆ %d" % reward],
+		["Ganancia" if career else "Monedas", (Career.fmt_eur(reward) if career else "◆ %d" % reward)],
 	], "ATERRIZAJE PERFECTO" if win and stars == 3 else "", win)
 
 func _hud() -> void:

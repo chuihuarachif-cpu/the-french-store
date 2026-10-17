@@ -3,6 +3,8 @@ extends Node3D
 ## Elementos únicos del país que se muestran cuando el jugador está cerca:
 ## pistas de aterrizaje, portaaviones, puente levadizo, Torre Lumière, grúas del puerto y el tren.
 
+## Escala del mapa respecto al diseño original de 16 km (para monumentos con coordenadas fijas).
+const MS := 2.0
 const DRAW_PERIOD := 90.0
 const DRAW_OPEN_AT := 52.0   # segundos del ciclo en que empieza a abrirse
 const DRAW_MOVE := 7.0
@@ -17,16 +19,20 @@ var train_road: RoadPath
 var train_s := 0.0
 
 func _ready() -> void:
-	var air: Dictionary = World.poi("airport")
-	var air2: Dictionary = World.poi("airfield")
-	_reg("runway_main", Vector3(air["x"], World.height(air["x"], air["z"]), air["z"]), 6000.0, func(): return _runway(air, true))
-	_reg("runway_field", Vector3(air2["x"], World.height(air2["x"], air2["z"]), air2["z"]), 4500.0, func(): return _runway(air2, false))
+	var rws: Array = World.pois.get("runways", [World.poi("airport"), World.poi("airfield")])
+	for rw in rws:
+		var a: Dictionary = rw
+		_reg("runway_" + str(a.get("id", a["name"])), Vector3(a["x"], World.height(a["x"], a["z"]), a["z"]), 6000.0 if a.get("id", "") == "airport" else 4500.0,
+			func(): return _runway(a, a.get("id", "") == "airport"))
+	for dp in World.pois.get("depots", []):
+		var d: Dictionary = dp
+		_reg("depot_" + str(d["id"]), Vector3(d["x"], d["y"], d["z"]), 1600.0, func(): return _depot(d))
 	var cv: Dictionary = World.poi("carrier")
 	_reg("carrier", Vector3(cv["x"], 0, cv["z"]), 7000.0, func(): return _carrier(cv))
 	var park: Dictionary = World.poi("park")
 	_reg("tower", Vector3(park["x"], World.height(park["x"], park["z"]), park["z"]), 9000.0, func(): return _tower())
-	_reg("cranes", Vector3(4300, 0, -250), 3000.0, func(): return _cranes())
-	_reg("ships", Vector3(5600, 0, -900), 5000.0, func(): return _ships())
+	_reg("cranes", Vector3(4300, 0, -250) * MS, 3000.0, func(): return _cranes())
+	_reg("ships", Vector3(5600, 0, -900) * MS, 5000.0, func(): return _ships())
 	for r in World.roads:
 		if r.draw_s >= 0.0:
 			draw_road = r
@@ -235,6 +241,101 @@ func _parked_planes(root: Node3D, spots: Array, yaw: float) -> void:
 		v.position = spots[i]
 		v.rotation.y = yaw
 
+# ------------------------------------------------------------------ DEPÓSITOS, EMPRESAS Y CONCESIONARIA
+func _depot(d: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	var fw := Vector3(d["fx"], 0, d["fz"])
+	var rt := Vector3(-fw.z, 0, fw.x) * float(d["side"])   # hacia el fondo del patio
+	root.transform = Transform3D(Basis(Vector3.UP.cross(rt).normalized(), Vector3.UP, rt.normalized()), Vector3(d["x"], d["y"], d["z"]))
+	var W: float = d["w"]
+	var D: float = d["d"]
+	# losa de hormigón con marcas de aparcamiento
+	var slab := MeshData.new()
+	slab.box(Transform3D(Basis.IDENTITY, Vector3(0, -0.4, 0)), Vector3(W, 1.0, D), Color(0.58, 0.58, 0.57), Vector2.ZERO, 5)
+	# acceso desde la carretera
+	slab.box(Transform3D(Basis.IDENTITY, Vector3(0, -0.45, -D * 0.5 - 9)), Vector3(44, 1.0, 18), Color(0.5, 0.5, 0.5), Vector2.ZERO, 5)
+	for k in int(W / 9.0) - 2:
+		var x := -W * 0.5 + 14.0 + k * 9.0
+		slab.box(Transform3D(Basis.IDENTITY, Vector3(x, 0.11, D * 0.5 - 61)), Vector3(0.16, 0.02, 18), Color(0.95, 0.85, 0.2), Vector2.ZERO, 5)
+	var mi := MeshInstance3D.new()
+	mi.mesh = slab.to_mesh(WorldAssets.mat("concrete"))
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	root.add_child(mi)
+	# valla perimetral (con hueco en la entrada) y farolas
+	var fence := MeshData.new()
+	var posts := []
+	for side in [[Vector3(-W * 0.5, 0, -D * 0.5), Vector3(-26, 0, -D * 0.5)], [Vector3(26, 0, -D * 0.5), Vector3(W * 0.5, 0, -D * 0.5)],
+			[Vector3(W * 0.5, 0, -D * 0.5), Vector3(W * 0.5, 0, D * 0.5)], [Vector3(W * 0.5, 0, D * 0.5), Vector3(-W * 0.5, 0, D * 0.5)], [Vector3(-W * 0.5, 0, D * 0.5), Vector3(-W * 0.5, 0, -D * 0.5)]]:
+		var a: Vector3 = side[0]
+		var b: Vector3 = side[1]
+		var n := int(a.distance_to(b) / 4.0)
+		for k in n + 1:
+			posts.append(a.lerp(b, float(k) / maxf(n, 1)))
+		var up := Vector3(0, 2.2, 0)
+		fence.quad(a + Vector3(0, 0.1, 0), b + Vector3(0, 0.1, 0), b + up, a + up, Color(0.55, 0.6, 0.6, 0.5))
+		fence.quad(b + Vector3(0, 0.1, 0), a + Vector3(0, 0.1, 0), a + up, b + up, Color(0.55, 0.6, 0.6, 0.5))
+	for p in posts:
+		fence.box(Transform3D(Basis.IDENTITY, p + Vector3(0, 1.15, 0)), Vector3(0.08, 2.3, 0.08), Color(0.35, 0.37, 0.4))
+	var fm := MeshInstance3D.new()
+	fm.mesh = fence.to_mesh(WorldAssets.mat("metal"))
+	fm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	root.add_child(fm)
+	for k in 4:
+		var lp := MultiMeshInstance3D.new()
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = WorldAssets.mesh("lamp_single")
+		mm.instance_count = 1
+		mm.set_instance_transform(0, Transform3D(Basis(Vector3.UP, PI * 0.5 if k % 2 == 0 else -PI * 0.5), Vector3((-0.35 + 0.23 * k) * W, 0, 0)))
+		lp.multimesh = mm
+		root.add_child(lp)
+	# cartel con el nombre de la empresa
+	var sign := Label3D.new()
+	sign.text = str(d["name"]).to_upper()
+	sign.font = UIKit.font("Orbitron-Black")
+	sign.font_size = 96
+	sign.pixel_size = 0.02
+	sign.modulate = Color(1, 1, 1) if d["id"] != "dealer" else Color(1.0, 0.82, 0.2)
+	sign.outline_size = 24
+	sign.outline_modulate = Color(0.05, 0.08, 0.15)
+	sign.position = Vector3(0, 9.0, -D * 0.5 - 2.0)
+	sign.rotation.y = PI
+	root.add_child(sign)
+	var post := MeshData.new()
+	for sx in [-14.0, 14.0]:
+		post.box(Transform3D(Basis.IDENTITY, Vector3(sx, 4.0, -D * 0.5 - 2.0)), Vector3(0.4, 8.0, 0.4), Color(0.2, 0.22, 0.25))
+	post.box(Transform3D(Basis.IDENTITY, Vector3(0, 9.0, -D * 0.5 - 1.8)), Vector3(30.0, 3.0, 0.3), Color(0.08, 0.12, 0.25) if d["id"] != "dealer" else Color(0.7, 0.05, 0.08))
+	var pm := MeshInstance3D.new()
+	pm.mesh = post.to_mesh(WorldAssets.mat("metal"))
+	root.add_child(pm)
+	# carga típica apilada en el patio (contenedores, troncos, depósitos)
+	var props := MeshData.new()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(d["id"])
+	var kind: String = d["id"]
+	for k in 10:
+		var px := lerpf(-W * 0.4, W * 0.4, rng.randf())
+		var pz := lerpf(D * 0.05, D * 0.3, rng.randf())
+		match kind:
+			"containers", "aircargo":
+				for hgt in rng.randi_range(1, 3):
+					props.box(Transform3D(Basis.IDENTITY, Vector3(px, 1.3 + hgt * 2.6, pz)), Vector3(12.2, 2.6, 2.45), Color.from_hsv(rng.randf(), 0.7, 0.6), Vector2.ZERO, 5)
+			"sawmill":
+				for h2 in 3:
+					props.prism(Vector3(px, 0.4 + h2 * 0.7, pz), 0.35, 0.35, 10.0, 6, Color(0.45, 0.32, 0.2), Vector2.ZERO, true, Transform3D(Basis(Vector3.FORWARD, PI * 0.5), Vector3.ZERO))
+			"refinery", "winery", "dairy":
+				props.prism(Vector3(px, 0.0, pz), 5.0, 5.0, 12.0, 14, Color(0.85, 0.86, 0.88), Vector2.ZERO, true)
+			"quarry", "steel":
+				props.box(Transform3D(Basis(Vector3.UP, rng.randf() * PI), Vector3(px, 1.0, pz)), Vector3(3.0, 2.0, 3.0), Color(0.6, 0.58, 0.55) if kind == "quarry" else Color(0.4, 0.42, 0.45), Vector2.ZERO, 5)
+			"farm":
+				props.prism(Vector3(px, 0.0, pz), 1.0, 1.0, 1.4, 10, Color(0.85, 0.72, 0.35), Vector2.ZERO, true, Transform3D(Basis(Vector3.FORWARD, PI * 0.5), Vector3.ZERO))
+			_:
+				props.box(Transform3D(Basis.IDENTITY, Vector3(px, 0.7, pz)), Vector3(1.2, 1.4, 1.0), Color(0.6, 0.45, 0.25), Vector2.ZERO, 5)
+	var prm := MeshInstance3D.new()
+	prm.mesh = props.to_mesh(WorldAssets.mat("building"), true)
+	root.add_child(prm)
+	return root
+
 # ------------------------------------------------------------------ TORRE LUMIÈRE
 func _tower() -> Node3D:
 	var root := Node3D.new()
@@ -286,7 +387,7 @@ func _tower() -> Node3D:
 # ------------------------------------------------------------------ BUQUES (bahía y río)
 func _ships() -> Node3D:
 	var root := Node3D.new()
-	var defs := [[Vector3(5350, 0, -820), 0.3, 200.0], [Vector3(5900, 0, -420), -1.2, 240.0], [Vector3(6150, 0, -1150), 1.5, 180.0], [Vector3(4700, 0, -600), 1.7, 90.0], [Vector3(1500, 0, 230), 1.55, 60.0]]
+	var defs := [[Vector3(5350, 0, -820) * MS, 0.3, 200.0], [Vector3(5900, 0, -420) * MS, -1.2, 240.0], [Vector3(6150, 0, -1150) * MS, 1.5, 180.0], [Vector3(4700, 0, -600) * MS, 1.7, 90.0], [Vector3(1500, 0, 230) * MS, 1.55, 60.0]]
 	var cols := [Color(0.75, 0.15, 0.1), Color(0.1, 0.35, 0.65), Color(0.1, 0.5, 0.3), Color(0.85, 0.6, 0.1), Color(0.55, 0.55, 0.58), Color(0.9, 0.9, 0.9)]
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 99
@@ -308,7 +409,7 @@ func _ships() -> Node3D:
 		mi.mesh = md.to_mesh(WorldAssets.mat("building"), true)
 		var p: Vector3 = d[0]
 		var wl := 0.0
-		if p.x < 3000.0:
+		if p.x < 3000.0 * MS:
 			wl = World.height(p.x, p.z) + 6.0
 		mi.transform = Transform3D(Basis(Vector3.UP, d[1]), Vector3(p.x, wl, p.z))
 		root.add_child(mi)
@@ -320,8 +421,8 @@ func _cranes() -> Node3D:
 	var md := MeshData.new()
 	var cols := [Color(0.85, 0.3, 0.1), Color(0.1, 0.45, 0.75)]
 	for i in 5:
-		var x := 3850.0 + i * 220.0
-		var z := -330.0
+		var x := 3850.0 * MS + i * 260.0
+		var z := -330.0 * MS
 		var y: float = World.height(x, z + 60.0)
 		var c: Color = cols[i % 2]
 		var xf := Transform3D(Basis.IDENTITY, Vector3(x, y, z))

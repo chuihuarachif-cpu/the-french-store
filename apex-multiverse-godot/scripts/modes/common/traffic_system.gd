@@ -164,9 +164,7 @@ func update(dt: float) -> void:
 				var js: float = jn[0]
 				var g3 := _ds(js, c["s"]) * dir - 9.0
 				if g3 > 0.0 and g3 < 45.0:
-					var other: RoadPath = World.roads[int(jn[1])]
-					var major := _is_major(road, other)
-					if World.light_state(World.junction_phase(road.id, other.id), World.time, major) != 0:
+					if junction_light(road, jn) != 0:
 						want = minf(want, maxf(0.0, (g3 - 2.0) * 0.6))
 						c["stop"] = true
 		# jugador delante: frena un poco (no se lo come por detrás)
@@ -213,6 +211,14 @@ func update(dt: float) -> void:
 		if road.closed:
 			s = road.clamp_s(s)
 		spawn(s)
+
+## Semáforo de un cruce de la vía r (0 verde, 1 ámbar, 2 rojo). En rutas compuestas usa la vía real.
+static func junction_light(r: RoadPath, jn: Array) -> int:
+	var base: RoadPath = r
+	if r.id < 0:
+		base = World.roads[RoutePlanner.junction_base(r, jn)]
+	var other: RoadPath = World.roads[int(jn[1])]
+	return World.light_state(World.junction_phase(base.id, other.id), World.time, _is_major(base, other))
 
 static func _is_major(r: RoadPath, o: RoadPath) -> bool:
 	var pr := {"highway": 5, "rail": 4, "avenue": 3, "road": 2, "dirt": 1}

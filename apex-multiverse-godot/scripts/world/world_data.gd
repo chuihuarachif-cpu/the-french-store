@@ -14,7 +14,7 @@ var n := 2048
 var cell := 8.0
 var half := 8192.0
 var _h := PackedByteArray()   # RGB: alto = (R*256+G)/40 - 100
-var _b := PackedByteArray()   # RGBA: bioma, dist. carretera, departamento
+var _b := PackedByteArray()   # RGB: bioma, dist. carretera, departamento
 var data := {}
 var roads: Array = []          # RoadPath
 var road_by_name := {}
@@ -44,8 +44,8 @@ func ensure_loaded() -> void:
 	_h = himg.get_data()
 	var bimg := Image.new()
 	bimg.load_png_from_buffer(FileAccess.get_file_as_bytes(DIR + "biome.png.bin"))
-	if bimg.get_format() != Image.FORMAT_RGBA8:
-		bimg.convert(Image.FORMAT_RGBA8)
+	if bimg.get_format() != Image.FORMAT_RGB8:
+		bimg.convert(Image.FORMAT_RGB8)
 	_b = bimg.get_data()
 	data = JSON.parse_string(FileAccess.get_file_as_string(DIR + "world.json.bin"))
 	cell = float(data["cell"])
@@ -180,7 +180,7 @@ func _btex(x: float, z: float, ch: int) -> int:
 	var t := _texel(x, z)
 	var i := clampi(int(round(t.x)), 0, n - 1)
 	var j := clampi(int(round(t.y)), 0, n - 1)
-	return _b[(j * n + i) * 4 + ch]
+	return _b[(j * n + i) * 3 + ch]
 
 func biome(x: float, z: float) -> int:
 	return _btex(x, z, 0)

@@ -24,6 +24,7 @@ static func mat(key: String) -> Material:
 			sm.set_shader_parameter("sand_tex", tex("sand_albedo"))
 			sm.set_shader_parameter("urban_tex", tex("concrete_albedo"))
 			sm.set_shader_parameter("hq", hq)
+			sm.set_shader_parameter("world_half", World.half)
 			m = sm
 		"road_highway":
 			m = _road(-14.6, 14.6, [
@@ -31,11 +32,13 @@ static func mat(key: String) -> Material:
 				{"x": 0.75, "w": 0.15, "k": "solid"}, {"x": -0.75, "w": 0.15, "k": "solid"},
 				{"x": 4.6, "w": 0.16, "k": "dash"}, {"x": 8.3, "w": 0.16, "k": "dash"}, {"x": -4.6, "w": 0.16, "k": "dash"}, {"x": -8.3, "w": 0.16, "k": "dash"},
 				{"x": 13.3, "w": 2.4, "k": "shoulder"}, {"x": -13.3, "w": 2.4, "k": "shoulder"}], [2.75, 6.45, 10.15, -2.75, -6.45, -10.15], Color(1, 1, 1), 0.0)
+			(m as ShaderMaterial).set_shader_parameter("lamp_mode", 1.0)
 		"road_avenue":
 			m = _road(-7.4, 7.4, [
 				{"x": 0.14, "w": 0.12, "k": "center"}, {"x": -0.14, "w": 0.12, "k": "center"},
 				{"x": 3.7, "w": 0.14, "k": "dash"}, {"x": -3.7, "w": 0.14, "k": "dash"},
 				{"x": 7.15, "w": 0.16, "k": "solid"}, {"x": -7.15, "w": 0.16, "k": "solid"}], [1.85, 5.55, -1.85, -5.55], Color(0.95, 0.95, 0.97), 0.0)
+			(m as ShaderMaterial).set_shader_parameter("lamp_mode", 2.0)
 		"road_road":
 			m = _road(-5.2, 5.2, [
 				{"x": 0.0, "w": 0.14, "k": "dash"}, {"x": 3.5, "w": 0.15, "k": "solid"}, {"x": -3.5, "w": 0.15, "k": "solid"},

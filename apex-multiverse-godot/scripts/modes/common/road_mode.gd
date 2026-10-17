@@ -8,6 +8,9 @@ const PRESET_NAMES := {"day": "DÍA", "sunset": "ATARDECER", "sunrise": "AMANECE
 var road: RoadPath
 var streamer: WorldStreamer
 var env_info := {}
+var atmos: Atmosphere
+var _lights_t := 0.0
+var headlight: SpotLight3D
 var preset := "day"
 var night := false
 var spec := {}
@@ -47,19 +50,13 @@ var is_moto := false
 var is_truck := false
 
 # ------------------------------------------------------------------ PREPARACIÓN
-func setup_world(r: RoadPath, s_start: float, time_preset: String) -> void:
+func setup_world(r: RoadPath, s_start: float, _time_preset := "") -> void:
 	road = r
-	preset = time_preset
-	if OS.get_environment("PRESET") != "":
-		preset = OS.get_environment("PRESET")
-	night = preset == "night"
-	env_info = EnvFactory.build(self, preset)
-	_tune_env()
-	RenderingServer.global_shader_parameter_set("night", 1.0 if night else 0.0)
-	RenderingServer.global_shader_parameter_set("wet", 0.55 if night else 0.0)
-	var tm := TrafficFactory.mats()
-	(tm["tail"] as StandardMaterial3D).emission_energy_multiplier = 4.5 if night else 1.3
-	(tm["head"] as StandardMaterial3D).emission_energy_multiplier = 7.0 if night else 1.2
+	# hora y clima universales (no dependen del evento)
+	env_info = Atmosphere.create(self)
+	atmos = env_info["atmos"]
+	night = atmos.night_w > 0.5
+	preset = "night" if night else "day"
 	streamer = WorldStreamer.new()
 	streamer.exclude_road = r.id
 	add_child(streamer)
@@ -67,12 +64,27 @@ func setup_world(r: RoadPath, s_start: float, time_preset: String) -> void:
 	var sel := Game.selected()
 	spec = sel["spec"]
 	paint = sel["color"]
+	if Game.career_job.has("vehicle") and Game.current_mode == "truck":
+		spec = Game.career_job["vehicle"]
+		paint = VehicleCatalog.color_of(spec["colors"][0])
 	is_moto = spec.get("kind", "car") == "moto"
 	is_truck = spec.get("kind", "car") == "truck"
 	apply_stats(car, spec)
 	pvis = VehicleVisual.new()
 	add_child(pvis)
 	pvis.setup(spec, paint)
+	# faros del jugador (solo se encienden de noche o con mal tiempo)
+	headlight = SpotLight3D.new()
+	headlight.light_color = Color(1.0, 0.95, 0.85)
+	headlight.spot_range = 70.0 if not is_truck else 85.0
+	headlight.spot_angle = 32.0
+	headlight.spot_attenuation = 0.6
+	headlight.shadow_enabled = false
+	headlight.light_energy = 0.0
+	headlight.visible = false
+	pvis.add_child(headlight)
+	headlight.position = Vector3(0, pvis.height * 0.5 + 0.3, -pvis.length * 0.5 - 0.2)
+	headlight.rotation.x = deg_to_rad(-7.0)
 	cam = Camera3D.new()
 	cam.far = streamer.radius[2] + 600.0
 	cam.near = 0.2
@@ -130,22 +142,6 @@ func setup_world(r: RoadPath, s_start: float, time_preset: String) -> void:
 	var fr := road.frame(car.s)
 	streamer.prewarm(fr.origin, -fr.basis.z)
 	_hide_loading()
-
-func _tune_env() -> void:
-	var env: Environment = env_info["env"]
-	var sun: DirectionalLight3D = env_info["sun"]
-	var q := Game.quality()
-	env.fog_density *= 0.9
-	if q == 0:
-		env.fog_density = maxf(env.fog_density, 0.0021)
-		sun.shadow_enabled = false
-		env.glow_enabled = false
-		env.adjustment_enabled = false
-		env.sky.radiance_size = Sky.RADIANCE_SIZE_32
-	else:
-		sun.directional_shadow_max_distance = 60.0 if q == 1 else 110.0
-		sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL if q == 1 else DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
-		env.sky.radiance_size = Sky.RADIANCE_SIZE_64
 
 ## Estadísticas del catálogo (1..10) -> física arcade.
 static func apply_stats(c: ArcadeCar, v: Dictionary) -> void:
@@ -308,6 +304,18 @@ func update_camera(dt: float) -> void:
 	streamer.focus_dir = -cam.global_transform.basis.z
 
 func update_fx(dt: float) -> void:
+	_lights_t -= dt
+	if _lights_t <= 0.0:
+		_lights_t = 1.0
+		night = atmos.night_w > 0.5
+		traffic.night = atmos.night_w > 0.35
+		var tm := TrafficFactory.mats()
+		(tm["tail"] as StandardMaterial3D).emission_energy_multiplier = lerpf(1.3, 4.5, atmos.night_w)
+		(tm["head"] as StandardMaterial3D).emission_energy_multiplier = lerpf(1.2, 7.0, atmos.night_w)
+		hud_weather()
+		var dark := clampf(atmos.night_w + Game.cloud * 0.25 + Game.fog_amount() * 0.3 - 0.15, 0.0, 1.0)
+		headlight.visible = dark > 0.1
+		headlight.light_energy = dark * (10.0 if not is_moto else 8.0)
 	sparks_l.emitting = car.scraping < 0 and state == "run"
 	sparks_r.emitting = car.scraping > 0 and state == "run"
 	smoke.emitting = (absf(car.drift) > 0.4 and car.speed > 25.0) or state == "wreck"
@@ -324,6 +332,11 @@ func update_fx(dt: float) -> void:
 		engine.volume_db = -9.0 + clampf(car.speed / top, 0.0, 1.0) * 5.0
 	if wind.stream:
 		wind.volume_db = lerpf(-40.0, -10.0, clampf(car.speed / 90.0, 0.0, 1.0))
+
+## Reloj y clima en el HUD.
+func hud_weather() -> void:
+	if hud and hud.has_method("set_clock"):
+		hud.set_clock(Atmosphere.hud_text())
 
 func update_minimap() -> void:
 	var fr := road.frame(road_s(car.s))

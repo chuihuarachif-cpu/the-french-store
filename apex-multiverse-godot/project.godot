@@ -52,6 +52,15 @@ environment/defaults/default_clear_color=Color(0.02, 0.03, 0.06, 1)
 
 [shader_globals]
 
+snow={
+"type": "float",
+"value": 0.0
+}
+lightning={
+"type": "float",
+"value": 0.0
+}
+
 game_time={
 "type": "float",
 "value": 0.0

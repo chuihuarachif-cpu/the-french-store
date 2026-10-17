@@ -11,6 +11,8 @@ uniform float world_half = 8192.0;
 uniform float snow_height = 600.0;
 uniform bool hq = true;
 global uniform float night;
+global uniform float snow;
+global uniform float wet;
 
 varying vec3 wpos;
 varying vec3 wn;
@@ -41,11 +43,15 @@ void fragment() {
 	float rm = max(sp.g, smoothstep(0.8, 0.6, wn.y));
 	col = mix(col, r, clamp(rm, 0.0, 1.0));
 	float sm = smoothstep(snow_height, snow_height + 50.0, wpos.y + big * 60.0) * smoothstep(0.5, 0.8, wn.y);
+	// nevada: cubre todo lo plano según lo acumulado
+	sm = max(sm, smoothstep(0.0, 0.7, snow * (0.75 + big * 0.5)) * smoothstep(0.55, 0.85, wn.y) * (1.0 - sp.a * 0.4));
+	// suelo mojado: más oscuro y algo brillante
+	col *= 1.0 - wet * 0.22 * (1.0 - sm);
 	col = mix(col, vec3(0.8, 0.83, 0.88) * (0.85 + big * 0.2), sm);
 	// lecho marino / fondo de río
 	float under = smoothstep(0.5, -6.0, wpos.y);
 	col = mix(col, s * vec3(0.55, 0.62, 0.6), under);
 	ALBEDO = col;
-	ROUGHNESS = 0.92 - sm * 0.35;
+	ROUGHNESS = 0.92 - sm * 0.35 - wet * 0.3 * sp.a;
 	SPECULAR = 0.25;
 }

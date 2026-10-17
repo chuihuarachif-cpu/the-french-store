@@ -5,8 +5,8 @@ const MODE_ORDER := ["highway", "race", "truck", "plane"]
 const MODE_INFO := {
 	"highway": {"num": "01", "color": Color(0.0, 0.86, 1.0), "desc": "La autopista A1 rodea todo el país: túneles, viaductos, costa y campo. Tráfico de autos y motos, sin fin."},
 	"race": {"num": "02", "color": Color(1.0, 0.62, 0.0), "desc": "10 carreras agresivas por la capital, la costa, la zona roja y los Alpes. Nitro, choques y derribos."},
-	"truck": {"num": "03", "color": Color(0.45, 0.95, 0.35), "desc": "Lleva la carga de A a B: semáforos, puentes, puente levadizo, árboles caídos y animales que cruzan."},
-	"plane": {"num": "04", "color": Color(0.65, 0.55, 1.0), "desc": "Despega del aeropuerto o del portaaviones, derriba a los enemigos y aterriza con éxito."},
+	"truck": {"num": "03", "color": Color(0.45, 0.95, 0.35), "desc": "Carrera de camionero: empiezas en la concesionaria sin dinero, alquilas camión y remolque, haces trabajos y compras tu flota."},
+	"plane": {"num": "04", "color": Color(0.65, 0.55, 1.0), "desc": "Carrera de piloto: acepta vuelos en el centro de pilotos, gana reputación para volar a aeropuertos lejanos y misiones de combate."},
 }
 
 var map_rect: TextureRect
@@ -146,6 +146,8 @@ func _mode_card(mode: String) -> Control:
 	var prog := ""
 	if mode == "highway":
 		prog = "RÉCORD %s" % HUD._fmt(int(Game.save.get("best_highway", 0)))
+	elif mode == "truck" or mode == "plane":
+		prog = "%s · NIVEL %d" % [Career.fmt_eur(Career.money()), Career.level(mode)]
 	else:
 		prog = "COMPLETADOS %d / %d" % [Game.unlocked_events(mode) - 1, Game.events(mode).size()]
 	v.add_child(UIKit.label(prog, 16, "Orbitron-Bold", UIKit.WARN))

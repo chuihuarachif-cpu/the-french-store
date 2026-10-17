@@ -408,7 +408,7 @@ func _show_events() -> void:
 		var info := ""
 		match mode:
 			"race":
-				info = "%s · %d rivales · %s" % [e["dept"], e["rivals"], {"day": "Día", "night": "Noche", "sunset": "Atardecer", "sunrise": "Amanecer"}[e["time"]]]
+				info = "%s · %d rivales" % [e["dept"], e["rivals"]]
 			"truck":
 				info = "%s ➜ %s · %s · pago ◆ %d" % [e["from"], e["to"], e["cargo"], e["pay"]]
 			"plane":

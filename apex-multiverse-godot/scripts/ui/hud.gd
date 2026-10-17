@@ -22,6 +22,7 @@ var pos_lbl: Label
 var pos_box: PanelContainer
 var extra_lbl: Label
 var warn_lbl: Label
+var clock_lbl: Label
 var _banner_tw: Tween
 
 func _ready() -> void:
@@ -104,6 +105,13 @@ func _ready() -> void:
 	UIKit.place(extra_lbl, Vector2(1, 0), Vector2(-430, 104))
 	extra_lbl.size = Vector2(400, 40)
 	root.add_child(extra_lbl)
+	# reloj y clima universales (bajo el minimapa)
+	clock_lbl = UIKit.label("", 16, "Orbitron-Bold", Color(0.92, 0.95, 1.0), HORIZONTAL_ALIGNMENT_RIGHT)
+	UIKit.place(clock_lbl, Vector2(1, 0), Vector2(-330, 308))
+	clock_lbl.size = Vector2(300, 24)
+	clock_lbl.add_theme_constant_override("outline_size", 6)
+	clock_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
+	root.add_child(clock_lbl)
 	# --- Abajo derecha: velocímetro ---
 	gauge = SpeedGauge.new()
 	UIKit.place(gauge, Vector2(0.5, 1), Vector2(-150, -246))
@@ -134,6 +142,9 @@ func _ready() -> void:
 func set_score(v: int, best: int) -> void:
 	score_lbl.text = _fmt(v)
 	best_lbl.text = "MEJOR " + _fmt(best)
+
+func set_clock(t: String) -> void:
+	clock_lbl.text = t
 
 func set_title(t: String) -> void:
 	title_tag.text = t
