@@ -2,7 +2,7 @@ name: Build Apex Multiverse APK
 
 on:
   push:
-    branches: [game/apex-multiverse]
+    branches: [game/apex-multiverse, claude/racing-game-overhaul-31unq3]
     paths:
       - "apex-multiverse-godot/**"
       - ".github/workflows/build-apex-apk.yml"
@@ -99,7 +99,8 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: Apex Multiverse (build ${{ github.run_number }})
           body: |
-            APK de Apex Multiverse (Godot 4.3). 4 modos con su nivel 1: Infinito, Historia, Camiones y Cohetes.
+            APK de Apex Multiverse (Godot 4.3). Mapa único: República de Fransterra.
+            4 modos: Infinito (autos y motos), Historia (carreras), Camiones (entregas A→B) y Aviones (combate y aterrizaje). 80 vehículos.
             Instálalo en Android permitiendo "instalar apps de orígenes desconocidos".
           files: dist/apex-multiverse.apk
           make_latest: false
