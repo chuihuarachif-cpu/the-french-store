@@ -41,15 +41,15 @@ func _draw() -> void:
 	var r := 112.0
 	var a0 := deg_to_rad(150.0)
 	var a1 := deg_to_rad(390.0)
-	draw_arc(c, r, a0, a1, 64, Color(1, 1, 1, 0.12), 10.0, true)
+	draw_arc(c, r, a0, a1, 32, Color(1, 1, 1, 0.12), 10.0, false)
 	var t := clampf(speed / max_speed, 0.0, 1.0)
 	var col := UIKit.ACCENT.lerp(UIKit.DANGER, smoothstep(0.7, 1.0, t))
 	if t > 0.001:
-		draw_arc(c, r, a0, lerpf(a0, a1, t), 64, col, 10.0, true)
+		draw_arc(c, r, a0, lerpf(a0, a1, t), 32, col, 10.0, false)
 	for i in 13:
 		var a := lerpf(a0, a1, i / 12.0)
 		var d := Vector2(cos(a), sin(a))
-		draw_line(c + d * (r - 18), c + d * (r - 8), Color(1, 1, 1, 0.5), 2.0, true)
+		draw_line(c + d * (r - 18), c + d * (r - 8), Color(1, 1, 1, 0.5), 2.0, false)
 	# Nitro: 10 segmentos inclinados
 	var segs := 10
 	var w := 22.0

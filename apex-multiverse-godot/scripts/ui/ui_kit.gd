@@ -21,9 +21,10 @@ static func label(text: String, size := 24, fnt := "Rajdhani-Bold", col := Color
 	l.add_theme_font_override("font", font(fnt))
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", col)
-	l.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.55))
-	l.add_theme_constant_override("shadow_offset_x", 0)
-	l.add_theme_constant_override("shadow_offset_y", 2)
+	if Game.quality() > 0:
+		l.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.55))
+		l.add_theme_constant_override("shadow_offset_x", 0)
+		l.add_theme_constant_override("shadow_offset_y", 2)
 	l.horizontal_alignment = align
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return l
@@ -41,8 +42,9 @@ static func panel_style(col := GLASS, border := Color(0, 0, 0, 0), bw := 0, radi
 	sb.content_margin_top = 8
 	sb.content_margin_bottom = 8
 	sb.skew = Vector2(skew, 0)
-	sb.shadow_color = Color(0, 0, 0, 0.35)
-	sb.shadow_size = 8
+	if Game.quality() > 0:
+		sb.shadow_color = Color(0, 0, 0, 0.35)
+		sb.shadow_size = 8
 	return sb
 
 static func panel(col := GLASS, border := Color(0, 0, 0, 0), bw := 0, skew := 0.0) -> PanelContainer:

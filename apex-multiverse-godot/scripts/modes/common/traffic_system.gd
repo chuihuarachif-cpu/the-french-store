@@ -91,19 +91,25 @@ func spawn(s: float, force_dir := 0) -> void:
 		cars.append(d)
 		return
 
+static var _glow_cache := {}
+
 func _glows(node: Node3D, d: Dictionary) -> void:
-	var q := QuadMesh.new()
-	q.size = Vector2(1.2, 1.2)
-	var mt := MatLib.billboard("glow", Color(1.0, 0.1, 0.05), 1.0)
-	var mh := MatLib.billboard("glow", Color(1.0, 0.95, 0.85), 1.0)
-	for sx in [-1, 1]:
+	var key := "%.2f_%.2f" % [d["hl"], d["hw"]]
+	if not _glow_cache.has(key):
+		var mesh := ArrayMesh.new()
 		for front in [false, true]:
-			var g := MeshInstance3D.new()
-			g.mesh = q
-			g.material_override = mh if front else mt
-			g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			g.position = Vector3(sx * d["hw"] * 0.7, 0.85, (-d["hl"] - 0.2) if front else (d["hl"] + 0.15))
-			node.add_child(g)
+			var md := MeshData.new()
+			for sx in [-1.0, 1.0]:
+				var c := Vector3(sx * d["hw"] * 0.7, 0.85, (-d["hl"] - 0.25) if front else (d["hl"] + 0.2))
+				var w := 0.7
+				md.quad(c + Vector3(-w, -w, 0), c + Vector3(w, -w, 0), c + Vector3(w, w, 0), c + Vector3(-w, w, 0), Color.WHITE, Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0))
+			var m := MatLib.additive("glow", Color(1.0, 0.95, 0.85) if front else Color(1.0, 0.1, 0.05), 1.0)
+			md.to_mesh(m, false, false, mesh)
+		_glow_cache[key] = mesh
+	var g := MeshInstance3D.new()
+	g.mesh = _glow_cache[key]
+	g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	node.add_child(g)
 
 func clear() -> void:
 	for c in cars:

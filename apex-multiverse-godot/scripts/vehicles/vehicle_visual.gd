@@ -93,8 +93,37 @@ func _mi(mesh: Mesh, parent: Node3D = null, shadow := true) -> MeshInstance3D:
 	(parent if parent else body).add_child(mi)
 	return mi
 
-## Malla con varias superficies a partir de MeshData por material.
+const DETAIL_COLORS := {"glass": Color(0.03, 0.045, 0.06, 0.5), "plastic": Color(0.035, 0.035, 0.04, 0.0), "chrome": Color(0.85, 0.86, 0.9, 0.5),
+	"tail": Color(0.8, 0.03, 0.02, 1.0), "head": Color(0.95, 0.95, 1.0, 1.0), "tire": Color(0.03, 0.03, 0.03, 0.0), "rim": Color(0.7, 0.72, 0.75, 0.5),
+	"metal": Color(0.55, 0.57, 0.6, 0.5), "emit_blue": Color(0.1, 0.35, 1.0, 1.0), "emit_red": Color(1.0, 0.08, 0.05, 1.0), "emit_white": Color(1.0, 0.95, 0.85, 1.0),
+	"rider": Color(0.08, 0.08, 0.1, 0.0), "skin": Color(0.8, 0.6, 0.5, 0.0), "canvas": Color(0.35, 0.38, 0.26, 0.0), "wood": Color(0.45, 0.32, 0.2, 0.0)}
+
+## Malla con pocas superficies: pintura, color secundario, luces de freno y un único "detalle" con color por vértice.
 func _compose(parts: Dictionary) -> ArrayMesh:
+	var mesh := ArrayMesh.new()
+	var detail := MeshData.new()
+	for k in parts:
+		if DETAIL_COLORS.has(k):
+			var md: MeshData = parts[k]
+			if md.is_empty():
+				continue
+			var dc: Color = DETAIL_COLORS[k]
+			for i in md.col.size():
+				md.col[i] = dc
+			detail.append(md)
+	for k in parts:
+		if DETAIL_COLORS.has(k):
+			continue
+		var md2: MeshData = parts[k]
+		if md2.is_empty():
+			continue
+		var mat2: Material = _paint_mat if k == "paint" else (_accent_mat if k == "accent" else _brake)
+		md2.to_mesh(mat2, false, false, mesh)
+	if not detail.is_empty():
+		detail.to_mesh(TrafficFactory.detail_material(), false, true, mesh)
+	return mesh
+
+func _compose_old(parts: Dictionary) -> ArrayMesh:
 	var mesh := ArrayMesh.new()
 	var m := TrafficFactory.mats()
 	for k in parts:
@@ -180,7 +209,6 @@ func _build_car() -> void:
 	d = TrafficFactory._car(p)
 	var bmi := _mi(d["mesh"])
 	bmi.set_surface_override_material(0, _paint_mat)
-	bmi.set_surface_override_material(4, _brake)
 	length = d["length"]
 	width = d["width"]
 	height = d["height"]
@@ -191,8 +219,10 @@ func _build_car() -> void:
 		for sx in [-1.0, 1.0]:
 			_add_wheel(Vector3(sx * tr, wr, z), wr, 0.26 if shape != "trophy" else 0.38, z < 0.0)
 	# extras
-	var ex := _parts(["paint", "accent", "plastic", "chrome", "emit_blue", "emit_red", "emit_white", "head"])
+	var ex := _parts(["paint", "accent", "plastic", "chrome", "emit_blue", "emit_red", "emit_white", "head", "brake"])
 	var L := length
+	for sx in [-1.0, 1.0]:
+		ex["brake"].box(Transform3D(Basis.IDENTITY, Vector3(sx * width * 0.31, d["belt"] - 0.06, L * 0.5 + 0.01)), Vector3(width * 0.27, 0.13, 0.04))
 	var deck: float = d["deck"]
 	var roof: float = d["roof"]
 	var hood: float = d["hood"]

@@ -62,6 +62,8 @@ func _ready() -> void:
 	_setup_input()
 	apply_quality()
 	autopilot = OS.get_environment("AUTOPILOT") == "1"
+	if OS.get_environment("LEVEL") != "":
+		current_level = int(OS.get_environment("LEVEL"))
 	if OS.get_environment("SHOT") != "":
 		add_child(load("res://tools_test/shot.gd").new())
 
@@ -118,6 +120,8 @@ func _load() -> void:
 		save["sfx"] = true
 	if not save.has("quality"):
 		save["quality"] = 0 if OS.get_name() == "Android" else 1
+	if OS.get_environment("QUALITY") != "":
+		save["quality"] = int(OS.get_environment("QUALITY"))
 	for k in ["owned", "colors", "selected", "progress", "stars"]:
 		if not (save.get(k) is Dictionary):
 			save[k] = {}

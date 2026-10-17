@@ -115,6 +115,7 @@ func _ready() -> void:
 	banner_box.alignment = BoxContainer.ALIGNMENT_CENTER
 	banner_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	banner_box.modulate.a = 0.0
+	banner_box.visible = false
 	root.add_child(banner_box)
 	banner_title = UIKit.label("", 84, "Orbitron-Black", Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER)
 	banner_title.add_theme_constant_override("outline_size", 10)
@@ -206,9 +207,11 @@ func banner(title: String, sub := "", dur := 1.6, col := Color.WHITE) -> void:
 	_banner_tw = create_tween()
 	_banner_tw.tween_property(banner_box, "modulate:a", 1.0, 0.12)
 	_banner_tw.parallel().tween_property(banner_box, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK)
+	banner_box.visible = true
 	if dur > 0.0:
 		_banner_tw.tween_interval(dur)
 		_banner_tw.tween_property(banner_box, "modulate:a", 0.0, 0.3)
+		_banner_tw.tween_callback(func(): banner_box.visible = false)
 
 static func _fmt(v: int) -> String:
 	var s := str(absi(v))

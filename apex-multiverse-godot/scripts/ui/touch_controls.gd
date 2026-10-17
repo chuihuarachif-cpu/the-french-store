@@ -39,7 +39,7 @@ func _input(event: InputEvent) -> void:
 			var a := _hit(p)
 			if a != "":
 				_touch[event.index] = a
-				_set_action(a, true)
+				_set_action(a, false)
 		elif _touch.has(event.index):
 			var a: String = _touch[event.index]
 			_touch.erase(event.index)
@@ -56,7 +56,7 @@ func _input(event: InputEvent) -> void:
 					_set_action(prev, false)
 			if a != "":
 				_touch[event.index] = a
-				_set_action(a, true)
+				_set_action(a, false)
 
 func _set_action(action: String, on: bool) -> void:
 	_pressed[action] = on
@@ -81,7 +81,7 @@ func _draw() -> void:
 		var on: bool = _pressed.get(b["action"], false)
 		var col: Color = b.get("color", Color(1, 1, 1))
 		draw_circle(c, r, Color(0.02, 0.04, 0.08, alpha * (0.85 if on else 0.55)))
-		draw_arc(c, r, 0, TAU, 48, Color(col.r, col.g, col.b, 0.95 if on else 0.6), 4.0 if on else 2.5, true)
+		draw_arc(c, r, 0, TAU, 24, Color(col.r, col.g, col.b, 0.95 if on else 0.6), 4.0 if on else 2.5, false)
 		if on:
 			draw_circle(c, r * 0.92, Color(col.r, col.g, col.b, 0.22))
 		var t: String = b.get("text", "")

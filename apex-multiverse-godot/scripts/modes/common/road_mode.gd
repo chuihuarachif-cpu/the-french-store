@@ -124,6 +124,8 @@ func setup_world(r: RoadPath, s_start: float, time_preset: String) -> void:
 		engine.play()
 	if wind.stream:
 		wind.play()
+	if OS.get_environment("CAM") != "":
+		cam_mode = int(OS.get_environment("CAM"))
 	_show_loading()
 	var fr := road.frame(car.s)
 	streamer.prewarm(fr.origin, -fr.basis.z)
@@ -135,6 +137,7 @@ func _tune_env() -> void:
 	var q := Game.quality()
 	env.fog_density *= 0.9
 	if q == 0:
+		env.fog_density = maxf(env.fog_density, 0.0021)
 		sun.shadow_enabled = false
 		env.glow_enabled = false
 		env.adjustment_enabled = false
@@ -256,7 +259,7 @@ func place_player(dt: float, steer: float) -> void:
 func update_camera(dt: float) -> void:
 	var fr := road.frame(road_s(car.s))
 	cam_yaw = lerpf(cam_yaw, yaw_vis * 0.35, clampf(dt * 4.0, 0.0, 1.0))
-	var base_d := 6.2 if not is_truck else 13.0
+	var base_d := 6.2 if not is_truck else 9.0 + pvis.trailer_len + 4.0
 	if is_moto:
 		base_d = 4.6
 	if cam_mode == 1:
@@ -265,7 +268,7 @@ func update_camera(dt: float) -> void:
 	cam_dist = lerpf(cam_dist, want_dist, clampf(dt * 2.5, 0.0, 1.0))
 	var b := fr.basis.rotated(fr.basis.y, cam_yaw)
 	var cp := pvis.global_position
-	var hgt := (2.0 if not is_truck else 4.6) + car.speed * 0.004
+	var hgt := (2.0 if not is_truck else 6.8) + car.speed * 0.004
 	if is_moto:
 		hgt = 1.7
 	if cam_mode == 1:
@@ -275,9 +278,9 @@ func update_camera(dt: float) -> void:
 	if cam_mode == 2:
 		# cámara interior / capó (como en los videos de motos y camiones)
 		var pb := pvis.global_transform.basis
-		var eye := Vector3(0, 1.15, -0.2) if not is_truck else Vector3(-0.5, 3.0, -4.2)
+		var eye := Vector3(0, pvis.height * 0.78, -pvis.length * 0.12) if not is_truck else Vector3(-0.5, 3.2, -4.6)
 		if is_moto:
-			eye = Vector3(0, 1.35, 0.15)
+			eye = Vector3(0, 1.3, -0.42)
 		pos = pvis.global_transform * eye
 		look = pos - pb.z * 20.0 + pb.y * -0.6
 		if is_moto:

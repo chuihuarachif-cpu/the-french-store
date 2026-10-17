@@ -62,7 +62,7 @@ func release() -> void:
 func _draw() -> void:
 	var c := _origin if _idx >= 0 else Vector2(size.x * 0.32, size.y * 0.62)
 	draw_circle(c, radius, Color(0.02, 0.04, 0.08, 0.35))
-	draw_arc(c, radius, 0, TAU, 48, Color(0.6, 0.55, 1.0, 0.55), 3.0, true)
+	draw_arc(c, radius, 0, TAU, 24, Color(0.6, 0.55, 1.0, 0.55), 3.0, false)
 	draw_circle(c + value * radius, radius * 0.38, Color(0.6, 0.55, 1.0, 0.5))
 	if _idx < 0:
 		var f := UIKit.font("Orbitron-Bold")

@@ -459,7 +459,7 @@ func _hud() -> void:
 		if t["fallen"] and t["s"] - car.s > 0.0 and t["s"] - car.s < 160.0:
 			warn = "⚠ ÁRBOL CAÍDO · DESVÍO A LA DERECHA"
 	if not animals.is_empty() and animals[-1]["s"] - car.s > 0.0 and animals[-1]["s"] - car.s < 200.0 and not animals[-1]["hit"]:
-		warn = "⚠ ANIMALES EN LA VÍA · TOCA LA BOCINA"
+		warn = "⚠ ANIMALES · USA LA BOCINA"
 	if road.is_tunnel(car.s + 100.0) and not road.is_tunnel(car.s) and warn == "":
 		warn = "TÚNEL"
 	hud.warn(warn)

@@ -79,5 +79,5 @@ func _draw() -> void:
 	draw_colored_polygon(PackedVector2Array([c + Vector2(0, -10), c + Vector2(7, 8), c + Vector2(0, 4), c + Vector2(-7, 8)]), Color(0.1, 0.9, 1.0))
 
 func _line(poly: PackedVector2Array) -> void:
-	draw_polyline(poly, Color(0, 0, 0, 0.6), 6.0, true)
-	draw_polyline(poly, Color(1.0, 0.75, 0.1), 3.5, true)
+	draw_polyline(poly, Color(0, 0, 0, 0.6), 6.0, false)
+	draw_polyline(poly, Color(1.0, 0.75, 0.1), 3.5, false)

@@ -18,6 +18,9 @@ var landmarks: WorldLandmarks
 var shadows := false
 var _time := 0.0
 var _initial_done := false
+var _sched_t := 0.0
+var _pending := true
+var _sched_at := Vector3.INF
 
 const VIS_END := {"person": 300.0, "flame": 320.0, "debris": 300.0, "umbrella": 340.0, "bush": 380.0, "vine": 380.0}
 
@@ -29,7 +32,7 @@ func _ready() -> void:
 	max_tasks = 2 if OS.get_processor_count() <= 4 else 3
 	match q:
 		0:
-			radius = [260.0, 620.0, 1150.0]
+			radius = [230.0, 560.0, 1000.0]
 		1:
 			radius = [320.0, 780.0, 1450.0]
 		_:
@@ -69,7 +72,11 @@ func _process(dt: float) -> void:
 	RenderingServer.global_shader_parameter_set("game_time", World.time)
 	sea.position = Vector3(snappedf(focus.x, 64.0), 0.0, snappedf(focus.z, 64.0))
 	_collect()
-	_schedule()
+	_sched_t -= dt
+	if _sched_t <= 0.0 or focus.distance_to(_sched_at) > 24.0 or (_pending and tasks.size() < max_tasks):
+		_sched_t = 0.25
+		_sched_at = focus
+		_schedule()
 	landmarks.update(focus)
 
 func _schedule() -> void:
@@ -102,6 +109,7 @@ func _schedule() -> void:
 			if not tasks.has(c):
 				chunks[c]["node"].queue_free()
 				chunks.erase(c)
+	_pending = want.size() > max_tasks - tasks.size()
 	if want.is_empty():
 		if not _initial_done and tasks.is_empty():
 			_initial_done = true

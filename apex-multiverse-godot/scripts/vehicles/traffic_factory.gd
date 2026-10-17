@@ -135,7 +135,60 @@ static func _new_sts() -> Dictionary:
 		d[k] = MeshKit.begin()
 	return d
 
+const DETAIL := {"glass": Color(0.03, 0.045, 0.06, 0.5), "plastic": Color(0.035, 0.035, 0.04, 0.0), "chrome": Color(0.85, 0.86, 0.9, 0.5),
+	"tail": Color(0.8, 0.03, 0.02, 1.0), "head": Color(0.95, 0.95, 1.0, 1.0), "tire": Color(0.03, 0.03, 0.03, 0.0), "rim": Color(0.7, 0.72, 0.75, 0.5)}
+static var _detail_mat: ShaderMaterial
+
+static func detail_material() -> ShaderMaterial:
+	if _detail_mat == null:
+		_detail_mat = ShaderMaterial.new()
+		_detail_mat.shader = load("res://shaders/vehicle_detail.gdshader")
+	return _detail_mat
+
+## Malla de 2 superficies: 0 = pintura (color por instancia), 1 = todos los detalles con color por vértice.
 static func _finish(sts: Dictionary, smooth_keys := ["paint", "glass"]) -> ArrayMesh:
+	var mesh := ArrayMesh.new()
+	var m := mats()
+	var pst: SurfaceTool = sts["paint"]
+	_smooth(pst)
+	pst.set_material(m["paint"])
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, pst.commit_to_arrays())
+	mesh.surface_set_material(0, m["paint"])
+	var V := PackedVector3Array()
+	var N := PackedVector3Array()
+	var C := PackedColorArray()
+	var I := PackedInt32Array()
+	for k in DETAIL:
+		var st: SurfaceTool = sts[k]
+		if k in smooth_keys:
+			_smooth(st)
+		var a := st.commit_to_arrays()
+		var vv = a[Mesh.ARRAY_VERTEX]
+		if vv == null or (vv as PackedVector3Array).is_empty():
+			continue
+		var base := V.size()
+		V.append_array(vv)
+		N.append_array(a[Mesh.ARRAY_NORMAL])
+		for i in (vv as PackedVector3Array).size():
+			C.append(DETAIL[k])
+		var ii = a[Mesh.ARRAY_INDEX]
+		if ii == null or (ii as PackedInt32Array).is_empty():
+			for i in (vv as PackedVector3Array).size():
+				I.append(base + i)
+		else:
+			for i in ii:
+				I.append(base + i)
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = V
+	arr[Mesh.ARRAY_NORMAL] = N
+	arr[Mesh.ARRAY_COLOR] = C
+	arr[Mesh.ARRAY_INDEX] = I
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	mesh.surface_set_material(1, detail_material())
+	return mesh
+
+static func _finish_old(sts: Dictionary, smooth_keys := ["paint", "glass"]) -> ArrayMesh:
 	var mesh := ArrayMesh.new()
 	var m := mats()
 	for k in ["paint", "glass", "plastic", "chrome", "tail", "head", "tire", "rim"]:

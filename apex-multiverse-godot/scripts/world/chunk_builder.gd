@@ -45,7 +45,7 @@ func inst(key: String, xf: Transform3D, custom := Color(0.5, 0.5, 0.5, 0.0)) -> 
 func build() -> Dictionary:
 	_terrain()
 	_roads()
-	if lod <= 1:
+	if lod == 0:
 		_junction_props()
 	_buildings()
 	_vegetation()
@@ -220,7 +220,7 @@ func _segment(r: RoadPath, a: int, b: int, s0: float) -> void:
 				var up := r.up[a] * 0.14
 				wd.quad(p - rt * 1.25 - fw + up, p + rt * 1.25 - fw + up, p + rt * 1.25 + fw + up, p - rt * 1.25 + fw + up, Color(0.45, 0.35, 0.25))
 	# farolas y árboles de acera
-	if lod <= 1 and not tunnel:
+	if lod == 0 and not tunnel:
 		var fwd := r.fwd[a]
 		if k == "highway" and a % 6 == 0 and not hidden:
 			inst("lamp_double", Transform3D(Basis(r.right[a], Vector3.UP, -fwd), _P(r, a, 0.0, 0.85)))
@@ -448,7 +448,7 @@ func _vault(m: MeshData, xf: Transform3D, w: float, d: float, h: float, rise: fl
 func _vegetation() -> void:
 	if lod == 2:
 		return
-	var sp := 9.0 if lod == 0 else 20.0
+	var sp := 11.0 if lod == 0 else 22.0
 	var o: Vector2 = W.chunk_origin(c)
 	var cells := int(W.CHUNK / sp)
 	for j in cells:
