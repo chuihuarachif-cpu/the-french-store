@@ -129,6 +129,63 @@ jobs:
               assert 'BreadcrumbList' in types or 'ItemList' in types
           PY
 
+
+      - name: Validate targeted SEO landing pages
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlsplit
+          import json, re
+
+          paths = [
+              'v2/juegos/mlbb-pase-semanal-elite.html',
+              'v2/juegos/mlbb-pase-mensual-epico.html',
+              'v2/juegos/clash-of-clans.html',
+              'v2/juegos/clash-royale.html',
+              'v2/juegos/mobile-legends-bang-bang.html',
+              'v2/juegos/free-fire.html',
+              'v2/recargas.html',
+          ]
+          class Links(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.hrefs = []
+              def handle_starttag(self, tag, attrs):
+                  if tag == 'a':
+                      self.hrefs.extend(v for k, v in attrs if k == 'href')
+
+          for page in paths:
+              text = Path(page).read_text(encoding='utf-8')
+              assert text.count('<h1') == 1, page
+              assert text.count('<title>') == 1, page
+              assert 'rel="canonical"' in text, page
+              assert 'name="description"' in text, page
+              assert 'index,follow' in text, page
+              assert '&lt;/strong&gt;' not in text, page
+              assert 'Precios publicados actualmente' not in text, page
+              scripts = re.findall(r'<script type="application/ld\+json">(.*?)</script>', text, re.S)
+              assert len(scripts) == 1, page
+              assert json.loads(scripts[0])['@context'] == 'https://schema.org', page
+              if 'mlbb-pase-' in page:
+                  graph = json.loads(scripts[0])['@graph']
+                  product = next(e for e in graph if e.get('@type') == 'Product')
+                  assert not product.get('offers'), page
+                  assert 'Precio publicado el 19/09/2026' not in text, page
+              links = Links()
+              links.feed(text)
+              for href in links.hrefs:
+                  if href.startswith(('http:', 'https:', '#', 'mailto:', 'tel:')):
+                      continue
+                  target = urlsplit(href).path
+                  resolved = (Path(page).parent / target).resolve()
+                  if target.endswith('/'):
+                      resolved = resolved / 'index.html'
+                  assert resolved.is_file(), (page, href)
+          print('Targeted SEO pages and local links OK')
+          PY
+
       - name: Local static smoke
         shell: bash
         run: |
