@@ -51,6 +51,9 @@
     window.gtag('js', new Date());
     window.gtag('config', MEASUREMENT_ID, {
       send_page_view: false,
+      page_location: sanitizedLocation(),
+      page_referrer: '',
+      page_title: 'FRENCH STORE',
       allow_google_signals: false,
       allow_ad_personalization_signals: false
     });
@@ -61,6 +64,7 @@
     window.gtag('event', 'page_view', {
       send_to: MEASUREMENT_ID,
       page_location: sanitizedLocation(),
+      page_referrer: '',
       page_title: 'FRENCH STORE'
     });
   }
@@ -140,6 +144,15 @@
     if (consent === 'allow') startAnalytics();
     else if (consent === null) showBanner();
   }
+
+  // Consentimiento del mismo dispositivo; nunca se incorpora a la cuenta Google.
+  window.FSAnalyticsConsent = Object.freeze({
+    get: function () { return readConsent(); },
+    set: function (value) {
+      if (value !== 'allow' && value !== 'deny') return;
+      choose(value);
+    }
+  });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
