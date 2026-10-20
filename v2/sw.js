@@ -3,13 +3,14 @@
    requests are never intercepted or cached. */
 'use strict';
 
-const CACHE='fs-store-r235-adsterra-worker-origin-20260922';
+const CACHE='fs-store-r236-brand-icon-20261020';
 const SHELL=[
   '/v2/',
   '/v2/index.html',
   '/v2/manifest.webmanifest',
   '/v2/assets/brand/icon-192.png',
   '/v2/assets/brand/icon-512.png',
+  '/v2/assets/brand/icon-512-maskable.png',
   '/v2/tiers/owner-classic-r7.css',
   '/v2/cinematic-ui.css',
   '/v2/cinematic-ui.js',
