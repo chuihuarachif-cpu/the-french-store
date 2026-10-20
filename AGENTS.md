@@ -27,6 +27,10 @@ Preserve strongest reasoning, correctness, safety and required verification whil
 - Use `.agents/memory/FRENCH_STORE_STATE.md` only when it avoids rediscovery; keep it bounded, pointer-based and secret-free.
 - Never silently downgrade the user's model. Save tokens by shrinking irrelevant context/narration, not reasoning quality.
 
+## Gemini 4 Argon
+
+External text-only specialist for genuinely hard code (<1,000 lines, no secrets, no repo access). Claude Code/Codex stay owners: review, integrate, test, commit. Delegate only under `.agents/ARGON_PROTOCOL.md`; never for simple tasks.
+
 ## Project boundaries
 
 Preserve `v2/ARCHITECTURE.md`.
