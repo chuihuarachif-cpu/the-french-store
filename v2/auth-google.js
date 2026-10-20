@@ -248,6 +248,11 @@
         analytics.type = 'checkbox';
         // Solo aparece seleccionado si ya había consentimiento.
         analytics.checked = window.FSAnalyticsConsent?.get?.() === 'allow';
+        // Aplicar inmediatamente la preferencia opcional, no al iniciar OAuth.
+        // Retirar consentimiento puede recargar la página para descargar GA4.
+        analytics.addEventListener('change', () => {
+          try { window.FSAnalyticsConsent?.set?.(analytics.checked ? 'allow' : 'deny'); } catch {}
+        });
         const analyticsText = document.createElement('span');
         analyticsText.textContent = 'Permito usar Google Analytics para estadísticas de visitas. (Opcional; puedo cambiarlo después)';
         optional.appendChild(analytics);
