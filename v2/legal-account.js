@@ -71,7 +71,11 @@
     const current = session?.user?.user_metadata || {};
     if (current.fs_terms_accepted === true &&
         current.fs_privacy_accepted === true &&
-        current.fs_legal_version === LEGAL_VERSION) return;
+        current.fs_legal_version === LEGAL_VERSION) {
+      // La cuenta ya aceptó esta versión; limpiar la marca local del acceso.
+      try { window.sessionStorage.removeItem(LEGAL_PENDING_KEY); } catch {}
+      return;
+    }
 
     // No marcar aceptación por el simple hecho de haber iniciado sesión con Google.
     if (!explicitGoogleLegalAcceptance()) return;
