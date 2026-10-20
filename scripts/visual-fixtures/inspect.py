@@ -20,10 +20,17 @@ print(json.dumps(data))
 assert data['bootstrap']=='ready','Bootstrap failed'
 assert not data['errors'], 'Uncaught browser errors'
 assert not data.get('blockedWrites'), 'Fixture attempted a write or unapproved RPC'
-# The active Gold/Diamond pass is a rewards entitlement, never a storefront skin.
-# Validate the seeded rank independently from the shared presentation.
-assert data['membership']==data['rank'], 'Active synthetic Rank Pass rewards state was lost'
-if 'after' in sys.argv[4:]:
+# Gold/Diamond are rewards entitlements, not different storefront themes.
+# R151 intentionally compares a pinned historical fixture (before) with the
+# current implementation (after). The old fixture's synthetic pass expired on
+# 2026-10-06, so do not require an active entitlement in that archived capture.
+# The *current* fixture must always preserve its seeded rank and unified skin.
+is_before = 'before' in sys.argv[4:]
+is_after = 'after' in sys.argv[4:]
+assert not (is_before and is_after), 'Ambiguous historical/current fixture mode'
+if not is_before:
+    assert data['membership']==data['rank'], 'Active synthetic Rank Pass rewards state was lost'
+if is_after:
     assert data['visualTier']=='base', 'A Rank Pass selected a paid storefront skin'
     assert data['ownerClassic']=='1', 'Unified Classic R7 storefront was not active'
     assert not data.get('visualInterface'), 'A retired world/paid interface was activated'
