@@ -1,0 +1,45 @@
+/* Banner opt-in de analítica: autónomo y sin dependencia del checkout. */
+.fs-ga4-banner {
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 9000;
+  inset: auto 12px max(12px, env(safe-area-inset-bottom)) 12px;
+  padding: 18px;
+  border: 1px solid rgba(98, 221, 250, .55);
+  border-radius: 16px;
+  background: #081c2d;
+  color: #f5faff;
+  box-shadow: 0 10px 42px rgba(0, 0, 0, .65);
+  font: 14px/1.55 system-ui, sans-serif;
+}
+.fs-ga4-banner strong { font-size: 16px; color: #fff; }
+.fs-ga4-banner p { margin: 8px 0 12px; color: #e4f2fa; }
+.fs-ga4-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.fs-ga4-actions button {
+  min-height: 44px;
+  padding: 9px 13px;
+  border: 1px solid #62ddfa;
+  border-radius: 9px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+.fs-ga4-deny { background: #112d41; color: #fff; }
+.fs-ga4-allow { background: #63defa; color: #061c29; }
+.fs-ga4-actions button:focus-visible,
+.fs-ga4-manage:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.fs-ga4-banner .fs-ga4-policies { margin: 12px 0 0; font-size: 13px; }
+.fs-ga4-policies a { color: #80e5ff; }
+.fs-ga4-manage {
+  border: 0;
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  font: inherit;
+  padding: 4px 0;
+}
+@media (min-width: 720px) {
+  .fs-ga4-banner { right: auto; width: min(540px, calc(100vw - 32px)); left: 16px; }
+}
