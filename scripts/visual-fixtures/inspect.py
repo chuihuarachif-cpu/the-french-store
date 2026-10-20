@@ -20,7 +20,14 @@ print(json.dumps(data))
 assert data['bootstrap']=='ready','Bootstrap failed'
 assert not data['errors'], 'Uncaught browser errors'
 assert not data.get('blockedWrites'), 'Fixture attempted a write or unapproved RPC'
-assert data['membership']==data['rank'], 'Rank fixture did not render the actual theme'
+# The active Gold/Diamond pass is a rewards entitlement, never a storefront skin.
+# Validate the seeded rank independently from the shared presentation.
+assert data['membership']==data['rank'], 'Active synthetic Rank Pass rewards state was lost'
+if 'after' in sys.argv[4:]:
+    assert data['visualTier']=='base', 'A Rank Pass selected a paid storefront skin'
+    assert data['ownerClassic']=='1', 'Unified Classic R7 storefront was not active'
+    assert not data.get('visualInterface'), 'A retired world/paid interface was activated'
+    assert not data.get('world'), 'Retired rank world decoration was activated'
 assert data['width']==int(sys.argv[3]), 'Chrome did not use the requested layout viewport'
 assert not data['overflow'], 'Horizontal overflow'
 assert data['calls'].get('get_my_loyalty_summary',0)<=12, 'Rank read loop returned'
