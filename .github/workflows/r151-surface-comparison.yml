@@ -52,7 +52,7 @@ jobs:
                 timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:$port/__qa-frame.html?rank=$QA_RANK&view=$view&state=normal&width=360" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
               }
               rm -rf "$profile"
-              python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360
+              python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" 360 "$side"
             done
           done
       - name: Wallet states and dialog keyboard regression
@@ -76,7 +76,7 @@ jobs:
               timeout 30s "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars $CHROME_QUIET --user-data-dir="$profile" --window-size=1366,960 --virtual-time-budget=6000 --screenshot="screenshots/$name.png" --dump-dom "http://127.0.0.1:8082/__qa-frame.html?rank=$QA_RANK&view=$view&state=$state&width=$width&checks=r151" > "/tmp/$name.html" 2> "/tmp/$name.stderr"
             }
             rm -rf "$profile"
-            python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width" r151 r153
+            python3 scripts/visual-fixtures/inspect.py "/tmp/$name.html" "screenshots/$name.json" "$width" r151 r153 after
           done
           done
       - name: Chrome failure diagnostics
