@@ -11,6 +11,7 @@
   const PROVIDER_RETRY_MS = 2000;
   const PROVIDER_RETRY_LIMIT = 5;
   const PROVIDER_FETCH_TIMEOUT_MS = 2500;
+  const LEGAL_PENDING_KEY = 'fs_google_legal_accept_pending_v1';
   let googleEnabledPromise = null;
   let googleEnabledCheckedAt = 0;
   let observer = null;
@@ -118,16 +119,37 @@
       button.textContent = 'Conectando con Google…';
     }
     try {
+      const legalCheckbox = document.getElementById('authGoogleTermsAccepted');
+      const analyticsCheckbox = document.getElementById('authGoogleAnalyticsAllowed');
+      if (!legalCheckbox?.checked) {
+        showMessage('Para continuar, lee y acepta los Términos y la Política de Privacidad.');
+        legalCheckbox?.focus();
+        return;
+      }
       if (!await googleProviderEnabled(true)) {
         showMessage('El acceso con Google no está disponible temporalmente. Intenta nuevamente en unos segundos.');
         return;
       }
+      // Guardar prueba local del consentimiento legal explícito para el retorno OAuth.
+      // No convertir la aceptación opcional de Analytics en condición de acceso.
+      try {
+        window.sessionStorage.setItem(LEGAL_PENDING_KEY, String(Date.now()));
+      } catch {
+        showMessage('Tu navegador bloquea guardar la aceptación. Habilita el almacenamiento para iniciar sesión.');
+        return;
+      }
+      const analyticsChoice = analyticsCheckbox?.checked === true ? 'allow' : 'deny';
+      try { window.FSAnalyticsConsent?.set?.(analyticsChoice); } catch { /* No bloquear autenticación por analítica. */ }
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: REDIRECT_TO }
       });
-      if (error) showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente.');
+      if (error) {
+        try { window.sessionStorage.removeItem(LEGAL_PENDING_KEY); } catch {}
+        showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente.');
+      }
     } catch {
+      try { window.sessionStorage.removeItem(LEGAL_PENDING_KEY); } catch {}
       showMessage('No se pudo iniciar el acceso con Google. Intenta nuevamente.');
     } finally {
       if (button) {
@@ -202,12 +224,38 @@
       dedupeGoogleButtons();
       stopProviderRetry(true);
 
-      if (!document.getElementById('authGoogleLegal')) {
-        const legal = document.createElement('p');
-        legal.id = 'authGoogleLegal';
-        legal.style.cssText = 'margin:10px 0 0;text-align:center;color:#8fa7b6;font-size:.78rem;line-height:1.4';
-        legal.innerHTML = 'Al continuar aceptas los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.';
-        currentBox.appendChild(legal);
+      if (!document.getElementById('authGoogleConsents')) {
+        const choices = document.createElement('div');
+        choices.id = 'authGoogleConsents';
+        choices.className = 'fs-google-consents';
+
+        const required = document.createElement('label');
+        required.className = 'fs-google-consent-item';
+        const terms = document.createElement('input');
+        terms.id = 'authGoogleTermsAccepted';
+        terms.type = 'checkbox';
+        terms.required = true;
+        terms.checked = false;
+        const legalText = document.createElement('span');
+        legalText.innerHTML = 'He leído y acepto los <a href="./terms.html" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a> y la <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>. <strong>(Obligatorio)</strong>';
+        required.appendChild(terms);
+        required.appendChild(legalText);
+
+        const optional = document.createElement('label');
+        optional.className = 'fs-google-consent-item';
+        const analytics = document.createElement('input');
+        analytics.id = 'authGoogleAnalyticsAllowed';
+        analytics.type = 'checkbox';
+        // Solo aparece seleccionado si ya había consentimiento.
+        analytics.checked = window.FSAnalyticsConsent?.get?.() === 'allow';
+        const analyticsText = document.createElement('span');
+        analyticsText.textContent = 'Permito usar Google Analytics para estadísticas de visitas. (Opcional; puedo cambiarlo después)';
+        optional.appendChild(analytics);
+        optional.appendChild(analyticsText);
+
+        choices.appendChild(required);
+        choices.appendChild(optional);
+        currentBox.insertBefore(choices, currentHost);
       }
     } finally {
       googleMountInProgress = false;

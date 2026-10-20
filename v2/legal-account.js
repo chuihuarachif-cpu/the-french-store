@@ -6,6 +6,7 @@
 
   const VERSION = 'legal-account-v2-20260824-r44';
   const LEGAL_VERSION = '2026-08-24';
+  const LEGAL_PENDING_KEY = 'fs_google_legal_accept_pending_v1';
   let clientReady = false;
   let oauthRecording = false;
 
@@ -55,21 +56,41 @@
     return provider === 'google' || providers.includes('google');
   }
 
+  function explicitGoogleLegalAcceptance() {
+    try {
+      const timestamp = Number(window.sessionStorage.getItem(LEGAL_PENDING_KEY));
+      return Number.isFinite(timestamp) && timestamp > 0 && Date.now() - timestamp >= 0 &&
+        Date.now() - timestamp < 30 * 60 * 1000;
+    } catch {
+      return false;
+    }
+  }
+
   async function recordGoogleAcceptance(session) {
     if (oauthRecording || !isGoogleSession(session)) return;
     const current = session?.user?.user_metadata || {};
     if (current.fs_terms_accepted === true &&
         current.fs_privacy_accepted === true &&
-        current.fs_legal_version === LEGAL_VERSION) return;
+        current.fs_legal_version === LEGAL_VERSION) {
+      // La cuenta ya aceptó esta versión; limpiar la marca local del acceso.
+      try { window.sessionStorage.removeItem(LEGAL_PENDING_KEY); } catch {}
+      return;
+    }
+
+    // No marcar aceptación por el simple hecho de haber iniciado sesión con Google.
+    if (!explicitGoogleLegalAcceptance()) return;
 
     oauthRecording = true;
     try {
-      await sb.auth.updateUser({
+      const { error } = await sb.auth.updateUser({
         data: {
           ...current,
           ...legalMetadata()
         }
       });
+      if (!error) {
+        try { window.sessionStorage.removeItem(LEGAL_PENDING_KEY); } catch {}
+      }
     } catch {
       // Authentication remains usable; legal metadata can be retried on next session.
     } finally {
