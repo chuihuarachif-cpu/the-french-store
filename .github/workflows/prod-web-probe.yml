@@ -1,0 +1,30 @@
+name: Production web probe (read-only)
+
+# Lee lo que sirve hoy frenchstorebo.com (sello de la versión, caché del Service Worker, archivos nuevos)
+# para documentar qué versión está publicada. Solo GET públicos; sin secretos. Solo en esta rama de trabajo.
+on:
+  push:
+    branches: [claude/bold-bardeen-gc50rb]
+    paths: ['.github/workflows/prod-web-probe.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe
+        shell: bash
+        run: |
+          set -u
+          base=https://frenchstorebo.com
+          for p in / /v2/ /v2/owner-lab-gate.js /v2/sw.js /v2/contact-phone.js /v2/ga4-consent.js /v2/currency-display.js /admin/r231-monetization.js /admin/r250-fx.js /sitemap.xml /v2/assets/brand/icon-512-maskable.png; do
+            code=$(curl -sS -o /tmp/b -w '%{http_code}' -A 'french-store-release-probe/1.0' "$base$p?probe=$(date +%s)" || echo ERR)
+            echo "$code $p $(wc -c </tmp/b) bytes"
+          done
+          echo '--- REVISION (owner-lab-gate.js)'; curl -sS "$base/v2/owner-lab-gate.js?probe=1" | grep -o "const REVISION = '[^']*'" || true
+          echo '--- SW cache'; curl -sS "$base/v2/sw.js?probe=1" | grep -o "const CACHE='[^']*'" || true
+          echo '--- WhatsApp'; curl -sS "$base/v2/config/storefront.js?probe=1" | grep -o "whatsapp: '[0-9]*'" || true
+          echo '--- index scripts'; curl -sS "$base/v2/index.html?probe=1" | grep -o '<script[^>]*src="[^"]*"' | head -40
