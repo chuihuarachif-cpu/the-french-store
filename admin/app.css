@@ -8,3 +8,11 @@
 .cuenta-foto-acciones{position:absolute;top:4px;right:4px;display:flex;gap:4px}
 .cuenta-foto-acciones button{padding:2px 7px;border-radius:7px;border:1px solid rgba(255,255,255,.22);background:rgba(3,17,29,.82);color:#dceaf4;font-size:.72rem;cursor:pointer}
 .cuenta-foto-portada{position:absolute;left:4px;bottom:4px;padding:2px 7px;border-radius:999px;background:rgba(46,204,113,.85);color:#03281a;font-size:.66rem;font-weight:800}
+
+/* Read-only customer details: no WhatsApp/copy controls on order history cards. */
+.order-customer{display:flex;flex-direction:column;gap:4px;margin-top:12px;padding:12px 13px;border-radius:12px;background:#172e38;color:#e4f5fa;overflow-wrap:anywhere}
+.order-customer strong{font-size:1rem;font-weight:800;color:#fff}
+.order-customer span{line-height:1.4}
+.order-customer span:last-child{color:#c2dce7}
+/* Fail-closed presentation if another legacy script injects contact actions. */
+.order-finalized :is(.customer-actions,.contact-actions,.whatsapp-actions,[data-customer-action],[data-contact-action]){display:none!important}
