@@ -14,5 +14,7 @@
 .order-customer strong{font-size:1rem;font-weight:800;color:#fff}
 .order-customer span{line-height:1.4}
 .order-customer span:last-child{color:#c2dce7}
+/* All finalized orders are read-only, including controls injected by legacy scripts. */
+.order-finalized button{display:none!important}
 /* Fail-closed presentation if another legacy script injects contact actions. */
 .order-finalized :is(.customer-actions,.contact-actions,.whatsapp-actions,[data-customer-action],[data-contact-action]){display:none!important}
