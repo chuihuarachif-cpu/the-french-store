@@ -14,6 +14,8 @@
   let topups=[];
   let bankPayments=[];
   let orders=[];
+  let orderContacts=new Map();
+  let orderCustomerNames=new Map();
   let activeFilter='editable';
   let currentTab='overview';
   let toastTimer=null;
@@ -67,7 +69,7 @@
     try{const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:`${location.origin}/admin/`}});if(error)throw error}
     catch{showLoginError('No se pudo iniciar sesión con Google. Intenta nuevamente.');button.disabled=false;button.textContent='G  Continuar con Google'}
   }
-  async function logout(){await sb.auth.signOut();products=[];topups=[];bankPayments=[];orders=[];showOnly('loginView')}
+  async function logout(){await sb.auth.signOut();products=[];topups=[];bankPayments=[];orders=[];orderContacts.clear();orderCustomerNames.clear();showOnly('loginView')}
 
   async function verifyPrivateAccess(){
     const{data:sessionData}=await sb.auth.getSession();const session=sessionData?.session;
@@ -190,27 +192,51 @@
 
   async function loadOrdersAdmin(){
     const host=$('ordersAdminList');host.innerHTML='<article class="card"><small>Cargando pedidos…</small></article>';
-    try{const data=await rpc('admin_app_list_orders',{p_limit:100});orders=Array.isArray(data)?data:[];renderOrders()}
-    catch(error){host.innerHTML=`<article class="card"><small>${esc(error.message||'No se pudieron cargar los pedidos.')}</small></article>`}
+    try{
+      const data=await rpc('admin_app_list_orders',{p_limit:100});
+      orders=Array.isArray(data)?data:[];
+      orderContacts=new Map();
+      orderCustomerNames=new Map();
+      const codes=orders.map((o)=>String(o.order_code||'')).filter(Boolean);
+      if(codes.length){
+        const [contacts,names]=await Promise.allSettled([
+          rpc('admin_app_order_contacts',{p_order_codes:codes}),
+          rpc('admin_app_order_customer_names',{p_order_codes:codes})
+        ]);
+        if(contacts.status==='fulfilled'&&Array.isArray(contacts.value)){
+          contacts.value.forEach((row)=>orderContacts.set(String(row.order_code||''),row));
+        }
+        if(names.status==='fulfilled'&&Array.isArray(names.value)){
+          names.value.forEach((row)=>orderCustomerNames.set(String(row.order_code||''),row.customer_name||''));
+        }
+      }
+      renderOrders();
+    }catch(error){host.innerHTML=`<article class="card"><small>${esc(error.message||'No se pudieron cargar los pedidos.')}</small></article>`}
   }
   function orderNeedsActions(order){return!['PENDING_PAYMENT','DELIVERED','CANCELLED','REFUNDED'].includes(norm(order.status))}
   function renderOrders(){
     const host=$('ordersAdminList');
     host.innerHTML=orders.length?orders.map((o)=>{
       const s=norm(o.status);const attention=['PAID','MANUAL_REQUIRED','AWAITING_CODE','PROCESSING','ERROR'].includes(s);
+      const terminal=['DELIVERED','CANCELLED','REFUNDED'].includes(s);
       const canData=['PAID','MANUAL_REQUIRED','PROCESSING','ERROR'].includes(s);
+      const contact=orderContacts.get(String(o.order_code||''));
+      const name=orderCustomerNames.get(String(o.order_code||''))||'Sin nombre registrado';
+      const phone=contact?.phone_e164||'';
+      const phoneLabel=phone?[contact?.country_name||'',phone].filter(Boolean).join(' · '):'Sin número registrado';
       const actions=[];
       if(orderNeedsActions(o)&&s!=='PROCESSING')actions.push(`<button data-order-status="PROCESSING" data-id="${o.id}">Procesando</button>`);
       if(orderNeedsActions(o)&&s!=='DELIVERED')actions.push(`<button class="primary" data-order-status="DELIVERED" data-id="${o.id}">Entregado</button>`);
       if(orderNeedsActions(o)&&s!=='ERROR')actions.push(`<button class="danger-btn" data-order-status="ERROR" data-id="${o.id}">Error</button>`);
       if(canData)actions.push(`<button data-order-data="${o.id}">Datos recarga</button>`);
-      return `<article class="card ${attention?'attention':''}"><div class="card-top"><div><b>${esc(o.order_code)} · ${money(o.total_amount)}</b><small>${esc(o.customer_email||'Sin correo')} · ${esc(o.payment_method||'—')} · ${fmtDate(o.created_at)}</small></div>${badge(o.status)}</div><div class="meta">${o.paid_at?`<span>Pagado: ${fmtDate(o.paid_at)}</span>`:''}${o.processing_at?`<span>Procesando: ${fmtDate(o.processing_at)}</span>`:''}${o.delivered_at?`<span>Entregado: ${fmtDate(o.delivered_at)}</span>`:''}${o.admin_note?`<span>Nota: ${esc(o.admin_note)}</span>`:''}</div>${actions.length?`<div class="card-actions">${actions.join('')}</div>`:''}</article>`;
+      return `<article class="card ${attention?'attention':''} ${terminal?'order-finalized':''}" data-current-status="${esc(s)}"><div class="card-top"><div><b>${esc(o.order_code)} · ${money(o.total_amount)}</b><small>${esc(o.customer_email||'Sin correo')} · ${esc(o.payment_method||'—')} · ${fmtDate(o.created_at)}</small></div>${badge(o.status)}</div><div class="order-customer"><span>Cliente:</span><strong>${esc(name)}</strong><span>${esc(phoneLabel)}</span></div><div class="meta">${o.paid_at?`<span>Pagado: ${fmtDate(o.paid_at)}</span>`:''}${o.processing_at?`<span>Procesando: ${fmtDate(o.processing_at)}</span>`:''}${o.delivered_at?`<span>Entregado: ${fmtDate(o.delivered_at)}</span>`:''}${o.admin_note?`<span>Nota: ${esc(o.admin_note)}</span>`:''}</div>${actions.length?`<div class="card-actions">${actions.join('')}</div>`:''}</article>`;
     }).join(''):'<article class="card"><small>No hay pedidos registrados.</small></article>';
     host.querySelectorAll('[data-order-status]').forEach((button)=>button.addEventListener('click',()=>updateOrderStatus(button)));
     host.querySelectorAll('[data-order-data]').forEach((button)=>button.addEventListener('click',()=>openOrderData(button.dataset.orderData)));
   }
   async function updateOrderStatus(button){
     const id=button.dataset.id;const status=button.dataset.orderStatus;const order=orders.find((x)=>x.id===id);
+    if(!order||!orderNeedsActions(order)){toast('Este pedido ya no admite acciones manuales.');return}
     const accepted=await confirmAction(`Marcar ${STATUS_LABELS[status]||status}`,`<p><b>${esc(order?.order_code||'Pedido')}</b></p><label>Nota Admin (opcional)<textarea id="orderAdminNote" rows="3" maxlength="300" placeholder="Ej. Entrega confirmada"></textarea></label>`,'Guardar estado');if(!accepted)return;
     const note=$('orderAdminNote')?.value.trim()||null;
     button.disabled=true;
@@ -280,7 +306,7 @@
 
   async function boot(){
     bindUi();
-    if('serviceWorker'in navigator)navigator.serviceWorker.register('/admin/sw.js?v=20260918-r225',{scope:'/admin/',updateViaCache:'none'}).then((registration)=>registration.update().catch(()=>{})).catch(()=>{});
+    if('serviceWorker'in navigator)navigator.serviceWorker.register('/admin/sw.js?v=20261027-contact-static',{scope:'/admin/',updateViaCache:'none'}).then((registration)=>registration.update().catch(()=>{})).catch(()=>{});
     try{
       await verifyPrivateAccess();
       sb.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>{if(!session)showOnly('loginView');else verifyPrivateAccess().catch(()=>showOnly('deniedView'))},0)});
